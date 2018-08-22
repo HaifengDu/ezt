@@ -6,16 +6,34 @@ const path = require('path')
 
 module.exports = {
   dev: {
-
+    reqUrl:{//测试环境访问接口地址
+      appOrder:"/appOrder/",
+      extension: "/ecsc-extension-rpc/",
+      payment:"/payment/news/post",
+    },
     // Paths
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {},
+    proxyTable: {//反向代理实现跨域
+      "/appOrder": {
+        target: "http://test.e7e6.net/scmapp/appOrder/",
+        changeOrigin: true,  //是否跨域
+        pathRewrite: {"^/appOrder" : ""} //后面可以使重写的新路径，一般不做更改
+      },
+      "/extension": {
+        target: "http://ecsc.meishijia.com/ecsc-extension-rpc/",
+        pathRewrite: {"^/extension" : ""} //后面可以使重写的新路径，一般不做更改
+      },
+      "/payment": {
+        target: "http://test.e7e6.net/payment/news/post",
+        pathRewrite: {"^/payment" : ""} //后面可以使重写的新路径，一般不做更改
+      }
+    },
 
     // Various Dev Server settings
     host: 'localhost', // can be overwritten by process.env.HOST
-    port: 8080, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
-    autoOpenBrowser: false,
+    port: process.env.PORT||8082, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
+    autoOpenBrowser: true,//项目启动自动打开浏览器
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
@@ -37,6 +55,11 @@ module.exports = {
   },
 
   build: {
+    reqUrl:{//线上环境
+      appOrder: "http://www.e7e6.net/scmapp/appOrder/",
+      extension: "http://ecsc.e7e6.net/ecsc-extension-rpc/",
+      payment: "http://www.e7e6.net/payment/news/post",
+    },
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),
 

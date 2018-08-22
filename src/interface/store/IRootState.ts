@@ -1,4 +1,4 @@
-import { IUser } from "../IUser";
+import { IUser } from "../IUserModel";
 
 export interface IRootState{
     user?:IUser

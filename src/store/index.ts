@@ -2,7 +2,7 @@ import VueX, { Store } from "vuex";
 import Vue from "vue";
 import { IRootState } from "../interface/store/IRootState";
 import { RootType } from "./mutation-types";
-import { IUser } from "../interface/IUser";
+import { IUser } from "../interface/IUserModel";
 import * as actions from "./action"
 Vue.use(VueX);
 export default new Store<IRootState>({

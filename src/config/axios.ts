@@ -1,6 +1,7 @@
 import Axios from "axios";
 import _ from "lodash";
 const host = "/";
+console.log(1111);
 _.extend(Axios.defaults,{
     baseURL: host,
     timeout: 300000,

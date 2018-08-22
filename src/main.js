@@ -7,7 +7,6 @@ import store from "./store"
 import VueAxios from 'vue-axios'
 import axios from 'axios'
 import './main.ts'
-
 Vue.use(VueAxios, axios)
 Vue.config.productionTip = false
 

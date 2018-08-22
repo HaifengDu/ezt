@@ -1,4 +1,4 @@
 import cacheWraperAxios from "./extendAxios"
-import './extendAxios';
+import './axios';
 import Axios from "axios";
 cacheWraperAxios(Axios);

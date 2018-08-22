@@ -1,0 +1,219 @@
+/************************************************************************************
+global：全局样式;
+*************************************************************************************/
+/* 初始化标签 */
+html,
+body,
+address,
+blockquote,
+div,
+dl,
+form,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+ol,
+p,
+pre,
+table,
+ul,
+dd,
+dt,
+li,
+tbody,
+td,
+tfoot,
+th,
+thead,
+tr,
+button,
+del,
+ins,
+map,
+object,
+a,
+abbr,
+acronym,
+b,
+bdo,
+big,
+br,
+cite,
+code,
+dfn,
+em,
+i,
+img,
+kbd,
+q,
+samp,
+small,
+span,
+strong,
+sub,
+sup,
+tt,
+var,
+legend,
+fieldset {
+  margin: 0;
+  padding: 0;
+  text-decoration: none;
+}
+
+ul,
+li,
+ol,
+dt,
+dd {
+  list-style: none;
+}
+
+html,
+body {
+  position: relative;
+  height: 100%;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: 14px;
+  font-weight: normal;
+}
+
+body {
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "微软雅黑";
+  font-family: Microsoft YaHei;
+  margin: 0;
+  padding: 0;
+}
+
+a,
+a:hover,
+a:visited {
+  text-decoration: none;
+}
+
+img,
+fieldset {
+  border: 0;
+}
+
+/* set image max width to 100% */
+
+img {
+  display: block;
+  width: 100%;
+  width: auto \9;
+  /* ie8 */
+}
+
+label, b {
+  font-weight: normal;
+}
+
+/* set html5 elements to block */
+
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+
+.txt-center {
+  text-align: center;
+}
+
+.fl {
+  float: left;
+}
+
+.fr {
+  float: right;
+}
+
+/************************************************************************************
+CLEARFIX ：清除浮动
+*************************************************************************************/
+
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+.clearfix {
+  display: inline-block;
+}
+
+.clearfix {
+  display: block;
+  zoom: 1;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar-corner { /* 边角，即两个滚动条的交汇处*/
+  background-color: transparent; /*设置元素的背景颜色为透明*/
+}
+
+::-webkit-scrollbar { /*滚动条整体部分*/
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track { /* 滚动条的轨道（里面装有Thumb）*/
+  background-color: transparent
+}
+
+::-webkit-scrollbar-thumb { /*滚动条里面的小方块，能向上向下移动（或往左往右移动，取决于是垂直滚动条还是水平滚动条）*/
+  border-radius: 10px;
+  /*background: rgba(0,0,0,.3);*/
+  background: #D8D8D8;
+}
+
+::-webkit-scrollbar-thumb:window-inactive { /*适用于所有滚动条，表示包含滚动条的区域，焦点不在该窗口的时候。*/
+  /*background: rgba(0,0,0,.3);*/
+  background: #D8D8D8;
+}
+
+::-webkit-scrollbar-corner:vertical { /*vertical伪类适用于任何垂直方向的滚动条*/
+  background-color: transparent;
+}
+
+/* input 属性placeholder文本颜色修改 */
+::-webkit-input-placeholder { /* WebKit browsers */
+  color: #C2C2C2;
+}
+
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+  color: #C2C2C2;
+}
+
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+  color: #C2C2C2;
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+  color: #C2C2C2;
+}

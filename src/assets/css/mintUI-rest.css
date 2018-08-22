@@ -1,0 +1,141 @@
+/*底部tabbar*/
+.layout-index .mint-tabbar > .mint-tab-item.is-selected{
+  background-color: transparent;
+  color: #1188FC;
+}
+.layout-index .mint-tab-item-label{
+  font-size: 10px;
+  color: #5F7B9A;
+  letter-spacing: 0;
+  line-height: 10px;
+}
+.layout-index .mint-tabbar > .mint-tab-item.is-selected .mint-tab-item-label{
+  color: #1188FC;
+}
+.layout-index .mint-tabbar{
+  background: #FFFFFF;
+  box-shadow: 0 -1px 0 0 #D8E4F3;
+}
+.layout-index .mint-cell-wrapper{
+  padding: 0px;
+}
+.layout-index .mint-cell{
+  background: none;
+}
+.layout-index .mint-cell:last-child{
+  background: none !important;
+}
+.layout-index .mint-cell-value,.layout-index .mint-cell-wrapper{
+  display: inherit;
+}
+.layout-index .mint-cell:first-child .mint-cell-wrapper{
+  background: transparent;
+}
+.layout-index .mint-tab-container{
+  overflow:visible;
+}
+/*登录页面*/
+.login .mint-field-core{
+  text-indent: 5px;
+  color: #395778;
+}
+.login .mint-cell-wrapper,.login .mint-cell:last-child{
+  padding: 0px;
+  background:none;
+  /*border:1px solid red;*/
+}
+.login .mint-cell{
+  min-height: 12px;
+}
+.login input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px white inset;
+}
+/*要货页面*/
+.requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{
+  line-height: 48px;
+  background-image:none;
+  border-bottom:1px solid  #DDECFD;
+  margin-left: 20px;
+  width: 95% !important;
+}
+.requiregoods .mint-cell:last-child .mint-cell-wrapper{
+  border-bottom:none;
+}
+.requiregoods .mint-checkbox-label,.selectTemplate .mint-checkbox-label{
+  float: left;
+}
+.requiregoods .mint-cell:last-child{
+  background-image:none;
+}
+.requiregoods .mint-checklist{
+  background-color:  #fff;
+  position:  absolute;
+  z-index:  9999;
+  width: 100%;
+  bottom: 0;
+  height: 50%;
+  overflow: scroll;
+}
+.requiregoods .mint-checklist::-webkit-scrollbar{
+  width:5px;
+}
+.requiregoods .mint-popup-bottom{
+  width: 100%;
+}
+.requiregoods .mint-radio-label,.requiregoods .mint-cell-text{
+  float: left;
+}
+.requiregoods .mint-radiolist-title{
+  font-size: 16px;
+  margin: 0;
+  color: #395778;
+  background-color: #F1F6FF;
+}
+.requiregoods .mint-field .mint-cell-value{
+  float: left;
+}
+.requiregoods .mint-field-core{
+  text-align: right;
+}
+/*选择模板页面*/
+.selectTemplate .mint-radio-label{
+  float: left;
+}
+/*要货收货明细列表*/
+.receive-detail .mint-cell-text{
+  font-size: 13px;
+  color: #5F7B9A;
+  display: flex;
+}
+.title-switch .mint-switch-core{
+  width: 45px;
+  height: 24px;
+}
+.title-switch .mint-switch-core::after,.title-switch .mint-switch-core::before{
+  width: 23px;
+  height: 22px;
+}
+.detaillist-bot .mint-field .mint-cell-title{
+  width: auto;
+}
+/*在tab切换内容里面没有滚动条，*/
+.mint-tab-container{
+  overflow: scroll !important;
+  flex:1;
+}
+/*退货*/
+.return-detail .mint-search-list{
+  background: #ccc;
+  /*opacity: .5;*/
+}
+.return-detail .mint-searchbar{
+  background: #F1F6FF;
+}
+.return-detail .mint-searchbar-core{
+  text-align: center;
+}
+.returnGood .mint-cell-text{
+  font-size: 12px;
+  color: #5F7B9A;
+  letter-spacing: 0;
+}

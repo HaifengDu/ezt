@@ -9,6 +9,9 @@ export default new Store<IRootState>({
     state:{
         user:void 0
     },
+    getters:{
+        user:state=>state.user
+    },
     mutations:{
         [RootType.UPDATE_USER](state,user:IUser){
             state.user = user;

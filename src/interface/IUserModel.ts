@@ -1,4 +1,8 @@
 export interface IUser{
+    auth?:{
+        [index:string]:any
+    }
+    store_id?:number;
     /**
      * 商户名
      */

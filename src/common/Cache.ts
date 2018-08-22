@@ -1,142 +1,149 @@
+import TypeCheck from './TypeCheck'
 import { ECache } from '../enum/ECache';
-var MemCache = (function () {
-    function MemCache() {
-        this.data = {};
-    }
-    MemCache.prototype.save = function (key, value) {
+import { ICache } from '../interface/ICache';
+import { ICacheFactory } from '../interface/ICacheFactory';
+
+class MemCache implements ICache {
+    private static MEMCACHE: MemCache;
+    private data: any = {};
+    private constructor() { }  
+    public save(key: string, value: any): any {
         this.data[key] = { 'ttl': Date.now(), 'val': value };
         return this.data[key];
-    };
-    MemCache.prototype.load = function (key, ttl) {
+    }
+
+    public load(key: string, ttl?: number): any {
+        //缓存365天
         return (this.data[key] && (this.data[key].ttl > Date.now() - (ttl || 60 * 60 * 24 * 365) * 1000)) ? this.data[key].val : false;
-    };
-    MemCache.prototype.clear = function () {
+    }
+    public clear(): MemCache {
         this.data = {};
         return this;
-    };
-    MemCache.prototype.hasKey = function (key) {
+    }
+
+    public hasKey(key:string):boolean{
         return key in this.data;
-    };
-    MemCache.prototype.remove = function (key) {
+    }
+
+    public remove(key: string): boolean {
         if (key in this.data) {
             delete this.data[key];
             return true;
         }
         return false;
-    };
-    MemCache.MemCacheFactory = function () {
+    }
+
+    public static MemCacheFactory(): MemCache{
         if (!MemCache.MEMCACHE) {
             MemCache.MEMCACHE = new MemCache();
         }
         return MemCache.MEMCACHE;
-    };
-    return MemCache;
-}());
-var LocCache = (function () {
-    function LocCache() {
-        this.data = {};
     }
-    LocCache.prototype.save = function (key, value) {
+}
+
+class LocCache implements ICache {
+    private static LOCCACHE: LocCache;
+    private data: any = {};
+
+    public save(key: string, value: any): any {
         try {
             key = ('&' == key.substring(0, 1)) ? key : '~' + key;
             this.data[key] = { 'ttl': Date.now(), 'val': value };
             localStorage[key] = JSON.stringify(this.data[key]);
             return this.data[key];
-        }
-        catch (e) {
+        } catch (e) {
             return false;
         }
-    };
-    LocCache.prototype.load = function (key, ttl) {
+    }
+
+    public load(key: string, ttl?: number): any {
         try {
             key = ('&' == key.substring(0, 1)) ? key : '~' + key;
             this.data[key] = JSON.parse(localStorage[key]);
             return (this.data[key] && (this.data[key].ttl > Date.now() - (ttl || 60 * 60 * 24 * 365) * 1000)) ? this.data[key].val : false;
-        }
-        catch (e) {
+        } catch (e) {
             return false;
-        }
-    };
-    LocCache.prototype.hasKey = function (key) {
+        } 
+    }   
+
+    public hasKey(key:string):boolean{
         return !!this.load(key);
-    };
-    LocCache.prototype.clear = function (prefix) {
+    }
+
+    public clear(prefix?: string): LocCache {
         prefix = prefix || '~';
         Object.keys(localStorage).forEach(function (key) {
-            if (key.substring(0, 1) == prefix) {
-                localStorage.removeItem(key);
-            }
+            if (key.substring(0,1) == prefix) { localStorage.removeItem(key); }
         });
         return this;
-    };
-    LocCache.prototype.remove = function (key, prefix) {
+    }
+    public remove(key: string,prefix?: string): boolean {
         prefix = prefix || '~';
-        localStorage.removeItem(prefix + key);
+        localStorage.removeItem(prefix+key);
         return true;
-    };
-    LocCache.LocCacheFactory = function () {
+    }
+    public static LocCacheFactory(): LocCache{
         if (!LocCache.LOCCACHE) {
             LocCache.LOCCACHE = new LocCache();
         }
         return LocCache.LOCCACHE;
-    };
-    return LocCache;
-}());
-var SessionCache = (function () {
-    function SessionCache() {
-        this.data = {};
     }
-    SessionCache.prototype.save = function (key, value) {
+}
+
+class SessionCache implements ICache {
+    private static LOCCACHE: SessionCache;
+    private data: any = {};
+
+    public save(key: string, value: any): any {
         try {
             key = ('&' == key.substring(0, 1)) ? key : '~' + key;
             this.data[key] = { 'ttl': Date.now(), 'val': value };
             sessionStorage[key] = JSON.stringify(this.data[key]);
             return this.data[key];
-        }
-        catch (e) {
+        } catch (e) {
             return false;
         }
-    };
-    SessionCache.prototype.hasKey = function (key) {
+    }
+
+    public hasKey(key:string):boolean{
         return !!this.load(key);
-    };
-    SessionCache.prototype.load = function (key, ttl) {
+    }
+
+    public load(key: string, ttl?: number): any {
         try {
             key = ('&' == key.substring(0, 1)) ? key : '~' + key;
             this.data[key] = JSON.parse(sessionStorage[key]);
             return (this.data[key] && (this.data[key].ttl > Date.now() - (ttl || 60 * 60 * 24 * 365) * 1000)) ? this.data[key].val : false;
-        }
-        catch (e) {
+        } catch (e) {
             return false;
-        }
-    };
-    SessionCache.prototype.clear = function (prefix) {
+        } 
+    }   
+
+    public clear(prefix?: string): SessionCache {
         prefix = prefix || '~';
         Object.keys(sessionStorage).forEach(function (key) {
-            if (key.substring(0, 1) == prefix) {
-                sessionStorage.removeItem(key);
-            }
+            if (key.substring(0,1) == prefix) { sessionStorage.removeItem(key); }
         });
         return this;
-    };
-    SessionCache.prototype.remove = function (key, prefix) {
+    }
+    public remove(key: string,prefix?: string): boolean {
         prefix = prefix || '~';
-        sessionStorage.removeItem(prefix + key);
+        sessionStorage.removeItem(prefix+key);
         return true;
-    };
-    SessionCache.SessionCacheFactory = function () {
+    }
+    public static SessionCacheFactory(): SessionCache{
         if (!SessionCache.LOCCACHE) {
             SessionCache.LOCCACHE = new SessionCache();
         }
         return SessionCache.LOCCACHE;
-    };
-    return SessionCache;
-}());
-var CacheFactory = (function () {
-    function CacheFactory() {
     }
-    CacheFactory.prototype.create = function (type) {
-        var cache;
+}
+
+export class CacheFactory implements ICacheFactory {
+    private static INSTANCE:ICacheFactory;
+    private constructor(){}
+    public create(type: ECache): ICache {
+        let cache: ICache;
         switch (type) {
             case ECache.MemCache:
                 cache = MemCache.MemCacheFactory();
@@ -152,70 +159,83 @@ var CacheFactory = (function () {
                 break;
         }
         return cache;
-    };
-    CacheFactory.getInstance = function () {
+    }
+
+    public static getInstance(){
         if (!CacheFactory.INSTANCE) {
             CacheFactory.INSTANCE = new CacheFactory();
         }
         return CacheFactory.INSTANCE;
-    };
-    return CacheFactory;
-}());
-export { CacheFactory };
-var CachePocily = (function () {
-    function CachePocily(type) {
-        if (type === void 0) { type = ECache.MemCache; }
+    }
+}
+
+export class CachePocily {
+    private cacheContainer:ICache;
+    private constructor(type:ECache=ECache.MemCache) {
         this.cacheContainer = CacheFactory.getInstance().create(type);
     }
-    CachePocily.prototype.save = function (key, value) {
+
+    public save(key: string, value: any) {
+        //优先使用MemCache
         this.cacheContainer.save(key, value);
-    };
-    CachePocily.prototype.remove = function (key) {
+    }
+
+    public remove(key: string) {
+        //优先使用MemCache
         this.cacheContainer.remove(key);
-    };
-    CachePocily.prototype.hasKey = function (key) {
+    }
+
+    public hasKey(key:string):boolean{
         return this.cacheContainer.hasKey(key);
-    };
-    CachePocily.prototype.clear = function () {
+    }
+
+    public clear(){
         this.cacheContainer.clear();
-    };
-    CachePocily.prototype.getData = function (key, func) {
-        var result = this.cacheContainer.load(key);
+    }
+    //非异步
+    public getData(key: string, func?: () => any): any {
+        //优先使用MemCache
+        let result: any = this.cacheContainer.load(key);
+        //无结果 存入
         if (!result && func) {
             result = func();
+            // cacheContainer.save(key, angular.toJson(result));
             this.cacheContainer.save(key, JSON.stringify(result));
         }
         return result;
-    };
-    CachePocily.prototype.getDataOnce = function (key) {
-        var result = this.getData(key);
+    }
+
+    public getDataOnce(key: string): any{
+        let result = this.getData(key);
         this.cacheContainer.remove(key);
         return result;
-    };
-    CachePocily.prototype.getDataPromise = function (key, func) {
-        var _this = this;
-        return new Promise(function (resolve, reject) {
-            var result = _this.cacheContainer.load(key);
+    }
+
+    
+    //异步
+    public getDataPromise(key: string, func: () => Promise<any>): Promise<any> {        
+        return new Promise((resolve,reject)=>{
+            //优先使用MemCache
+            let result: any = this.cacheContainer.load(key);
+            //无结果 存入
             if (!result) {
                 result = func();
                 if (!result || !result.then) {
                     throw new Error('传入的func参数返回对象必须为promise');
                 }
-                result.then(function (result) {
-                    _this.cacheContainer.save(key, result);
+                result.then((result: any)=> {
+                    this.cacheContainer.save(key, result);
                     resolve(result);
-                }, function (result) {
+                }, function (result: any) {
                     reject(result);
                 });
-            }
-            else {
+            } else {
                 resolve(result);
             }
         });
-    };
-    CachePocily.getInstance = function (type) {
+    }
+
+    public static getInstance(type?:ECache){
         return new CachePocily(type);
-    };
-    return CachePocily;
-}());
-export { CachePocily };
+    }
+}

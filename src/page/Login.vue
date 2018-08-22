@@ -9,14 +9,17 @@
                 <div class="login-from-item">
                     <div class="i-index"><img src="../assets/images/merchant.png"/></div>
                     <input type="text" v-model="user.shopname" placeholder="请输入商户"/>
+                    <div class="i-index index-right" @click="clear('shopname')"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </div>
                 <div class="login-from-item">
                     <div class="i-index"><i class="fa fa-user" aria-hidden="true"></i></div>
                     <input type="text" v-model="user.loginname" placeholder="请输入用户名"/>
+                    <div class="i-index index-right" @click="clear('loginname')"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </div>
                 <div class="login-from-item">
                     <div class="i-index"><i class="fa fa-lock" aria-hidden="true"></i></div>
                     <input type="password" v-model="user.pwd" placeholder="请输入密码"/>
+                    <div class="i-index index-right" @click="clear('pwd')"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </div>
             </div>
             <div class="login-btn">
@@ -30,30 +33,25 @@ import Vue from 'vue'
 import {Component} from "vue-property-decorator";
 import IUser from "../interface/IUserModel"
 import ErrorMsg from "../model/ErrorMsg"
+import loginService,{ LoginService } from "../service/LoginService"
 @Component
 export default class Login extends Vue{
     private user:IUser={};
-    
-    private check(){
-        if(!this.user.shopname){
-            return new ErrorMsg(false,"商户名不能为空");
-        }
-        if(!this.user.loginname){
-            return new ErrorMsg(false,"用户名不能为空");
-        }
-        if(!this.user.pwd){
-            return new ErrorMsg(false,"密码不能为空");
-        }
-        return new ErrorMsg(true)
+    private service:LoginService;
+    created() {
+        this.service = LoginService.getInstance();
+    }
+
+    private clear(key:string){
+        this.user[key] = '';
     }
 
     private login(){
-        const checkResult = this.check();
-        if(!checkResult.success){
-            this.$toasted.show(checkResult.message as string);
-            return;
-        }
-        console.log("登录")
+        this.service.login(this.user).then(res=>{
+            console.log("登录成功");
+        },err=>{
+            this.$toasted.show(err.message);
+        });
     }
 }
 </script>
@@ -87,6 +85,9 @@ export default class Login extends Vue{
                     width:1.5rem;
                     height: 1.5rem;
                     color:#87abc6;
+                }
+                &.index-right{
+                    right: 0;
                 }
             }
             input{

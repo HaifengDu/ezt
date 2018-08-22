@@ -17,8 +17,8 @@ export default class ObjectHelper{
         }
     }
 
-    static serialize<T>(obj:any){
-        let result:T
+    static serialize<T extends any>(obj:any){
+        let result:any;
         try{
             if(typeof obj==="string"){
                 result = JSON.parse(obj);
@@ -28,7 +28,7 @@ export default class ObjectHelper{
         }catch(e){
             result = null;
         }
-        return result;
+        return result as T;
     }
 
     static mergeChildToSource(obj:any){

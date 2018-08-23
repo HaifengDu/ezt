@@ -58,6 +58,7 @@ export default class Login extends Vue{
 <style lang="less" scoped>
 .logo{
     margin-top:60px;
+    text-align: center;
     img{
         width: 7.5rem;
         height: 7.5rem;

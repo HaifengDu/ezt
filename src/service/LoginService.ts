@@ -7,7 +7,9 @@ import crypto from "crypto-browserify";
 import { CachePocily } from "../common/Cache";
 import { cacheKey } from "../config/cacheKey";
 import { ECache } from "../enum/ECache";
-
+import store from "../store"
+import RootType from "../store/mutation-types";
+import ObjectHelper from "../common/objectHelper";
 export class LoginService extends BaseService{
 
     private cache = CachePocily.getInstance(ECache.LocCache);
@@ -56,15 +58,17 @@ export class LoginService extends BaseService{
             user.auth = auth;
             user.store_id = res.data.store_id;
             this.cache.save(cacheKey.USER_MODEL,JSON.stringify(user));
+            store.commit(RootType.UPDATE_USER,user);
             return Promise.resolve(res);
-        })
+        });
     }
 
     autoLogin(){
-        const user = this.cache.getData(cacheKey.USER_MODEL);
+        let user = this.cache.getData(cacheKey.USER_MODEL);
         if(!user){
             return Promise.reject(new ErrorMsg(false,"未获取用户"));
         }
+        user = ObjectHelper.parseJSON(user);
         return this.login(user);
     }
 

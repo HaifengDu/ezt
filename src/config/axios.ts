@@ -1,6 +1,8 @@
 import Axios from "axios";
 import _ from "lodash";
-const host = "/";
+const host = "/",
+    emptyResMsg="返回数据为空，请联系管理员",
+    errorResMsg="服务器错误，请稍后重试";
 _.extend(Axios.defaults,{
     baseURL: host,
     timeout: 300000,
@@ -79,14 +81,14 @@ _.extend(Axios.defaults,{
         // return data
     }],
     // 返回数据预处理
-    transformResponse: [(respData:any) =>
+    transformResponse: [(respData:any) =>{
         // 检查返回status值
-        // if (typeof respData.status !== 'undefined') {
-        //   if (respData.status === 1) {
-        //     return respData
-        //   }
-        //   throw new Error(respData.errMsg || 'respData.status不为0')
-        // }
-        respData,
-    ],
+        if (!respData){
+            throw new Error(emptyResMsg)
+        }
+        if (respData.errcode === 0) {
+            return respData
+        }
+        throw new Error(respData.errmsg||errorResMsg)
+    }],
 });

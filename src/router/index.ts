@@ -9,12 +9,12 @@ Vue.use(Router)
 const router = new Router({
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login,
       meta:{noRequireAuth:true}
     },{
-      path:"/home",
+      path:"/",
       name:"Home",
       component:Index
     }

@@ -10,11 +10,11 @@ export function interceptRouter(router:Router):Router {
                 next();
             },err=>{
                 next({
-                    path: "/"
+                    path: "/login"
                 });
             }).catch(()=>{
                 next({
-                    path: "/"
+                    path: "/login"
                 });
             });
         }else{

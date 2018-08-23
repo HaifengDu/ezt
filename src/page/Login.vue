@@ -49,6 +49,7 @@ export default class Login extends Vue{
     private login(){
         this.service.login(this.user).then(res=>{
             console.log("登录成功");
+            this.$router.replace("/home");
         },err=>{
             this.$toasted.show(err.message);
         });

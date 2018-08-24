@@ -8,6 +8,8 @@ import TabContainerItem from 'mint-ui/lib/tab-container-item';
 import TabContainer from 'mint-ui/lib/tab-container';
 import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
+import XInput from "vux/src/components/x-input";
+import Group from "vux/src/components/group";
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
 // import TimePicker from "element-ui/lib/time-picker";
@@ -104,3 +106,5 @@ Vue.component(TabContainerItem.name,Vue.extend(TabContainerItem));
 Vue.component(TabContainer.name,Vue.extend(TabContainer));
 Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
 Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件
+Vue.component("x-input", Vue.extend(XInput));
+Vue.component("group", Vue.extend(Group));

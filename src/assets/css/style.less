@@ -1,1 +1,154 @@
 @import "../font-awesome-4.7.0/less/font-awesome.less";
+@import "./global.css";
+/*背景颜色*/
+.bg_c1{ background-color:#fff; }
+.bg_c2{ background-color:#F1F6FF;}
+.bg_c3{ background-color: #395778;}
+.bg_c4{ background-color: #FFF8DD;}
+.bg_c5{ background-color: #1188FC;}
+.bg_c6{ background-color: #F4F8FF;}
+.bg_c7{ background-color: #F8FBFF;}
+.bg_c8{ background-color:  #42D069;}
+
+/*字体大小*/
+.fon_s1{ font-size:10px; }
+.fon_s2{ font-size:12px; }
+.fon_s3{ font-size:13px; }
+.fon_s4{ font-size:14px; }
+.fon_s5{ font-size:15px; }
+.fon_s6{ font-size:16px; }
+.fon_s7{ font-size:18px; }
+.fon_s8{ font-size:20px; }
+
+/*字体颜色*/
+.fon_c1{ color:#FFFFFF; } 
+.fon_c2{ color:#C1CFDE; }
+.fon_c3{ color:#395778; }
+.fon_c4{ color:#95A7BA; }
+.fon_c5{ color:#5F7B9A; }
+.fon_c6{ color:#1188FC; }
+.fon_c7{ color:#FF885E; }
+.fon_c8{ color:#A3B3C2; }
+.fon_c9{ color:#ADBFD3; }
+.fon_c10{ color:#3ABAFF;}
+.fon_c11{ color:#1188FC;}
+.fon_c12{ color:#B5C7D9;}
+.fon_c13{ color:#FF6363;}
+.fon_c14{ color: #42D069;}
+.fon_c15{ color: #FFA32C;}
+
+/*元素居中.*/
+.txt_1{ text-align:center;}
+.txt_2{ text-align:left;}
+.txt_3{ text-align:right;}
+.val_1{ vertical-align:top;}
+.val_m{ vertical-align:middle;}
+
+/*元素定位*/
+.posi_r{ position:relative;}
+.posi_a{ position:absolute;}
+.posi_f{ position:fixed;}
+
+/*上下边距*/
+.pt5{ padding-top:5px;}
+.pt1{ padding-top:10px;}
+.ml1{ margin-left:5px;}
+.ml2{ margin-left:10px;}
+.mt1{ margin-top:5px;}
+.mt2{ margin-top:10px;}
+
+/*圆角*/
+.rad_1{-moz-border-radius:4px; -webkit-border-radius:4px; border-radius:4px;}
+.rad_2{-moz-border-radius:6px; -webkit-border-radius:6px; border-radius:6px;}
+.rad_3{-moz-border-radius:10px; -webkit-border-radius:10px; border-radius:10px;}
+
+/*蓝色按钮*/
+.s_btn1{
+    background-image: linear-gradient(90deg, #5A12CC 0%, #3C82FB 100%);
+    box-shadow: 0 3px 10px 0 rgba(60,130,251,0.43);
+    border-radius: 100px; 
+    cursor:pointer;
+}
+/*白色按钮*/
+.s_btn2{
+    background-image: linear-gradient(0deg, #F9FAFF 0%, #FFFFFF 50%);
+    box-shadow: 0 3px 10px 0 rgba(196,218,255,0.43), inset 0 1px 0 0 #FFFFFF;
+    border-radius: 100px;   
+    cursor:pointer;
+}
+/*橙色小按钮    待审核*/
+.s_btn3{
+    background-image: linear-gradient(-134deg, #FFC560 0%, #FFA95C 100%);
+    box-shadow: 0 2px 6px 0 rgba(255,193,122,0.70);
+}
+/*淡红色小按钮   审核失败*/
+.s_btn4{
+    background-image: linear-gradient(-51deg, #FEA277 0%, #FC7E89 100%);
+    box-shadow: 0 2px 6px 0 rgba(255,175,162,0.70);
+}
+/*蓝色小按钮   待付款*/
+.s_btn5{
+    opacity: 0.7;
+    background-image: linear-gradient(-134deg, #4DBCFE 0%, #646EFF 100%);
+    box-shadow: 0 2px 6px 0 rgba(130,182,255,0.70);
+}
+
+// 表单形式左右分列
+.FormItem{
+    display: flex;
+    ul{
+        li{
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-direction: row ;
+            border-bottom: 1px solid #E0EBF9;
+            padding-right: 15px;
+            margin-left: 15px;
+            .from-label{
+                font-size: 12px;
+                color: #5F7B9A;
+            }
+            .from-value{
+                font-size: 16px;
+                color: #395778;
+                cursor: pointer;
+                i{
+                    width: 15px;
+                    height: 15px;
+                    background-image: url('../images/icon-trunxia.png');
+                    background-repeat: no-repeat;
+                    background-size: 100% 100%;
+                    display: block;
+                    float: right;
+                    margin:4px 0 0 5px;
+                  }
+            }
+        }
+    }
+  }
+/*原生下拉选项框*/
+   select {
+        width: 100px;
+        height: 40px;
+        /*Chrome和Firefox里面的边框是不一样的，所以复写了一下*/
+        border: solid 1px #000;
+        /*很关键：将默认的select选择框样式清除*/
+        // appearance:none;
+        // -moz-appearance:none;
+        // -webkit-appearance:none;
+        /*将背景改为红色*/
+        background:#fff;
+        /*加padding防止文字覆盖*/
+        padding-right: 14px;
+    }
+    /*清除ie的默认选择框样式清除，隐藏下拉箭头*/
+    // select::-ms-expand { display: none; }
+   
+   
+
+
+
+
+

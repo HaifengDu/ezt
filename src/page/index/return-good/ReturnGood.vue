@@ -7,94 +7,142 @@
        </div>
     </ezt-header>    
     <div class="ezt-main">
-      <div class="ezt-add-content">
-        <!-- 退货单列表 布局-->
-        <div class="return-dc-list">
-          <div>
-            <span class="return-list-title">入库编号：111111</span>
-            <span class="return-turn-icon"></span>
-          </div>
-          <div class="return-list-content">
-            <div class="return-cot-l">
-                <span class="return-dc-content"><p class="return-dc-title">配送中心：</p>222</span>
-                <span class="return-dc-content"><p class="return-dc-title">单据金额：</p>333</span>
-                <span class="return-dc-content"><p class="return-dc-title">调整时间：</p>444</span>
-            </div>
-            <span class="return-ys-btn">申请退货</span>
-          </div>
+        <div>
+          <div :key="index" v-for="(item,index) in goodList">{{item.name}}</div>
         </div>
-        <!-- 收货单列表 布局-->
-        <div class="receive-dc-list">
-          <div class="receive-icon-title">
-            <span class="receive-icon-dcName"></span>
-            <span class="return-list-title">'item.dc_name'</span> 
-            <span class="receive-status">待审核</span>
-            </div>
-          <div class="receive-icon-content">
-            <span class="receive-dc-title">订单编号：<span class="receive-dc-content">'item.bill_no'</span></span>
-            <div style="display:flex">
-              <span class="receive-dc-title">到货日期：<span class="receive-dc-content">'item.arrive_date'</span></span>
-              <span class="receive-dc-title">要货日期：<span class="receive-dc-content">'item.ask_goods_date'</span></span>
-            </div>
-            <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">'item.details'</span></span>
-          </div>
-          <div class="receive-icon-bottom">
-            <div class="glow-1">
-              <span>共item.material_size件货品<span class="receive-total">合计：￥434</span></span>
-            </div>
-            <div>
-              <span class="receive-ys-btn">验收</span>
-            </div>
-          </div>
-        </div>
-        <!-- 退货清单、收货详情物品列表 开始 -->
-        <div class="detail-content-list">
-          <div class="detail-detaillist-title">
-            <div>item</div>
-            <span>编码：item.material_num</span>
-          </div>
-          <div class="detail-detaillist-cot" >
-            <div class="detail-list-left">单价：<span class="detail-list-right">￥11</span></div>
-            <div class="detail-list-left">规格：<span class="detail-list-right">￥22</span></div>
-          </div>
-          <div class="detail-detaillist-bot" >
-            <span class="detail-list-left">应收：{{3}}</span>
-            <span class="detail-act-right"><span>实收：</span><input type="number" value='222'></span>
-          </div>
-        </div>      
-      </div>
-      
-    </div>    
-    <ezt-footer :isShow="true">
-      <div slot="comfirm">
-        提交
-      </div>
-    </ezt-footer>
+       <mt-navbar v-model="selected">
+          <mt-tab-item id="deliver">
+            <img slot="icon" src="../../../assets/images/distribution.png">
+            <span class="deliver">配送单</span>
+          </mt-tab-item>
+          <mt-tab-item id="purchase">
+            <img slot="icon" src="../../../assets/images/put_in_storage.png">
+            <span class="purchase">采购单</span>
+          </mt-tab-item>
+        </mt-navbar>        
+      <div class="ezt-add-content">       
+        <mt-tab-container v-model="selected">
+          <mt-tab-container-item id="deliver">
+            配送单         
+            <ul class="done-none">
+               <div></div>
+              <span>目前还没有任何订单</span>
+            </ul>
+          </mt-tab-container-item>
+          <mt-tab-container-item id="purchase">
+            采购单
+            
+            <ul class="done-none">
+              <div></div>
+              <span>目前还没有任何订单</span>
+            </ul>
+          </mt-tab-container-item>
+        </mt-tab-container>
+      </div>    
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
-import {Component} from "vue-property-decorator"
+import ErrorMsg from "../model/ErrorMsg"
+import {Component,Watch} from "vue-property-decorator"
+import ReturnGoodService from '../../../service/ReturnGoodService'
+import Pager from '../../../common/Pager';
+import { mapActions, mapGetters } from 'vuex';
+import { INoop, INoopPromise } from '../../../helper/methods';
 declare var mobiscroll:any;
 @Component({
    components:{
   
+   },
+   computed:{
+     ...mapGetters({
+       'goodList':'returnGood/goodList'
+     })
+   },
+   methods:{
+     ...mapActions({
+       'getGoodList':"returnGood/getGoodList"
+     })
    }
 })
-export default class Index extends Vue{
-  
+export default class ReturnGood extends Vue{
+    private selected:String = 'deliver';
+    private service: ReturnGoodService;
+    private pager:Pager;
+    private getGoodList:INoopPromise
+    // private updateUser:INoop;
+    private list:any[] = [];
+    private goodList:any[];
+
     created() {
-      
+      //  this.pager = new Pager()
+      //  this.service = ReturnGoodService.getInstance();
+      //  this.getGoodList();
     }
+
     mounted(){
-      
+      this.getGoodList();
     }
+
+  /**
+   * watch demo
+   */
+    @Watch("list",{
+      deep:true
+    })
+    private listWatch(newValue:any[],oldValue:any[]){
+
+    }
+
+/**
+ * computed demo
+ */
+    private get Total(){
+      return this.list.reduce((ori,item)=>{
+        return ori.uprice+item;
+      },0);
+    }
+
+    // private getGoodList(){
+    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
+    //        this.list = res.data.data;
+    //        this.pager.setNext();
+    //     },err=>{
+    //         this.$toasted.show(err.message);
+    //     });
+
+    //     this.pager.setLimit(20);
+    // }
    
 }
 </script>
 
 <style lang="less" scoped> 
+//tab切换颜色设置
+  .mint-tab-item.is-selected .deliver {
+    color: #54B1FD;
+    border-bottom: 2px solid #54B1FD;
+    padding: 3px 6px;
+  }
+
+  .mint-tab-item.is-selected .purchase {
+    color: #6EDB90;
+    border-bottom: 2px solid #6EDB90;
+    padding: 3px 6px;
+  }
+
+  .mint-navbar .mint-tab-item.is-selected {
+    border: none;
+  }
+
+  .mint-navbar .mint-tab-item {
+    padding: 7px 0;
+  }
+  .mint-navbar{
+    display: flex;
+  }
   .ezt-add-content{
     // position: relative;
     overflow-y: auto;

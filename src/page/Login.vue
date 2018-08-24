@@ -1,40 +1,50 @@
 <template>
-    <div>
+    <div class="login">
         <div class="logo">
-            <img src="../assets/images/logo.png">
-            <div>E掌通</div>
-        </div>
+            <i></i>
+            <span>E掌通</span>
+        </div>    
         <div class="from-main">
             <div class="login-form">
                 <div class="login-from-item">
-                    <div class="i-index"><img src="../assets/images/merchant.png"/></div>
-                    <input type="text" v-model="user.shopname" placeholder="请输入商户"/>
-                    <div class="i-index index-right" @click="clear('shopname')"><i class="fa fa-times" aria-hidden="true"></i></div>
+                    <group>
+                      <div class="i-index"><img src="../assets/images/merchant.png"/></div>
+                      <x-input :max="20" v-model="user.shopname" placeholder="请输入商户"></x-input>
+                    </group>
                 </div>
                 <div class="login-from-item">
-                    <div class="i-index"><i class="fa fa-user" aria-hidden="true"></i></div>
-                    <input type="text" v-model="user.loginname" placeholder="请输入用户名"/>
-                    <div class="i-index index-right" @click="clear('loginname')"><i class="fa fa-times" aria-hidden="true"></i></div>
+                    <group>
+                      <div class="i-index"><i class="fa fa-user" aria-hidden="true"></i></div>
+                      <x-input :max="20" v-model="user.loginname" placeholder="请输入用户名"></x-input>
+                    </group>
                 </div>
                 <div class="login-from-item">
-                    <div class="i-index"><i class="fa fa-lock" aria-hidden="true"></i></div>
-                    <input type="password" v-model="user.pwd" placeholder="请输入密码"/>
-                    <div class="i-index index-right" @click="clear('pwd')"><i class="fa fa-times" aria-hidden="true"></i></div>
+                     <group>
+                      <div class="i-index"><i class="fa fa-lock" aria-hidden="true"></i></div>
+                      <x-input :max="20" type="password" v-model="user.pwd" placeholder="请输入密码"></x-input>
+                    </group>
                 </div>
             </div>
             <div class="login-btn">
-                <el-button @click="login" type="primary" round>登录</el-button>
+                <p @click="login">登录</p>
             </div>
         </div>
+        <div class="footer">©北京普照天星科技有限公司</div>
     </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import {Component} from "vue-property-decorator";
+import {Component} from "vue-property-decorator"
 import IUser from "../interface/IUserModel"
 import ErrorMsg from "../model/ErrorMsg"
+<<<<<<< HEAD
 import loginService,{ LoginService } from "../service/LoginService"
+@Component 
+
+=======
+import LoginService from "../service/LoginService"
 @Component
+>>>>>>> 1f7fb7cd505dcf4ef3c6a4d2270824907c8a357e
 export default class Login extends Vue{
     private user:IUser={};
     private service:LoginService;
@@ -49,7 +59,7 @@ export default class Login extends Vue{
     private login(){
         this.service.login(this.user).then(res=>{
             console.log("登录成功");
-            this.$router.replace("/");
+            this.$router.push({path:'/SelectTemplate'})
         },err=>{
             this.$toasted.show(err.message);
         });
@@ -57,18 +67,38 @@ export default class Login extends Vue{
 }
 </script>
 <style lang="less" scoped>
-.logo{
+.login{
+    position: absolute;
+    display: flex;
+    top: 0;
+    left: 0;
+    align-items: center;
+    flex-direction: column;
+    right: 0;
+    bottom: 0;
+  .logo{
+    display: flex;
     margin-top:60px;
-    text-align: center;
-    img{
-        width: 7.5rem;
-        height: 7.5rem;
-        background-repeat: no-repeat;
+    align-items: center;
+    flex-direction: column;
+    i{
+        background: url("../assets/images/logo.png") 0 0 no-repeat;
+        display: block;
+        width: 70px;
+        height: 70px;
+        background-size: 70px 70px;
+        margin-bottom: 20px;
+    }
+    span{
+        font-family: ".PingFangSC-Light";
+        font-size: 18px;
+        color: #273C58;
+        opacity: 0.71;
     }
 }
 .from-main{
     position:absolute;
-    bottom: 10%;
+    bottom: 20%;
     justify-content: center;
     text-align: center;
     width:100%;
@@ -79,10 +109,9 @@ export default class Login extends Vue{
         .login-from-item{
             margin-bottom:25px;
             position: relative;
-            border-bottom: 1px solid #aaa;
             .i-index{
                 position: absolute;
-                bottom: -5px;
+                bottom: 11px;
                 img,i{
                     width:1.5rem;
                     height: 1.5rem;
@@ -102,10 +131,25 @@ export default class Login extends Vue{
             }
         }
     }
-    .login-btn button{
-        width: 75%;
+    .login-btn p{
+        width: 90%;
+        height: 50px;
+        line-height: 50px;
+        border-radius: 30px;
+        margin: 0 auto;
+        font-size:18px;
+        color: #FFFFFF;
+        cursor: pointer;
+        letter-spacing: 0;
+        background-image: linear-gradient(90deg, #3C82FB 0%, #5A12CC 100%);
+        box-shadow: 0 3px 10px 0 rgba(60,130,251,0.43);
     }
+  }  
+  .footer{
+    position: absolute;
+    bottom: 20px;
+    font-size: 12px;
+    color: #C1CFDE;
+ }
 }
 </style>
-
-

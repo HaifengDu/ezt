@@ -33,3 +33,11 @@ Vue.filter("isnull", (value:string)=> {
     // 返回处理后的值
     return value||"暂无";
 });
+Vue.filter("toFixedPrice",(value:string) => {
+    const val = Number(value);
+    return val.toFixedNoZero(4);
+});
+Vue.filter("toFixedMount",(value:string) => {
+    const val = Number(value);
+    return val.toFixedNoZero(4);
+});

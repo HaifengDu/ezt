@@ -200,7 +200,13 @@ CLEARFIX ：清除浮动
 ::-webkit-scrollbar-corner:vertical { /*vertical伪类适用于任何垂直方向的滚动条*/
   background-color: transparent;
 }
-
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-transition-delay: 9999s;
+    -webkit-transition: color 9999s ease-out, background-color 9999s ease-out;
+} 
 /* input 属性placeholder文本颜色修改 */
 ::-webkit-input-placeholder { /* WebKit browsers */
   color: #C2C2C2;

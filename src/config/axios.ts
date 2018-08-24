@@ -1,5 +1,7 @@
 import Axios from "axios";
 import _ from "lodash";
+import store from "../store";
+
 const host = "/",
     emptyResMsg="返回数据为空，请联系管理员",
     errorResMsg="服务器错误，请稍后重试";
@@ -9,7 +11,7 @@ _.extend(Axios.defaults,{
     headers: { 'Content-Type': 'application/json' },
     // method: 'post',
     // 跨域请求，是否带上认证信息
-    withCredentials: true, // default
+    withCredentials: false, // default
     // http返回的数据类型
     // 默认是json，可选'arraybuffer', 'blob', 'document', 'json', 'text', 'stream'
     responseType: 'json', // default
@@ -22,6 +24,14 @@ _.extend(Axios.defaults,{
             return data;
         }
         if(headers&&headers["Content-Type"]==="application/json"){
+            if(data){
+                data.timestamp = 0; 
+                const user = store.getters.user;
+                if(user){
+                    data.store_id = user.store_id;
+                    data.tenancy_id = user.shopname;
+                }
+            }
             return JSON.stringify(data);
         }
         // 请求对象转换成jon字符串
@@ -86,7 +96,7 @@ _.extend(Axios.defaults,{
         if (!respData){
             throw new Error(emptyResMsg)
         }
-        if (respData.errcode === 0) {
+        if (respData.errcode == 0) {
             return respData
         }
         throw new Error(respData.errmsg||errorResMsg)

@@ -45,6 +45,7 @@ import 'mint-ui/lib/tabbar/style.css';
 import 'mint-ui/lib/tab-item/style.css';
 import 'mint-ui/lib/tab-container-item/style.css';
 import 'mint-ui/lib/tab-container/style.css';
+import 'mint-ui/lib/mt-radio/style.css';
 // import 'element-ui/lib/theme-chalk/notification.css';
 // import 'element-ui/lib/theme-chalk/date-picker.css';
 // import 'element-ui/lib/theme-chalk/time-picker.css';
@@ -97,7 +98,7 @@ Vue.use(Toasted,{duration:1000,position:"top-center"});
 // Footer.install(Vue);
 // Aside.install(Vue);
 /**
- * 布局 end
+ * 布局 end  
  */
 // Vue.component("tree-select", Vue.extend(Treeselect));
 Vue.component(Tabbar.name,Vue.extend(Tabbar));

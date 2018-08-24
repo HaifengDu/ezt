@@ -35,20 +35,8 @@
   overflow:visible;
 }
 /*登录页面*/
-.login .mint-field-core{
-  text-indent: 5px;
-  color: #395778;
-}
-.login .mint-cell-wrapper,.login .mint-cell:last-child{
-  padding: 0px;
-  background:none;
-  /*border:1px solid red;*/
-}
-.login .mint-cell{
-  min-height: 12px;
-}
-.login input:-webkit-autofill {
-  -webkit-box-shadow: 0 0 0px 1000px white inset;
+.login .weui-cell{
+  text-indent: 15px;
 }
 /*要货页面*/
 .requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{

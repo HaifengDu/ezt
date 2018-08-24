@@ -6,10 +6,7 @@
            <span>退货</span>
        </div>
     </ezt-header>    
-    <div class="ezt-main">
-        <div>
-          <div :key="index" v-for="(item,index) in goodList">{{item.name}}</div>
-        </div>
+    <div class="ezt-main">       
        <mt-navbar v-model="selected">
           <mt-tab-item id="deliver">
             <img slot="icon" src="../../../assets/images/distribution.png">
@@ -23,11 +20,13 @@
       <div class="ezt-add-content">       
         <mt-tab-container v-model="selected">
           <mt-tab-container-item id="deliver">
-            配送单         
-            <ul class="done-none">
+            <div>
+              <div :key="index" v-for="(item,index) in goodList">{{item.name}}</div>
+            </div>         
+            <!-- <ul class="done-none">
                <div></div>
               <span>目前还没有任何订单</span>
-            </ul>
+            </ul> -->
           </mt-tab-container-item>
           <mt-tab-container-item id="purchase">
             采购单

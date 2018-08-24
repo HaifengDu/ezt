@@ -47,7 +47,6 @@ import 'mint-ui/lib/tab-item/style.css';
 import 'mint-ui/lib/navbar/style.css';
 import 'mint-ui/lib/tab-container-item/style.css';
 import 'mint-ui/lib/tab-container/style.css';
-import 'mint-ui/lib/mt-radio/style.css';
 // import 'element-ui/lib/theme-chalk/notification.css';
 // import 'element-ui/lib/theme-chalk/date-picker.css';
 // import 'element-ui/lib/theme-chalk/time-picker.css';

@@ -110,16 +110,7 @@
   flex:1;
 }
 /*顶部菜单*/
-.ezt-header{
-  /*height: 45px;*/
-  width: 100%;
-  display: flex;
-  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
-  background-color: transparent;
-  flex-direction: row;
-  color: #fff;
-  padding: 12px 0;
-}
+
 .title-name{
   flex:1;
   font-size: 16px;
@@ -135,7 +126,7 @@
   letter-spacing: 0;
   line-height: 21px;
 }
-//没有订单的时候
+/* 没有订单的时候 */
   .done-none{
     width: 100%;
     height: 100%;

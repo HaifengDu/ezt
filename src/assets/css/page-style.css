@@ -1,0 +1,290 @@
+/* 页面顶部header 开始 */
+.ezt-header{
+  height: 45px;
+  width: 100%;
+  display: flex;
+  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
+  background-color: transparent;
+  flex-direction: row;
+  color: #fff;
+  padding: 12px 0;
+}
+.ezt-header-goback{
+  width: 20px;
+  height: 20px;
+  flex:1;
+  background:url('../images/icon-title-back.png') no-repeat;
+  background-size: 20px 20px;
+  margin-left: 10px;
+}
+.ezt-header-goback.none{ /* header并没有返回按钮 */
+  background:none;
+  margin-left: 10px;
+}
+.ezt-header-title{
+  flex:2;
+  font-size: 17px;
+  color: #FFFFFF;
+  letter-spacing: 0;
+  line-height: 17px;
+}
+.ezt-header-action{
+  flex:1;
+}
+/* 页面顶部header 结束 */
+
+/* 页面内容布局 开始 */
+.ezt-container{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+.ezt-main{
+  background-color: #F1F6FF;
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  top: 44px;
+  bottom: 0px;
+}
+.ezt-page-con{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  margin-top: -1px;
+}
+/* 页面内容布局 结束 */
+
+/*列表样式*/
+.return-dc-list {
+    text-align: left;
+    background: #FFFFFF;
+    border: 1px solid #DDECFD;
+    box-shadow: 0 0 20px 0 rgba(71, 66, 227, 0.07);
+    border-radius: 6px;
+    margin: 8px 10px;
+  }
+  .return-dc-list>div{
+    font-size: 15px;
+    color: #5E7A98;
+    margin: 8px 15px 0 15px;
+    border-bottom: 1px solid #E2EDFA;
+    padding-bottom: 8px;
+    display:flex;
+    align-items: center;
+  }
+  .return-turn-icon{
+    width: 14px;
+    height: 14px;
+    background: url('../images/icon-trunright.png') no-repeat;
+    display: inline-block;
+    background-size: 14px 14px;
+  }
+  .return-list-title{
+    display:flex;
+    flex:1;
+  }
+  .return-dc-content p{
+     display: inline-block;
+  }
+  .return-cot-l{
+    display: flex;
+    flex:1;
+    flex-direction: column;
+  }
+  .return-dc-title{
+    font-size: 12px;
+    color: #5F7B9A;
+    line-height: 20px;
+  }
+  .return-dc-content{
+    font-size: 13px;
+    color: #395778;
+  }
+  .return-ys-btn{
+    height: 100%;
+    border: 1px solid #1188FC;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #1188FC;
+    letter-spacing: 0;
+  }
+   /* 退货单列表样式 结束 */
+
+    /* 收货单列表样式 开始 */
+  .receive-dc-list {
+    text-align: left;
+    background: #FFFFFF;
+    border: 1px solid #DDECFD;
+    box-shadow: 0 0 20px 0 rgba(71, 66, 227, 0.07);
+    border-radius: 6px;
+    margin: 8px 10px;
+  }
+
+  .receive-icon-dcName, .receive-icon-orderName {
+    width: 18px;
+    height: 18px;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0px 3px 0px 14px;
+  }
+
+  .receive-icon-dcName {
+    background: url('../images/icon-dcName.png') no-repeat;
+    background-size: 18px 18px;
+  }
+
+  .receive-icon-orderName {
+    background: url('../images/icon-orderName.png') no-repeat;
+    background-size: 18px 18px;
+  }
+
+  .receive-icon-title {
+    font-size: 15px;
+    color: #395778;
+    display:flex;
+    letter-spacing: 0;
+    padding: 11px 0px 11px 3px;
+    border-bottom: 1px solid #E0EBF9;
+  }
+
+  .receive-icon-content {
+    padding: 12px 21px 12px 15px;
+  }
+
+  .receive-icon-bottom {
+    padding: 12px 15px;
+    background: #FFFFFF;
+    box-shadow: 0 0 10px 0 rgba(71, 66, 227, 0.07);
+    display: flex;
+    flex-direction: row;
+  }
+
+  .receive-dc-title {
+    font-size: 12px;
+    color: #95A7BA;
+    letter-spacing: 0;
+    line-height: 20px;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+  }
+
+  .receive-dc-content {
+    font-size: 13px;
+    color: #395778;
+    letter-spacing: 0;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    flex:1;
+  }
+
+  .receive-total {
+    margin-left: 5px;
+    font-size: 12px;
+    color: #395778;
+    letter-spacing: 0;
+  }
+  .receive-ys-btn{
+    /*width: 59px;*/
+    height: 20px;
+    border: 1px solid #1188FC;
+    border-radius: 6px;
+    padding: 6px 16px;
+    font-size: 12px;
+    color: #1188FC;
+    letter-spacing: 0;
+  }
+  .receive-status{
+    font-size: 12px;
+    margin-right: 15px;
+    color: #FFA32C;
+    letter-spacing: 0;
+  }
+   /* 收货单列表样式 结束 */
+
+   /* 退货清单、收货详情物品列表 开始*/
+   .detail-content-list {
+    /*padding: 12px 15px 0px 15px;*/
+    margin: 5px 10px;
+    border: 1px solid #DDECFD;
+    box-shadow: 0 0 20px 0 rgba(71, 66, 227, 0.07);
+    border-radius: 6px;
+    background: #FFFFFF;
+    text-align: left;
+  }
+
+  .detail-detaillist-title {
+    font-size: 15px;
+    color: #395778;
+    letter-spacing: 0;
+    margin: 12px 15px 0px 15px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .detail-detaillist-title span {
+    font-size: 12px;
+    color: #95A7BA;
+    letter-spacing: 0;
+    margin-left: 8px;
+  }
+
+  .detail-list-left {
+    font-size: 12px;
+    color: #5F7B9A;
+    letter-spacing: 0;
+    flex: 1;
+  }
+
+  .detail-list-right {
+    font-size: 13px;
+    color: #395778;
+    letter-spacing: 0;
+  }
+
+  .detail-detaillist-cot {
+    display: flex;
+    flex-direction: row;
+    margin: 10px 0;
+    margin: 12px 15px 0px 15px;
+  }
+
+  .detail-detaillist-bot {
+    background: #FFFFFF;
+    box-shadow: 0 0 10px 0 rgba(71, 66, 227, 0.07);
+    /* padding: 15px 0px; */
+    margin: 12px 0px 0px 0px;
+    display: flex;
+    flex-direction: row;
+  }
+
+  .detail-detaillist-bot .detail-list-left {
+    margin-left: 12px;
+    display: inline-block;
+    display: flex;
+    align-items: center;
+  }
+  .detail-act-right{
+    flex: 1;
+    background: #FFFFFF;
+    border: 1px solid #C1CFDE;
+    padding: 15px 0;
+    font-size: 12px;
+    color: #5F7B9A;
+    letter-spacing: 0;
+  }
+  
+  .detail-detaillist-bot input{
+    border: none;
+    width: 100px;
+  }
+  /* 退货清单、收货详情物品列表 结束*/

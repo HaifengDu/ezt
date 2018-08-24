@@ -122,6 +122,7 @@
 .mint-tab-container{
   overflow: scroll !important;
   flex:1;
+  height:100%;
 }
 /*退货*/
 .return-detail .mint-search-list{
@@ -139,3 +140,4 @@
   color: #5F7B9A;
   letter-spacing: 0;
 }
+

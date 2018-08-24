@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import {interceptRouter} from "./intercept"
 import Index from "@/page/Index.vue"
 import Login from "@/page/Login.vue";
+import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
 
 Vue.use(Router)
 
@@ -17,6 +18,10 @@ const router = new Router({
       path:"/",
       name:"Home",
       component:Index
+    },{
+      path:"/returnGood",
+      name:"ReturnGood",
+      component:ReturnGood
     }
   ]
 });

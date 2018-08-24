@@ -2,6 +2,12 @@ import Vue from "vue";
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
+import Tabbar from 'mint-ui/lib/tabbar';
+import TabItem from  'mint-ui/lib/tab-item';
+import TabContainerItem from 'mint-ui/lib/tab-container-item';
+import TabContainer from 'mint-ui/lib/tab-container';
+import EztHeader from '../components/Header.vue';
+import EztFooter from '../components/Footer.vue';
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
 // import TimePicker from "element-ui/lib/time-picker";
@@ -33,6 +39,10 @@ import Button from "element-ui/lib/button";
 // import Treeselect from '@riophae/vue-treeselect';
 import 'element-ui/lib/theme-chalk/message.css';
 import 'element-ui/lib/theme-chalk/button.css';
+import 'mint-ui/lib/tabbar/style.css';
+import 'mint-ui/lib/tab-item/style.css';
+import 'mint-ui/lib/tab-container-item/style.css';
+import 'mint-ui/lib/tab-container/style.css';
 // import 'element-ui/lib/theme-chalk/notification.css';
 // import 'element-ui/lib/theme-chalk/date-picker.css';
 // import 'element-ui/lib/theme-chalk/time-picker.css';
@@ -88,3 +98,9 @@ Vue.use(Toasted,{duration:1000,position:"top-center"});
  * 布局 end
  */
 // Vue.component("tree-select", Vue.extend(Treeselect));
+Vue.component(Tabbar.name,Vue.extend(Tabbar));
+Vue.component(TabItem.name,Vue.extend(TabItem));
+Vue.component(TabContainerItem.name,Vue.extend(TabContainerItem));
+Vue.component(TabContainer.name,Vue.extend(TabContainer));
+Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
+Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件

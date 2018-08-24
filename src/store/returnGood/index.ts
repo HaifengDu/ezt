@@ -13,8 +13,8 @@ const returnGood:Module<any,IRootState> = {
         goodList:state=>state.goodList
     },
     mutations:{
-        [RootType.UPDATE_GOODLIST](state,GOODLIST:[]){
-            state.goodList = [];
+        [RootType.UPDATE_GOODLIST](state,goodList:any[]){
+            state.goodList = goodList;
         }
     },
     actions:{

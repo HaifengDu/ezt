@@ -8,7 +8,7 @@
     </ezt-header>    
     <div class="ezt-main">
         <div>
-          <div :key="index" v-for="(item,index) in list">{{item.name}}</div>
+          <div :key="index" v-for="(item,index) in goodList">{{item.name}}</div>
         </div>
        <mt-navbar v-model="selected">
           <mt-tab-item id="deliver">
@@ -46,38 +46,75 @@
 <script lang="ts">
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
-import {Component} from "vue-property-decorator"
+import {Component,Watch} from "vue-property-decorator"
 import ReturnGoodService from '../../../service/ReturnGoodService'
 import Pager from '../../../common/Pager';
+import { mapActions, mapGetters } from 'vuex';
+import { INoop, INoopPromise } from '../../../helper/methods';
 declare var mobiscroll:any;
 @Component({
    components:{
   
+   },
+   computed:{
+     ...mapGetters({
+       'goodList':'returnGood/goodList'
+     })
+   },
+   methods:{
+     ...mapActions({
+       'getGoodList':"returnGood/getGoodList"
+     })
    }
 })
 export default class ReturnGood extends Vue{
     private selected:String = 'deliver';
     private service: ReturnGoodService;
     private pager:Pager;
+    private getGoodList:INoopPromise
+    // private updateUser:INoop;
     private list:any[] = [];
+    private goodList:any[];
+
     created() {
-       this.pager = new Pager()
-       this.service = ReturnGoodService.getInstance();
-       this.getGoodList();
+      //  this.pager = new Pager()
+      //  this.service = ReturnGoodService.getInstance();
+      //  this.getGoodList();
     }
+
     mounted(){
       this.getGoodList();
     }
-    private getGoodList(){
-        this.service.getGoodList(this.pager.getPage()).then(res=>{
-           this.list = res.data.data;
-           this.pager.setNext();
-        },err=>{
-            this.$toasted.show(err.message);
-        });
 
-        this.pager.setLimit(20);
+  /**
+   * watch demo
+   */
+    @Watch("list",{
+      deep:true
+    })
+    private listWatch(newValue:any[],oldValue:any[]){
+
     }
+
+/**
+ * computed demo
+ */
+    private get Total(){
+      return this.list.reduce((ori,item)=>{
+        return ori.uprice+item;
+      },0);
+    }
+
+    // private getGoodList(){
+    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
+    //        this.list = res.data.data;
+    //        this.pager.setNext();
+    //     },err=>{
+    //         this.$toasted.show(err.message);
+    //     });
+
+    //     this.pager.setLimit(20);
+    // }
    
 }
 </script>

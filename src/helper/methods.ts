@@ -9,3 +9,7 @@ export const noopPromise: INoopPromise = (...args: any[]) => Promise.resolve<any
 export function createNonceStr() {
   return Math.random().toString(36).substr(2, 15);
 };
+
+export function numThousand(num:number){
+  return "";
+}

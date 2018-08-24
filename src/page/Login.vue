@@ -33,7 +33,7 @@ import Vue from 'vue'
 import {Component} from "vue-property-decorator";
 import IUser from "../interface/IUserModel"
 import ErrorMsg from "../model/ErrorMsg"
-import loginService,{ LoginService } from "../service/LoginService"
+import LoginService from "../service/LoginService"
 @Component
 export default class Login extends Vue{
     private user:IUser={};

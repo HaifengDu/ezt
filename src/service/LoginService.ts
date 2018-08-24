@@ -13,6 +13,7 @@ import ObjectHelper from "../common/objectHelper";
 export class LoginService extends BaseService{
 
     private cache = CachePocily.getInstance(ECache.LocCache);
+    private user:IUser;
     private static _instance: LoginService;
 
     private constructor() {
@@ -30,6 +31,10 @@ export class LoginService extends BaseService{
             return new ErrorMsg(false,"密码不能为空");
         }
         return new ErrorMsg(true)
+    }
+
+    public getUser(){
+        return this.user;
     }
 
     login(user:IUser){
@@ -59,6 +64,7 @@ export class LoginService extends BaseService{
             user.store_id = res.data.store_id;
             this.cache.save(cacheKey.USER_MODEL,JSON.stringify(user));
             store.commit(RootType.UPDATE_USER,user);
+            this.user = user;
             return Promise.resolve(res);
         });
     }

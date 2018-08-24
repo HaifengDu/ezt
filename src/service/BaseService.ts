@@ -1,4 +1,5 @@
 import { ERequestType } from "../enum/ERequestType";
+import { IUser } from "../interface/IUserModel";
 declare var process:any;
 export class BaseService{
     private static readonly typeDict={

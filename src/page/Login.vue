@@ -53,7 +53,7 @@ export default class Login extends Vue{
     private login(){
         this.service.login(this.user).then(res=>{
             console.log("登录成功");
-            this.$router.push({path:'/SelectTemplate'})
+            this.$router.replace({path:'/'})
         },err=>{
             this.$toasted.show(err.message);
         });

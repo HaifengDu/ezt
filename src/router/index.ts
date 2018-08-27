@@ -5,6 +5,7 @@ import Index from "@/page/Index.vue"
 import Login from "@/page/Login.vue"
 import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
 import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
+import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue'
 
 Vue.use(Router)
 
@@ -27,6 +28,10 @@ const router = new Router({
       path:"/selectTemplate",
       name:"SelectTemplate",
       component:SelectTemplate
+    },{
+      path:"/receiveGood",
+      name:"ReceiveGood",
+      component:ReceiveGood
     }
   ]
 });

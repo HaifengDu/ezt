@@ -22,7 +22,7 @@ export class ReturnGoodService extends BaseService{
         //     "oper": "RETURN_ORDER_LIST",
         //     "pagination": {"orderby":null,"asc":false,"pageno":1,"pagesize":20,"totalcount":0}
         // });
-        const promise = Axios.get(`https://10.152.64.93/apimock/getMockData?id=12`);
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }
     static createInstance() {

@@ -5,6 +5,7 @@ import { RootType } from "./mutation-types";
 import { IUser } from "../interface/IUserModel";
 import * as actions from "./action"
 import returnGood from "./returnGood";
+import needGood from "./needGood";
 Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
@@ -22,6 +23,7 @@ export default new Store<IRootState>({
         ...actions
     },
     modules:{
-        returnGood
+        returnGood,
+        needGood
     }
 })

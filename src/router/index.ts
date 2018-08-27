@@ -4,7 +4,7 @@ import {interceptRouter} from "./intercept"
 import Index from "@/page/Index.vue"
 import Login from "@/page/Login.vue"
 import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
-import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
+import NeedGood from '@/page/index/needGood/NeedGood.vue'
 
 Vue.use(Router)
 
@@ -24,9 +24,9 @@ const router = new Router({
       name:"ReturnGood",
       component:ReturnGood
     },{
-      path:"/selectTemplate",
-      name:"SelectTemplate",
-      component:SelectTemplate
+      path:"/needGood",
+      name:"NeedGood",
+      component:NeedGood
     }
   ]
 });

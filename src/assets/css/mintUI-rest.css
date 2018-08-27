@@ -38,6 +38,9 @@
 .login .weui-cell{
   text-indent: 15px;
 }
+.login .weui-cell:before,.login .weui-cells:before{
+  border-top:none!important;
+}
 /*要货页面*/
 .requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{
   line-height: 48px;

@@ -7,7 +7,7 @@ import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
 import NeedGood from '@/page/index/needGood/NeedGood.vue'
 import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
 import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue'
-
+import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -37,6 +37,10 @@ const router = new Router({
       path:"/receiveGood",
       name:"ReceiveGood",
       component:ReceiveGood
+    },{
+      path:"/stockTaking",
+      name:"StockTaking",
+      component:StockTaking
     }
   ]
 });

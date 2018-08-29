@@ -111,6 +111,7 @@ export default class stockTaking extends Vue{
       });
     }
     tabClick(index:number){
+      alert("kknkhj")
         this.tabList.setActive(index);
         
     }

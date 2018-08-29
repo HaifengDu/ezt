@@ -11,10 +11,10 @@
        </div>        
     </ezt-header>    
     <div class="ezt-main ezt-pk">       
-            <tab :line-width=2 active-color='#fc378c' v-model="index">
-              <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList" @click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+            <tab :line-width=2 active-color='#fc378c'>
+              <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
             </tab>
-            <swiper v-model="index" height="100px" :show-dots="false">
+            <swiper  height="100px" :show-dots="false">
               <swiper-item v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                        <ul class="submitted">
@@ -41,12 +41,12 @@
       </div>    
   </div>
   <!-- 盘库详情 -->
-  <div>
+  <div>   
     <router-view/>
   </div>
 </div>
 </template>
-<script lang="ts">
+<script lang="ts">   
 import Vue from 'vue'
 import {TabItem} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
@@ -110,11 +110,7 @@ export default class stockTaking extends Vue{
         active:false
       });
     }
-    tabClick(index:number){
-      alert("kknkhj")
-        this.tabList.setActive(index);
-        
-    }
+   
     mounted(){
       this.getInventoryList();
     }
@@ -137,21 +133,16 @@ export default class stockTaking extends Vue{
         return ori.uprice+item;
       },0);
     }
+    private tabClick(index:number){
+      this.tabList.setActive(index);
+      this.getInventoryList(this.tabList.getActive().status);
+    }
 
-    // private getPsList(){
-    //     this.service.getPsList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
 
-    //     this.pager.setLimit(20);
-    // }
+ 
       
 }
 </script>
-
 <style lang="less" scoped> 
 @padding: 5px 6px;
 .stocktaking{

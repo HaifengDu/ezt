@@ -65,8 +65,8 @@ import IUser from "../../interface/IUserModel"
 import LoginService from "../../service/LoginService"
 import {mapGetters} from "vuex";
 import {maskMixin} from "../../helper/maskMixin";
-import ErrorMsg from "../model/ErrorMsg"
-import commonService from '../../service/commonService.js'
+import ErrorMsg from "../model/ErrorMsg";
+import commonService from '../../service/commonService.js';
 import _ from "lodash";
 declare var mobiscroll:any;
 @Component({

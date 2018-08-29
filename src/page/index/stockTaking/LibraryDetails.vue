@@ -10,22 +10,28 @@
         <div class="pkdetails">
              <div class="librarytype">
                <ul>
-                 <li><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></li>
-                 <li><p>盘点日期：<span>2017-07-11</span></p></li>
-                 <li><p>盘库方式：<span>模板导入</span></p></li>
-                 <li><p>盘点类型：<span>日盘</span></p></li>
-                 <li><p>未盘处理：<span>按当前库存量处理</span></p></li>
+                 <li>
+                    <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
+                    <div><p>盘点日期：<span>2017-07-11</span></p></div>
+                    <div><p>盘库方式：<span>模板导入</span></p></div>
+                    <div><p>盘点类型：<span>日盘</span></p></div>
+                    <div><p>未盘处理：<span>按当前库存量处理</span></p></div>
+                 </li>
                </ul>
              </div>
              <div class="inventory">
-                <div class="line">
-                    <span class="text">盘库明细</span>
+               <div class="pkmx">
+                    <div class="line">
+                        <div class="title">盘库明细</div>
+                    </div>
                 </div>
                 <ul>
-                  <li><p>咸鸭蛋</p><span>编码：<em>112352345</em></span></li>
-                  <li><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1728</span></p></li>
-                  <li><p>理论库存：<span>12</span></p><p>理论消耗：<span>233</span></p></li>
-                  <li><p>整箱数量：<span>12</span></p><p>散装数量：<span>233</span></p></li>
+                  <li :key="index" v-for="(item,index) in inventoryDetails">
+                    <p class="name">{{item.name}}<span class="code">编码：<em>{{item.code}}</em></span></p>
+                    <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmje}}</span></p></div>
+                    <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
+                    <div><p>整箱数量：<span>{{item.zxsl}}</span></p><p>散装数量：<span>{{item.szsl}}</span></p></div>
+                  </li>
                 </ul>
              </div>
         </div>
@@ -36,38 +42,41 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager';
-import { mapActions, mapGetters } from 'vuex';
-import { INoop, INoopPromise } from '../../../helper/methods';
+import Pager from '../../../common/Pager'
+import { mapActions, mapGetters } from 'vuex'
+import { INoop, INoopPromise } from '../../../helper/methods'
+import LibraryDetailService from '../../../service/LibraryDetailService'
 declare var mobiscroll:any;
-@Component({
+@Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       
+       'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
-   methods:{
+   methods:{ 
      ...mapActions({
-       
+       'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
-})
+})  
 export default class stockTaking extends Vue{
     private pager:Pager;   
+    private service: LibraryDetailService;
     private list:any[] = [];
+    private inventoryDetails:any[];
+    private getInventoryDetails:INoopPromise;
+    
     
     created() {
-      //  this.pager = new Pager()
-      //  this.service = StockTakingService.getInstance();
-      //  this.getPsList();
+      
     }
 
     mounted(){
-      
+      this.getInventoryDetails();
     }
 
   /**
@@ -80,78 +89,142 @@ export default class stockTaking extends Vue{
 
     }
 
-/**
- * computed demo
- */
+  /**
+   * computed demo
+   */
     private get Total(){
       return this.list.reduce((ori,item)=>{
         return ori.uprice+item;
       },0);
     }
 
-    // private getPsList(){
-    //     this.service.getPsList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
-
-    //     this.pager.setLimit(20);
-    // }
+  
       
 }
 </script>
 
 <style lang="less" scoped> 
+@width:100%;
+@background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);;
 .librarydetails{
     position: relative;
     top: 0;
     left: 0;
     z-index: 99;
-    width: 100%;
+    width: @width;
     height: 900px;
     background: @background;
     .pkdetails{
-      width: 100%;
+      width:@width;
       height: 100%;
       display: flex;
+      align-items: center;
       flex-direction: column;
       justify-content: flex-start;
       background: @background;
       .librarytype{
-          width: 100%;
-          background-color: #fff;
+          width: 95%;
+          background-color:@background-color;
+          border-top-left-radius: 4px;
+          border-top-right-radius: 4px;
           ul{
-           
+           text-align: left;
+           padding: 10px 0 10px 15px;
             li{
-               width: 100%;
-               height: 30px;
-               line-height: 30px;
-               p{
-                 width: 100%;
-                 font-size: 12px;
-                 color: #5F7B9A;
-                 span{
-                  font-size: 13px;
-                  color: #395778;
-                 }
+               width:@width;
+               div{
+                  height: 25px;
+                  line-height: 25px;
+                  p{
+                      width: @width;
+                      font-size: 12px;
+                      color: #5F7B9A;
+                      span{
+                        font-size: 13px;
+                        color: #395778;
+                      }
+                  }
                }
             }
           }
       }
       .inventory{
-           .line{
-              height: 1px; 
-              margin-top: 40px;
-              text-align: center; 
-              border-top: 1px solid #e2e2e2;
-          }
-          .text{ 
-              position: relative;
-              
-              display: inline-block;
+           width: 95%;
+           margin-top:-1px;
+           background-color: @background-color;
+           border-bottom-left-radius: 4px;
+           border-bottom-right-radius: 4px;
+           .pkmx{
+                 position: relative;
+              .line{
+                    position: absolute;
+                    top: 0px;
+                    width: 100%;
+                    text-align: center;
+                    margin: 0 auto;
+                .title{
+                  width: 100%;
+                }
+                .title:before {
+                      display: inline-block;
+                      position: relative;
+                      top: -5px;
+                      right: 10px;
+                      content: "";
+                      width: 155px;
+                      height: 0px;
+                      border: 1px dashed #A3B3C2;
+                  }
+                  .title:after {
+                      display: inline-block;
+                      position: relative;
+                      top: -5px;
+                      left: 10px;
+                      content: "";
+                      width: 155px;
+                      height: 0px;
+                      border: 1px dashed #A3B3C2;
+                  }
+              }
+           }
+           ul{
+           text-align: left;
+           padding: 10px 10px 10px 15px;
+           margin-top: 20px;
+            li{
+               width:@width;
+               padding-bottom: 10px;
+               margin-bottom: 10px;
+               border-bottom: 1px solid #DDECFD;
+               .name{
+                      font-size: 15px;
+                      color: #395778;
+                      margin-bottom: 10px;
+                  }
+                  .code{
+                      font-size: 11px;
+                      color: #A3B3C2;
+                      margin-left: 10px;
+                      em{
+                        font-style: normal;
+                      }
+                  }
+                  div{
+                    display: flex;
+                    height: 25px;
+                    line-height: 25px;
+                     p{
+                        width: @width;
+                        font-size: 12px;
+                        color: #5F7B9A;
+                        span{
+                          font-size: 13px;
+                          color: #395778;
+                        }
+                      }
+                  }
+              }
           }
       }
     }

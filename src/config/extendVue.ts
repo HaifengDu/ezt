@@ -11,6 +11,8 @@ import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
 import XInput from "vux/src/components/x-input";
 import Group from "vux/src/components/group";
+import IndexList from 'mint-ui/lib/index-list';
+import IndexSection from 'mint-ui/lib/index-section';
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
 // import TimePicker from "element-ui/lib/time-picker";
@@ -47,6 +49,8 @@ import 'mint-ui/lib/tab-item/style.css';
 import 'mint-ui/lib/navbar/style.css';
 import 'mint-ui/lib/tab-container-item/style.css';
 import 'mint-ui/lib/tab-container/style.css';
+import 'mint-ui/lib/index-list/style.css';
+import 'mint-ui/lib/index-section/style.css';
 // import 'element-ui/lib/theme-chalk/notification.css';
 // import 'element-ui/lib/theme-chalk/date-picker.css';
 // import 'element-ui/lib/theme-chalk/time-picker.css';
@@ -111,3 +115,5 @@ Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
 Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件
 Vue.component("x-input", Vue.extend(XInput));
 Vue.component("group", Vue.extend(Group));
+Vue.component(IndexList.name,Vue.extend(IndexList));
+Vue.component(IndexSection.name,Vue.extend(IndexSection));

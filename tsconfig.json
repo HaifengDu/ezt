@@ -12,7 +12,7 @@
         "experimentalDecorators": true,
         "declaration": false,
         "noImplicitAny": true,
-        // "allowJs": true,
+        "allowJs": true,
         // "noImplicitThis": true,
         // "strictNullChecks": true,
         "removeComments": true,

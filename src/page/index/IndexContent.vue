@@ -5,12 +5,10 @@
        <div slot="action">
            <span ref="canlendar">日结</span>
        </div>
-       <div slot="title" class="indexPop">
-         <span @click="handleSelect">门店1</span>
-         <!-- <div class="pop-before" > -->
-         
-         <!-- </div> -->
-         
+       <div slot="title" class="indexPop" @click="handleSelect">
+         <span >{{user.auth.store_name}}</span>
+         <i class="fa fa-sort-desc" v-if="!titleSelect" aria-hidden="true"></i>
+         <i class="fa fa-sort-asc" v-if="titleSelect" aria-hidden="true"></i>       
        </div>
     </ezt-header>
     <div class="header-mine" @click="renderUrl('/mine')">
@@ -30,11 +28,11 @@
             </div>
             <div class="ezt-checkList">
               <div>搜索</div>
-              <ul>
-                <li>门店1</li>
-                <li>门店2</li>
-                <li>门店3</li>
-              </ul>
+              <mt-index-list>
+                <mt-index-section :index="letter" :key="index" v-for="(stores, letter, index) in storeGroupData">
+                  <div @click="handlerStore(item)" class="list-line" :key="index" v-for="(item,index) in stores">{{item.storeName}}</div>
+                </mt-index-section>
+              </mt-index-list>
             </div>
           </div>
         <ul class="icon-menu"><!--主页内容菜单-->
@@ -68,6 +66,8 @@ import LoginService from "../../service/LoginService"
 import {mapGetters} from "vuex";
 import {maskMixin} from "../../helper/maskMixin";
 import ErrorMsg from "../model/ErrorMsg"
+import commonService from '../../service/commonService.js'
+import _ from "lodash";
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -89,9 +89,49 @@ export default class Index extends Vue{
    private addMaskClickListener:(...args:any[])=>void;
    private showMask:()=>void;
    private hideMask:()=>void;
-   private storeList:any[] = [];
+   private storeGroupData:{[index:string]:any[]} = {};
+   private testData:any[] = [
+     {
+       id:1,
+       storeName:'供应商1'//G
+     },{
+       id:2,
+       storeName:'河北仓'//H
+     },{
+       id:3,
+       storeName:'牛牛'//N
+     },{
+       id:4,
+       storeName: '工厂1'//G
+     },{
+       id:5,
+       storeName:'薛之谦'//X
+     },{
+       id:6,
+       storeName:'阿卡达'
+     },{
+       id:1,
+       storeName:'供应商2'//G
+     },{
+       id:2,
+       storeName:'河北仓2'//H
+     },{
+       id:3,
+       storeName:'牛牛2'//N
+     },{
+       id:4,
+       storeName: '工厂2'//G
+     },{
+       id:5,
+       storeName:'薛之谦2'//X
+     },{
+       id:6,
+       storeName:'阿卡达2'
+     }
+   ];
     created() {
-      this.service = LoginService.getInstance();      
+      this.service = LoginService.getInstance();  
+      this.storeGroupData = commonService.sortLetter(this.testData);    
     }
     mounted(){     
       //日历
@@ -115,9 +155,11 @@ export default class Index extends Vue{
       //   // this.hideMask();
       // });
     }
+    //首页菜单跳转
     private renderUrl(info:string){
         this.$router.push(info);
     }
+    //日结事件
     private checkDate(date:string){
       this.service.checkDay(date).then(res=>{
         console.log(res,'res00000')
@@ -125,9 +167,13 @@ export default class Index extends Vue{
         this.$toasted.error(err.message);
       })
     }
+    //顶部选择门店下拉点击事件
     private handleSelect(){
       this.titleSelect=!this.titleSelect; 
-      // this.titleSelect?this.showMask():this.hideMask();
+    }
+    //门店下拉列表中切换门店事件
+    private handlerStore(item:any){
+      debugger
     }
    
 }
@@ -194,6 +240,7 @@ export default class Index extends Vue{
     width: 100%;
     height: 30px;
     background-image: linear-gradient(139deg, #018BFF -11%, #4A39F3 100%);
+    margin-top: -1px;
 }
 .busiDate {
     /*display: flex;*/
@@ -218,6 +265,13 @@ export default class Index extends Vue{
     border-bottom-right-radius: 11px;
   }
   // 顶部下拉
+  .indexPop>span{
+    width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: inline-block;
+  }
   .storeList{
     width: 100%;
     height: 100%;
@@ -227,21 +281,14 @@ export default class Index extends Vue{
     background: #fff;
     z-index: 3;
     color:#000;
-    display:flex;
-    flex-direction: row;
+    // display:flex;
+    // flex-direction: row;
   }
   .pop-before{
     z-index: 3;
   }
-  .pop-mask{
-    z-index: 2;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 45px;
-    left: 0;
-    background: #000;
-    opacity: .2;
+  .list-line{
+    padding: 6px 0;
   }
   .ezt-history{
     flex:.5;
@@ -255,7 +302,7 @@ export default class Index extends Vue{
     height: 30px;
     position: absolute;
     left: 10px;
-    top: 8px;
+    top: 10px;
     background: url(../../assets/images/user_logo.png) 0 0 no-repeat;
     background-size: 30px 30px;
   }

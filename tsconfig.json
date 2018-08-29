@@ -14,7 +14,7 @@
         "noImplicitAny": true,
         // "allowJs": true,
         // "noImplicitThis": true,
-        "strictNullChecks": true,
+        // "strictNullChecks": true,
         "removeComments": true,
         "suppressImplicitAnyIndexErrors": true,
         "allowSyntheticDefaultImports": true,

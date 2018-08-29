@@ -8,6 +8,8 @@
   flex-direction: row;
   color: #fff;
   padding: 12px 0;
+  position: absolute;
+  top:0;
 }
 .ezt-header-goback{
   width: 20px;

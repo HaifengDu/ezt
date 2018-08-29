@@ -1,5 +1,5 @@
 
-export const RootType = {
+export const GoodType = {
     UPDATE_GOODLIST:"UPDATE_GOODlIST"
 };
-export default RootType;
+export default GoodType;

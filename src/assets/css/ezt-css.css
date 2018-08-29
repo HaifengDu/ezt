@@ -67,7 +67,7 @@
   display: inline-block;
   width: 20px;
   height: 20px;
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 .icon-search{
   background: url('../../assets/images/icon-title-search.png') no-repeat;

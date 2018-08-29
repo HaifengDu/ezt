@@ -31,7 +31,7 @@ export default class ObjectHelper{
         return result as T;
     }
 
-    static mergeChildToSource(obj:any){
+    static mergeChildToSource(obj:any):any{
         if(!obj){
             return null;
         }

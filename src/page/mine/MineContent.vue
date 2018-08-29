@@ -1,7 +1,7 @@
   <!--首页我的页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="false" title="我的">
+    <ezt-header :back="true" title="我的">
       <div slot="action">
           <span>退出</span>
       </div>

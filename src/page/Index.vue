@@ -31,10 +31,10 @@
           <a slot="icon" class="chart-css"></a>
           报表
         </mt-tab-item>
-        <mt-tab-item id="mine">
+        <!-- <mt-tab-item id="mine">
           <a slot="icon" class="mine-css"></a>
           我的
-        </mt-tab-item>
+        </mt-tab-item> -->
       </mt-tabbar>
     </div>
     

@@ -8,6 +8,7 @@ import returnGood from "./returnGood";
 import needGood from "./needGood";
 import stockTaking from "./stockTaking"
 import libraryDetails from "./stockTaking/libraryDetails"
+import receiveGood from './receiveGood'
 Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
@@ -28,6 +29,7 @@ export default new Store<IRootState>({
         returnGood,
         needGood,
         stockTaking,
-        libraryDetails
+        libraryDetails,
+        receiveGood,
     }
 })

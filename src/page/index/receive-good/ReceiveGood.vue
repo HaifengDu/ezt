@@ -11,34 +11,34 @@
     </ezt-header>    
     <div class="ezt-main">       
       <tab :line-width=2 active-color='#fc378c'>
-        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList"
-         @click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
+        @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
       </tab>        
-      <div class="ezt-add-content">       
-         <!-- <swiper v-model="index" height="100px" :show-dots="false">
-              <swiper-item v-for="(item, index) in list2" :key="index">
-                <div class="tab-swiper vux-center">
-                       <ul class="submitted">
-                          <li :key="index" v-for="(item,index) in inventoryList" @click="librarydetails">
-                            <div class="state">
-                                <span><i>{{item.week}}</i>{{item.name}}</span>
-                                <span>{{item.state}}</span>
-                            </div>
-                            <div class="content">
-                                <p>盘点仓库：<span>{{item.cangku}}</span></p>
-                                <p>盘点日期：<span>{{item.date}}</span></p>
-                                <p>生成损溢：<span>{{item.sunyi}}</span></p>
-                                <p>未盘处理：<span>{{item.wpcl}}</span></p>
-                            </div>
-                            <div class="footer">
-                                <P>业务日期：<span>{{item.ywrq}}</span></P>
-                                <div class="submit">实盘录入</div>
-                            </div>
-                          </li>
-                        </ul>
-                  </div>
-              </swiper-item>
-          </swiper> -->
+      <div class="ezt-add-content"> 
+        <!-- 收货单列表       -->
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
+          <div class="receive-icon-title">
+            <span class="receive-icon-dcName"></span>
+            <span class="return-list-title">{{item.dc_name}}</span> 
+            <span class="receive-status">待审核</span>
+            </div>
+          <div class="receive-icon-content">
+            <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+            <div style="display:flex">
+              <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+              <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+            </div>
+            <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+          </div>
+          <div class="receive-icon-bottom">
+            <div class="glow-1">
+              <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+            </div>
+            <div>
+              <span class="receive-ys-btn">验收</span>
+            </div>
+          </div>
+        </div>
       </div>    
     </div>
   </div>
@@ -52,8 +52,8 @@ import Pager from '../../../common/Pager';
 import {TabItem} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { ReceiveGoodService } from '../../../service/RecieveGoodService';
 import { TabList } from '../../../common/ITab';
+import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -61,16 +61,16 @@ declare var mobiscroll:any;
    },
    computed:{
      ...mapGetters({
-       'goodList':'returnGood/goodList'
+       'goodList':'receiveGood/goodList'
      })
    },
    methods:{
      ...mapActions({
-       'getGoodList':"returnGood/getGoodList"
+       'getGoodList':"receiveGood/getGoodList"
      })
    }
 })
-export default class ReturnGood extends Vue{
+export default class ReceiveGood extends Vue{
     private selected:String = 'deliver';
     private service: ReceiveGoodService;
     private pager:Pager;
@@ -104,10 +104,7 @@ export default class ReturnGood extends Vue{
     mounted(){
       this.getGoodList();
     }
-
-    tabClick(index:number){
-      this.tabList.setActive(index);
-    }
+   
 
   /**
    * watch demo
@@ -126,6 +123,10 @@ export default class ReturnGood extends Vue{
       return this.list.reduce((ori,item)=>{
         return ori.uprice+item;
       },0);
+    }
+    private tabClick(index:number){
+      this.tabList.setActive(index);
+      this.getGoodList(this.tabList.getActive().status);
     }
 
     // private getGoodList(){

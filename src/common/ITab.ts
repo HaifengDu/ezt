@@ -10,16 +10,29 @@ export interface ITabTreeNode extends ITab {
     children?: Array<ITab>,
     childShow?: boolean
 }
+export class ATabArray<T extends ITab>{
+    protected tabList:Array<T>;
+    
+    public get TabList(){
+        return this.tabList;
+    }
 
-export abstract class ATabArray<T extends ITab> extends Array<T> {
+    constructor(){
+        this.tabList = [];
+    }
+
+    public push(item:T){
+        this.tabList.push(item);
+    }
+    
     public setActive(index: number): void {
-        this.forEach((item, i) => {
+        this.tabList.forEach((item, i) => {
             item.active = index === i;
         });
     }
 
     public setActivebyNode(node: T): void {
-        this.forEach((item, i) => {
+        this.tabList.forEach((item, i) => {
             item.active = item == node;
         });
     }
@@ -27,7 +40,7 @@ export abstract class ATabArray<T extends ITab> extends Array<T> {
     public setActiveByName(name: string): void {
         const node:T = this.getActive();
         let hasActive = false;
-        this.forEach((item, index) => {
+        this.tabList.forEach((item, index) => {
             item.active = item.name == name;
             hasActive = hasActive||item.active;
         });
@@ -37,11 +50,11 @@ export abstract class ATabArray<T extends ITab> extends Array<T> {
     }
 
     public getTab(index: number): T {
-        return this[index];
+        return this.tabList[index];
     }
 
     public getTabByName(name: string): T {
-        let tempTabs = this.filter((item, index) => {
+        let tempTabs = this.tabList.filter((item, index) => {
             return item.name == name;
         });
         if (tempTabs.length) {
@@ -51,7 +64,7 @@ export abstract class ATabArray<T extends ITab> extends Array<T> {
     }
 
     public getActive(): T {
-        let tempTabs = this.filter((item, index) => {
+        let tempTabs = this.tabList.filter((item, index) => {
             return item.active;
         });
         if (tempTabs.length) {
@@ -60,10 +73,8 @@ export abstract class ATabArray<T extends ITab> extends Array<T> {
         return null;
     }
 }
-
 export class TabList extends ATabArray<ITab>{
 }
-
 export class TabTreeList extends ATabArray<ITabTreeNode>{
     public setChildActive(node: ITabTreeNode, child: ITab) {
         let isShow: boolean = child.active;
@@ -95,7 +106,7 @@ export class TabTreeList extends ATabArray<ITabTreeNode>{
     }
 
     private setAllChildActive(active: boolean) {
-        this.forEach(item => {
+        this.tabList.forEach(item => {
             if (item.children) {
                 item.children.forEach(model => {
                     model.active = active;
@@ -108,7 +119,7 @@ export class TabTreeList extends ATabArray<ITabTreeNode>{
         let current: ITabTreeNode = this.getActive()
             , ischildShow = current.childShow;
         
-        this.forEach(item => {
+        this.tabList.forEach(item => {
             item.childShow = false;
         });
         current.childShow = !ischildShow;

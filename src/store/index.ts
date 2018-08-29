@@ -6,6 +6,7 @@ import { IUser } from "../interface/IUserModel";
 import * as actions from "./action"
 import returnGood from "./returnGood";
 import needGood from "./needGood";
+import stockTaking from "./stockTaking"
 Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
@@ -24,6 +25,7 @@ export default new Store<IRootState>({
     },
     modules:{
         returnGood,
-        needGood
+        needGood,
+        stockTaking
     }
 })

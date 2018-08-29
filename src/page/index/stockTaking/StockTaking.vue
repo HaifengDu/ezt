@@ -1,94 +1,102 @@
-<!--整体页面的头部布局-->
+<!--盘库模块-->
 <template>
-<div class="ezt-page-con">
+<div>
+   <div class="ezt-page-con stocktaking">
     <ezt-header :back="true" title="盘库">
        <div slot="action">
-           <!-- <span></span> -->
-           <div>
-             <i class="fa fa-user" aria-hidden="true"></i>
+           <div class="add">
+             <i class="fa fa-plus" aria-hidden="true"></i>
+             <i class="fa fa-search" aria-hidden="true"></i>
            </div>
-           <div>
-             <i class="fa fa-user" aria-hidden="true"></i>
-           </div>
-       </div>
+       </div>        
     </ezt-header>    
-    <div class="ezt-main">       
-       <mt-navbar v-model="selected">
-          <mt-tab-item id="all">
-            <!-- <img slot="icon" src="../../../assets/images/all.png"> -->
-            <span class="all">待提交</span>
-          </mt-tab-item>
-          <mt-tab-item id="shengxiao">
-            <!-- <img slot="icon" src="../../../assets/images/daishengxiao.png"> -->
-            <span class="shengxiao">待/已生效</span>
-          </mt-tab-item>
-          <mt-tab-item id="shenhe">
-            <!-- <img slot="icon" src="../../../assets/images/daishenhe.png"> -->
-            <span class="shenhe">待审核</span>
-          </mt-tab-item>
-          <mt-tab-item id="shenheshibai">
-            <!-- <img slot="icon" src="../../../assets/images/shenheshibai.png"> -->
-            <span class="shenheshibai">审核失败</span>
-          </mt-tab-item>
-        </mt-navbar>
-        <mt-tab-container v-model="selected">
-          <mt-tab-container-item id="all">
-            待提交
-          </mt-tab-container-item>
-          <mt-tab-container-item id="shengxiao">
-            待/已生效
-          </mt-tab-container-item>
-          <mt-tab-container-item id="shenhe">
-            待审核
-          </mt-tab-container-item>
-          <mt-tab-container-item id="shenheshibai">
-            审核失败
-          </mt-tab-container-item>
-        </mt-tab-container>
+    <div class="ezt-main ezt-pk">       
+            <tab :line-width=2 active-color='#fc378c' v-model="index">
+              <tab-item class="vux-center" :selected="demo2 === item" v-for="(item, index) in list2" @click="demo2 = item" :key="index">{{item}}</tab-item>
+            </tab>
+            <swiper v-model="index" height="100px" :show-dots="false">
+              <swiper-item v-for="(item, index) in list2" :key="index">
+                <div class="tab-swiper vux-center">
+                       <ul class="submitted">
+                          <li :key="index" v-for="(item,index) in inventoryList" @click="librarydetails">
+                            <div class="state">
+                                <span><i>{{item.week}}</i>{{item.name}}</span>
+                                <span>{{item.state}}</span>
+                            </div>
+                            <div class="content">
+                                <p>盘点仓库：<span>{{item.cangku}}</span></p>
+                                <p>盘点日期：<span>{{item.date}}</span></p>
+                                <p>生成损溢：<span>{{item.sunyi}}</span></p>
+                                <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                            </div>
+                            <div class="footer">
+                                <P>业务日期：<span>{{item.ywrq}}</span></P>
+                                <div class="submit">实盘录入</div>
+                            </div>
+                          </li>
+                        </ul>
+                  </div>
+              </swiper-item>
+          </swiper>
       </div>    
-    </div>
   </div>
+  <!-- 盘库详情 -->
+  <div>
+    <router-view/>
+  </div>
+</div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import {TabItem} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import NeedGoodService from '../../../service/NeedGoodService'
+import StockTakingService from '../../../service/StockTakingService'
 import Pager from '../../../common/Pager';
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../../helper/methods';
+import librarydetails from './LibraryDetails';
 declare var mobiscroll:any;
+const list = () => ['待提交', '待/已生效', '待审核','审核失败']
 @Component({
    components:{  
-  
+      TabItem,
+      
    },   
    computed:{
      ...mapGetters({
-       'psList':'needGood/psList'
+       'inventoryList':'stockTaking/inventoryList'
      }) 
    },
    methods:{
      ...mapActions({
-       'getPsList':'needGood/getPsList'
-     })
+       'getInventoryList':'stockTaking/getInventoryList'
+     }),
+     librarydetails(){
+       this.$router.push({name:'LibraryDetails',query:{},params:{}})
+       
+     }
    }   
 })
-export default class NeedGood extends Vue{
+export default class stockTaking extends Vue{
     private selected:String = 'all';
-    private service: NeedGoodService;
+    private service: StockTakingService;
     private pager:Pager;   
-    private getPsList:INoopPromise
-    // private updateUser:INoop;
+    private getInventoryList:INoopPromise
     private list:any[] = [];
-    private psList:any[];
+    private inventoryList:any[];
+    private demo2 = '待提交';
+    private index =0;
+    private list2 = list();
+    
     created() {
       //  this.pager = new Pager()
-      //  this.service = NeedGoodService.getInstance();
+      //  this.service = StockTakingService.getInstance();
       //  this.getPsList();
     }
 
     mounted(){
-      this.getPsList();
+      this.getInventoryList();
     }
 
   /**
@@ -125,25 +133,34 @@ export default class NeedGood extends Vue{
 </script>
 
 <style lang="less" scoped> 
-    .mint-tab-item.is-selected .all{
+@padding: 5px 6px;
+.stocktaking{
+    .add{
+      font-size: 20px;
+      i{
+        margin-right: 10px;
+      }
+    }
+    .mint-tab-item.is-selected{
+      border-bottom:none;
+      .all,.shengxiao,.shenhe,.shenheshibai{
+        padding: @padding;
+      }
+      .all{
         color: #AF4DFF;
         border-bottom: 2px solid #AF4DFF;
-        padding: 5px 6px;
       }
-      .mint-tab-item.is-selected .shengxiao{
+      .shengxiao{
         color: #54B0FF;
         border-bottom: 2px solid #54B0FF;
-        padding: 5px 6px;
       }
-      .mint-tab-item.is-selected .shenhe{
+      .shenhe{
         color: #FFA74D;
         border-bottom: 2px solid #FFA74D;
-        padding: 5px 6px;
       }
-      .mint-tab-item.is-selected .shenheshibai{
+      .shenheshibai{
         color: #FF7562;
         border-bottom: 2px solid #FF7562;
-        padding: 5px 6px;
       }
       .mint-navbar .mint-tab-item.is-selected{
         border:none;
@@ -151,7 +168,92 @@ export default class NeedGood extends Vue{
       .mint-navbar .mint-tab-item{
         padding: 7px 0;
       }
-
+     
+    }
+    //待提交
+    .submitted{
+        width: 95%;
+        display: flex;
+        margin: 10px auto;  
+        flex-direction: column;
+        li{
+          width: 100%;
+          margin-bottom: 10px;
+          border: 1px solid #DDECFD;
+          box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
+          border-radius: 6px;
+          background-color: #fff;
+          .state{
+            border-bottom: 1px solid #D2DFEE;
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            span{
+              font-size: 15px;
+              color: #395778;
+              i{
+                opacity: 0.7;
+                background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
+                border-radius: 4px;
+                font-size: 4px;
+                color: #fff;
+                width: 16px;
+                height: 16px;
+                text-align: center;
+                font-style: normal;
+                display: block;
+                float: left;
+                margin-right: 5px;
+              }
+            }
+            span:last-child{
+              font-size: 12px;
+              color: #3ABAFF;
+            }
+          }
+          .content p,.footer p{
+              font-size: 12px;
+              color: #5F7B9A;
+          }
+          .content p span,.footer p span{
+              font-size: 13px;
+              color: #395778;
+          }
+          .content{
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            justify-content: start;
+            border-bottom: 1px solid #D2DFEE;
+            padding-left: 10px;
+            p{
+              line-height: 30px;
+            }
+          }
+          .footer{
+              height: 40px;
+              display: flex;
+              justify-content: space-between;
+              line-height: 40px;
+              padding: 0 10px;
+              p{
+                line-height: 40px;
+              }
+              .submit{
+                height: 25px;
+                line-height: 25px;
+                font-size: 12px;
+                color: #1188FC;
+                border: 1px solid #1188FC;
+                border-radius: 6px;
+                margin-top: 7px;
+                padding: 0 10px;
+                cursor: pointer;
+              }
+          }
+        }
+    }
+}
 </style>
 
 

@@ -9,6 +9,7 @@ import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
 import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue'
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
+import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -27,11 +28,11 @@ const router = new Router({
       name:"ReturnGood",
       component:ReturnGood
     },{
-      path:"/needGood",
+      path:"/needgood",
       name:"NeedGood",
       component:NeedGood
     },{
-      path:"/selectTemplate",
+      path:"/selecttemplate",
       name:"SelectTemplate",
       component:SelectTemplate
     },{
@@ -43,10 +44,17 @@ const router = new Router({
       name:"MineContent",
       component:MineContent
     },{
-      path:"/stockTaking",
+      path:"/stocktaking",
       name:"StockTaking",
-      component:StockTaking
-    }
+      component:StockTaking,
+      children: [  //二级路由的配置
+        {
+          path: '/librarydetails',
+          name: 'LibraryDetails',
+          component: LibraryDetails,
+        },
+      ]
+    },
   ]
 });
 interceptRouter(router);

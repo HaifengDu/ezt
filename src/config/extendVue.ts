@@ -1,4 +1,5 @@
 import Vue from "vue";
+import { Tab, XInput , Group , Swiper ,SwiperItem} from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -9,10 +10,13 @@ import TabContainerItem from 'mint-ui/lib/tab-container-item';
 import TabContainer from 'mint-ui/lib/tab-container';
 import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
+<<<<<<< HEAD
 import XInput from "vux/src/components/x-input";
 import Group from "vux/src/components/group";
 import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
+=======
+>>>>>>> f74764293415f689e47c60c9e406f71a18eb6879
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
 // import TimePicker from "element-ui/lib/time-picker";
@@ -115,5 +119,13 @@ Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
 Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件
 Vue.component("x-input", Vue.extend(XInput));
 Vue.component("group", Vue.extend(Group));
+<<<<<<< HEAD
 Vue.component(IndexList.name,Vue.extend(IndexList));
 Vue.component(IndexSection.name,Vue.extend(IndexSection));
+=======
+Vue.component("tab", Vue.extend(Tab));
+Vue.component("swiper", Vue.extend(Swiper));
+Vue.component("swiper-item", Vue.extend(SwiperItem));
+
+
+>>>>>>> f74764293415f689e47c60c9e406f71a18eb6879

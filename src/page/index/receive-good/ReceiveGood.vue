@@ -3,40 +3,42 @@
 <div class="ezt-page-con">
     <ezt-header :back="true" title="收货">
        <div slot="action">
-           <span class="icon-search"></span>
+         <div class="add">
+          <i class="fa fa-plus" aria-hidden="true"></i> 
+          <i class="fa fa-search" aria-hidden="true"></i>
+         </div>
        </div>
     </ezt-header>    
     <div class="ezt-main">       
-       <mt-navbar v-model="selected">
-          <mt-tab-item id="deliver">
-             <!--<img slot="icon" src="../../../assets/images/distribution.png">-->
-            <span class="deliver">已收货</span>
-          </mt-tab-item>
-          <mt-tab-item id="purchase">
-             <!--<img slot="icon" src="../../../assets/images/put_in_storage.png">-->
-            <span class="purchase">已完成</span>
-          </mt-tab-item>
-        </mt-navbar>        
+      <tab :line-width=2 active-color='#fc378c'>
+        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList"
+         @click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+      </tab>        
       <div class="ezt-add-content">       
-        <mt-tab-container v-model="selected">
-          <mt-tab-container-item id="deliver">
-            <div>
-              <div :key="index" v-for="(item,index) in goodList">{{item.name}}</div>
-            </div>         
-            <!-- <ul class="done-none">
-               <div></div>
-              <span>目前还没有任何订单</span>
-            </ul> -->
-          </mt-tab-container-item>
-          <mt-tab-container-item id="purchase">
-            采购单
-            
-            <ul class="done-none">
-              <div></div>
-              <span>目前还没有任何订单</span>
-            </ul>
-          </mt-tab-container-item>
-        </mt-tab-container>
+         <!-- <swiper v-model="index" height="100px" :show-dots="false">
+              <swiper-item v-for="(item, index) in list2" :key="index">
+                <div class="tab-swiper vux-center">
+                       <ul class="submitted">
+                          <li :key="index" v-for="(item,index) in inventoryList" @click="librarydetails">
+                            <div class="state">
+                                <span><i>{{item.week}}</i>{{item.name}}</span>
+                                <span>{{item.state}}</span>
+                            </div>
+                            <div class="content">
+                                <p>盘点仓库：<span>{{item.cangku}}</span></p>
+                                <p>盘点日期：<span>{{item.date}}</span></p>
+                                <p>生成损溢：<span>{{item.sunyi}}</span></p>
+                                <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                            </div>
+                            <div class="footer">
+                                <P>业务日期：<span>{{item.ywrq}}</span></P>
+                                <div class="submit">实盘录入</div>
+                            </div>
+                          </li>
+                        </ul>
+                  </div>
+              </swiper-item>
+          </swiper> -->
       </div>    
     </div>
   </div>
@@ -47,13 +49,15 @@ import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
+import {TabItem} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { ReceiveGoodService } from '../../../service/RecieveGoodService';
+import { TabList } from '../../../common/ITab';
 declare var mobiscroll:any;
 @Component({
    components:{
-  
+     TabItem
    },
    computed:{
      ...mapGetters({
@@ -75,7 +79,23 @@ export default class ReturnGood extends Vue{
     private list:any[] = [];
     private goodList:any[];
 
+    private tabList:TabList = new TabList();
     created() {
+      this.tabList.push({
+        name:"待收货",
+        status:1,
+        active:true
+      });
+      this.tabList.push({
+        name:"待入库",
+        status:2,
+        active:false
+      });
+      this.tabList.push({
+        name:"已完成",
+        status:3,
+        active:false
+      });
       //  this.pager = new Pager()
       //  this.service = ReturnGoodService.getInstance();
       //  this.getGoodList();
@@ -83,6 +103,10 @@ export default class ReturnGood extends Vue{
 
     mounted(){
       this.getGoodList();
+    }
+
+    tabClick(index:number){
+      this.tabList.setActive(index);
     }
 
   /**
@@ -150,5 +174,11 @@ export default class ReturnGood extends Vue{
     width: 100%;
     height: 100%;
   }
+  .add{
+      font-size: 20px;
+      i{
+        margin-right: 10px;
+      }
+    }
 
 </style>

@@ -3,6 +3,7 @@
     active: boolean,
     status: string | number,
     sup_status?:string|number,
+    customcls?:string;
     canEdit?: boolean
 }
 export interface ITabTreeNode extends ITab {

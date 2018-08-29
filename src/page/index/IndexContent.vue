@@ -173,7 +173,9 @@ export default class Index extends Vue{
     }
     //门店下拉列表中切换门店事件
     private handlerStore(item:any){
-      debugger
+      console.log(item.storeName);
+      this.titleSelect = false;
+      // user.auth.store_name=item.storeName;
     }
    
 }

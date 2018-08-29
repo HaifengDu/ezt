@@ -12,10 +12,10 @@
     </ezt-header>    
     <div class="ezt-main ezt-pk">       
             <tab :line-width=2 active-color='#fc378c' v-model="index">
-              <tab-item class="vux-center" :selected="demo2 === item" v-for="(item, index) in list2" @click="demo2 = item" :key="index">{{item}}</tab-item>
+              <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList" @click="tabClick(index)" :key="index">{{item.name}}</tab-item>
             </tab>
             <swiper v-model="index" height="100px" :show-dots="false">
-              <swiper-item v-for="(item, index) in list2" :key="index">
+              <swiper-item v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                        <ul class="submitted">
                           <li :key="index" v-for="(item,index) in inventoryList" @click="librarydetails">
@@ -56,8 +56,8 @@ import Pager from '../../../common/Pager';
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import librarydetails from './LibraryDetails';
+import { TabList } from '../../../common/ITab';
 declare var mobiscroll:any;
-const list = () => ['待提交', '待/已生效', '待审核','审核失败']
 @Component({
    components:{  
       TabItem,
@@ -68,6 +68,7 @@ const list = () => ['待提交', '待/已生效', '待审核','审核失败']
        'inventoryList':'stockTaking/inventoryList'
      }) 
    },
+   
    methods:{
      ...mapActions({
        'getInventoryList':'stockTaking/getInventoryList'
@@ -85,16 +86,34 @@ export default class stockTaking extends Vue{
     private getInventoryList:INoopPromise
     private list:any[] = [];
     private inventoryList:any[];
-    private demo2 = '待提交';
-    private index =0;
-    private list2 = list();
-    
+    private index = 0;
+    private tabList:TabList = new TabList();
     created() {
-      //  this.pager = new Pager()
-      //  this.service = StockTakingService.getInstance();
-      //  this.getPsList();
+      this.tabList.push({
+        name:"待提交",
+        status:1,
+        active:true
+      });    
+      this.tabList.push({
+        name:"待/已生效",
+        status:2,
+        active:false
+      });
+      this.tabList.push({
+        name:"待审核",
+        status:3,
+        active:false
+      });
+      this.tabList.push({
+        name:"审核失败",
+        status:3,
+        active:false
+      });
     }
-
+    tabClick(index:number){
+        this.tabList.setActive(index);
+        
+    }
     mounted(){
       this.getInventoryList();
     }
@@ -135,7 +154,7 @@ export default class stockTaking extends Vue{
 <style lang="less" scoped> 
 @padding: 5px 6px;
 .stocktaking{
-    .add{
+    .add{   
       font-size: 20px;
       i{
         margin-right: 10px;

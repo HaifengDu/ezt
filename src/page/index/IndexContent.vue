@@ -75,7 +75,7 @@ export default class Index extends Vue{
     display: flex;
     align-items: center;
     flex-direction: column;
-    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
     border-right: 1px solid #E1ECFF;
     border-bottom: 1px solid #E1ECFF;
   }

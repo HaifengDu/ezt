@@ -31,7 +31,7 @@
         </div>
         <div class="footer">©北京普照天星科技有限公司</div>
     </div>
-</template>
+</template>  
 <script lang="ts">
 import Vue from 'vue'
 import {Component} from "vue-property-decorator"

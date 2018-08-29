@@ -41,6 +41,14 @@
 .login .weui-cell:before,.login .weui-cells:before{
   border-top:none!important;
 }
+/*盘库模块待提交*/
+.ezt-pk .vux-swiper,.ezt-pk .vux-slider{
+   height: 100% !important;
+   overflow: scroll !important;
+}
+.ezt-pk .vux-tab{
+  z-index: 9;
+}
 /*要货页面*/
 .requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{
   line-height: 48px;

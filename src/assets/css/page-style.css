@@ -8,6 +8,8 @@
   flex-direction: row;
   color: #fff;
   padding: 12px 0;
+  position: absolute;
+  top:0;
 }
 .ezt-header-goback{
   width: 20px;
@@ -46,7 +48,7 @@
   position: absolute;
   left: 0px;
   right: 0px;
-  top: 44px;
+  top: 41px;
   bottom: 0px;
 }
 .ezt-page-con{
@@ -58,6 +60,7 @@
   flex-direction: column;
   flex-wrap: nowrap;
   margin-top: -1px;
+  position: absolute;
 }
 /* 页面内容布局 结束 */
 

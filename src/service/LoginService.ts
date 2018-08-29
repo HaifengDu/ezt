@@ -10,6 +10,7 @@ import { ECache } from "../enum/ECache";
 import store from "../store"
 import RootType from "../store/mutation-types";
 import ObjectHelper from "../common/objectHelper";
+import { ReceiveGood } from '../interface/store/ReceiveGood';
 export class LoginService extends BaseService{
 
     private cache = CachePocily.getInstance(ECache.LocCache);
@@ -36,7 +37,7 @@ export class LoginService extends BaseService{
     public getUser(){
         return this.user;
     }
-
+    //登录
     login(user:IUser){
         const checkResult = this.check(user);
         if(!checkResult.success){
@@ -68,7 +69,9 @@ export class LoginService extends BaseService{
             return Promise.resolve(res);
         });
     }
-
+    /**
+     * 退出登录
+     */
     autoLogin(){
         let user = this.cache.getData(cacheKey.USER_MODEL);
         if(!user){
@@ -76,6 +79,18 @@ export class LoginService extends BaseService{
         }
         user = ObjectHelper.parseJSON(user);
         return this.login(user);
+    }
+    /**
+     * 日结
+     * @param param 
+     */
+    checkDay(date:string){
+        const promise = Axios.post(`${this.reqUrl}operatedayend/post`,{
+            data: [{"day_count":date}],
+            "oper": "ORDER_SCHEDULE",
+            "pagination": null
+        });
+        return promise;
     }
 
     static createInstance() {

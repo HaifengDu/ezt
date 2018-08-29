@@ -1,6 +1,6 @@
 import VueX, { Store, Module } from "vuex";
 import Vue from "vue";
-import { RootType } from "./mutation-types";
+import { GoodType } from "./mutation-types";
 import * as actions from "./action"
 import { IRootState } from "../../interface/store/IRootState";
 Vue.use(VueX);
@@ -13,7 +13,7 @@ const returnGood:Module<any,IRootState> = {
         goodList:state=>state.goodList
     },
     mutations:{
-        [RootType.UPDATE_GOODLIST](state,goodList:any[]){
+        [GoodType.UPDATE_GOODLIST](state,goodList:any[]){
             state.goodList = goodList;
         }
     },

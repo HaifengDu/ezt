@@ -139,4 +139,7 @@
   color: #5F7B9A;
   letter-spacing: 0;
 }
+.indexPop .v-modal{
+  top: 45px !important;
+}
 

@@ -5,7 +5,6 @@
         "no-duplicate-variable": true,
         "no-unused-variable": true,
         "adjacent-overload-signatures": true,
-        "no-empty": true,
         "no-inferrable-types": [
             true
         ],

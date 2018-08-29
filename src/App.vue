@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <router-view/>
+    <div id="ezt-mask"></div>
   </div>
 </template>
 
@@ -8,6 +9,7 @@
 export default {
   name: 'App'
 }
+
 </script>
 
 <style>
@@ -20,5 +22,15 @@ export default {
   height:100%;
   padding: 0;
   margin: 0;
+}
+#ezt-mask{
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 44px;
+    left: 0;
+    background: #000;
+    opacity: .3;
+    display: none;
 }
 </style>

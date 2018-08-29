@@ -1,21 +1,19 @@
 import LoginService from "./LoginService";
 import mixins from "../common/Mixin";
+import { BaseService } from "./BaseService";
+import { ERequestType } from "../enum/ERequestType";
 
-class RecieveGoodService {
+import Axios from "axios";
+export class ReceiveGoodService extends BaseService{
 
-    private static _instance: RecieveGoodService;
-    loginService:LoginService;
-
+    private static _instance: ReceiveGoodService;
+    private loginService:LoginService;
     private constructor() {
-        this.loginService = LoginService.getInstance();
+        super(ERequestType.AppOrder)
     }
-
-    test(){
-        this.loginService.login
-    }
-
+    
     static createInstance() {
-        RecieveGoodService.getInstance();
+        ReceiveGoodService.getInstance();
     }
 
     static getInstance() {
@@ -24,4 +22,4 @@ class RecieveGoodService {
 
 }
 
-mixins(RecieveGoodService,LoginService)
+export default ReceiveGoodService;

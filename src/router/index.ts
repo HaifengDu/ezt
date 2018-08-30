@@ -10,6 +10,8 @@ import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue'
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
+import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
+import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -48,11 +50,21 @@ const router = new Router({
       name:"StockTaking",
       component:StockTaking,
       children: [  //二级路由的配置
-        {
-          path: '/librarydetails',
+        {      
+          path: '/librarydetails',   //盘库详情
           name: 'LibraryDetails',
           component: LibraryDetails,
         },
+        {
+          path: '/confirmationlist',  //确认盘点单
+          name: 'ConfirmationList',
+          component: ConfirmationList,
+        },
+        {
+          path: '/realdiscentry',   //实盘录入
+          name: 'RealdiscEntry',
+          component: RealdiscEntry,
+        }
       ]
     },
   ]

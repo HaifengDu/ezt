@@ -18,20 +18,27 @@
               <swiper-item v-for="(item, index) in tabList" :key="index">
                 <div class="tab-swiper vux-center">
                        <ul class="submitted">
-                          <li :key="index" v-for="(item,index) in inventoryList" @click="librarydetails">
-                            <div class="state">
+                          <li :key="index" v-for="(item,index) in inventoryList">
+                            <div @click="librarydetails">
+                               <div class="state">
                                 <span><i>{{item.week}}</i>{{item.name}}</span>
-                                <span>{{item.state}}</span>
-                            </div>
-                            <div class="content">
-                                <p>盘点仓库：<span>{{item.cangku}}</span></p>
-                                <p>盘点日期：<span>{{item.date}}</span></p>
-                                <p>生成损溢：<span>{{item.sunyi}}</span></p>
-                                <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                                <span>暂存</span>
+                                <span v-if="false">{{已生效}}</span>
+                                <span v-if="false">{{待审核}}</span>
+                                <span v-if="false">{{审核失败}}</span>
+                              </div>
+                              <div class="content">
+                                  <p>盘点仓库：<span>{{item.cangku}}</span></p>
+                                  <p>盘点日期：<span>{{item.date}}</span></p>
+                                  <p>生成损溢：<span>{{item.sunyi}}</span></p>
+                                  <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                              </div>
                             </div>
                             <div class="footer">
                                 <P>业务日期：<span>{{item.ywrq}}</span></P>
-                                <div class="submit">实盘录入</div>
+                                <div v-if="item.status === 0 " class="submit" @click="submission">提交</div>
+                                <div v-if="item.status === 1"  class="submit" @click="realdiscentry">实盘录入</div>
+                                <div v-if="item.status === 2 " class="submit" @click="toexamine">审核</div>
                             </div>
                           </li>
                         </ul>
@@ -44,6 +51,10 @@
   <div>   
     <router-view/>
   </div>
+  <!-- 确认盘点单 -->
+  <div>   
+    <router-view/>
+  </div>
 </div>
 </template>
 <script lang="ts">   
@@ -52,11 +63,12 @@ import {TabItem} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import StockTakingService from '../../../service/StockTakingService'
-import Pager from '../../../common/Pager';
-import { mapActions, mapGetters } from 'vuex';
-import { INoop, INoopPromise } from '../../../helper/methods';
-import librarydetails from './LibraryDetails';
-import { TabList } from '../../../common/ITab';
+import Pager from '../../../common/Pager'
+import { mapActions, mapGetters } from 'vuex'
+import { INoop, INoopPromise } from '../../../helper/methods'
+import librarydetails from './LibraryDetails'
+import confirmationlist from './ConfirmationList'
+import { TabList } from '../../../common/ITab'
 declare var mobiscroll:any;
 @Component({
    components:{  
@@ -73,10 +85,7 @@ declare var mobiscroll:any;
      ...mapActions({
        'getInventoryList':'stockTaking/getInventoryList'
      }),
-     librarydetails(){
-       this.$router.push({name:'LibraryDetails',query:{},params:{}})
-       
-     }
+     
    }   
 })
 export default class stockTaking extends Vue{
@@ -92,7 +101,7 @@ export default class stockTaking extends Vue{
       this.tabList.push({
         name:"待提交",
         status:1,
-        active:true
+        active:true,
       });    
       this.tabList.push({
         name:"待/已生效",
@@ -106,7 +115,7 @@ export default class stockTaking extends Vue{
       });
       this.tabList.push({
         name:"审核失败",
-        status:3,
+        status:4,
         active:false
       });
     }
@@ -136,6 +145,21 @@ export default class stockTaking extends Vue{
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.getInventoryList(this.tabList.getActive().status);
+    }
+    private librarydetails(){
+       this.$router.replace({name:'LibraryDetails',query:{},params:{}})
+    }
+    // 提交页面
+    public submission(){
+       this.$router.replace({name:'ConfirmationList',query:{},params:{}})
+    }
+    //实盘录入
+    public realdiscentry(){
+       this.$router.replace({name:'RealdiscEntry',query:{},params:{}})
+    }
+    //审核
+    public toexamine(){
+       
     }
 
 

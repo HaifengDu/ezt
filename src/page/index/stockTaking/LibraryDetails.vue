@@ -91,14 +91,14 @@ export default class stockTaking extends Vue{
 
     }
 
-  /**
-   * computed demo
-   */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
-    }
+    /**
+     * computed demo
+     */
+      private get Total(){
+        return this.list.reduce((ori,item)=>{
+          return ori.uprice+item;
+        },0);
+      }
 
   
       
@@ -108,18 +108,20 @@ export default class stockTaking extends Vue{
 @width:100%;
 @height:100%;
 @background-color:#fff;
-@background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);;
+@background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
 .librarydetails{
-    position: relative;
+    position: absolute;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 99;
-    height: 900px;
-    background: @background;
+    width: @width;
+    height: @height;
     .content{
+      width: @width;
       height:@height;
-      background: @background;
-      position: relative;
+      position: absolute;
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -132,7 +134,7 @@ export default class stockTaking extends Vue{
         width: 95%;
         background-color:@background-color;
         position: absolute;
-        height: 90%;
+        height: 98%;
         .librarytype{
           ul{
             text-align: left;
@@ -210,7 +212,6 @@ export default class stockTaking extends Vue{
             }
             li:last-child{
               border-bottom: none;
-              padding-bottom: 150px;
             }
          }
         }

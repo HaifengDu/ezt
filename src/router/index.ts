@@ -6,7 +6,8 @@ import Login from "@/page/Login.vue"
 import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
 import NeedGood from '@/page/index/needGood/NeedGood.vue'
 import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
-import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue'
+import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue';
+import ComfirmAccept from '@/page/index/receive-good/ConfirmAccept.vue';
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
@@ -38,7 +39,14 @@ const router = new Router({
     },{
       path:"/receiveGood",
       name:"ReceiveGood",
-      component:ReceiveGood
+      component:ReceiveGood,
+      children:[
+        {
+          path: '/comfirmAccept',
+          name: 'ComfirmAccept',
+          component: ComfirmAccept,
+        }
+      ]
     },{
       path:"/mine",
       name:"MineContent",

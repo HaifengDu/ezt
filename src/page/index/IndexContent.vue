@@ -258,6 +258,8 @@ export default class Index extends Vue{
     background-size: 88px 22px;
     position: absolute;
     bottom:0;
+    left: 50%;
+    margin-left: -40px;
   }
 
   .busiDate span {
@@ -301,12 +303,13 @@ export default class Index extends Vue{
   }
   .mine-css{
     display: inline-block;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     position: absolute;
     left: 10px;
     top: 10px;
     background: url(../../assets/images/user_logo.png) 0 0 no-repeat;
-    background-size: 30px 30px;
+    background-size: 40px 40px;
+    z-index: 2;
   }
 </style>

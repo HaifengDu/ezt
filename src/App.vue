@@ -27,7 +27,7 @@ export default {
     width: 100%;
     height: 100%;
     position: absolute;
-    top: 44px;
+    top: 0;
     left: 0;
     background: #000;
     opacity: .3;

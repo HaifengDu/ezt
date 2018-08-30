@@ -1,8 +1,8 @@
 <template>
     <div class="ezt-page-footer" v-if="isShow">
-         <slot name="comfirm">
-                
-         </slot>
+        <slot name="confirm">
+            
+        </slot>
     </div>
 </template>
 <script lang="ts">
@@ -22,14 +22,7 @@ export default class Header extends Vue{
 }
 </script>
 <style lang="less" scoped>
-     .ezt-page-footer {
-        height: 50px;
-        background: #FFFFFF;
-        box-shadow: 0 -1px 3px 0 rgba(204,216,228,0.80);
-        position: fixed;
-        width: 100%;
-        bottom:0;
-    }
+    
 </style>
 
 

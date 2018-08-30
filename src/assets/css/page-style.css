@@ -291,3 +291,22 @@
     width: 100px;
   }
   /* 退货清单、收货详情物品列表 结束*/
+
+  /* 详情页底部 */
+  .ezt-page-footer {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    padding: 15px 0px;
+    background: #FFFFFF;
+    box-shadow: 0 -1px 3px 0 rgba(204, 216, 228, 0.80);
+    width: 100%;
+  }
+  /*列表页 tab下面内容高度*/
+  .ezt-add-content{   
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 70px;
+    width: 100%;
+    height: calc(100vh - 90px);
+  }

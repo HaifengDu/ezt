@@ -7,33 +7,35 @@
        </div>        
     </ezt-header>    
     <div class="ezt-main">       
-        <div class="pkdetails">
-             <div class="librarytype">
-               <ul>
-                 <li>
-                    <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
-                    <div><p>盘点日期：<span>2017-07-11</span></p></div>
-                    <div><p>盘库方式：<span>模板导入</span></p></div>
-                    <div><p>盘点类型：<span>日盘</span></p></div>
-                    <div><p>未盘处理：<span>按当前库存量处理</span></p></div>
-                 </li>
-               </ul>
-             </div>
-             <div class="inventory">
-               <div class="pkmx">
-                    <div class="line">
-                        <div class="title">盘库明细</div>
-                    </div>
-                </div>
+        <div class="content">
+            <div class="pkdetails">
+              <div class="librarytype">
                 <ul>
-                  <li :key="index" v-for="(item,index) in inventoryDetails">
-                    <p class="name">{{item.name}}<span class="code">编码：<em>{{item.code}}</em></span></p>
-                    <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmje}}</span></p></div>
-                    <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
-                    <div><p>整箱数量：<span>{{item.zxsl}}</span></p><p>散装数量：<span>{{item.szsl}}</span></p></div>
+                  <li>
+                      <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
+                      <div><p>盘点日期：<span>2017-07-11</span></p></div>
+                      <div><p>盘库方式：<span>模板导入</span></p></div>
+                      <div><p>盘点类型：<span>日盘</span></p></div>
+                      <div><p>未盘处理：<span>按当前库存量处理</span></p></div>
                   </li>
                 </ul>
-             </div>
+              </div>
+              <div class="inventory">
+                <div class="pkmx">
+                      <div class="line">
+                          <div class="title">盘库明细</div>
+                      </div>
+                  </div>
+                  <ul>
+                    <li :key="index" v-for="(item,index) in inventoryDetails">
+                      <p class="name">{{item.name}}<span class="code">编码：<em>{{item.code}}</em></span></p>
+                      <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmje}}</span></p></div>
+                      <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
+                      <div><p>整箱数量：<span>{{item.zxsl}}</span></p><p>散装数量：<span>{{item.szsl}}</span></p></div>
+                    </li>
+                  </ul>
+              </div>
+          </div>
         </div>
     </div>    
   </div>
@@ -102,9 +104,9 @@ export default class stockTaking extends Vue{
       
 }
 </script>
-
 <style lang="less" scoped> 
 @width:100%;
+@height:100%;
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);;
 .librarydetails{
@@ -112,120 +114,106 @@ export default class stockTaking extends Vue{
     top: 0;
     left: 0;
     z-index: 99;
-    width: @width;
     height: 900px;
     background: @background;
-    .pkdetails{
-      width:@width;
-      height: 100%;
+    .content{
+      height:@height;
+      background: @background;
+      position: relative;
       display: flex;
       align-items: center;
       flex-direction: column;
-      justify-content: flex-start;
-      background: @background;
-      .librarytype{
-          width: 95%;
-          background-color:@background-color;
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
+      .pkdetails{
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        border-radius: 4px;
+        overflow: scroll;
+        width: 95%;
+        background-color:@background-color;
+        position: absolute;
+        height: 90%;
+        .librarytype{
           ul{
-           text-align: left;
-           padding: 10px 0 10px 15px;
+            text-align: left;
+            padding: 10px 0 10px 15px;
             li{
-               width:@width;
-               div{
-                  height: 25px;
-                  line-height: 25px;
-                  p{
-                      width: @width;
-                      font-size: 12px;
-                      color: #5F7B9A;
-                      span{
-                        font-size: 13px;
-                        color: #395778;
-                      }
+              width:@width;
+              div{
+                height: 25px;
+                line-height: 25px;
+                p{
+                  width: @width;
+                  font-size: 12px;
+                  color: #5F7B9A;
+                  span{
+                    font-size: 13px;
+                    color: #395778;
                   }
+                }
                }
-            }
-          }
-      }
-      .inventory{
-           width: 95%;
-           margin-top:-1px;
-           background-color: @background-color;
-           border-bottom-left-radius: 4px;
-           border-bottom-right-radius: 4px;
+             }
+           }
+        }
+        .inventory{
            .pkmx{
-                 position: relative;
+              position: relative;
               .line{
-                    position: absolute;
-                    top: 0px;
-                    width: 100%;
-                    text-align: center;
-                    margin: 0 auto;
+                position: absolute;
+                top: 1px;
+                width: 100%;
+                text-align: center;
+                margin: 0 auto;
                 .title{
                   width: 100%;
+                  font-size: 12px;
+                  color: #95A7BA;
                 }
-                .title:before {
-                      display: inline-block;
-                      position: relative;
-                      top: -5px;
-                      right: 10px;
-                      content: "";
-                      width: 155px;
-                      height: 0px;
-                      border: 1px dashed #A3B3C2;
-                  }
-                  .title:after {
-                      display: inline-block;
-                      position: relative;
-                      top: -5px;
-                      left: 10px;
-                      content: "";
-                      width: 155px;
-                      height: 0px;
-                      border: 1px dashed #A3B3C2;
-                  }
               }
-           }
-           ul{
-           text-align: left;
-           padding: 10px 10px 10px 15px;
-           margin-top: 20px;
-            li{
-               width:@width;
-               padding-bottom: 10px;
-               margin-bottom: 10px;
-               border-bottom: 1px solid #DDECFD;
-               .name{
-                      font-size: 15px;
-                      color: #395778;
-                      margin-bottom: 10px;
+            }
+            ul{
+            text-align: left;
+            padding: 10px 10px 10px 15px;
+            margin-top: 20px;
+              li{
+                width:@width;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+                border-bottom: 1px solid #DDECFD;
+                .name{
+                  font-size: 15px;
+                  color: #395778;
+                  margin-bottom: 10px;
                   }
-                  .code{
-                      font-size: 11px;
-                      color: #A3B3C2;
-                      margin-left: 10px;
-                      em{
-                        font-style: normal;
-                      }
+                .code{
+                    font-size: 11px;
+                    color: #A3B3C2;
+                    margin-left: 10px;
+                    em{
+                      font-style: normal;
+                    }
+                }
+              div{
+                display: flex;
+                height: 25px;
+                line-height: 25px;
+                p{
+                  width: @width;
+                  font-size: 12px;
+                  color: #5F7B9A;
+                  span{
+                    font-size: 13px;
+                    color: #395778;
                   }
-                  div{
-                    display: flex;
-                    height: 25px;
-                    line-height: 25px;
-                     p{
-                        width: @width;
-                        font-size: 12px;
-                        color: #5F7B9A;
-                        span{
-                          font-size: 13px;
-                          color: #395778;
-                        }
-                      }
-                  }
+                }
               }
-          }
+            }
+            li:last-child{
+              border-bottom: none;
+              padding-bottom: 150px;
+            }
+         }
+        }
       }
     }
 }

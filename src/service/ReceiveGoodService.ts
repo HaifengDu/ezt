@@ -15,12 +15,17 @@ export class ReceiveGoodService extends BaseService{
         super(ERequestType.AppOrder)
         this.loginService = LoginService.getInstance();
     }
-    getGoodList(pager:IPagerData){
+    getGoodList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
         //     "oper": "UNDER_RECEIVING_LIST",
         //     "pagination": pager
         // });
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        return promise;
+    }
+
+    getGoodDetail(id:string,type:string){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }

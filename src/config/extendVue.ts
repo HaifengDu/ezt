@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , Swiper ,SwiperItem} from 'vux'
+import { Tab, XInput , Group , Swiper ,SwiperItem, LoadingPlugin } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -12,6 +12,8 @@ import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
 import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
+import InfiniteScroll from 'mint-ui';
+
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
 // import TimePicker from "element-ui/lib/time-picker";
@@ -118,4 +120,6 @@ Vue.component(IndexList.name,Vue.extend(IndexList));
 Vue.component(IndexSection.name,Vue.extend(IndexSection));
 Vue.component("tab", Vue.extend(Tab));
 Vue.component("swiper", Vue.extend(Swiper));
+Vue.use(LoadingPlugin)
+Vue.use(InfiniteScroll);//更多加载
 Vue.component("swiper-item", Vue.extend(SwiperItem));

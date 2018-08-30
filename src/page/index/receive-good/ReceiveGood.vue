@@ -14,9 +14,12 @@
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
         @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
       </tab>        
-      <div class="ezt-add-content"> 
+      <div class="ezt-add-content"  
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10"> 
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('/comfirmAccept')">
           <div class="receive-icon-title">
             <span class="receive-icon-dcName"></span>
             <span class="return-list-title">{{item.dc_name}}</span> 
@@ -39,7 +42,12 @@
             </div>
           </div>
         </div>
+         <span v-if="allLoaded">已全部加载</span>
       </div>    
+    </div>
+      <!-- 收货详情 -->
+    <div>
+      <router-view/>
     </div>
   </div>
 </template>
@@ -49,8 +57,9 @@ import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
-import {TabItem} from 'vux'
+import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
+import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
@@ -59,25 +68,28 @@ declare var mobiscroll:any;
    components:{
      TabItem
    },
+   mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       'goodList':'receiveGood/goodList'
+      //  'goodList':'receiveGood/goodList'
      })
    },
-   methods:{
-     ...mapActions({
-       'getGoodList':"receiveGood/getGoodList"
-     })
-   }
+  //  methods:{
+  //    ...mapActions({
+  //      'getGoodList':"receiveGood/getGoodList"
+  //    })
+  //  }
 })
 export default class ReceiveGood extends Vue{
     private selected:String = 'deliver';
     private service: ReceiveGoodService;
     private pager:Pager;
     private getGoodList:INoopPromise
+    private hideMask:()=>void;
+    private showMask:()=>void;
     // private updateUser:INoop;
-    private list:any[] = [];
-    private goodList:any[];
+    private goodList:any[] = [];
+    private allLoaded:boolean= false;
 
     private tabList:TabList = new TabList();
     created() {
@@ -86,59 +98,88 @@ export default class ReceiveGood extends Vue{
         status:1,
         active:true
       });
-      this.tabList.push({
-        name:"待入库",
-        status:2,
-        active:false
-      });
+      // this.tabList.push({
+      //   name:"待入库",
+      //   status:2,
+      //   active:false
+      // });
       this.tabList.push({
         name:"已完成",
         status:3,
         active:false
       });
-      //  this.pager = new Pager()
-      //  this.service = ReturnGoodService.getInstance();
+       this.pager = new Pager()
+       this.service = ReceiveGoodService.getInstance();
+       this.goodList = [];
       //  this.getGoodList();
     }
 
-    mounted(){
-      this.getGoodList();
+    mounted(){      
+      this.getList();
     }
-   
-
+    //详情页跳转
+    private renderUrl(info:string){
+      this.$router.push(info);
+    }
   /**
-   * watch demo
+   * computed demo
    */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-
-    }
-
-/**
- * computed demo
- */
     private get Total(){
-      return this.list.reduce((ori,item)=>{
+      return this.goodList.reduce((ori,item)=>{
         return ori.uprice+item;
       },0);
     }
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.getGoodList(this.tabList.getActive().status);
+      this.allLoaded=false;
+      window.scrollTo(0,0);
+      const status = this.tabList.getActive().status;
+      // this.$vux.loading.show({
+      //   text: '加载中...'
+      // });
+      this.pager.resetStart();//分页加载还原pageNum值
+      this.getList();     
     }
-
-    // private getGoodList(){
-    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
-
-    //     this.pager.setLimit(20);
-    // }
+    //下拉加载更多
+    private loadMore() {
+      if(!this.allLoaded){
+         this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setNext();
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+        if(this.pager.getPage().limit>res.data.data.length){
+          this.allLoaded=true;
+        }else{
+          this.goodList=this.goodList.concat(res.data.data);
+        }
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500); 
+      },err=>{
+          this.$toasted.show(err.message);
+      })
+      this.pager.setLimit(20);
+      }     
+    }
+    //获取列表
+    private getList(){
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+        this.showMask();
+        this.$vux.loading.show({
+          text: '加载中...'
+          });
+        this.goodList=res.data.data;
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },400); 
+        },err=>{
+          this.$toasted.show(err.message);
+      });
+    }
    
 }
 </script>
@@ -166,15 +207,7 @@ export default class ReceiveGood extends Vue{
   }
   .mint-navbar{
     display: flex;
-  }
-  .ezt-add-content{
-    // position: relative;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 70px;
-    width: 100%;
-    height: 100%;
-  }
+  } 
   .add{
       font-size: 20px;
       i{

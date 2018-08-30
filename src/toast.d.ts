@@ -158,6 +158,13 @@ declare module 'vue/types/vue' {
   }
 
   interface Vue {
-    $toasted: Toasted
+    $toasted: Toasted,
+    $vux:{
+      loading:{
+        show:(...args:any[])=>void,
+        hide:(...args:any[])=>void,
+        isVisible:(...args:any[])=>void
+      }
+    }
   }
 }

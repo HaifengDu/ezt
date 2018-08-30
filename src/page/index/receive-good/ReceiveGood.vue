@@ -14,7 +14,7 @@
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
         @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
       </tab>        
-      <div class="ezt-add-content"  
+      <div class="ezt-add-content" ref="listContainer" 
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10"> 
@@ -132,11 +132,7 @@ export default class ReceiveGood extends Vue{
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.allLoaded=false;
-      window.scrollTo(0,0);
-      const status = this.tabList.getActive().status;
-      // this.$vux.loading.show({
-      //   text: '加载中...'
-      // });
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
@@ -166,6 +162,7 @@ export default class ReceiveGood extends Vue{
     }
     //获取列表
     private getList(){
+      const status = this.tabList.getActive().status;
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
         this.showMask();
         this.$vux.loading.show({

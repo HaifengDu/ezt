@@ -48,13 +48,14 @@
               </ul>
            </div>
           </div>
-           
-           <div class="temporary">
-             <div class="total">货品数量合计：<span>27182</span></div>
-             <div class="button">
-               <div class="storage">暂存</div><div class="sub">提交</div>
-             </div>
-           </div>
+          <ezt-footer>
+            <div class="temporary" slot="confirm">
+              <div class="total">货品数量合计：<span>27182</span></div>
+              <div class="button">
+                <div class="storage">暂存</div><div class="sub">提交</div>
+              </div>
+            </div>  
+        </ezt-footer>
         </div>
       </div>    
     </div>    

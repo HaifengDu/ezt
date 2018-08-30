@@ -125,16 +125,16 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
+      overflow: scroll;
+      overflow-x: hidden;
       .pkdetails{
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         border-radius: 4px;
-        overflow: scroll;
         width: 95%;
         background-color:@background-color;
         position: absolute;
-        height: 98%;
         .librarytype{
           ul{
             text-align: left;

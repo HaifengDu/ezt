@@ -19,7 +19,7 @@
         infinite-scroll-distance="10">
                 <ul class="submitted">
                   <li :key="index" v-for="(item,index) in inventoryList">
-                    <div @click="librarydetails">
+                    <div @click="librarydetails('/librarydetails')">
                         <div class="state">
                         <span><i>{{item.week}}</i>{{item.name}}</span>
                         <span>暂存</span>
@@ -193,8 +193,8 @@ export default class stockTaking extends Vue{
       this.pager.setLimit(20);
       }     
     }
-    private librarydetails(){
-       
+    private librarydetails(info:string){
+      this.$router.push(info);
     }
     // 提交页面
     private submission(info:string){

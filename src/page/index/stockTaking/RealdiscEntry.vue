@@ -16,19 +16,30 @@
                   <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
                   <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
                   <div class="purchase">
-                      <div><p>采购单位：<span><input type="number">箱</span></p><p>库存主单位：<span><input type="number">斤</span></p></div>
-                      <div><p>消耗单位：<span><input type="number">只</span></p></div>
+                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
+                      <div><p>消耗单位：<span><input value="11" type="number">只</span></p></div>
+                  </div>
+                </li>
+                 <li>
+                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
+                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
+                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
+                  <div class="purchase">
+                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
+                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
                   </div>
                 </li>
               </ul>
            </div>
           </div>
-           <div class="temporary">
+          <ezt-footer>
+           <div class="temporary" slot="confirm">
              <div class="total">货品数量合计：<span>27182</span></div>
              <div class="button">
                <div class="storage">暂存</div><div class="sub">提交</div>
              </div>
            </div>
+          </ezt-footer>
         </div>
     </div>    
   </div>
@@ -116,31 +127,29 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       .list{
-        background-color:@background-color;
         width: 95%;
       .checklist{
-        background-color: #F1F6FF;
         display: flex;
         align-items: center;
         flex-direction: column;
         ul{
+           width: @width;
            display: flex;
            line-height: 30px;
            margin-top: 10px;
            flex-direction: column;
-           width: 100%;
            li{
               display: flex;
               flex-direction: column;
-              margin-bottom: 10px;
-              border-radius: @border-radius;
-              background-color: @background-color;
               line-height: 25px;
-              padding: 10px;
+              background-color:@background-color;
+              margin-bottom: 10px;
+               border-radius: @border-radius;
                div{
                   text-align: left;
                   display: flex;
                   justify-content: space-between;
+                  padding: 0 10px;
                    p{
                     font-size: 12px;
                     color: #5F7B9A;
@@ -151,17 +160,23 @@ export default class stockTaking extends Vue{
                 }
               }
               .purchase{
-                box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
                 flex-direction: column;
                 margin-top: 10px;
                 padding-top: 10px;
+                box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
                 div{
                     margin-bottom: 10px;
                     border-bottom: 1px solid #D2DFEE; 
-                    padding-bottom: 10px;
+                    padding:0 0 10px 0;
+                    
                   p{
                     font-size: 13px;
                     color: #395778; 
+                    width: 46%;
+                    border-right: 1px solid #D2DFEE;
+                  }
+                  p:last-child{
+                    border-right: none;
                   }
                   input{
                     width: 50px;
@@ -176,9 +191,9 @@ export default class stockTaking extends Vue{
                 }
               }
               .title{
+                padding-top: 10px;
                 p{
                   font-size: 15px;
-                  color: #395778 !important;
                   span{
                       font-size: 11px;
                       color: #A3B3C2;

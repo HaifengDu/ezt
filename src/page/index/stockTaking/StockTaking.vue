@@ -4,9 +4,9 @@
    <div class="ezt-page-con stocktaking">
     <ezt-header :back="true" title="盘库">
        <div slot="action">
-           <div class="add">
-             <i class="fa fa-plus" aria-hidden="true"></i>
-             <i class="fa fa-search" aria-hidden="true"></i>
+           <div class="addbtn">
+             <div class="add"><i class="fa fa-plus" aria-hidden="true"></i></div>
+             <div class="query"><i class="fa fa-search" aria-hidden="true"></i></div>
            </div>
        </div>        
     </ezt-header>      
@@ -14,7 +14,7 @@
             <tab :line-width=2 active-color='#fc378c'>
               <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
             </tab>   
-            <div class="ezt-add-content"  v-infinite-scroll="loadMore"
+            <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
                 <ul class="submitted">
@@ -124,7 +124,7 @@ export default class stockTaking extends Vue{
     }
    
     mounted(){
-       this.getList();
+       this.getpkList();
     }
 
   /**
@@ -145,16 +145,12 @@ export default class stockTaking extends Vue{
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.allLoaded=false;
-      window.scrollTo(0,0);
-      const status = this.tabList.getActive().status;
-      // this.$vux.loading.show({
-      //   text: '加载中...'
-      // });
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
-      this.getList();  
+      this.getpkList();  
     }
      //获取列表
-    private getList(){
+    private getpkList(){
       this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
         this.showMask();
         this.$vux.loading.show({
@@ -208,6 +204,7 @@ export default class stockTaking extends Vue{
     public toexamine(info:string){
        this.$router.push(info);
     }
+    //
 
 
  
@@ -217,12 +214,14 @@ export default class stockTaking extends Vue{
 <style lang="less" scoped> 
 @padding: 5px 6px;
 .stocktaking{
+  .addbtn{
     .add{   
       font-size: 20px;
       i{
         margin-right: 10px;
       }
     }
+  }
     .mint-tab-item.is-selected{
       border-bottom:none;
       .all,.shengxiao,.shenhe,.shenheshibai{

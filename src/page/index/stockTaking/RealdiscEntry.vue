@@ -12,12 +12,12 @@
            <div class="checklist">
               <ul>
                 <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
+                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
                   <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
                   <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
                   <div class="purchase">
-                      <div><p>采购单位:<span><input type="number">箱</span></p><p>库存主单位:<span><input type="number">斤</span></p></div>
-                      <div><p>消耗单位:<span><input type="number">只</span></p></div>
+                      <div><p>采购单位：<span><input type="number">箱</span></p><p>库存主单位：<span><input type="number">斤</span></p></div>
+                      <div><p>消耗单位：<span><input type="number">只</span></p></div>
                   </div>
                 </li>
               </ul>
@@ -116,7 +116,6 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       .list{
-        overflow: scroll;
         background-color:@background-color;
         width: 95%;
       .checklist{
@@ -137,7 +136,7 @@ export default class stockTaking extends Vue{
               border-radius: @border-radius;
               background-color: @background-color;
               line-height: 25px;
-              padding: 10px 0 10px 0;
+              padding: 10px;
                div{
                   text-align: left;
                   display: flex;
@@ -145,11 +144,9 @@ export default class stockTaking extends Vue{
                    p{
                     font-size: 12px;
                     color: #5F7B9A;
-                    padding: 0 10px;
                   span{
                     font-size: 13px;
                     color: #395778; 
-                    
                   }
                 }
               }
@@ -160,6 +157,8 @@ export default class stockTaking extends Vue{
                 padding-top: 10px;
                 div{
                     margin-bottom: 10px;
+                    border-bottom: 1px solid #D2DFEE; 
+                    padding-bottom: 10px;
                   p{
                     font-size: 13px;
                     color: #395778; 
@@ -168,8 +167,15 @@ export default class stockTaking extends Vue{
                     width: 50px;
                   }
                 }
+                div:last-child{
+                   border-bottom:none;
+                   margin-bottom:0;
+                    p{
+                    border-right:none; 
+                  }
+                }
               }
-              div:first-child{
+              .title{
                 p{
                   font-size: 15px;
                   color: #395778 !important;

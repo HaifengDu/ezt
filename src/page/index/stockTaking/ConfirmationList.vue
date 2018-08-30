@@ -6,8 +6,8 @@
           <span></span>
        </div>        
     </ezt-header>    
-    <div class="ezt-main">       
-        <div class="content">
+    <div class="ezt-main">   
+      <div class="content">
           <div class="list">
             <div class="details">
              <ul>
@@ -56,8 +56,8 @@
              </div>
            </div>
         </div>
+      </div>    
     </div>    
-  </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -141,15 +141,15 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
+      overflow: scroll;
       .list{
-        overflow: scroll;
         background-color:@background-color;
         width: 95%;
         .details{
         padding: 15px 0 30px 0;
         border-radius: @border-radius;
         ul{
-          div{
+          div{ 
             display: flex;
             justify-content: space-between;
             line-height: 25px;
@@ -221,10 +221,9 @@ export default class stockTaking extends Vue{
            }
         }
       }
-      }
-      
+    }
       .temporary{
-        width: 100%;
+        width: 104%;
         height: 76px;
         background: #FFF8DD;
         position: absolute;

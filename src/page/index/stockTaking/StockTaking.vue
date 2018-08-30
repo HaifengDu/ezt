@@ -9,7 +9,7 @@
              <i class="fa fa-search" aria-hidden="true"></i>
            </div>
        </div>        
-    </ezt-header>    
+    </ezt-header>      
     <div class="ezt-main ezt-pk">       
             <tab :line-width=2 active-color='#fc378c'>
               <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>

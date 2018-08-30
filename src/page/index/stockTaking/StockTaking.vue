@@ -13,38 +13,37 @@
     <div class="ezt-main ezt-pk">       
             <tab :line-width=2 active-color='#fc378c'>
               <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
-            </tab>
-            <swiper  height="100px" :show-dots="false">
-              <swiper-item v-for="(item, index) in tabList" :key="index">
-                <div class="tab-swiper vux-center">
-                       <ul class="submitted">
-                          <li :key="index" v-for="(item,index) in inventoryList">
-                            <div @click="librarydetails">
-                               <div class="state">
-                                <span><i>{{item.week}}</i>{{item.name}}</span>
-                                <span>暂存</span>
-                                <span v-if="false">{{已生效}}</span>
-                                <span v-if="false">{{待审核}}</span>
-                                <span v-if="false">{{审核失败}}</span>
-                              </div>
-                              <div class="content">
-                                  <p>盘点仓库：<span>{{item.cangku}}</span></p>
-                                  <p>盘点日期：<span>{{item.date}}</span></p>
-                                  <p>生成损溢：<span>{{item.sunyi}}</span></p>
-                                  <p>未盘处理：<span>{{item.wpcl}}</span></p>
-                              </div>
-                            </div>
-                            <div class="footer">
-                                <P>业务日期：<span>{{item.ywrq}}</span></P>
-                                <div v-if="item.status === 0 " class="submit" @click="submission">提交</div>
-                                <div v-if="item.status === 1"  class="submit" @click="realdiscentry">实盘录入</div>
-                                <div v-if="item.status === 2 " class="submit" @click="toexamine">审核</div>
-                            </div>
-                          </li>
-                        </ul>
-                  </div>
-              </swiper-item>
-          </swiper>
+            </tab>   
+            <div class="ezt-add-content"  v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
+                <ul class="submitted">
+                  <li :key="index" v-for="(item,index) in inventoryList">
+                    <div @click="librarydetails">
+                        <div class="state">
+                        <span><i>{{item.week}}</i>{{item.name}}</span>
+                        <span>暂存</span>
+                        <span v-if="false">{{已生效}}</span>
+                        <span v-if="false">{{待审核}}</span>
+                        <span v-if="false">{{审核失败}}</span>
+                      </div>
+                      <div class="content">
+                          <p>盘点仓库：<span>{{item.cangku}}</span></p>
+                          <p>盘点日期：<span>{{item.date}}</span></p>
+                          <p>生成损溢：<span>{{item.sunyi}}</span></p>
+                          <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                      </div>
+                    </div>
+                    <div class="footer">
+                        <P>业务日期：<span>{{item.ywrq}}</span></P>
+                        <div v-if="item.status === 0 " class="submit" @click="submission('/confirmationlist')">提交</div>
+                        <div v-if="item.status === 1"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-if="item.status === 2 " class="submit" @click="toexamine">审核</div>
+                    </div>
+                  </li>
+                </ul>
+                <span v-if="allLoaded">已全部加载</span>
+          </div>
       </div>    
   </div>
   <!-- 盘库详情 -->
@@ -59,7 +58,7 @@
 </template>
 <script lang="ts">   
 import Vue from 'vue'
-import {TabItem} from 'vux'
+import {TabItem,LoadingPlugin} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import StockTakingService from '../../../service/StockTakingService'
@@ -69,34 +68,35 @@ import { INoop, INoopPromise } from '../../../helper/methods'
 import librarydetails from './LibraryDetails'
 import confirmationlist from './ConfirmationList'
 import { TabList } from '../../../common/ITab'
+import {maskMixin} from "../../../helper/maskMixin";
 declare var mobiscroll:any;
 @Component({
    components:{  
       TabItem,
       
    },   
+   mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       'inventoryList':'stockTaking/inventoryList'
+      //  'inventoryList':'stockTaking/inventoryList'
      }) 
    },
    
-   methods:{
-     ...mapActions({
-       'getInventoryList':'stockTaking/getInventoryList'
-     }),
-     
-   }   
+  //  methods:{
+  //    ...mapActions({
+  //      'getInventoryList':'stockTaking/getInventoryList'
+  //    }),
+  //  }   
 })
 export default class stockTaking extends Vue{
-    private selected:String = 'all';
     private service: StockTakingService;
     private pager:Pager;   
     private getInventoryList:INoopPromise
-    private list:any[] = [];
-    private inventoryList:any[];
-    private index = 0;
+    private inventoryList:any[] = [];
     private tabList:TabList = new TabList();
+    private allLoaded:boolean= false;
+    private hideMask:()=>void;
+    private showMask:()=>void;
     created() {
       this.tabList.push({
         name:"待提交",
@@ -118,10 +118,13 @@ export default class stockTaking extends Vue{
         status:4,
         active:false
       });
+      this.pager = new Pager()
+      this.service = StockTakingService.getInstance();
+      this.inventoryList = [];
     }
    
     mounted(){
-      this.getInventoryList();
+       this.getList();
     }
 
   /**
@@ -136,30 +139,74 @@ export default class stockTaking extends Vue{
 
 /**
  * computed demo
- */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
-    }
+ */ 
+    
+    //tab页面切换
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.getInventoryList(this.tabList.getActive().status);
+      this.allLoaded=false;
+      window.scrollTo(0,0);
+      const status = this.tabList.getActive().status;
+      // this.$vux.loading.show({
+      //   text: '加载中...'
+      // });
+      this.pager.resetStart();//分页加载还原pageNum值
+      this.getList();  
+    }
+     //获取列表
+    private getList(){
+      this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
+        this.showMask();
+        this.$vux.loading.show({
+          text: '加载中...'
+          });
+        this.inventoryList=res.data.data;
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },400); 
+        },err=>{
+          this.$toasted.show(err.message);
+      });
+    }
+    //下拉加载更多
+    private loadMore() {
+      if(!this.allLoaded){
+         this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });       
+      this.pager.setNext();
+      this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
+        if(this.pager.getPage().limit>res.data.data.length){
+          this.allLoaded=true;
+        }else{
+          this.inventoryList=this.inventoryList.concat(res.data.data);
+        }
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500); 
+      },err=>{
+          this.$toasted.show(err.message);
+      })
+      this.pager.setLimit(20);
+      }     
     }
     private librarydetails(){
-       this.$router.replace({name:'LibraryDetails',query:{},params:{}})
+       
     }
     // 提交页面
-    public submission(){
-       this.$router.replace({name:'ConfirmationList',query:{},params:{}})
+    private submission(info:string){
+      this.$router.push(info);
     }
     //实盘录入
-    public realdiscentry(){
-       this.$router.replace({name:'RealdiscEntry',query:{},params:{}})
+    private realdiscentry(info:string){
+      this.$router.push(info);
     }
     //审核
-    public toexamine(){
-       
+    public toexamine(info:string){
+       this.$router.push(info);
     }
 
 
@@ -211,7 +258,6 @@ export default class stockTaking extends Vue{
         display: flex;
         margin: 10px auto;  
         flex-direction: column;
-        padding-bottom: 35px;
         li{
           width: 100%;
           margin-bottom: 10px;

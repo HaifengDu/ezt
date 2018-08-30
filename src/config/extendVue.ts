@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , Swiper ,SwiperItem, LoadingPlugin } from 'vux'
+import { Tab, XInput , Group , LoadingPlugin } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -119,7 +119,5 @@ Vue.component("group", Vue.extend(Group));
 Vue.component(IndexList.name,Vue.extend(IndexList));
 Vue.component(IndexSection.name,Vue.extend(IndexSection));
 Vue.component("tab", Vue.extend(Tab));
-Vue.component("swiper", Vue.extend(Swiper));
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
-Vue.component("swiper-item", Vue.extend(SwiperItem));

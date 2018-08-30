@@ -187,6 +187,7 @@ export default class stockTaking extends Vue{
         display: flex;
         margin: 10px auto;  
         flex-direction: column;
+        padding-bottom: 35px;
         li{
           width: 100%;
           margin-bottom: 10px;

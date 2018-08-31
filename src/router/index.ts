@@ -13,6 +13,7 @@ import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
+import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -58,6 +59,11 @@ const router = new Router({
       name:"StockTaking",
       component:StockTaking,
       children: [  //二级路由的配置
+        {
+          path: '/addinventorylist',   //新增盘点单
+          name: 'AddinventoryList',
+          component: AddinventoryList,
+        },
         {      
           path: '/librarydetails',   //盘库详情
           name: 'LibraryDetails',

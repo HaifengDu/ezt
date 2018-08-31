@@ -50,7 +50,7 @@
     <router-view/>
   </div>
   <!-- 新增盘点单 -->
-   <div>
+   <div> 
       <x-dialog v-model="newlyadded" class="dialog">
         <div class="newlytype">
            <div class="title" @click="show=false">
@@ -58,7 +58,7 @@
               <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
             </div>
             <ul>
-              <li :key="index" v-for="(type,index) in inventoryType"><i></i>{{type.name}}</li>
+              <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist('/addinventorylist')"><i></i>{{type.name}}</li>
             </ul>
         </div>
       </x-dialog>
@@ -76,6 +76,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import librarydetails from './LibraryDetails'
 import confirmationlist from './ConfirmationList'
+import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin";
 declare var mobiscroll:any;
@@ -218,6 +219,10 @@ export default class stockTaking extends Vue{
     //新增盘点单
     private add(){
       this.newlyadded = true
+    }
+    private addinventorylist(info:string){
+       this.newlyadded = false
+       this.$router.push(info)
     }
     //查询盘点单
     private query(){

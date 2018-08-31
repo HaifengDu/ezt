@@ -14,6 +14,7 @@ import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
+import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -78,6 +79,11 @@ const router = new Router({
           path: '/realdiscentry',   //实盘录入
           name: 'RealdiscEntry',
           component: RealdiscEntry,
+        },
+        {
+          path: '/auditchecklist',   //审核盘点单
+          name: 'AuditcheckList',
+          component: AuditcheckList,
         }
       ]
     },

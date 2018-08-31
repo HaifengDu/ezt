@@ -6,7 +6,7 @@
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
-             <i @click="query" class="fa fa-search" aria-hidden="true"></i>
+             <i @click="query('/auditchecklist')" class="fa fa-search" aria-hidden="true"></i>
           </div>
        </div>        
     </ezt-header>      
@@ -225,8 +225,8 @@ export default class stockTaking extends Vue{
        this.$router.push(info)
     }
     //查询盘点单
-    private query(){
-       alert("2222")
+    private query(info:string){
+      this.$router.push(info)
     }
 
 

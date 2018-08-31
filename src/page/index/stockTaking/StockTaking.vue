@@ -5,16 +5,16 @@
     <ezt-header :back="true" title="盘库">
        <div slot="action">
            <div class="addbtn">
-             <div class="add"><i class="fa fa-plus" aria-hidden="true"></i></div>
-             <div class="query"><i class="fa fa-search" aria-hidden="true"></i></div>
-           </div>
+             <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
+             <i @click="query" class="fa fa-search" aria-hidden="true"></i>
+          </div>
        </div>        
     </ezt-header>      
     <div class="ezt-main ezt-pk">       
-            <tab :line-width=2 active-color='#fc378c'>
-              <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
-            </tab>   
-            <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
+      <tab :line-width=2 active-color='#fc378c'>
+        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+      </tab>   
+      <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
                 <ul class="submitted">
@@ -46,13 +46,22 @@
           </div>
       </div>    
   </div>
-  <!-- 盘库详情 -->
   <div>   
     <router-view/>
   </div>
-  <!-- 确认盘点单 -->
-  <div>   
-    <router-view/>
+  <!-- 新增盘点单 -->
+   <div>
+      <x-dialog v-model="newlyadded" class="dialog">
+        <div class="newlytype">
+           <div class="title" @click="show=false">
+              <p>请选择盘点类型</p>
+              <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
+            </div>
+            <ul>
+              <li :key="index" v-for="(type,index) in inventoryType"><i></i>{{type.name}}</li>
+            </ul>
+        </div>
+      </x-dialog>
   </div>
 </div>
 </template>
@@ -93,8 +102,10 @@ export default class stockTaking extends Vue{
     private pager:Pager;   
     private getInventoryList:INoopPromise
     private inventoryList:any[] = [];
+    private inventoryType:any[] = [{name:'数据整理'},{name:'日盘'},{name:'月盘'},{name:'周盘'}];
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
+    private newlyadded:boolean= false;
     private hideMask:()=>void;
     private showMask:()=>void;
     created() {
@@ -158,11 +169,11 @@ export default class stockTaking extends Vue{
           });
         this.inventoryList=res.data.data;
         setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },400); 
+          this.$vux.loading.hide()
+          this.hideMask()
+        },400)
         },err=>{
-          this.$toasted.show(err.message);
+          this.$toasted.show(err.message)
       });
     }
     //下拉加载更多
@@ -175,36 +186,43 @@ export default class stockTaking extends Vue{
       this.pager.setNext();
       this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
+          this.allLoaded=true
         }else{
-          this.inventoryList=this.inventoryList.concat(res.data.data);
+          this.inventoryList=this.inventoryList.concat(res.data.data)
         }
         setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
+          this.$vux.loading.hide()
+          this.hideMask()
         },500); 
       },err=>{
-          this.$toasted.show(err.message);
+          this.$toasted.show(err.message)
       })
-      this.pager.setLimit(20);
+      this.pager.setLimit(20)
       }     
     }
     private librarydetails(info:string){
-      this.$router.push(info);
+      this.$router.push(info)
     }
     // 提交页面
     private submission(info:string){
-      this.$router.push(info);
+      this.$router.push(info)
     }
     //实盘录入
     private realdiscentry(info:string){
-      this.$router.push(info);
+      this.$router.push(info)
     }
     //审核
-    public toexamine(info:string){
-       this.$router.push(info);
+    private toexamine(info:string){
+       this.$router.push(info)
     }
-    //
+    //新增盘点单
+    private add(){
+      this.newlyadded = true
+    }
+    //查询盘点单
+    private query(){
+       alert("2222")
+    }
 
 
  
@@ -215,41 +233,10 @@ export default class stockTaking extends Vue{
 @padding: 5px 6px;
 .stocktaking{
   .addbtn{
-    .add{   
       font-size: 20px;
       i{
-        margin-right: 10px;
+        margin-right: 15px;
       }
-    }
-  }
-    .mint-tab-item.is-selected{
-      border-bottom:none;
-      .all,.shengxiao,.shenhe,.shenheshibai{
-        padding: @padding;
-      }
-      .all{
-        color: #AF4DFF;
-        border-bottom: 2px solid #AF4DFF;
-      }
-      .shengxiao{
-        color: #54B0FF;
-        border-bottom: 2px solid #54B0FF;
-      }
-      .shenhe{
-        color: #FFA74D;
-        border-bottom: 2px solid #FFA74D;
-      }
-      .shenheshibai{
-        color: #FF7562;
-        border-bottom: 2px solid #FF7562;
-      }
-      .mint-navbar .mint-tab-item.is-selected{
-        border:none;
-      }
-      .mint-navbar .mint-tab-item{
-        padding: 7px 0;
-      }
-     
     }
     //待提交
     .submitted{
@@ -334,6 +321,69 @@ export default class stockTaking extends Vue{
           }
         }
     }
+}
+// 新增盘点单
+.dialog {
+    height: 350px;
+    .newlytype{
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       .title{
+         margin-top: 10px;
+         font-size: 13px;
+         color: #95A7BA;
+       }
+      .close {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        width: 30px;
+        height: 30px;
+        display: block;
+        right: 5px;
+        position: absolute;
+        z-index: 9999;
+        top: -5px;
+        font-size: 20px;
+      }
+      ul{
+        width: 90%;
+        margin-top: 10px;
+        li{
+          border-bottom: 1px dashed #C1CFDE;
+          height: 59px;
+          line-height: 59px;
+          text-align: left;
+          cursor: pointer;
+          font-size: 14px;
+          color: #395778;
+          i{
+            width: 30px;
+            height: 30px;
+            display: block;
+            float: left;
+            margin: 17px 10px 0 0;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+          }
+        }
+        li:nth-child(1) i{
+            background-image: url("../../../assets/images/inventory_ico_data.png")
+        }
+        li:nth-child(2) i{
+            background-image: url("../../../assets/images/intentory_ico_day.png")
+        }
+        li:nth-child(3) i{
+            background-image: url("../../../assets/images/intentory_ico_month.png")
+        }
+        li:nth-child(4) i{
+            background-image: url("../../../assets/images/intentory_ico_week.png")
+        }
+        li:last-child{
+          border-bottom:none;
+        }
+      }
+    }    
 }
 </style>
 

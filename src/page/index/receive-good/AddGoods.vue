@@ -1,112 +1,21 @@
-<!--收货新增页面-->
+<!--选择物品-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='添加采购入库单'>
+    <ezt-header :back="true" title=''>
        <div slot="action">
+         <span class="search-title">
+
+         </span>
        </div>
     </ezt-header>    
     <div class="ezt-main">
       <div class="ezt-add-content">
-         <ul class="ezt-title-search">
-          <li class="select-list">
-            <span class="title-search-name ">单据类型：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-          <li class="select-list">
-            <span class="title-search-name ">供应商：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          <li class="select-list">
-            <span class="title-search-name ">仓库：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-          <li>
-            <span class="title-search-name">备注：</span>
-            <input type="text" class="ezt-middle">
-          </li>
-          <li>
-            <!-- <span class="title-search-name">选择物料：</span> -->
-            <span class="title-search-name">选择物料：</span>
-            <span class="title-search-right" @click="renderUrl('/addGoods')">
-              <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </span>
-            
-          </li>
-        </ul>
-        <ul>
-           <li class="good-detail-content">
-              <div class="ezt-detail-good">
-                  <div class="good-detail-l">
-                      <div>
-                          <span class="good-detail-name">猪肉
-                              <span class="good-detail-sort">（规格）</span>
-                          </span>
-                          <span class="good-detail-sort">￥<input type="number" class="good-detail-sort" placeholder="11.001"><span>/kg</span></span>
-                           <input type="number" placeholder="3">
-                      </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                      </div>                     
-                  </div>
-                  <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect">拨</span>
-                    <div class="park-input">
-                      <span>备注：</span>
-                      <div class="remark-area">
-                         <textarea name="" id="" cols="24" rows="4" style="width:100%;"></textarea>
-                      </div>                     
-                    </div>                    
-                  </div>
-              </div>
-           </li>
-        </ul>
-        <div>
-          <x-dialog v-model="isDirect" class="dialog-demo">
-            <div class="img-box">
-              <div class="good-warehouse">
-                <div class="warehouse-title-num">
-                  <span>4</span>
-                  <span>可直拨</span>
-                </div>                
-                <div class="warehouse-list">
-                    <ul class="warehouse-isDefault">
-                        <li>
-                          <span>江阳1仓</span>
-                          <input type="text" placeholder="11" class="ezt-smart">
-                        </li>
-                        <li>
-                          <span>江阳2仓</span>
-                          <input type="text" placeholder="22" class="ezt-smart">
-                        </li>
-                    </ul>
-                </div>
-              </div>
-            </div>
-            <div @click="isDirect=false">
-              <span class="ezt-close">
-                <i class="fa fa-times" aria-hidden="true"></i>
-              </span>
-            </div>
-          </x-dialog>
-        </div>
+         
+       
       </div> 
       <ezt-footer>
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 提交</a>  
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 提交并审核</a>       
+        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 已选择货品</a>  
+        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 去提交</a>       
       </ezt-footer>
     </div>
   </div>
@@ -189,10 +98,6 @@ export default class ReceiveGood extends Vue{
      */
     private handlerDirect(){
       this.isDirect = true;
-    }
-     //选择物料
-    private renderUrl(info:string){
-      this.$router.push(info);
     }
 
     // private getGoodList(){

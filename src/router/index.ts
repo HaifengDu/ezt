@@ -11,6 +11,7 @@ import ComfirmAccept from '@/page/index/receive-good/ConfirmAccept.vue';//收货
 import AddReceiveGood from '@/page/index/receive-good/AddReceiveGood.vue';//新增收货
 import CheckDetail from '@/page/index/receive-good/CheckDetail.vue';//收货单详情页
 import SearchReceiveGood from '@/page/index/receive-good/SearchReceiveGood.vue';//收货单查询
+import AddGoods from '@/page/index/receive-good/AddGoods.vue';//选择物料
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
@@ -107,7 +108,11 @@ const router = new Router({
           component: QueryResult,
         }
       ]
-    },
+    },{
+      path:'/addGoods',
+      name:'AddGoods',
+      component: AddGoods
+    }
   ]
 });
 interceptRouter(router);

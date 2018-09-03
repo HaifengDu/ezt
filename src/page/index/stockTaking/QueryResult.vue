@@ -155,6 +155,8 @@ export default class queryresult extends Vue{
                    align-items: center;
                    .see{
                       border: 1px solid #1188FC;
+                      font-size: 12px;
+                      color: #1188FC;
                       border-radius: 6px;
                       width: 70px;
                       height: 30px;

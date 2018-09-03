@@ -60,7 +60,7 @@
           </li>
           <li>
             <span class="title-search-name">收货日期：</span>
-            <span>
+            <span>   
               <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
                <span>至</span>
               <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>

@@ -14,7 +14,6 @@ import SearchReceiveGood from '@/page/index/receive-good/SearchReceiveGood.vue';
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
-import EnquiryList from '@/page/index/stockTaking/EnquiryList.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
@@ -80,11 +79,6 @@ const router = new Router({
           path: '/addinventorylist',   //新增盘点单
           name: 'AddinventoryList',
           component: AddinventoryList,
-        },
-        {
-          path: '/enquirylist',   //查询盘点单
-          name: 'EnquiryList',
-          component: EnquiryList,
         },
         {      
           path: '/librarydetails',   //盘库详情

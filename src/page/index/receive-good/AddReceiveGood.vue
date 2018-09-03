@@ -105,8 +105,17 @@
         </div>
       </div> 
       <ezt-footer>
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 提交</a>  
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 提交并审核</a>       
+        <div class="ezt-foot-temporary" slot="confirm">
+          <div class="ezt-foot-total">合计：
+            <b>品项</b><span>12</span>，
+            <b>数量</b><span>100</span>，
+            <b>￥</b><span>22422.01</span>
+          </div>
+          <div class="ezt-foot-button">
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive"> 提交</a>  
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
+          </div>  
+        </div>
       </ezt-footer>
     </div>
   </div>
@@ -327,5 +336,5 @@ export default class ReceiveGood extends Vue{
     .title-search-right{
       flex: 2;
       text-align: right;
-    } 
+    }    
 </style>

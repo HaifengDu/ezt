@@ -25,8 +25,8 @@
               </select>
             </span>
           </li>
-          <li>
-            <span class="title-search-name remark">备注：</span>
+          <li class="input-list">
+            <span class="title-search-name">备注：</span>
             <input type="text" class="ezt-middle">
           </li>         
         </ul>
@@ -145,6 +145,10 @@ export default class ReceiveGood extends Vue{
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
+    private orderType:any=[{
+      name:'仓库1',
+      id:'01'
+    }]
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();

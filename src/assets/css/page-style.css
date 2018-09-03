@@ -60,6 +60,9 @@ input.ezt-middle{
   width: 70%;
   max-width: 66%;
 }
+.input-list{
+  padding-left: 10px;
+}
 /* select下拉 结束  */
 /* 页面顶部header 开始 */
 .ezt-header{
@@ -410,10 +413,10 @@ input.ezt-middle{
       display: flex;
       flex-direction: row;
   }
-  .ezt-title-search li:last-child{
+  /* .ezt-title-search li:last-child{
     background:none;
     padding: 4px 0px;
-  }
+  } */
   .title-search-name{
     flex:1;
   }
@@ -426,4 +429,7 @@ input.ezt-middle{
   }
   .icon-trun-on{
     margin-left: 10px;
+  }
+  .title-search-right{
+    margin-right: 6px;
   }

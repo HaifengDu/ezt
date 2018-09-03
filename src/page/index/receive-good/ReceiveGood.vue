@@ -50,33 +50,48 @@
       </div> 
       <div v-if="isSearch" class="search-dialog">
         <ul class="ezt-title-search">
-          <li>
-            <span class="title-search-name">收货类型：</span>
-            <span class="title-select-name">配送收货<i class="icon-trun-on"></i></span>
+           <li class="select-list">
+            <span class="title-search-name ">收货类型：</span>
+            <span class="title-select-name item-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              </select>
+            </span>
           </li>
-          <li>
-            <span class="title-search-name">来货单位：</span>
-            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
+           <li class="select-list">
+            <span class="title-search-name ">来货单位：</span>
+            <span class="title-select-name item-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              </select>
+            </span>
           </li>
           <li>
             <span class="title-search-name">收货日期：</span>
             <span>
-              <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+              <ezt-canlendar placeholder="开始时间" type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
                <span>至</span>
-              <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+              <ezt-canlendar placeholder="结束时间" type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+            </span>
+          </li>
+          <li class="select-list">
+            <span class="title-search-name ">仓库：</span>
+            <span class="title-select-name item-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              </select>
             </span>
           </li>
           <li>
-            <span class="title-search-name">仓库：</span>
-            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
-          </li>
-          <li>
             <span class="title-search-name">源单号：</span>
-            <input type="text">
+            <input type="text" class="ezt-middle">
           </li>
            <li>
             <span class="title-search-name">单据或物料：</span>
-            <input type="text">
+            <input type="text" class="ezt-middle">
           </li>
           <li>
             <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -134,6 +149,10 @@ export default class ReceiveGood extends Vue{
     private searchParam:any={};//搜索时的查询条件
 
     private tabList:TabList = new TabList();
+    private orderType:any=[{
+      name:'仓库1',
+      id:'01'
+    }]
     created() {
       this.tabList.push({
         name:"待收货",

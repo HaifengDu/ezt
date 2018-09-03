@@ -6,8 +6,11 @@ import Login from "@/page/Login.vue"
 import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
 import NeedGood from '@/page/index/needGood/NeedGood.vue'
 import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
-import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue';
-import ComfirmAccept from '@/page/index/receive-good/ConfirmAccept.vue';
+import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue';//收货页
+import ComfirmAccept from '@/page/index/receive-good/ConfirmAccept.vue';//收货修改页
+import AddReceiveGood from '@/page/index/receive-good/AddReceiveGood.vue';//新增收货
+import CheckDetail from '@/page/index/receive-good/CheckDetail.vue';//收货单详情页
+import SearchReceiveGood from '@/page/index/receive-good/SearchReceiveGood.vue';//收货单查询
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
@@ -47,6 +50,18 @@ const router = new Router({
           path: '/comfirmAccept',
           name: 'ComfirmAccept',
           component: ComfirmAccept,
+        },{
+          path: '/checkDetail',
+          name: 'CheckDetail',
+          component: CheckDetail
+        },{
+          path: '/addReceiveGood',
+          name: 'AddReceiveGood',
+          component: AddReceiveGood
+        },{
+          path: '/searchReceiveGood',
+          name: 'SearchReceiveGood',
+          component: SearchReceiveGood
         }
       ]
     },{

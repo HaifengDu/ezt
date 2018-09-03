@@ -1,7 +1,7 @@
 <!--整体页面的头部布局-->
 <template>
 <div>
-    <input class="ezt-canlendar" ref="canlendar" @change="selectChange"/>
+    <input class="ezt-canlendar" ref="canlendar" :disabled="disabled" :type="type" @change="selectChange"/>
 </div>
 
 </template>
@@ -21,7 +21,9 @@
         event:'change'
     },
     props: {
-       value:String
+       value:String,
+       type:String,
+       disabled:Boolean
     },
     computed: {
 

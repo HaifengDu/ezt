@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , Swiper ,SwiperItem, LoadingPlugin } from 'vux'
+import { Tab, XInput , Group , Swiper ,SwiperItem, LoadingPlugin, XDialog} from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -10,6 +10,7 @@ import TabContainerItem from 'mint-ui/lib/tab-container-item';
 import TabContainer from 'mint-ui/lib/tab-container';
 import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
+import EztCanlendar from '../components/Canlendar';
 import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
 import InfiniteScroll from 'mint-ui';
@@ -114,6 +115,7 @@ Vue.component(TabContainerItem.name,Vue.extend(TabContainerItem));
 Vue.component(TabContainer.name,Vue.extend(TabContainer));
 Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
 Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件
+Vue.component('EztCanlendar',Vue.extend(EztCanlendar));//页面日历
 Vue.component("x-input", Vue.extend(XInput));
 Vue.component("group", Vue.extend(Group));
 Vue.component(IndexList.name,Vue.extend(IndexList));
@@ -123,3 +125,4 @@ Vue.component("swiper", Vue.extend(Swiper));
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
 Vue.component("swiper-item", Vue.extend(SwiperItem));
+Vue.component("x-dialog", Vue.extend(XDialog));

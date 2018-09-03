@@ -1,3 +1,66 @@
+input{
+  /* border: 1px solid #ccc; */
+  border: none;
+  border-radius: 6px;
+  height: 20px;
+  text-align: center;
+  background: #FFFFFF;
+}
+/* 小号的input */
+input.ezt-smart{
+  width: 100px;
+}
+input.ezt-middle{
+  width: 70%;
+  max-width: 66%;
+}
+/* select选择框的样式 开始*/
+.ezt-select{
+  appearance: none;
+  position: absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  padding: 0 48px 0 16px;
+  max-width: 65%;
+  border: none;
+  background: #fff;
+  color: #000;
+  text-indent: .01px;
+  text-overflow: "";
+  white-space: nowrap;
+  cursor: pointer;
+}
+.item-select::after{
+  display: inline-block;
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  margin-top: -3px;
+  width: 0;
+  height: 0;
+  border-top: 5px solid;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+  color: #999;
+  content: "";
+  pointer-events: none;
+}
+.item-select::before{
+  display: inline-block;
+  content: "";
+  box-sizing: border-box;
+}
+.select-list{
+  position: relative;
+}
+.title-select-name .ezt-select{
+  direction: ltr;
+  width: 70%;
+  max-width: 66%;
+}
+/* select下拉 结束  */
 /* 页面顶部header 开始 */
 .ezt-header{
   height: 45px;
@@ -302,6 +365,32 @@
     box-shadow: 0 -1px 3px 0 rgba(204, 216, 228, 0.80);
     width: 100%;
   }
+  /* 下拉左侧lable字体样式 */
+  .title-search-name{
+    font-size: 13px;
+    color: #5F7B9A;
+  }
+  /* 下拉选项值样式 */
+  .title-select-name{
+    font-size: 14px;
+    color: #5F7B9A;
+    height: 20px;
+  }
+  /* 日历占位样式 */
+  .input-canlendar{
+    display: inline-block;    
+  }
+  .input-canlendar .ezt-canlendar{
+    width: 70px;
+  }
+  /* 背景色按钮 */
+  .ezt-two-btn{
+    background: #1081EF;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    padding: 14px 44px;
+  }
   /*列表页 tab下面内容高度*/
   .ezt-add-content{   
     overflow-y: auto;
@@ -309,4 +398,32 @@
     padding-bottom: 70px;
     width: 100%;
     height: calc(100vh - 90px);
+  }
+  /* 头部信息带有选项修改的样式 下拉 */
+  .ezt-title-search{
+    background: #fff;
+  }
+  .ezt-title-search li{
+      padding: 10px;
+      border-bottom: 1px solid #E0EBF9;
+      text-align: left;
+      display: flex;
+      flex-direction: row;
+  }
+  .ezt-title-search li:last-child{
+    background:none;
+    padding: 4px 0px;
+  }
+  .title-search-name{
+    flex:1;
+  }
+  .ezt-two-btn{
+      width: 40px;
+      margin: 0 auto;
+      border-radius: 8px;
+      padding: 6px 11px;
+      text-align: center;
+  }
+  .icon-trun-on{
+    margin-left: 10px;
   }

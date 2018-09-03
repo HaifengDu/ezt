@@ -94,6 +94,16 @@
   background: url('../../assets/images/icon-title-back.png') no-repeat;
   background-size: 20px 20px;
 }
+.icon-trun-on{
+  width:12px;
+  height: 12px;
+  background: url("../../assets/images/icon-trunxia.png") no-repeat;
+  background-size: 12px 12px;
+  display: inline-block;
+}
+.icon-trun-on.off{
+  transform: rotate(180deg); 
+}
 /*验收*/
 .ys-btn{
   /*width: 59px;*/

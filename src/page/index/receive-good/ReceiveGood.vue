@@ -4,8 +4,12 @@
     <ezt-header :back="true" title="收货">
        <div slot="action">
          <div class="add">
-          <i class="fa fa-plus" aria-hidden="true"></i> 
-          <i class="fa fa-search" aria-hidden="true"></i>
+           <span class='ezt-action-point' @click="renderUrl('/addReceiveGood')">
+            <i class="fa fa-plus" aria-hidden="true" ></i>
+           </span>
+          <span class='ezt-action-point' @click="searchTitle">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>          
          </div>
        </div>
     </ezt-header>    
@@ -17,38 +21,73 @@
       <div class="ezt-add-content" ref="listContainer" 
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10"> 
+        infinite-scroll-distance="10">
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('/comfirmAccept')">
-          <div class="receive-icon-title">
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('')">
+            <div class="receive-icon-title">
             <span class="receive-icon-dcName"></span>
             <span class="return-list-title">{{item.dc_name}}</span> 
-            <span class="receive-status">待审核</span>
+            <span class="receive-status">{{tabList.getActive().status==1?'待审核':'已完成'}}</span>
             </div>
-          <div class="receive-icon-content">
-            <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-            <div style="display:flex">
-              <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-              <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+            <div class="receive-icon-content">
+              <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+              <div style="display:flex">
+                <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+                <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+              </div>
+              <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
             </div>
-            <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-          </div>
-          <div class="receive-icon-bottom">
-            <div class="glow-1">
-              <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+            <div class="receive-icon-bottom">
+              <div class="glow-1">
+                <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+              </div>
+              <div>
+                <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
+              </div>
             </div>
-            <div>
-              <span class="receive-ys-btn">验收</span>
-            </div>
-          </div>
         </div>
-         <span v-if="allLoaded">已全部加载</span>
-      </div>    
+         <span v-if="allLoaded">已全部加载</span>          
+      </div> 
+      <div v-if="isSearch" class="search-dialog">
+        <ul class="ezt-title-search">
+          <li>
+            <span class="title-search-name">收货类型：</span>
+            <span class="title-select-name">配送收货<i class="icon-trun-on"></i></span>
+          </li>
+          <li>
+            <span class="title-search-name">来货单位：</span>
+            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
+          </li>
+          <li>
+            <span class="title-search-name">收货日期：</span>
+            <span>
+              <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+               <span>至</span>
+              <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+            </span>
+          </li>
+          <li>
+            <span class="title-search-name">仓库：</span>
+            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
+          </li>
+          <li>
+            <span class="title-search-name">源单号：</span>
+            <input type="text">
+          </li>
+           <li>
+            <span class="title-search-name">单据或物料：</span>
+            <input type="text">
+          </li>
+          <li>
+            <div class="ezt-two-btn" @click="toSearch">查询</div>
+          </li>
+        </ul>
+      </div>      
     </div>
       <!-- 收货详情 -->
     <div>
       <router-view/>
-    </div>
+    </div>      
   </div>
 </template>
 
@@ -85,11 +124,14 @@ export default class ReceiveGood extends Vue{
     private service: ReceiveGoodService;
     private pager:Pager;
     private getGoodList:INoopPromise
+    private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
     private showMask:()=>void;
     // private updateUser:INoop;
-    private goodList:any[] = [];
-    private allLoaded:boolean= false;
+    private goodList:any[] = [];//列表页list数据
+    private allLoaded:boolean= false;//数据是否已经全部加载完
+    private isSearch:boolean= false; //搜索的条件
+    private searchParam:any={};//搜索时的查询条件
 
     private tabList:TabList = new TabList();
     created() {
@@ -111,15 +153,29 @@ export default class ReceiveGood extends Vue{
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
        this.goodList = [];
+       this.searchParam = {};
       //  this.getGoodList();
     }
 
     mounted(){      
       this.getList();
+       this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
+        this.isSearch=false; 
+        this.hideMask();
+      });
     }
     //详情页跳转
     private renderUrl(info:string){
-      this.$router.push(info);
+      if(info){
+         this.$router.push(info);
+         return false;
+      }
+      if(this.tabList.getActive().status==1){
+        this.$router.push('/comfirmAccept');
+      }else if(this.tabList.getActive().status==3){
+        this.$router.push('/checkDetail');
+      }
+      
     }
   /**
    * computed demo
@@ -177,6 +233,16 @@ export default class ReceiveGood extends Vue{
           this.$toasted.show(err.message);
       });
     }
+    //搜索选择的条件显示/隐藏
+    private searchTitle(){
+      this.isSearch = !this.isSearch;
+      this.isSearch?this.showMask():this.hideMask();
+    }
+    private toSearch(){
+      this.isSearch = false;
+      this.hideMask();
+      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
+    }
    
 }
 </script>
@@ -211,5 +277,16 @@ export default class ReceiveGood extends Vue{
         margin-right: 10px;
       }
     }
-
+    .ezt-action-point{
+      width: 20px;
+      height: 26px;
+      display: inline-block;
+    }
+    //搜索弹框
+    .search-dialog{
+      width: 100%; 
+      position:absolute;
+      top:0; 
+      z-index:3000;
+    }
 </style>

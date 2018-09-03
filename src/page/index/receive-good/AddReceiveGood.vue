@@ -1,21 +1,30 @@
-<!--收货修改页面-->
+<!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='收货'>
+    <ezt-header :back="true" title='添加采购入库单'>
        <div slot="action">
        </div>
     </ezt-header>    
-    <div class="ezt-main">       
+    <div class="ezt-main">
       <div class="ezt-add-content">
          <ul class="ezt-title-search">
-          <li>
-            <span class="title-search-name">源单号：</span>
-            <input type="text" class="ezt-middle">
+          <li class="select-list">
+            <span class="title-search-name ">单据类型：</span>
+            <span class="title-select-name item-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              </select>
+            </span>
           </li>
-          <li>
-            <span class="title-search-name">来货单位：</span>
-            <input type="text" class="ezt-middle">
-          </li>
+          <li class="select-list">
+            <span class="title-search-name ">供应商：</span>
+            <span class="title-select-name item-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              </select>
+            </span>
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
             <span class="title-select-name item-select">
@@ -26,13 +35,14 @@
             </span>
           </li>
           <li>
-            <span class="title-search-name remark">备注：</span>
+            <span class="title-search-name">备注：</span>
             <input type="text" class="ezt-middle">
-          </li>         
+          </li>
+          <li>
+            <!-- <span class="title-search-name">选择物料：</span> -->
+            <span class="title-search-name remark">选择物料：<i class="icon-trun-on"></i></span>
+          </li>
         </ul>
-        <div class="detail-acount-title">
-          物料明细
-        </div> 
         <ul>
            <li class="good-detail-content">
               <div class="ezt-detail-good">
@@ -41,19 +51,11 @@
                           <span class="good-detail-name">猪肉
                               <span class="good-detail-sort">（规格）</span>
                           </span>
-                          <span class="good-detail-sort">
-                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
-                          </span>
-                           <span class="title-search-name">
-                             发：1000
-                           </span>
+                          <span class="good-detail-sort">￥<input type="number" class="good-detail-sort" placeholder="11.001"><span>/kg</span></span>
+                           <input type="number" placeholder="3">
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name">
-                            收：<input type="text" placeholder="10000">
-                          </span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
@@ -61,14 +63,14 @@
                     <div class="park-input">
                       <span>备注：</span>
                       <div class="remark-area">
-                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
-                      </div>
-                    </div>
-                    
+                         <textarea name="" id="" cols="24" rows="4" style="width:100%;"></textarea>
+                      </div>                     
+                    </div>                    
                   </div>
               </div>
            </li>
         </ul>
+        <div>
           <x-dialog v-model="isDirect" class="dialog-demo">
             <div class="img-box">
               <div class="good-warehouse">
@@ -96,6 +98,7 @@
               </span>
             </div>
           </x-dialog>
+        </div>
       </div> 
       <ezt-footer>
         <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 提交</a>  
@@ -145,6 +148,13 @@ export default class ReceiveGood extends Vue{
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
+    private orderType:any[] = [{
+      name:"合同采购单",
+      type:"q"
+    },{
+      name:"采购单",
+      type:"m"
+    }];
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
@@ -152,7 +162,8 @@ export default class ReceiveGood extends Vue{
       //  this.getGoodList();
     }
 
-    mounted(){  
+    mounted(){      
+      this.title = this.$route.params.type 
     }
 
   /**
@@ -191,14 +202,7 @@ export default class ReceiveGood extends Vue{
 </script>
 
 <style lang="less" scoped>
- .detail-acount-title{
-      font-size: 12px;
-      color: #95A7BA;
-      letter-spacing: 0;
-      text-align: left;
-      margin-left: 10px;
-  }
-  //物料信息
+ //物料信息
     .good-detail-content{
         text-align: left;
         margin: 8px 10px;
@@ -284,7 +288,7 @@ export default class ReceiveGood extends Vue{
     .title-search-name.remark{
       margin-left: 10px;
     }
-        //直拨仓库
+    //直拨仓库
     .good-warehouse{
         display: flex;
         flex-direction: row;
@@ -305,11 +309,11 @@ export default class ReceiveGood extends Vue{
       background: #ccc;
     }
     .good-warehouse-num{
-        margin-left: 10px;
-        color: #95A7BA;
-        letter-spacing: 0;
+      margin-left: 10px;
+      color: #95A7BA;
+      letter-spacing: 0;
     }
     .remark-area{
       flex: .8;
-    }
+    }   
 </style>

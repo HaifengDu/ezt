@@ -7,8 +7,8 @@
        </div>
        <div slot="title" class="indexPop" @click="handleSelect">
          <span >{{user.auth.store_name}}</span>
-         <i class="fa fa-sort-desc" v-if="!titleSelect" aria-hidden="true"></i>
-         <i class="fa fa-sort-asc" v-if="titleSelect" aria-hidden="true"></i>       
+         <i class="icon-trun-on" v-if="!titleSelect"></i>
+         <i class="icon-trun-on off" v-if="titleSelect"></i>       
        </div>
     </ezt-header>
     <div class="header-mine" @click="renderUrl('/mine')">
@@ -271,7 +271,7 @@ export default class Index extends Vue{
   }
   // 顶部下拉
   .indexPop>span{
-    width: 90%;
+    width: 88%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;

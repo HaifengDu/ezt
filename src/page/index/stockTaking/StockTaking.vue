@@ -22,7 +22,7 @@
                     <div @click="librarydetails('/librarydetails')">
                         <div class="state">
                         <span><i>{{item.week}}</i>{{item.name}}</span>
-                        <span>{{tabList.getActive().status==1?'暂存':'已生效' || tabList.getActive().status==3?'待审核':'审核失败' }}</span>
+                        <span>{{tabList.getActive().status==1?'暂存':'' || tabList.getActive().status==2?'已生效':'' || tabList.getActive().status==3?'待审核':'' || tabList.getActive().status==4?'审核失败':'' }}</span>
                       </div>
                       <div class="content">
                           <p>盘点仓库：<span>{{item.cangku}}</span></p>
@@ -241,7 +241,7 @@ export default class stockTaking extends Vue{
     }
     private librarydetails(info:string){
       this.$router.push(info)
-    }
+    }   
     // 提交页面
     private submission(info:string){
       this.$router.push(info)
@@ -267,12 +267,11 @@ export default class stockTaking extends Vue{
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
     }
-    // 关闭弹层
-    private close(){
-    }
     //查询结果
     private toSearch(){
-      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
+      this.isSearch = false;
+      this.hideMask();
+      this.$router.push({name:'QueryResult',params:{obj:this.searchParam}});
     }
 
 
@@ -286,6 +285,10 @@ export default class stockTaking extends Vue{
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
+.input-canlendar .ezt-canlendar{
+  font-size: 16px!important;
+  width: 100px!important;
+}
 .stocktaking{
   .addbtn{
       font-size: 20px;
@@ -300,7 +303,7 @@ export default class stockTaking extends Vue{
         margin: 10px auto;  
         flex-direction: column;
         li{
-          width: 100%;
+          width:@width;
           margin-bottom: 10px;
           border: 1px solid #DDECFD;
           box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);

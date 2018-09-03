@@ -6,8 +6,8 @@
           <span></span>
        </div>        
     </ezt-header>    
-    <div class="ezt-main">       
-        <div class="content">
+    <div class="ezt-main">   
+      <div class="content">
           <div class="list">
             <div class="details">
              <ul>
@@ -48,16 +48,17 @@
               </ul>
            </div>
           </div>
-           
-           <div class="temporary">
-             <div class="total">货品数量合计：<span>27182</span></div>
-             <div class="button">
-               <div class="storage">暂存</div><div class="sub">提交</div>
-             </div>
-           </div>
+          <ezt-footer>
+            <div class="temporary" slot="confirm">
+              <div class="total">货品数量合计：<span>27182</span></div>
+              <div class="button">
+                <div class="storage">暂存</div><div class="sub">提交</div>
+              </div>
+            </div>  
+        </ezt-footer>
         </div>
+      </div>    
     </div>    
-  </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -141,15 +142,16 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
+      overflow: scroll;
       .list{
-        overflow: scroll;
         background-color:@background-color;
         width: 95%;
+        margin-top: 10px;
         .details{
-        padding: 15px 0 30px 0;
+        padding: 15px 0;
         border-radius: @border-radius;
         ul{
-          div{
+          div{ 
             display: flex;
             justify-content: space-between;
             line-height: 25px;
@@ -168,13 +170,12 @@ export default class stockTaking extends Vue{
       .checklist{
         background-color: #F1F6FF;
         display: flex;
-        align-items: center;
         flex-direction: column;
         .title{
           margin-top: 5px;
           font-size: 12px;
           color: #95A7BA;
-          padding: 0 14px;
+          text-align: left;
         }
         ul{
            display: flex;
@@ -194,6 +195,7 @@ export default class stockTaking extends Vue{
                   text-align: left;
                   display: flex;
                   justify-content: space-between;
+                  padding: 0 15px;
                    p{
                     font-size: 12px;
                     color: #5F7B9A;
@@ -211,7 +213,7 @@ export default class stockTaking extends Vue{
                   span{
                       font-size: 11px;
                       color: #A3B3C2;
-                      margin-left: 10px;
+                      margin-left: 30px;
                       em{
                       font-style: normal;
                       }
@@ -221,10 +223,9 @@ export default class stockTaking extends Vue{
            }
         }
       }
-      }
-      
+    }
       .temporary{
-        width: 100%;
+        width: 104%;
         height: 76px;
         background: #FFF8DD;
         position: absolute;

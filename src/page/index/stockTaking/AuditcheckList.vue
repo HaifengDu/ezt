@@ -1,7 +1,7 @@
-<!--盘库详情-->
+<!--审核盘点单-->
 <template>
-<div class="ezt-page-con librarydetails">
-    <ezt-header :back="true" title="盘库详情">
+<div class="ezt-page-con auditchecklist">
+    <ezt-header :back="true" title="审核盘点单">
        <div slot="action">
           <span></span>
        </div>        
@@ -28,14 +28,23 @@
                   </div>
                   <ul>
                     <li :key="index" v-for="(item,index) in inventoryDetails">
-                      <p class="name">{{item.name}}<span class="code">编码：<em>{{item.code}}</em></span></p>
-                      <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmje}}</span></p></div>
-                      <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
-                      <div><p>整箱数量：<span>{{item.zxsl}}</span></p><p>散装数量：<span>{{item.szsl}}</span></p></div>
+                      <p class="name">{{item.name}}</p>
+                       <div><p>编码：<span>{{item.guige}}</span></p><p>规格：<span>{{item.zmje}}</span></p></div>
+                      <div><p>账面数量：<span>{{item.guige}}</span></p><p>理论库存：<span>{{item.zmje}}</span></p></div>
+                      <div><p>理论消耗：<span>{{item.llkc}}</span></p><p>采购单位<span>{{item.llxh}}</span></p></div>
+                      <div><p>库存主单位：<span>{{item.zxsl}}</span></p><p>消耗单位：<span>{{item.szsl}}</span></p></div>
                     </li>
                   </ul>
               </div>
           </div>
+          <ezt-footer>
+           <div class="temporary" slot="confirm">
+             <div class="total">数量：<span>27182</span></div>
+             <div class="button">
+               <div class="storage">审核不通过</div><div class="sub">审核通过</div>
+             </div>
+           </div>
+          </ezt-footer>
         </div>
     </div>    
   </div>
@@ -109,7 +118,7 @@ export default class stockTaking extends Vue{
 @height:100%;
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
-.librarydetails{
+.auditchecklist{
     position: absolute;
     top: 0;
     left: 0;
@@ -187,14 +196,6 @@ export default class stockTaking extends Vue{
                   color: #395778;
                   margin-bottom: 10px;
                   }
-                .code{
-                    font-size: 11px;
-                    color: #A3B3C2;
-                    margin-left: 10px;
-                    em{
-                      font-style: normal;
-                    }
-                }
               div{
                 display: flex;
                 height: 25px;
@@ -215,6 +216,47 @@ export default class stockTaking extends Vue{
             }
          }
         }
+      }
+      .ezt-page-footer{
+        padding:0 0; 
+        background:none; 
+        box-shadow: none; 
+        .temporary{
+        width: 100%;
+        height: 76px;
+        background: #FFF8DD;
+        position: fixed;
+        bottom: 0;
+        .total{
+          height: 25px;
+          line-height: 25px;
+          font-size: 12px;
+          color: #5F7B9A;
+          span{
+            font-size: 15px;
+            color: red;
+          }
+        }
+        .button{
+          display: flex;
+          flex-direction: row;
+          height: 50px;
+          line-height: 50px;
+          justify-content: space-around;
+          font-size: 15px;
+          color: #FFFFFF; 
+          .storage{
+             width: 50%;
+             cursor: pointer;
+             background-color: #395778;
+          }
+          .sub{
+             flex: 1;
+             cursor: pointer;
+             background-color: #1188FC;
+          }
+        }
+       }
       }
     }
 }

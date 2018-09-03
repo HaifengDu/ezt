@@ -14,7 +14,7 @@ export class StockTakingService extends BaseService{
         super(ERequestType.AppOrder)
         this.loginService = LoginService.getInstance();
     } 
-    getInventoryList(pager:IPagerData){
+    getInventoryList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}inventory/post`,{
         //     data: [{"status":"0"}], 
         //     "oper": "STOCK_LIST",
@@ -23,7 +23,14 @@ export class StockTakingService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/`)
         return promise;
-    }
+    }    
+
+    // getInventoryDetails(id:string,type:string){
+    //     const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
+    //     return promise;
+    // }
+ 
+    
     static createInstance() {
         StockTakingService.getInstance();
     }

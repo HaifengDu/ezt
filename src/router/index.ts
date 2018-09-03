@@ -13,9 +13,12 @@ import CheckDetail from '@/page/index/receive-good/CheckDetail.vue';//收货单�
 import SearchReceiveGood from '@/page/index/receive-good/SearchReceiveGood.vue';//收货单查询
 import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
+import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
+import EnquiryList from '@/page/index/stockTaking/EnquiryList.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
+import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -73,6 +76,16 @@ const router = new Router({
       name:"StockTaking",
       component:StockTaking,
       children: [  //二级路由的配置
+        {
+          path: '/addinventorylist',   //新增盘点单
+          name: 'AddinventoryList',
+          component: AddinventoryList,
+        },
+        {
+          path: '/enquirylist',   //查询盘点单
+          name: 'EnquiryList',
+          component: EnquiryList,
+        },
         {      
           path: '/librarydetails',   //盘库详情
           name: 'LibraryDetails',
@@ -87,6 +100,11 @@ const router = new Router({
           path: '/realdiscentry',   //实盘录入
           name: 'RealdiscEntry',
           component: RealdiscEntry,
+        },
+        {
+          path: '/auditchecklist',   //审核盘点单
+          name: 'AuditcheckList',
+          component: AuditcheckList,
         }
       ]
     },

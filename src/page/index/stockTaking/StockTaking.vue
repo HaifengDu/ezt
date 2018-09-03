@@ -6,7 +6,7 @@
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
-             <i @click="query('/auditchecklist')" class="fa fa-search" aria-hidden="true"></i>
+             <i @click="query('/enquirylist')" class="fa fa-search" aria-hidden="true"></i>
           </div>
        </div>        
     </ezt-header>      

@@ -146,8 +146,9 @@ export default class stockTaking extends Vue{
       .list{
         background-color:@background-color;
         width: 95%;
+        margin-top: 10px;
         .details{
-        padding: 15px 0 30px 0;
+        padding: 15px 0;
         border-radius: @border-radius;
         ul{
           div{ 
@@ -169,13 +170,12 @@ export default class stockTaking extends Vue{
       .checklist{
         background-color: #F1F6FF;
         display: flex;
-        align-items: center;
         flex-direction: column;
         .title{
           margin-top: 5px;
           font-size: 12px;
           color: #95A7BA;
-          padding: 0 14px;
+          text-align: left;
         }
         ul{
            display: flex;
@@ -195,6 +195,7 @@ export default class stockTaking extends Vue{
                   text-align: left;
                   display: flex;
                   justify-content: space-between;
+                  padding: 0 15px;
                    p{
                     font-size: 12px;
                     color: #5F7B9A;
@@ -212,7 +213,7 @@ export default class stockTaking extends Vue{
                   span{
                       font-size: 11px;
                       color: #A3B3C2;
-                      margin-left: 10px;
+                      margin-left: 30px;
                       em{
                       font-style: normal;
                       }

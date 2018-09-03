@@ -9,7 +9,7 @@
     </ezt-header>    
     <div class="ezt-main">   
        <div class="content">
-          <div class="store">
+          <div class="store">  
             <group>
               <x-input title='门店名称' text-align="right" disabled  v-model="disabledValue">{{disabledValue}}</x-input>
               <x-input title='盘点日期' text-align="right" disabled  v-model="value2">{{value2}}</x-input>
@@ -17,14 +17,26 @@
             </group>
           </div>
           <div class="warehouse">
-              <group>
-                <popup-radio title="仓库" :options="options3" v-model="option3">
-                    <p slot="popup-header" class="vux-1px-b demo3-slot">请选择仓库</p>
-                </popup-radio>
-                <popup-radio title="未盘处理" :options="options4" v-model="option4">
-                    <p slot="popup-header" class="vux-1px-b demo3-slot">请选择未盘处理方式</p>
-                </popup-radio>
-               </group>
+              <ul>
+                 <li>
+                  <span>仓库</span>
+                  <p>
+                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
+                      <option :value="item.type" :key="index" v-for="(item,index) in warehouseType">{{item.name}}</option>
+                    </select>
+                  </p>
+                </li>
+                <li>
+                  <span>未盘处理</span>
+                  <p>
+                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择未盘处理方式</option>
+                      <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    </select>
+                  </p>
+                </li>
+              </ul>
           </div>
           <div class="method">
               <p>盘点方式</p>
@@ -67,10 +79,20 @@ export default class addinventorylist extends Vue{
     private disabledValue:string = '黄焖鸡';
     private value2:string = '2018-08-29';
     private value3:string = '日盘';
-    private option3:string = '仓库A';
-    private options3:any[] =['仓库A', '仓库B', '仓库C'];
-    private option4:string = '按照当前库存量处理';
-    private options4:any[] =['按照当前库存量处理', '按照0库存量处理',];
+    private warehouseType:any[] = [{
+      name:"仓库A",
+      type:"q"
+    },{
+      name:"仓库B",
+      type:"m"
+    }];
+    private orderType:any[] = [{
+      name:"按照当前库存量处理",
+      type:"q"
+    },{
+      name:"按照0库存量处理",
+      type:"m"
+    }];
     // private pdmethod:any[] = [{name:'手工制单'},{name:'模板导入'},{name:'盘点类型导入'}];
     created() {
       
@@ -136,6 +158,29 @@ export default class addinventorylist extends Vue{
       }
       .warehouse{
         margin-top: 10px;
+        ul{
+          background-color: @background-color;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          li{
+            height: 45px;
+            line-height: 45px;
+            width: 96%;
+            border-bottom: 1px solid  #D2DFEE;
+            position: relative;
+            p{
+              float: right;
+              .ezt-select{
+                width: auto;
+                padding: 0px 15px;
+              }
+            }
+          }
+          li:last-child{
+            border-bottom: none;
+          }
+        }
       }
     .method{
           width: @width;

@@ -241,7 +241,7 @@ export default class stockTaking extends Vue{
     }
     private librarydetails(info:string){
       this.$router.push(info)
-    }
+    }   
     // 提交页面
     private submission(info:string){
       this.$router.push(info)

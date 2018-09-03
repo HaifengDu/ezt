@@ -46,6 +46,17 @@
    height: 100% !important;
    overflow: scroll !important;
 }
+// 新增盘库单
+.addinventorylist .group{
+   width: 100%;
+}
+.addinventorylist .weui-cells,.enquirylist .weui-cells{
+   margin-top: 0em;
+}
+.addinventorylist .weui-label,.addinventorylist .vux-label,.enquirylist .weui-label,.enquirylist .vux-label{
+  font-size: 13px;
+  color: #5F7B9A;
+}
 /*要货页面*/
 .requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{
   line-height: 48px;

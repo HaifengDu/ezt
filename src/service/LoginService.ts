@@ -69,7 +69,7 @@ export class LoginService extends BaseService{
             return Promise.resolve(res);
         });
     }
-    /**
+    /**   
      * 退出登录
      */
     autoLogin(){

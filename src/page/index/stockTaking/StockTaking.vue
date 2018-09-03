@@ -6,7 +6,7 @@
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
-             <i @click="query('/enquirylist')" class="fa fa-search" aria-hidden="true"></i>
+             <i @click="query" class="fa fa-search" aria-hidden="true"></i>
           </div>
        </div>        
     </ezt-header>      
@@ -22,10 +22,7 @@
                     <div @click="librarydetails('/librarydetails')">
                         <div class="state">
                         <span><i>{{item.week}}</i>{{item.name}}</span>
-                        <span>暂存</span>
-                        <span v-if="false">{{已生效}}</span>
-                        <span v-if="false">{{待审核}}</span>
-                        <span v-if="false">{{审核失败}}</span>
+                        <span>{{tabList.getActive().status==1?'暂存':'已生效' || tabList.getActive().status==3?'待审核':'审核失败' }}</span>
                       </div>
                       <div class="content">
                           <p>盘点仓库：<span>{{item.cangku}}</span></p>
@@ -36,9 +33,9 @@
                     </div>
                     <div class="footer">
                         <P>业务日期：<span>{{item.ywrq}}</span></P>
-                        <div v-if="item.status === 0 " class="submit" @click="submission('/confirmationlist')">提交</div>
-                        <div v-if="item.status === 1"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
-                        <div v-if="item.status === 2 " class="submit" @click="toexamine">审核</div>
+                        <div v-if="tabList.getActive().status==1" class="submit" @click="submission('/confirmationlist')">提交</div>
+                        <div v-if="tabList.getActive().status==2 || tabList.getActive().status==4"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-if="tabList.getActive().status==3" class="submit" @click="toexamine('./auditchecklist')">审核</div>
                     </div>
                   </li>
                 </ul>
@@ -63,6 +60,37 @@
         </div>
       </x-dialog>
   </div>
+  <!-- 查询盘点单 -->
+    <div class="enquirylist" v-if="isSearch">
+        <div class="content">
+          <div class="warehouse">
+            <ul>
+              <li>
+                 <span>单据号</span>
+                 <p><input type="text"></p>
+              </li>
+              <li>
+                  <span>盘点库</span>
+                  <p>
+                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                      <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    </select>
+                  </p>
+              </li>
+              <li>
+                  <span>开始日期</span>
+                  <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+              </li>
+              <li>
+                  <span>结束日期</span>
+                  <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+              </li>
+            </ul>
+             <p class="s_btn1" @click="toSearch">查询</p>
+          </div>
+       </div>
+   </div>    
 </div>
 </template>
 <script lang="ts">   
@@ -79,6 +107,7 @@ import confirmationlist from './ConfirmationList'
 import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin";
+declare var mobiscroll:any;
 @Component({
    components:{  
       TabItem,
@@ -106,8 +135,17 @@ export default class stockTaking extends Vue{
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
+    private isSearch:boolean= false; //搜索的条件
+    private searchParam:any={};//搜索时的查询条件
     private hideMask:()=>void;
     private showMask:()=>void;
+    private orderType:any[] = [{
+      name:"合同采购单",
+      type:"q"
+    },{
+      name:"采购单",
+      type:"m"
+    }];
     created() {
       this.tabList.push({
         name:"待提交",
@@ -132,6 +170,7 @@ export default class stockTaking extends Vue{
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
       this.inventoryList = [];
+      this.searchParam = {};
     }
    
     mounted(){
@@ -224,8 +263,16 @@ export default class stockTaking extends Vue{
        this.$router.push(info)
     }
     //查询盘点单
-    private query(info:string){
-      this.$router.push(info)
+    private query(){
+      this.isSearch = !this.isSearch;
+      this.isSearch?this.showMask():this.hideMask();
+    }
+    // 关闭弹层
+    private close(){
+    }
+    //查询结果
+    private toSearch(){
+      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
     }
 
 
@@ -235,6 +282,10 @@ export default class stockTaking extends Vue{
 </script>
 <style lang="less" scoped> 
 @padding: 5px 6px;
+@width:100%;
+@height:100%;
+@background-color:#fff;
+@border-radius:3px;
 .stocktaking{
   .addbtn{
       font-size: 20px;
@@ -388,6 +439,80 @@ export default class stockTaking extends Vue{
         }
       }
     }    
+}
+// 查询盘点单
+.enquirylist{
+    position: absolute;
+    top: 40px;
+    left: 0;
+    z-index: 99;
+    width: @width;
+    height: @height;
+    .content{
+      width: @width;
+      height:@height;
+      display: flex;
+      align-items: center;
+      flex-direction: column;
+     .warehouse{
+          width: @width;
+          background-color: @background-color;
+          text-align: left;
+          display:  flex;
+          flex-direction:  column;
+          align-items:  center;
+          padding-bottom: 20px;
+          ul{
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            border-bottom: 1px solid #A3B3C2;
+            width: @width;
+            li{
+               height: 45px;
+               line-height: 45px;
+               width: 90%;
+               border-bottom: 1px solid #A3B3C2;
+               display: flex;
+               justify-content: space-between;
+               position: relative;
+               padding-right: 20px;
+               span{
+                 display: block;
+                 width: 100px
+               }
+               p{
+                 flex: 1;
+                 .ezt-select{
+                   padding-right: 0;
+                   margin-right: 15px;
+                   margin-top: 2px;
+                 }
+                 input{
+                   height: 40px;
+                   line-height: 40px;
+                   float: right;
+                   background: none;
+                 }
+               }
+            }
+            li:last-child{
+               border-bottom:none;
+            }
+          }
+       .s_btn1{
+         margin-top: 20px;
+         width: 95%;
+         height: 45px;
+         color: #fff;
+         line-height: 45px;
+         text-align: center;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+       }
+     }
+   }
 }
 </style>
 

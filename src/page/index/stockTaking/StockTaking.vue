@@ -79,7 +79,6 @@ import confirmationlist from './ConfirmationList'
 import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin";
-declare var mobiscroll:any;
 @Component({
    components:{  
       TabItem,

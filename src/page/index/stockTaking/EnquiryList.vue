@@ -10,12 +10,14 @@
     <div class="ezt-main">   
        <div class="content">
           <div class="warehouse">
-             <ul>
-               <li><p>单据号</p><p></p></li>
-               <li><p>盘点库</p><p><span>CN01686-消耗库B</span><i></i></p></li>
-               <li><p>开始日期</p><p><span></span><i></i></p></li>
-               <li><p>结束日期</p><p><span></span><i></i></p></li>
-             </ul>
+            <group>
+              <x-input title='单据号' text-align="right" v-model="disabledValue">{{disabledValue}}</x-input>
+              <popup-radio title="盘点库" :options="options3" v-model="option3">
+                  <p slot="popup-header" class="vux-1px-b demo3-slot">请选择盘点库</p>
+              </popup-radio>
+               <x-input title='开始日期' disabled text-align="right"></x-input>
+              <x-input title='结束日期' text-align="right" disabled  ref="canlendar"></x-input>
+            </group>
           </div>
           <p class="s_btn1">查询</p>
        </div>
@@ -27,18 +29,22 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import LoginService from "../../../service/LoginService"
+import IUser from "../../../interface/IUserModel"
+import {maskMixin} from "../../../helper/maskMixin";
 import '../../../assets/css/style.less'
+import _ from "lodash";
 declare var mobiscroll:any;
 @Component({  
    components:{  
       
-   },   
+   }, 
+   mixins:[maskMixin],  
    computed:{
      ...mapGetters({
-       
+       "user":"user"
      }) 
    },
    methods:{ 
@@ -48,36 +54,43 @@ declare var mobiscroll:any;
 
    }   
 })  
-export default class stockTaking extends Vue{
-    private pager:Pager;   
+export default class enquirylist extends Vue{
+    private service:LoginService;
+    private user:IUser;
+    private disabledValue:string = '黄焖鸡';
+    private option3:string = '仓库A';
+    private options3:any[] =['仓库A', '仓库B', '仓库C'];
+    
     created() {
-      
+       this.service = LoginService.getInstance();  
     }
 
     mounted(){
-      
+      //日历
+      mobiscroll.date(this.$refs.canlendar, {
+          theme: 'material', 
+          display: 'bottom',
+          lang: 'zh',
+          dateFormat:'yyyy-mm-dd',
+          onSet: (val:{
+              valueText:string
+          })=>{
+            this.checkDate(val.valueText);
+          },
+          onShow:(event:any,inst:any)=>{
+            
+          }
+      });
 
     }
-
-  /**
-   * watch demo
-   */
-    @Watch("",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-
+     private checkDate(date:string){
+      this.service.checkDay(date).then(res=>{
+        console.log(res,'res00000')
+      },err=>{
+        this.$toasted.error(err.message);
+      })
     }
-
-    /**
-     * computed demo
-     */
-      private 11(){
-       
-      }
-
-  
-      
+     
 }
 </script>
 <style lang="less" scoped> 
@@ -85,6 +98,11 @@ export default class stockTaking extends Vue{
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
+.demo3-slot{
+  text-align: center;
+  padding: 8px 0;
+  color: #888;
+}
 .enquirylist{
     position: absolute;
     top: 0;
@@ -100,43 +118,7 @@ export default class stockTaking extends Vue{
       flex-direction: column;
      .warehouse{
           width: @width;
-          display: flex;
-          background-color:@background-color;
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 10px;
-          ul{
-            width: 95%;
-          li{
-            height: 45px;
-            line-height: 45px;
-            border-bottom: 1px solid #E0EBF9;
-            display: flex;
-            justify-content: space-between;
-          }
-          li p:nth-child(1){
-            font-size: 13px;
-            color: #5F7B9A;
-          }
-          li p:nth-child(2){
-            padding-right: 15px;
-            font-size: 16px;
-            color: #395778;
-          }
-          li:last-child{
-            border-bottom: none;
-          }
-        }
-        i{
-          display: block;
-          width: 16px;
-          height: 15px;
-          float: right;
-          background-size: 100% 100%;
-          margin: 15px 0 0 5px;
-          background-position: center;
-          background-image:url('../../../assets/images/icon-trunxia.png');
-        }
+          text-align: left;
      }
      .s_btn1{
          margin-top: 20px;

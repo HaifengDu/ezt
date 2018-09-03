@@ -57,7 +57,6 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import LibraryDetailService from '../../../service/LibraryDetailService'
-declare var mobiscroll:any;
 @Component({  
    components:{  
       

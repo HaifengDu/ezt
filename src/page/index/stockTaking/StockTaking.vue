@@ -267,12 +267,11 @@ export default class stockTaking extends Vue{
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
     }
-    // 关闭弹层
-    private close(){
-    }
     //查询结果
     private toSearch(){
-      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
+      this.isSearch = false;
+      this.hideMask();
+      this.$router.push({name:'QueryResult',params:{obj:this.searchParam}});
     }
 
 

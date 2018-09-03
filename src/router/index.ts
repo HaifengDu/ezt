@@ -18,6 +18,7 @@ import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
+import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 Vue.use(Router)
 
 const router = new Router({
@@ -99,6 +100,11 @@ const router = new Router({
           path: '/auditchecklist',   //审核盘点单
           name: 'AuditcheckList',
           component: AuditcheckList,
+        },
+        {
+          path: '/queryresult',   //查询结果
+          name: 'QueryResult',
+          component: QueryResult,
         }
       ]
     },

@@ -69,14 +69,14 @@
                  <span>单据号</span>
                  <p><input type="text"></p>
               </li>
-              <li>
-                  <span>盘点库</span>
-                  <p>
-                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                      <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                    </select>
-                  </p>
+              <li class="select-list">
+                <span class="title-search-name ">盘点库</span>
+                <span class="title-select-name item-select">
+                  <select name="" id="" placeholder="请选择" class="ezt-select">
+                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
+                    <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                  </select>
+                </span>
               </li>
               <li>
                   <span>开始日期</span>

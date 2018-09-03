@@ -23,7 +23,7 @@
                   <span class="title-select-name item-select">
                     <select name="" id="" placeholder="请选择" class="ezt-select">
                       <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                      <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                      <option :value="item.type" :key="index" v-for="(item,index) in warehouseType">{{item.name}}</option>
                     </select>
                   </span>
                 </li>

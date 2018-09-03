@@ -14,8 +14,12 @@
        
       </div> 
       <ezt-footer>
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 已选择货品</a>  
-        <a href="javascript:(0)" slot="confirm" @click="confirmReceive"> 去提交</a>       
+        <div class="ezt-foot-temporary" slot="confirm">
+          <div class="ezt-foot-button">
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">已选择货品</a>  
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">去提交</a>   
+          </div>  
+        </div>       
       </ezt-footer>
     </div>
   </div>

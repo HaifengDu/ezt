@@ -3,8 +3,7 @@
         <!--tab切换的不同页面对应内容-->
     <mt-tab-container v-model="selected">
       <mt-tab-container-item id="index">
-          <index-content></index-content><!--首页-->
-        
+          <index-content></index-content><!--首页-->        
       </mt-tab-container-item>
       <mt-tab-container-item id="order">
           <order-content></order-content><!--订单-->

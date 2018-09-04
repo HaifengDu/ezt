@@ -134,7 +134,7 @@
 }
 /*在tab切换内容里面没有滚动条，*/
 .mint-tab-container{
-  overflow: scroll !important;
+  /* overflow: scroll !important; */
   flex:1;
   height:100%;
 }

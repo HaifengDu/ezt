@@ -55,8 +55,11 @@
                           <span class="good-detail-name">猪肉
                               <span class="good-detail-sort">（规格）</span>
                           </span>
-                          <span class="good-detail-sort">￥<input type="number" class="good-detail-sort" placeholder="11.001"><span>/kg</span></span>
-                           <input type="number" placeholder="3">
+                          <span class="good-detail-sort">￥
+                            <input type="number" class="good-detail-sort ezt-smart" placeholder="11.001">
+                            <span>/kg</span>
+                          </span>
+                           <input type="number" placeholder="3" class="ezt-smart">
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
@@ -65,10 +68,12 @@
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect">拨</span>
                     <div class="park-input">
-                      <span>备注：</span>
+                      <!-- <span>备注：</span>
                       <div class="remark-area">
                          <textarea name="" id="" cols="24" rows="4" style="width:100%;"></textarea>
-                      </div>                     
+                      </div>                      -->
+                      <span class="title-search-name">备注：</span>
+                      <input type="text" class="ezt-middle">
                     </div>                    
                   </div>
               </div>
@@ -284,7 +289,7 @@ export default class ReceiveGood extends Vue{
     }
     //物料明细结束 
     .ezt-detail-good input{
-      width: 50px;
+      // width: 50px;
     }
     .icon-dail{
       flex: .1;
@@ -300,7 +305,7 @@ export default class ReceiveGood extends Vue{
       flex:1;
     }
     .park-input span{
-      flex:.2;
+      flex:2;
     }
     .title-search-name.remark{
       margin-left: 10px;

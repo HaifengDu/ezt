@@ -1,3 +1,9 @@
+/* 金额字体 */
+.ezt-money-font{
+  font-size: 20px;
+  color: #FF6363;
+  letter-spacing: 0;
+}
 input{
   /* border: 1px solid #ccc; */
   border: none;
@@ -8,7 +14,7 @@ input{
 }
 /* 小号的input */
 input.ezt-smart{
-  width: 100px;
+  width: 50px;
 }
 input.ezt-middle{
   width: 70%;
@@ -401,6 +407,7 @@ input.ezt-middle{
     padding-bottom: 70px;
     width: 100%;
     height: calc(100vh - 90px);
+    margin-top: -1px;
   }
   /* 头部信息带有选项修改的样式 下拉 */
   .ezt-title-search{
@@ -475,3 +482,5 @@ input.ezt-middle{
       color: #fff;
     }
       /* 页面底部按钮样式 结束  */
+
+   

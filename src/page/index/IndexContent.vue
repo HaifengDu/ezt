@@ -21,20 +21,26 @@
         </div>
       </div>
        <div class="storeList" v-if="titleSelect">
-            <div class="ezt-history">
-              <ul>
-                  <li>历史记录</li>
-              </ul> 
-            </div>
-            <div class="ezt-checkList">
-              <div>搜索</div>
-              <mt-index-list>
-                <mt-index-section :index="letter" :key="index" v-for="(stores, letter, index) in storeGroupData">
-                  <div @click="handlerStore(item)" class="list-line" :key="index" v-for="(item,index) in stores">{{item.storeName}}</div>
-                </mt-index-section>
-              </mt-index-list>
-            </div>
+         <div class="ezt-tab">
+           <ul>
+             <li :class="[{'active':!tabStatus}]" @click="handlerStatus(false)">最近查看过的门店</li>
+             <li :class="[{'active':tabStatus}]" @click="handlerStatus(true)">全部门店</li>
+           </ul>
+         </div>
+          <div class="ezt-history" v-if="!tabStatus">
+            <ul>
+                <li>历史记录</li>
+            </ul> 
           </div>
+          <div class="ezt-checkList" v-if="tabStatus">
+            <!-- <div>搜索</div> -->
+            <mt-index-list>
+              <mt-index-section :index="letter" :key="index" v-for="(stores, letter, index) in storeGroupData">
+                <div @click="handlerStore(item)" class="list-line" :key="index" v-for="(item,index) in stores">{{item.storeName}}</div>
+              </mt-index-section>
+            </mt-index-list>
+          </div>
+        </div>
         <ul class="icon-menu"><!--主页内容菜单-->
             <li @click="renderUrl('/needGood')">
                 <div class="yaohuo"></div>
@@ -90,6 +96,7 @@ export default class Index extends Vue{
    private showMask:()=>void;
    private hideMask:()=>void;
    private storeGroupData:{[index:string]:any[]} = {};
+   private tabStatus:boolean=true;//门店下拉默认显示全部门店 
    private testData:any[] = [
      {
        id:1,
@@ -131,7 +138,7 @@ export default class Index extends Vue{
    ];
     created() {
       this.service = LoginService.getInstance();  
-      this.storeGroupData = commonService.sortLetter(this.testData);    
+      this.storeGroupData = commonService.sortLetter(this.testData); 
     }
     mounted(){     
       //日历
@@ -176,6 +183,9 @@ export default class Index extends Vue{
       console.log(item.storeName);
       this.titleSelect = false;
       // user.auth.store_name=item.storeName;
+    }
+    private handlerStatus(item:boolean){
+      this.tabStatus = item;
     }
    
 }
@@ -271,7 +281,7 @@ export default class Index extends Vue{
   }
   // 顶部下拉
   .indexPop>span{
-    width: 88%;
+    width: 82%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -301,6 +311,7 @@ export default class Index extends Vue{
   .ezt-checkList{
     flex: 1;
   }
+  /* 我的用户头像 */
   .mine-css{
     display: inline-block;
     width: 40px;
@@ -311,5 +322,22 @@ export default class Index extends Vue{
     background: url(../../assets/images/user_logo.png) 0 0 no-repeat;
     background-size: 40px 40px;
     z-index: 2;
+  } 
+  .ezt-tab{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    ul{
+      display:flex;
+      flex-direction: row;
+      flex:1      
+    }
+    li{
+        flex:1;
+      }
+    li.active{
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 10px;
+    }
   }
 </style>

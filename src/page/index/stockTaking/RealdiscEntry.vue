@@ -29,19 +29,35 @@
                       <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
                   </div>
                 </li>
+                <li>
+                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
+                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
+                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
+                  <div class="purchase">
+                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
+                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
+                  </div>
+                </li>
+                <li>
+                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
+                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
+                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
+                  <div class="purchase">
+                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
+                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
+                  </div>
+                </li>
               </ul>
            </div>
           </div>
-          <ezt-footer>
-           <div class="temporary" slot="confirm">
-             <div class="total">货品数量合计：<span>27182</span></div>
-             <div class="button">
-               <div class="storage">暂存</div><div class="sub">提交</div>
-             </div>
-           </div>
-          </ezt-footer>
+          <div class="temporary" slot="confirm">
+            <div class="total">货品数量合计：<span>27182</span></div>
+            <div class="button">
+              <div class="storage">暂存</div><div class="sub">提交</div>
+            </div>
+          </div>
         </div>
-    </div>    
+    </div>  
   </div>
 </template>
 <script lang="ts">
@@ -125,8 +141,12 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+      overflow-y:scroll;
       .list{
         width: 95%;
+        padding-bottom: 70px;
       .checklist{
         display: flex;
         align-items: center;
@@ -208,10 +228,10 @@ export default class stockTaking extends Vue{
       }
      }
       .temporary{
-        width: 100%;
+        width: 102%;
         height: 76px;
         background: #FFF8DD;
-        position: absolute;
+        position: fixed;
         bottom: 0;
         .total{
           height: 25px;

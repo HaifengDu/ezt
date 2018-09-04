@@ -48,14 +48,12 @@
               </ul>
            </div>
           </div>
-          <ezt-footer>
-            <div class="temporary" slot="confirm">
-              <div class="total">货品数量合计：<span>27182</span></div>
-              <div class="button">
-                <div class="storage">暂存</div><div class="sub">提交</div>
-              </div>
-            </div>  
-        </ezt-footer>
+          <div class="temporary" slot="confirm">
+            <div class="total">货品数量合计：<span>27182</span></div>
+            <div class="button">
+              <div class="storage">暂存</div><div class="sub">提交</div>
+            </div>
+          </div>  
         </div>
       </div>    
     </div>    
@@ -141,11 +139,14 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
-      overflow: scroll;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      position: relative;
       .list{
         background-color:@background-color;
         width: 95%;
         margin-top: 10px;
+        padding-bottom: 70px;
         .details{
         padding: 15px 0;
         border-radius: @border-radius;
@@ -227,8 +228,8 @@ export default class stockTaking extends Vue{
         width: 104%;
         height: 76px;
         background: #FFF8DD;
-        position: absolute;
-        bottom: 0;
+        position: fixed;
+        bottom: -1px;
         .total{
           height: 25px;
           line-height: 25px;

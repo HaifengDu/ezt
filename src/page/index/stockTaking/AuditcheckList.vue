@@ -37,14 +37,12 @@
                   </ul>
               </div>
           </div>
-          <ezt-footer>
            <div class="temporary" slot="confirm">
              <div class="total">数量：<span>27182</span></div>
              <div class="button">
                <div class="storage">审核不通过</div><div class="sub">审核通过</div>
              </div>
            </div>
-          </ezt-footer>
         </div>
     </div>    
   </div>
@@ -133,16 +131,17 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
-      overflow: scroll;
-      overflow-x: hidden;
       .pkdetails{
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         border-radius: 4px;
-        width: 95%;
+        width: 97%;
         background-color:@background-color;
-        position: absolute;
+        padding-bottom: 70px; 
+        height: 100%;     
+        overflow: scroll;
+        overflow-x: hidden;  
         .librarytype{
           ul{
             text-align: left;
@@ -167,13 +166,8 @@ export default class stockTaking extends Vue{
         }
         .inventory{
            .pkmx{
-              position: relative;
               .line{
-                position: absolute;
-                top: 1px;
-                width: 100%;
                 text-align: center;
-                margin: 0 auto;
                 .title{
                   width: 100%;
                   font-size: 12px;
@@ -183,8 +177,8 @@ export default class stockTaking extends Vue{
             }
             ul{
             text-align: left;
+            background-color: @background-color;
             padding: 10px 10px 10px 15px;
-            margin-top: 20px;
               li{
                 width:@width;
                 padding-bottom: 10px;
@@ -216,16 +210,12 @@ export default class stockTaking extends Vue{
          }
         }
       }
-      .ezt-page-footer{
-        padding:0 0; 
-        background:none; 
-        box-shadow: none; 
-        .temporary{
-        width: 100%;
+      .temporary{
+        width: 103%;
         height: 76px;
         background: #FFF8DD;
         position: fixed;
-        bottom: 0;
+        bottom: -1px;
         .total{
           height: 25px;
           line-height: 25px;
@@ -257,7 +247,6 @@ export default class stockTaking extends Vue{
         }
        }
       }
-    }
 }
 </style>
 

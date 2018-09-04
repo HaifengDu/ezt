@@ -128,7 +128,7 @@ declare var mobiscroll:any;
 })
 export default class stockTaking extends Vue{
     private service: StockTakingService;
-    private pager:Pager;   
+    private pager:Pager;      
     private getInventoryList:INoopPromise
     private inventoryList:any[] = [];
     private inventoryType:any[] = [{name:'数据整理'},{name:'日盘'},{name:'月盘'},{name:'周盘'}];
@@ -323,8 +323,9 @@ export default class stockTaking extends Vue{
                 border-radius: 4px;
                 font-size: 4px;
                 color: #fff;
-                width: 16px;
-                height: 16px;
+                width: 20px;
+                height: 20px;
+                line-height: 20px; 
                 text-align: center;
                 font-style: normal;
                 display: block;

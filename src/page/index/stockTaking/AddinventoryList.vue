@@ -18,23 +18,23 @@
           </div>
           <div class="warehouse">
               <ul>
-                 <li>
-                  <span>仓库</span>
-                  <p>
-                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
+                 <li class="select-list">
+                  <span class="title-search-name ">仓库：</span>
+                  <span class="title-select-name item-select">
+                    <select name="" id="" placeholder="请选择" class="ezt-select">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                       <option :value="item.type" :key="index" v-for="(item,index) in warehouseType">{{item.name}}</option>
                     </select>
-                  </p>
+                  </span>
                 </li>
-                <li>
-                  <span>未盘处理</span>
-                  <p>
-                    <select name="" id="" placeholder="请选择盘点库" class="ezt-select">
+                 <li class="select-list">
+                  <span class="title-search-name ">未盘处理：</span>
+                  <span class="title-select-name item-select">
+                    <select name="" id="" placeholder="请选择" class="ezt-select">
                       <option value="" style="display:none;" disabled="disabled" selected="selected">请选择未盘处理方式</option>
                       <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                     </select>
-                  </p>
+                  </span>
                 </li>
               </ul>
           </div>
@@ -169,13 +169,6 @@ export default class addinventorylist extends Vue{
             width: 96%;
             border-bottom: 1px solid  #D2DFEE;
             position: relative;
-            p{
-              float: right;
-              .ezt-select{
-                width: auto;
-                padding: 0px 15px;
-              }
-            }
           }
           li:last-child{
             border-bottom: none;

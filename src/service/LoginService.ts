@@ -70,7 +70,7 @@ export class LoginService extends BaseService{
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         // return promise;
     }
-    /**
+    /**   
      * 退出登录
      */
     autoLogin(){

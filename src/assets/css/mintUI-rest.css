@@ -57,6 +57,13 @@
   font-size: 13px;
   color: #5F7B9A;
 }
+/*选择模板*/
+.selectthetemplate .vux-checklist-label-left{
+  text-align: left;
+}
+.selectthetemplate .weui-cell{
+  padding: 13px 15px;
+}
 /*要货页面*/
 .requiregoods .mint-cell-wrapper,.selectTemplate .mint-cell-wrapper{
   line-height: 48px;

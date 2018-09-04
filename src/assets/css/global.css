@@ -78,6 +78,11 @@ body {
   height: 100%;
   font-size: 14px;
   overflow: hidden;
+  padding: 0;
+  margin: 0;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: "微软雅黑";
+  font-family: Microsoft YaHei;
 }
 
 h1,
@@ -88,14 +93,6 @@ h5,
 h6 {
   font-size: 14px;
   font-weight: normal;
-}
-
-body {
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-family: "微软雅黑";
-  font-family: Microsoft YaHei;
-  margin: 0;
-  padding: 0;
 }
 
 a,

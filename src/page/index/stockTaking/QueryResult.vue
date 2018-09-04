@@ -113,7 +113,7 @@ export default class queryresult extends Vue{
               >p{
                 height: 45px;
                 line-height: 45px;
-                border-bottom: 1px solid #A3B3C2;
+                border-bottom: 1px solid #D2DFEE;
                 padding-left: 10px;
                 em{
                     background-image: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);

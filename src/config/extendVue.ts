@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox} from 'vux'
+import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -125,6 +125,7 @@ Vue.component('x-dialog',Vue.extend(XDialog))
 Vue.component('popup-radio',Vue.extend(PopupRadio))
 Vue.component('cell',Vue.extend(Cell))
 Vue.component('cell-box',Vue.extend(CellBox))
+Vue.component('checklist',Vue.extend(Checklist ))
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
 Vue.component("x-dialog", Vue.extend(XDialog));

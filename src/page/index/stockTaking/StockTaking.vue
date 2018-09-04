@@ -308,7 +308,7 @@ export default class stockTaking extends Vue{
           border: 1px solid #DDECFD;
           box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
           border-radius: 6px;
-          background-color: #fff;
+          background-color:@background-color;
           .state{
             border-bottom: 1px solid #D2DFEE;
             display: flex;
@@ -469,13 +469,13 @@ export default class stockTaking extends Vue{
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            border-bottom: 1px solid #A3B3C2;
+            border-bottom: 1px solid #D2DFEE;
             width: @width;
             li{
                height: 45px;
                line-height: 45px;
                width: 90%;
-               border-bottom: 1px solid #A3B3C2;
+               border-bottom: 1px solid #D2DFEE;
                display: flex;
                justify-content: space-between;
                position: relative;

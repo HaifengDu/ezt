@@ -8,15 +8,15 @@
             <ul class="ezt-title-search">
                 <li>
                     <span class="title-search-name">原密码：</span>
-                    <input type="password" class="ezt-middle">
+                    <input type="password" class="ezt-middle" placeholder="输入旧密码">
                 </li>
                  <li>
                     <span class="title-search-name">新密码：</span>
-                    <input type="password" class="ezt-middle">
+                    <input type="password" class="ezt-middle" placeholder="请设置新密码">
                 </li>
                  <li>
                     <span class="title-search-name">确认新密码：</span>
-                    <input type="password" class="ezt-middle">
+                    <input type="password" class="ezt-middle" placeholder="确认密码">
                 </li>
             </ul>
             <div class="mine-bot-btn">

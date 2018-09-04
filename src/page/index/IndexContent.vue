@@ -293,7 +293,7 @@ export default class Index extends Vue{
     position: absolute;
     top: auto;
     left: 0;
-    background: #fff;
+    background: #F1F6FF;
     z-index: 3;
     color:#000;
     // display:flex;
@@ -327,6 +327,7 @@ export default class Index extends Vue{
     display: flex;
     flex-direction: row;
     width: 100%;
+    background: #FFF;
     ul{
       display:flex;
       flex-direction: row;
@@ -336,7 +337,7 @@ export default class Index extends Vue{
         flex:1;
       }
     li.active{
-      border-bottom: 1px solid #ccc;
+      border-bottom: 2px solid #DDECFD;
       padding-bottom: 10px;
     }
   }

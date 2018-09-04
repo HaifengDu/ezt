@@ -1,6 +1,6 @@
 <!--整体页面的头部布局-->
 <template>
-<div>
+<div class="ezt-sanjiao">
     <input class="ezt-canlendar" :placeholder="placeholder" ref="canlendar" 
     :disabled="disabled" :type="type" @change="selectChange"/>
 </div>
@@ -55,6 +55,6 @@
   }
 </script>
 <style lang="less" scoped>
-
+ 
 
 </style>

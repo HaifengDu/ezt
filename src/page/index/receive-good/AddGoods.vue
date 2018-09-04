@@ -1,11 +1,13 @@
 <!--选择物品-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title=''>
+    <ezt-header :back="true" title='选择物料'>
        <div slot="action">
-         <span class="search-title">
-
-         </span>
+         <div class="add">
+          <span class='ezt-action-point'>
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>          
+         </div>
        </div>
     </ezt-header>    
     <div class="ezt-main">

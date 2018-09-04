@@ -70,9 +70,7 @@ export class LoginService extends BaseService{
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         // return promise;
     }
-    /**   
-     * 退出登录
-     */
+    
     autoLogin(){
         let user = this.cache.getData(cacheKey.USER_MODEL);
         if(!user){
@@ -80,6 +78,18 @@ export class LoginService extends BaseService{
         }
         user = ObjectHelper.parseJSON(user);
         return this.login(user);
+    }
+    /**
+     * 退出登录
+     */
+    logout(){
+        return Axios.post(`${this.reqUrl}login/post`,{
+            data: [{}],
+            "oper": "SIGN_OUT",
+            "pagination": null,
+        }).then(res=>{
+            this.cache.clear();
+        });
     }
     /**
      * 日结

@@ -35,7 +35,7 @@
               </span>
             
             </div>
-           <div class="mine-bot-btn">
+           <div class="mine-bot-btn" @click="logout">
              <span class="ezt-lone-btn">退出</span>
            </div>
          </div>
@@ -61,14 +61,21 @@ declare var mobiscroll:any;
 })
 export default class Mine extends Vue{
   private user:IUser;
+  private service:LoginService;
   
   created() {
+    this.service = LoginService.getInstance();  
   }
   mounted(){
     
   }
+  //去修改密码
   private renderUrl(info:string){
     this.$router.push(info);
+  }
+  //退出
+  private logout(){
+    this.service.logout();
   }
    
 }

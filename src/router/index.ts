@@ -20,6 +20,7 @@ import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
+import ChangePsd from '@/page/mine/ChangePassword.vue';
 Vue.use(Router)
 
 const router = new Router({
@@ -111,7 +112,11 @@ const router = new Router({
     },{
       path:'/addGoods',
       name:'AddGoods',
-      component: AddGoods
+      component: AddGoods,
+    },{
+      path:'/changePsd',
+      name:'ChangePsd',
+      component: ChangePsd,
     }
   ]
 });

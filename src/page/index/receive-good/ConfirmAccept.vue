@@ -52,17 +52,19 @@
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
                           <span class="title-search-name">
-                            收：<input type="text" placeholder="10000">
+                            收：<input type="text" placeholder="10000" class="ezt-smart">
                           </span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect">拨</span>
                     <div class="park-input">
-                      <span>备注：</span>
+                      <!-- <span>备注：</span>
                       <div class="remark-area">
                         <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
-                      </div>
+                      </div> -->
+                      <span class="title-search-name">备注：</span>
+                      <input type="text" class="ezt-middle">
                     </div>
                     
                   </div>
@@ -276,7 +278,7 @@ export default class ReceiveGood extends Vue{
     }
     //物料明细结束 
     .ezt-detail-good input{
-      width: 50px;
+      // width: 50px;
     }
     .icon-dail{
       flex: .1;
@@ -292,7 +294,7 @@ export default class ReceiveGood extends Vue{
       flex:1;
     }
     .park-input span{
-      flex:.2;
+      flex:2;
     }
     .title-search-name.remark{
       margin-left: 10px;

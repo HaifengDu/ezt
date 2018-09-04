@@ -10,7 +10,6 @@ import { ECache } from "../enum/ECache";
 import store from "../store"
 import RootType from "../store/mutation-types";
 import ObjectHelper from "../common/objectHelper";
-import { ReceiveGood } from '../interface/store/ReceiveGood';
 export class LoginService extends BaseService{
 
     private cache = CachePocily.getInstance(ECache.LocCache);
@@ -68,6 +67,8 @@ export class LoginService extends BaseService{
             this.user = user;
             return Promise.resolve(res);
         });
+        // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        // return promise;
     }
     /**
      * 退出登录

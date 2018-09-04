@@ -8,7 +8,7 @@
     </ezt-header>    
     <div class="ezt-main">   
        <div class="content">
-         <checklist v-if="labelPosition = labelPosition === 'left' ? '' : 'left'" :label-position="labelPosition" style="width:100%;" :options="commonList" v-model="radioValue" :max="1" @on-change="change"></checklist>
+         <checklist :label-position="labelPosition" style="width:100%;" :options="commonList" :max="1"></checklist>
          <div class="nextstep">下一步</div>
        </div>
      </div>    
@@ -39,6 +39,7 @@ import { INoop, INoopPromise } from '../../../helper/methods'
 })  
 export default class selectthetemplate extends Vue{
     private pager:Pager;   
+    private labelPosition= 'left';
     private commonList:any[] = [ '模板1', '模板2', '模板3' ];
     created() {
       

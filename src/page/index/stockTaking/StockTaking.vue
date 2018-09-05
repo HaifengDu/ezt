@@ -64,10 +64,10 @@
     <div class="enquirylist" v-if="isSearch">
         <div class="content">
           <div class="warehouse">
-            <ul>
+            <ul>   
               <li>
                  <span>单据号</span>
-                 <p><input type="text"></p>
+                 <p><input type="text" placeholder="请输入单据号"></p>
               </li>
               <li class="select-list">
                 <span class="title-search-name ">盘点库</span>
@@ -80,11 +80,11 @@
               </li>
               <li>
                   <span>开始日期</span>
-                  <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
               </li>
               <li>
                   <span>结束日期</span>
-                  <ezt-canlendar type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
               </li>
             </ul>
              <p class="s_btn1" @click="toSearch">查询</p>

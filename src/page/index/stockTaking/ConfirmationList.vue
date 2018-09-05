@@ -20,30 +20,10 @@
            <div class="checklist">
               <p class="title">盘点单</p>
               <ul>
-                <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                </li>
-                 <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                </li>
-                <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                </li>
-                <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                </li>
-                <li>
-                  <div><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
+                <li :key="index" v-for="(item,index) in inventoryDetails">
+                  <div><p>{{item.name}}<span>编码：<em>{{item.code}}</em></span></p></div>
+                  <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmsl}}</span></p></div>
+                  <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
                 </li>
               </ul>
            </div>
@@ -70,7 +50,7 @@ import LibraryDetailService from '../../../service/LibraryDetailService'
    components:{  
       
    },   
-   computed:{
+    computed:{
      ...mapGetters({
        'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
@@ -83,15 +63,12 @@ import LibraryDetailService from '../../../service/LibraryDetailService'
    }   
 })  
 export default class stockTaking extends Vue{
-    private pager:Pager;   
     private service: LibraryDetailService;
     private list:any[] = [];
-    private inventoryDetails:any[];
     private getInventoryDetails:INoopPromise;
-    
-    
+    private inventoryList:any[] = [];
     created() {
-      
+      this.service = LibraryDetailService.getInstance();
     }
 
     mounted(){

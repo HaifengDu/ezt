@@ -55,7 +55,6 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 @Component({  
@@ -75,7 +74,6 @@ import { INoop, INoopPromise } from '../../../helper/methods'
    }   
 })  
 export default class addinventorylist extends Vue{
-    private pager:Pager;   
     private disabledValue:string = '黄焖鸡';
     private value2:string = '2018-08-29';
     private value3:string = '日盘';
@@ -93,7 +91,6 @@ export default class addinventorylist extends Vue{
       name:"按照0库存量处理",
       type:"m"
     }];
-    // private pdmethod:any[] = [{name:'手工制单'},{name:'模板导入'},{name:'盘点类型导入'}];
     created() {
       
     }
@@ -103,9 +100,6 @@ export default class addinventorylist extends Vue{
 
     }
 
-  /**
-   * watch demo
-   */
     @Watch("list",{
       deep:true
     })
@@ -113,9 +107,7 @@ export default class addinventorylist extends Vue{
 
     }
 
-    /**
-     * computed demo
-     */
+    
     //盘点类型导入
      private inventorytype(info:string){
       this.$router.push(info)
@@ -125,8 +117,6 @@ export default class addinventorylist extends Vue{
         this.$router.push(info)
      }
       
-
-  
       
 }
 </script>

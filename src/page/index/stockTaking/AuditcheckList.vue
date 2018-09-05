@@ -51,7 +51,6 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import LibraryDetailService from '../../../service/LibraryDetailService'
@@ -71,8 +70,7 @@ import LibraryDetailService from '../../../service/LibraryDetailService'
 
    }   
 })  
-export default class stockTaking extends Vue{
-    private pager:Pager;   
+export default class auditchecklist extends Vue{
     private service: LibraryDetailService;
     private list:any[] = [];
     private inventoryDetails:any[];
@@ -96,15 +94,11 @@ export default class stockTaking extends Vue{
     private listWatch(newValue:any[],oldValue:any[]){
 
     }
-
-    /**
-     * computed demo
-     */
-      private get Total(){
-        return this.list.reduce((ori,item)=>{
-          return ori.uprice+item;
-        },0);
-      }
+    private get Total(){
+      return this.list.reduce((ori,item)=>{
+        return ori.uprice+item;
+      },0);
+    }
 
   
       
@@ -245,8 +239,8 @@ export default class stockTaking extends Vue{
              background-color: #1188FC;
           }
         }
-       }
-      }
+     }
+  }
 }
 </style>
 

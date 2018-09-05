@@ -7,10 +7,15 @@
        </div>        
     </ezt-header>    
     <div class="ezt-main">   
-       <div class="content">
-         <checklist :label-position="labelPosition" style="width:100%;" :options="commonList" :max="1"></checklist>
-         <div class="nextstep">下一步</div>
-       </div>
+       <div class="content"> 
+         <checklist 
+           :label-position="labelPosition" 
+           style="width:100%;" 
+           :options="inventoryList" 
+           :max="1"></checklist>
+           <div :key="index" v-for="(item,index) in inventoryDetails" v-model="item.name"></div>
+         <div class="nextstep">下一步</div>   
+       </div>   
      </div>    
    </div>    
 </template>
@@ -21,18 +26,19 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import LibraryDetailService from '../../../service/LibraryDetailService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       
+       'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-       
+       'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
@@ -40,13 +46,15 @@ import { INoop, INoopPromise } from '../../../helper/methods'
 export default class selectthetemplate extends Vue{
     private pager:Pager;   
     private labelPosition= 'left';
-    private commonList:any[] = [ '模板1', '模板2', '模板3' ];
+    private service: LibraryDetailService;
+    private getInventoryDetails:INoopPromise;
+    private inventoryList:any[] = ['模板1','模板2','模板3'];
     created() {
       
     }
 
     mounted(){
-      
+       this.getInventoryDetails();
 
     }
 
@@ -97,7 +105,7 @@ export default class selectthetemplate extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
-      
+      overflow-x: hidden;
     .nextstep{
         width: 100%;
         height: 45px;

@@ -1,6 +1,10 @@
 <!--整体页面的头部布局-->
 <template>
-<div class="ezt-page-con">
+<div>
+  <div class="ezt-page-con"  ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title="收货">
        <div slot="action">
          <div class="add">
@@ -16,12 +20,10 @@
     <div class="ezt-main">       
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
-        @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+        @on-item-click="tabClick(index)" :key="index">{{item.name}}
+        </tab-item>
       </tab>        
-      <div class="ezt-add-content" ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+      <div class="ezt-add-content">
         <!-- 收货单列表       -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('')">
             <div class="receive-icon-title">
@@ -47,63 +49,60 @@
             </div>
         </div>
          <span v-if="allLoaded">已全部加载</span>          
-      </div> 
-      <div v-if="isSearch" class="search-dialog">
-        <ul class="ezt-title-search">
-           <li class="select-list">
-            <span class="title-search-name ">收货类型：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-           <li class="select-list">
-            <span class="title-search-name ">来货单位：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-          <li>
-            <span class="title-search-name">收货日期：</span>
-            <span>
-              <ezt-canlendar placeholder="开始时间" type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
-               <span>至</span>
-              <ezt-canlendar placeholder="结束时间" type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
-            </span>
-          </li>
-          <li class="select-list">
-            <span class="title-search-name ">仓库：</span>
-            <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-          <li>
-            <span class="title-search-name">源单号：</span>
-            <input type="text" class="ezt-middle">
-          </li>
-           <li>
-            <span class="title-search-name">单据或物料：</span>
-            <input type="text" class="ezt-middle">
-          </li>
-          <li>
-            <div class="ezt-two-btn" @click="toSearch">查询</div>
-          </li>
-        </ul>
-      </div>      
-    </div>
-      <!-- 收货详情 -->
-    <div>
-      <router-view/>
-    </div>      
+      </div>
+    </div>         
   </div>
+   <div v-if="isSearch" class="search-dialog">
+      <ul class="ezt-title-search">
+        <li class="select-list">
+        <span class="title-search-name ">收货类型：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+        <li class="select-list">
+        <span class="title-search-name ">来货单位：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="title-search-name">收货日期：</span>
+        <span>
+          <ezt-canlendar placeholder="开始时间" type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+            <span>至</span>
+          <ezt-canlendar placeholder="结束时间" type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+        </span>
+      </li>
+      <li class="select-list">
+        <span class="title-search-name ">仓库：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="title-search-name">源单号：</span>
+        <input type="text" class="ezt-middle">
+      </li>
+        <li>
+        <span class="title-search-name">单据或物料：</span>
+        <input type="text" class="ezt-middle">
+      </li>
+      <li>
+        <div class="ezt-two-btn" @click="toSearch">查询</div>
+      </li>
+    </ul>
+  </div> 
+  </div> 
 </template>
 
 <script lang="ts">
@@ -117,7 +116,6 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
-declare var mobiscroll:any;
 @Component({
    components:{
      TabItem
@@ -157,7 +155,7 @@ export default class ReceiveGood extends Vue{
       this.tabList.push({
         name:"待收货",
         status:1,
-        active:true
+        active:true,
       });
       // this.tabList.push({
       //   name:"待入库",
@@ -305,7 +303,12 @@ export default class ReceiveGood extends Vue{
     .search-dialog{
       width: 100%; 
       position:absolute;
-      top:0; 
-      z-index:3000;
+      top:45px; 
+      z-index:10001;
+    }
+    .oo{
+      display: inline-block;
+      width:10px;
+      height: 10px;
     }
 </style>

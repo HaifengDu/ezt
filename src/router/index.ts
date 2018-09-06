@@ -51,27 +51,24 @@ const router = new Router({
     },{
       path:"/receiveGood",
       name:"ReceiveGood",
-      component:ReceiveGood,
-      children:[
-        {
-          path: '/comfirmAccept',
-          name: 'ComfirmAccept',
-          component: ComfirmAccept,
-        },{
-          path: '/checkDetail',
-          name: 'CheckDetail',
-          component: CheckDetail
-        },{
-          path: '/addReceiveGood',
-          name: 'AddReceiveGood',
-          component: AddReceiveGood
-        },{
-          path: '/searchReceiveGood',
-          name: 'SearchReceiveGood',
-          component: SearchReceiveGood
-        }
-      ]
+      component:ReceiveGood,     
     },{
+        path: '/comfirmAccept',
+        name: 'ComfirmAccept',
+        component: ComfirmAccept,
+      },{
+        path: '/checkDetail',
+        name: 'CheckDetail',
+        component: CheckDetail
+      },{
+        path: '/addReceiveGood',
+        name: 'AddReceiveGood',
+        component: AddReceiveGood
+      },{
+        path: '/searchReceiveGood',
+        name: 'SearchReceiveGood',
+        component: SearchReceiveGood
+      },{
       path:"/mine",
       name:"MineContent",
       component:MineContent

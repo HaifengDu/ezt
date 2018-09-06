@@ -6,7 +6,7 @@
            <span ref="canlendar">日结</span>
        </div>
        <div slot="title" class="indexPop" @click="handleSelect">
-         <span >{{user.auth.store_name}}</span>
+         <span >{{user.auth.store_name||'-'}}</span>
          <i class="icon-trun-on" v-if="!titleSelect"></i>
          <i class="icon-trun-on off" v-if="titleSelect"></i>       
        </div>
@@ -74,7 +74,7 @@ import {maskMixin} from "../../helper/maskMixin";
 import ErrorMsg from "../model/ErrorMsg";
 import commonService from '../../service/commonService.js';
 import _ from "lodash";
-declare var mobiscroll:any;
+declare var mobiscroll:any;//全局定义日历
 @Component({
    components:{
     //  'ezt-header':eztHeader
@@ -195,6 +195,7 @@ export default class Index extends Vue{
    .icon-menu {
     padding: 10px 0px 20px 0px;
     /*display: -webkit-flex;*/
+    margin-top: 30px;
 
   }
   .icon-menu li {
@@ -249,11 +250,11 @@ export default class Index extends Vue{
     color: #395778;
   } 
   .header-date{
-    position: relative;
+    position: fixed;
     width: 100%;
     height: 30px;
     background-image: linear-gradient(139deg, #018BFF -11%, #4A39F3 100%);
-    margin-top: -1px;
+    margin-top: -5px;
 }
 .busiDate {
     /*display: flex;*/
@@ -316,18 +317,19 @@ export default class Index extends Vue{
     display: inline-block;
     width: 40px;
     height: 40px;
-    position: absolute;
+    position: fixed;
     left: 10px;
     top: 10px;
     background: url(../../assets/images/user_logo.png) 0 0 no-repeat;
     background-size: 40px 40px;
-    z-index: 2;
+    z-index: 5;
   } 
   .ezt-tab{
     display: flex;
     flex-direction: row;
     width: 100%;
     background: #FFF;
+    padding-top: 10px;
     ul{
       display:flex;
       flex-direction: row;

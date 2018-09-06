@@ -11,15 +11,48 @@
        </div>
     </ezt-header>    
     <div class="ezt-main">
-      <div class="ezt-add-content">
+      <!-- <div class="ezt-add-content"> -->
+        <div class="good-type">
+          <span class="collect-good active">
+            <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
+            <span>收藏</span>
+          </span>
+           <div class="good-type-list">
+             <span :key=index v-for="(item,index) in goodType">{{item.name}}</span>
+           </div>
+        </div>
+        <div class="good-cont">
+           <ul class="good-category-list">
+             <li class="category-item" :key=index v-for="(item,index) in goodType">全部</li>
+             <li class="category-item">速冻类</li>
+           </ul>
+           <div class="good-content-list">
+             <div class="good-item" v-for="(item,index) in goodList" :key='index'>
+               <div class="good-item-title">
+                 <span class="good-item-name">{{item.name}}</span>
+                 <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+               </div>
+               <div class="good-item-bot">
+                 <span class="good-remark">备</span>
+                 <span>
+                   <i class="fa fa-star-o" aria-hidden="true"></i>
+                 </span>
+                 <span>
+                    <x-number name="" title="" v-model="selectedItem.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                 </span>
+               </div>
+             </div>
+           </div>
+        </div>
          
        
-      </div> 
+      <!-- </div>  -->
       <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">已选择货品</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">去提交</a>   
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="">
+              <span class="ezt-badge">{{selectedItem.good.length}}</span>已选择货品</a>  
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="">去提交</a>   
           </div>  
         </div>       
       </ezt-footer>
@@ -33,210 +66,151 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
 import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
-import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { TabList } from '../../../common/ITab';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
-declare var mobiscroll:any;
+
+
 @Component({
-   components:{
-     TabItem
-   },
-   mixins:[maskMixin],
-   computed:{
-     ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
-     })
-   },
-  //  methods:{
-  //    ...mapActions({
-  //      'getGoodList':"receiveGood/getGoodList"
-  //    })
-  //  }
+
 })
-export default class ReceiveGood extends Vue{
-    private title:String = '';
-    private service: ReceiveGoodService;
-    private pager:Pager;
-    private getGoodList:INoopPromise
-    private hideMask:()=>void;
-    private showMask:()=>void;
-    // private updateUser:INoop;
-    private list:any[] = [];
-    private goodList:any[] = [];
-
-    private tabList:TabList = new TabList();
-    private isDirect:boolean = false; //是否可直拨弹框
-    private orderType:any[] = [{
-      name:"合同采购单",
-      type:"q"
+export default class AddGood extends Vue{
+  private selectedItem:any= {//已选择的货口数量 
+    num:0,
+    good:[]
+  };
+  private goodList:any[]=[{
+    id:1,
+    name:'草鱼半成品',
+    price:'12',
+    utilname:'KG',
+    unit:'箱'
+  }]
+  private goodType:any[] = [{
+    id:1,
+    name:'牛羊肉',
+    cdata:[{
+      id:1,
+      name:"全部"
+    }]
+  },{
+    id:2,
+    name:'成本类',
+    cdata:[{
+      id:2,
+      name:'全部'
     },{
-      name:"采购单",
-      type:"m"
-    }];
-    created() {     
-       this.pager = new Pager()
-       this.service = ReceiveGoodService.getInstance();
-       this.goodList = [];
-      //  this.getGoodList();
-    }
-
-    mounted(){      
-      this.title = this.$route.params.type 
-    }
-
+      id:1-2,
+      name:'速冻类'
+    },{
+      id:1-3,
+      name:'演示品项'
+    }]
+  },{
+    id:3,
+    name:'222222222222222222222222',
+  }]; 
   /**
-   * computed demo
+   * 添加/删除物品数量
    */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
+  private handlerNum(item:any){
+    var ret = this.selectedItem.good.find((value:any)=>{
+      return item.id == value.id;
+    })
+    if(!ret){
+      this.selectedItem.good.push(item);
     }
-    /**
-     * 确认收货
-     */
-    private confirmReceive(){
-      console.log('确认收货！')
-    }
-    /**
-    *可直拨
-     */
-    private handlerDirect(){
-      this.isDirect = true;
-    }
-
-    // private getGoodList(){
-    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
-
-    //     this.pager.setLimit(20);
-    // }
-   
+  }  
 }
 </script>
 
 <style lang="less" scoped>
- //物料信息
-    .good-detail-content{
-        text-align: left;
-        margin: 8px 10px;
-        padding: 12px 10px 12px 15px;
-        background: #FFFFFF;
-        border: 1px solid #DDECFD;
-        box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-        display: flex;
-        flex: row;
-        flex-direction: column;
+  .good-type{
+    height: 45px;
+    top: 0;
+    z-index: 2;
+    position: absolute;
+    display:flex;
+    flex-direction: row;
+    align-items: baseline;
+    text-align: left;
+  }
+  .good-type-list{
+    width: calc(100vw - 70px);
+    height: 100%;
+    overflow-x:scroll;
+    display:flex;
+    white-space: nowrap;
+    span{
+      margin-right: 10px;
     }
-    .good-detail-l{
-        display: inline-block;
-        flex:.8;
-    }
-    .good-detail-l>div{
-       display:flex;
-       flex-direction: row;
-    }
-    .good-detail-l>div>span{
-       flex:1;
-    }
-    .good-detail-r{
-        display: inline-block;
-        display:flex;
-    }
-    .good-detail-num{
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        font-size: 20px;
-        color: #FF885E;
-        letter-spacing: 0;
-    }
-    .good-detail-name{
-        font-size: 14px;
-        color: #395778;
-        letter-spacing: 0;
-        display: flex;
-    }
-    .good-detail-sort{
-        font-size: 13px;
-        color: #5F7B9A;
-        letter-spacing: 0;
-        display: flex;
-        flex-direction: row;
-    }
-    .good-detail-billno,.good-num-t{
-        font-size: 10px;
-        color: #A3B3C2;
-        letter-spacing: 0;
-    }
-    .good-num-t{
-        display: inline-block;
-        text-align: center;
-        width: 100%;
-    }
-    .ezt-detail-good{
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 10px;
-    }
-    //物料明细结束 
-    .ezt-detail-good input{
-      width: 50px;
-    }
-    .icon-dail{
-      flex: .1;
-      background: pink;
-      display: inline-block;
-      height: 20px;
+  }
+  .collect-good{
+    height: 44px;
+    float: left;
+    font-size: 14px;
+    padding: 12px 10px;
+    max-width: 70px;
+    // text-align: center;
+    border-bottom-width: 1.5px;
+    border-bottom-color: #fff;
+  }
+  .collect-good.active{
+    color: #1674fc;
+  }
+  .good-cont{
+    display: flex;
+    padding: 5px;
+    width: 100%;
+  }
+  .good-category-list{
+    padding: 0;
+    margin-top: 44px;
+    background: #eee;
+  }
+  .good-content-list{
+    margin-top: 44px;
+    padding: 0;
+    padding-left: 1px;
+    margin-left: 3%;
+  }
+  .good-item{
+    background: #fff;
+    padding: 10px;
+    text-align: left;
+    .good-remark{
       border: 1px solid #ccc;
-      // width: 20px;
-      text-align: center;
+      padding: 1px;
+      display:inline-block;
+      margin-right: 20px;
     }
-    .park-input{
-      display: flex;
-      flex:1;
-    }
-    .park-input span{
-      flex:.2;
-    }
-    .title-search-name.remark{
-      margin-left: 10px;
-    }
-    //直拨仓库
-    .good-warehouse{
-        display: flex;
-        flex-direction: row;
-        padding: 4px;
-        .warehouse-list{
-            flex: 1;
-             text-align: left;
-             margin-left: 10px;
-            .warehouse-isDefault{           
-                display: inline-block;               
-                        
-            }            
-        }       
-    }
-    .warehouse-title-num{
-      display: flex;
-      flex-direction: column;
-      background: #ccc;
-    }
-    .good-warehouse-num{
-      margin-left: 10px;
-      color: #95A7BA;
-      letter-spacing: 0;
-    }
-    .remark-area{
-      flex: .8;
-    }  
-    .title-search-right{
-      flex: 2;
-      text-align: right;
-    } 
+  }
+  .category-item{
+    background: #eee;
+    border-bottom: 1px solid #fff;
+    border-width: .1px;
+    padding: 13px 10px;
+    font-size: 14px;
+    text-align: center;
+  }
+  .good-item-bot{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+  .ezt-foot-storage{
+    position: relative;
+  }
+  .ezt-badge{
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    content: "";
+    position: absolute;
+    background: red;
+    border-radius: 16px;
+    right: 30px;
+    top: 4px;
+    color: #fff;
+    line-height: 16px;
+  }
+
 </style>

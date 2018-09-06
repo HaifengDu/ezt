@@ -89,6 +89,10 @@ export class LoginService extends BaseService{
             "pagination": null,
         }).then(res=>{
             this.cache.clear();
+            setTimeout(()=>{
+                store.commit(RootType.DELETE_USER);
+            });
+            return res;
         });
     }
     /**
@@ -102,6 +106,17 @@ export class LoginService extends BaseService{
             "pagination": null
         });
         return promise;
+    }
+    /**
+     * 查询余额
+     */
+    checkBalance(){
+        return Axios.post(`${this.reqUrl}operateorder/post`,{
+            data: [{}],
+            "oper": "BALANCE_AMOUNT",
+        }).then(res=>{           
+            return Promise.resolve(res);
+        });
     }
 
     static createInstance() {

@@ -57,6 +57,10 @@
   font-size: 13px;
   color: #5F7B9A;
 }
+.addinventorylist .vux-x-input.disabled .weui-input{
+  font-size: 16px;
+  color: #395778;
+}
 /*选择模板*/
 .selectthetemplate .vux-checklist-label-left{
   text-align: left;

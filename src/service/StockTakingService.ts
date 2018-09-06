@@ -13,7 +13,7 @@ export class StockTakingService extends BaseService{
     private constructor() {   
         super(ERequestType.AppOrder)
         this.loginService = LoginService.getInstance();
-    } 
+    }   
     getInventoryList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}inventory/post`,{
         //     data: [{"status":"0"}], 

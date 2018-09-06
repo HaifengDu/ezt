@@ -109,7 +109,6 @@ export default class selectthetemplate extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
-      overflow-x: hidden;
     .nextstep{
         width: 100%;
         height: 45px;

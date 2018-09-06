@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist,Search,InlineXNumber ,Rater } from 'vux'
+import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist,XNumber,Search,InlineXNumber,Rater } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -13,7 +13,8 @@ import EztFooter from '../components/Footer.vue';
 import EztCanlendar from '../components/Canlendar';
 import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
-import InfiniteScroll from 'mint-ui';
+import InfiniteScroll from 'mint-ui/lib/infinite-scroll';
+import CellSwipe from 'mint-ui/lib/cell-swipe';
 
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
@@ -53,6 +54,7 @@ import 'mint-ui/lib/tab-container-item/style.css';
 import 'mint-ui/lib/tab-container/style.css';
 import 'mint-ui/lib/index-list/style.css';
 import 'mint-ui/lib/index-section/style.css';
+import 'mint-ui/lib/cell-swipe/style.css';
 // import 'element-ui/lib/theme-chalk/notification.css';
 // import 'element-ui/lib/theme-chalk/date-picker.css';
 // import 'element-ui/lib/theme-chalk/time-picker.css';
@@ -132,3 +134,5 @@ Vue.component('rater',Vue.extend(Rater))
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
 Vue.component("x-dialog", Vue.extend(XDialog));
+Vue.component("x-number",Vue.extend(XNumber));
+Vue.component(CellSwipe.name,Vue.extend(CellSwipe));

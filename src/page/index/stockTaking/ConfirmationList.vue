@@ -120,8 +120,6 @@ export default class stockTaking extends Vue{
       display: flex;
       align-items: center;
       flex-direction: column;
-      overflow-x: hidden;
-      overflow-y: scroll;
       position: relative;
       .list{
         background-color:@background-color;

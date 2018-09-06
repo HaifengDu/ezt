@@ -145,8 +145,6 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       position: relative;
-      overflow-x: hidden;
-      overflow-y:scroll;
       .list{
         width: 95%;
         padding-bottom: 70px;

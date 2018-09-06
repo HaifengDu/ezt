@@ -20,6 +20,9 @@ export default new Store<IRootState>({
     mutations:{
         [RootType.UPDATE_USER](state,user:IUser){
             state.user = user;
+        },
+        [RootType.DELETE_USER](state){
+            state.user = null;
         }
     },
     actions:{

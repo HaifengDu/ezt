@@ -72,7 +72,7 @@ input.ezt-middle{
 /* select下拉 结束  */
 /* 页面顶部header 开始 */
 .ezt-header{
-  height: 45px;
+  /* height: 45px; */
   width: 100%;
   display: flex;
   background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
@@ -80,8 +80,10 @@ input.ezt-middle{
   flex-direction: row;
   color: #fff;
   padding: 12px 0;
-  position: absolute;
+  /* position: absolute; */
+  position: fixed;
   top:0;
+  z-index: 4;
 }
 .ezt-header-goback{
   width: 20px;
@@ -118,21 +120,23 @@ input.ezt-middle{
 .ezt-main{
   background-color: #F1F6FF;
   position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 41px;
-  bottom: 0px;
+  top:0;
+  width:100%;
+  height: 100%;
+  margin-top: 45px;
+  /* margin-bottom: 50px; */
 }
 .ezt-page-con{
   width: 100%;
   height: 100%;
   display: flex;
   flex-wrap: wrap;
-  overflow: hidden;
+  overflow-x: hidden;
   flex-direction: column;
   flex-wrap: nowrap;
   margin-top: -1px;
   position: absolute;
+
 }
 /* 页面内容布局 结束 */
 
@@ -366,13 +370,15 @@ input.ezt-middle{
 
   /* 详情页底部 */
   .ezt-page-footer {
-    position: absolute;
+    /* position: absolute; */
+    position: fixed;
     bottom: 0;
     text-align: center;
     padding: 15px 0px;
     background: #FFFFFF;
     box-shadow: 0 -1px 3px 0 rgba(204, 216, 228, 0.80);
     width: 100%;
+    z-index: 4;
   }
   /* 下拉左侧lable字体样式 */
   .title-search-name{
@@ -418,11 +424,9 @@ input.ezt-middle{
   }
   /*列表页 tab下面内容高度*/
   .ezt-add-content{   
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow:hidden;
     padding-bottom: 70px;
     width: 100%;
-    height: calc(100vh - 90px);
     margin-top: -1px;
   }
   /* 头部信息带有选项修改的样式 下拉 */
@@ -498,5 +502,8 @@ input.ezt-middle{
       color: #fff;
     }
       /* 页面底部按钮样式 结束  */
+      .ezt-add-content.main-menu{
+        height: calc(100vh - 150px);
+      }
 
    

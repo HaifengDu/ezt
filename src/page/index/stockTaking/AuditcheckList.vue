@@ -137,8 +137,6 @@ export default class auditchecklist extends Vue{
         background-color:@background-color;
         padding-bottom: 70px; 
         height: 100%;     
-        overflow: scroll;
-        overflow-x: hidden;  
         .librarytype{
           ul{
             text-align: left;

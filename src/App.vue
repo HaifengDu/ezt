@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <router-view/>
     <div id="ezt-mask"></div>
+    <router-view/>    
   </div>
 </template>
 
@@ -32,5 +32,6 @@ export default {
     background: #000;
     opacity: .3;
     display: none;
+    z-index: 10000;
 }
 </style>

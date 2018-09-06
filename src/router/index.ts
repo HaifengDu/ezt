@@ -21,6 +21,7 @@ import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
+import SelectingInventory from '@/page/index/stockTaking/common/SelectingInventory.vue'
 import ChangePsd from '@/page/mine/ChangePassword.vue';
 Vue.use(Router)
 
@@ -113,6 +114,11 @@ const router = new Router({
           path: '/selectthetemplate',   //选择模板
           name: 'SelecttheTemplate',
           component: SelecttheTemplate,
+        },
+        {
+          path: '/selectinginventory',   //选择盘点货品
+          name: 'SelectingInventory',
+          component: SelectingInventory,
         }
       ]
     },{

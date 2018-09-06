@@ -13,8 +13,8 @@
            style="width:100%;" 
            :options="inventoryList" 
            :max="1"></checklist>
-           <div :key="index" v-for="(item,index) in inventoryDetails" v-model="item.name"></div>
-         <div class="nextstep">下一步</div>   
+           <div :key="index" v-for="(item,index) in inventoryDetails"></div>
+         <div class="nextstep" @click="nextstep">下一步</div>   
        </div>   
      </div>    
    </div>    
@@ -74,6 +74,10 @@ export default class selectthetemplate extends Vue{
     // 盘点类型导入
      private inventorytype(info:string){
       this.$router.push(info)
+     }
+     //下一步
+     private nextstep(){
+       this.$router.push('/confirmationlist')
      }
     
       

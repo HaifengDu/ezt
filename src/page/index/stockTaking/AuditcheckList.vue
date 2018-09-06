@@ -40,7 +40,7 @@
            <div class="temporary" slot="confirm">
              <div class="total">数量：<span>27182</span></div>
              <div class="button">
-               <div class="storage">审核不通过</div><div class="sub">审核通过</div>
+               <div class="storage">审核不通过</div><div class="sub" @click="sub">审核通过</div>
              </div>
            </div>
         </div>
@@ -98,6 +98,9 @@ export default class auditchecklist extends Vue{
       return this.list.reduce((ori,item)=>{
         return ori.uprice+item;
       },0);
+    }
+    private sub(){
+      this.$router.push('/')
     }
 
   

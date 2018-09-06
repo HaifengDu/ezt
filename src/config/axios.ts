@@ -8,7 +8,7 @@ const host = "/",
 _.extend(Axios.defaults,{
     baseURL: host,
     timeout: 300000,
-    headers: { 'Content-Type': 'application/json' },
+    headers: { 'Content-Type': 'application/json;charset=utf-8' },
     // method: 'post',
     // 跨域请求，是否带上认证信息
     withCredentials: false, // default
@@ -23,7 +23,7 @@ _.extend(Axios.defaults,{
         if(headers&&headers["Content-Type"]==="multipart/form-data"){
             return data;
         }
-        if(headers&&headers["Content-Type"]==="application/json"){
+        if(headers&&headers["Content-Type"]==="application/json;charset=utf-8"){
             if(data){
                 data.timestamp = 0; 
                 const user = store.getters.user;

@@ -7,13 +7,13 @@
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
              <i @click="query" class="fa fa-search" aria-hidden="true"></i>
-          </div>
+          </div>   
        </div>        
     </ezt-header>      
     <div class="ezt-main ezt-pk">       
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
-      </tab>   
+      </tab>     
       <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
@@ -21,21 +21,22 @@
                   <li :key="index" v-for="(item,index) in inventoryList">
                     <div @click="librarydetails('/librarydetails')">
                         <div class="state">
-                        <span><i>{{item.week}}</i>{{item.name}}</span>
-                        <span>{{tabList.getActive().status==1?'暂存':'' || tabList.getActive().status==2?'已生效':'' || tabList.getActive().status==3?'待审核':'' || tabList.getActive().status==4?'审核失败':'' }}</span>
+                        <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
+                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==2?'已生效':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
                       <div class="content">
-                          <p>盘点仓库：<span>{{item.cangku}}</span></p>
-                          <p>盘点日期：<span>{{item.date}}</span></p>
-                          <p>生成损溢：<span>{{item.sunyi}}</span></p>
-                          <p>未盘处理：<span>{{item.wpcl}}</span></p>
+                          <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
+                          <p>盘点日期：<span>{{item.busi_date}}</span></p>
+                          <p>生成损溢：<span>{{item.is_profit_loss}}</span></p>
+                          <p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p>
                       </div>
                     </div>
                     <div class="footer">
-                        <P>业务日期：<span>{{item.ywrq}}</span></P>
-                        <div v-if="tabList.getActive().status==1" class="submit" @click="submission('/confirmationlist')">提交</div>
-                        <div v-if="tabList.getActive().status==2 || tabList.getActive().status==4"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
-                        <div v-if="tabList.getActive().status==3" class="submit" @click="toexamine('./auditchecklist')">审核</div>
+                        <P>业务日期：<span>{{item.busi_date}}</span></P>
+                        <div v-if="tabList.getActive().status==0" class="submit" @click="submission('/confirmationlist')">提交</div>
+                         <!-- <div v-if="tabList.getActive().status==2" class="submit" @click="submission('/confirmationlist')">已生效</div> -->
+                        <div v-if="tabList.getActive().status==2 || tabList.getActive().status==3"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-if="tabList.getActive().status==1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
                     </div>
                   </li>
                 </ul>
@@ -43,7 +44,7 @@
           </div>
       </div>    
   </div>
-  <div>   
+  <div> 
     <router-view/>
   </div>
   <!-- 新增盘点单 -->
@@ -61,6 +62,7 @@
       </x-dialog>
   </div>
   <!-- 查询盘点单 -->
+  <transition :name="sildename">
     <div class="enquirylist" v-if="isSearch">
         <div class="content">
           <div class="warehouse">
@@ -90,7 +92,8 @@
              <p class="s_btn1" @click="toSearch">查询</p>
           </div>
        </div>
-   </div>    
+   </div>  
+ </transition>  
 </div>
 </template>
 <script lang="ts">   
@@ -106,7 +109,8 @@ import librarydetails from './LibraryDetails'
 import confirmationlist from './ConfirmationList'
 import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
-import {maskMixin} from "../../../helper/maskMixin";
+import {maskMixin} from "../../../helper/maskMixin"
+import '../../../assets/css/transition.css'
 declare var mobiscroll:any;
 @Component({
    components:{  
@@ -137,6 +141,7 @@ export default class stockTaking extends Vue{
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
+    private sildename:string = 'slide-go';
     private hideMask:()=>void;
     private showMask:()=>void;
     private orderType:any[] = [{
@@ -149,7 +154,7 @@ export default class stockTaking extends Vue{
     created() {
       this.tabList.push({
         name:"待提交",
-        status:1,
+        status:0,
         active:true,
       });    
       this.tabList.push({
@@ -159,12 +164,12 @@ export default class stockTaking extends Vue{
       });
       this.tabList.push({
         name:"待审核",
-        status:3,
+        status:1,
         active:false
       });
       this.tabList.push({
         name:"审核失败",
-        status:4,
+        status:3,
         active:false
       });
       this.pager = new Pager()
@@ -185,7 +190,7 @@ export default class stockTaking extends Vue{
     })
     private listWatch(newValue:any[],oldValue:any[]){
 
-    }
+    }  
 
 /**
  * computed demo
@@ -198,6 +203,8 @@ export default class stockTaking extends Vue{
       (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getpkList();  
+
+
     }
      //获取列表
     private getpkList(){
@@ -206,7 +213,8 @@ export default class stockTaking extends Vue{
         this.$vux.loading.show({
           text: '加载中...'
           });
-        this.inventoryList=res.data.data;
+        this.inventoryList=res.data.data[0].list;
+        // console.log(JSON.stringify(this.inventoryList))
         setTimeout(()=>{
           this.$vux.loading.hide()
           this.hideMask()
@@ -291,7 +299,6 @@ export default class stockTaking extends Vue{
 }
 .stocktaking{
   .addbtn{
-      font-size: 20px;
       i{
         margin-right: 15px;
       }

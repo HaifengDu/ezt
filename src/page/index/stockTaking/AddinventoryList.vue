@@ -41,7 +41,7 @@
           <div class="method">
               <p>盘点方式</p>
               <ul>
-                <li>手工制单</li>
+                <li @click="manualproduction('/selectinginventory')">手工制单</li>
                 <li @click="templateimport('/selectthetemplate')">模板导入</li>
                 <li @click="inventorytype('/confirmationlist')">盘点类型导入</li>
               </ul>
@@ -106,11 +106,13 @@ export default class addinventorylist extends Vue{
     private listWatch(newValue:any[],oldValue:any[]){
 
     }
-
-    
+    // 手工制单
+    manualproduction(info:string){
+        this.$router.push(info)
+    }
     //盘点类型导入
      private inventorytype(info:string){
-      this.$router.push(info)
+        this.$router.push(info)
      }
     //模板导入
      private templateimport(info:string){

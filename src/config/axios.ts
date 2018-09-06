@@ -28,8 +28,7 @@ _.extend(Axios.defaults,{
                 data.timestamp = 0; 
                 const user = store.getters.user;
                 if(user){
-                    data.store_id = user[0].store_id;
-                    console.log('-----------------'+data.store_id)
+                    data.store_id = user.auth.store_id;
                     data.tenancy_id = user.shopname;
                 }
             }

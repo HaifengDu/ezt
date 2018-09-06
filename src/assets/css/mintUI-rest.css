@@ -157,4 +157,14 @@
 .indexPop .v-modal{
   top: 45px !important;
 }
-
+/* 左侧滑动删除 */
+.good-detail-content .mint-cell-title{
+  flex:inherit
+}
+.good-detail-content .mint-cell-wrapper{
+  padding: 0;
+  display: inherit;
+}
+.good-detail-content .mint-cell-value{
+  display:inherit;
+}

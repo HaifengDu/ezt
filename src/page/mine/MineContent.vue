@@ -15,7 +15,7 @@
            <div class="mine-action">
             <div class="mine-action-title">
               <span class="mine-funds return-dc-content">资金管理</span>
-              <span class="return-dc-title">余额：<span class="ezt-money-font">￥99999</span></span>
+              <span class="return-dc-title">余额：<span class="ezt-money-font">￥{{balancAmt}}</span></span>
             </div>
             <ul class="mine-action-name">
               <li>
@@ -62,9 +62,11 @@ declare var mobiscroll:any;
 export default class Mine extends Vue{
   private user:IUser;
   private service:LoginService;
+  private balancAmt:number=0;
   
   created() {
-    this.service = LoginService.getInstance();  
+    this.service = LoginService.getInstance();     
+    this.checkBalance();
   }
   mounted(){
     
@@ -75,7 +77,17 @@ export default class Mine extends Vue{
   }
   //退出
   private logout(){
-    this.service.logout();
+    this.service.logout().then(res=>{
+      this.$router.replace('/login');
+    });
+  }
+  /**
+   * 查询余额
+   */
+  private checkBalance(){
+    this.service.checkBalance().then(res=>{
+      this.balancAmt=res.data.data[0].balance_amount
+    })
   }
    
 }

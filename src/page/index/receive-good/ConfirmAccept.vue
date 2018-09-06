@@ -33,8 +33,11 @@
         <div class="detail-acount-title">
           物料明细
         </div> 
-        <ul>
-           <li class="good-detail-content">
+        <ul> 
+          <li class="good-detail-content" > 
+            <mt-cell-swipe
+              :right="rightButtons"
+             >
               <div class="ezt-detail-good">
                   <div class="good-detail-l">
                       <div>
@@ -44,9 +47,9 @@
                           <span class="good-detail-sort">
                             ￥<span class="good-detail-sort">112</span><span>/kg</span>
                           </span>
-                           <span class="title-search-name">
-                             发：1000
-                           </span>
+                            <span class="title-search-name">
+                              发：1000
+                            </span>
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
@@ -68,8 +71,89 @@
                     </div>
                     
                   </div>
-              </div>
-           </li>
+              </div>                 
+            </mt-cell-swipe> 
+          </li> 
+          <li class="good-detail-content" > 
+            <mt-cell-swipe
+              :right="rightButtons"
+             >
+              <div class="ezt-detail-good">
+                  <div class="good-detail-l">
+                      <div>
+                          <span class="good-detail-name">猪肉
+                              <span class="good-detail-sort">（规格）</span>
+                          </span>
+                          <span class="good-detail-sort">
+                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
+                          </span>
+                            <span class="title-search-name">
+                              发：1000
+                            </span>
+                      </div>
+                      <div>
+                          <span class="good-detail-billno">编码：003222</span>
+                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="title-search-name">
+                            收：<input type="text" placeholder="10000" class="ezt-smart">
+                          </span>
+                      </div>                     
+                  </div>
+                  <div class="good-detail-r">
+                    <span class="icon-dail" @click="handlerDirect">拨</span>
+                    <div class="park-input">
+                      <!-- <span>备注：</span>
+                      <div class="remark-area">
+                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
+                      </div> -->
+                      <span class="title-search-name">备注：</span>
+                      <input type="text" class="ezt-middle">
+                    </div>
+                    
+                  </div>
+              </div>                 
+            </mt-cell-swipe> 
+          </li>          
+          <li class="good-detail-content" > 
+            <mt-cell-swipe
+              :right="rightButtons"
+             >
+              <div class="ezt-detail-good">
+                  <div class="good-detail-l">
+                      <div>
+                          <span class="good-detail-name">猪肉
+                              <span class="good-detail-sort">（规格）</span>
+                          </span>
+                          <span class="good-detail-sort">
+                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
+                          </span>
+                            <span class="title-search-name">
+                              发：1000
+                            </span>
+                      </div>
+                      <div>
+                          <span class="good-detail-billno">编码：003222</span>
+                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="title-search-name">
+                            收：<input type="text" placeholder="10000" class="ezt-smart">
+                          </span>
+                      </div>                     
+                  </div>
+                  <div class="good-detail-r">
+                    <span class="icon-dail" @click="handlerDirect">拨</span>
+                    <div class="park-input">
+                      <!-- <span>备注：</span>
+                      <div class="remark-area">
+                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
+                      </div> -->
+                      <span class="title-search-name">备注：</span>
+                      <input type="text" class="ezt-middle">
+                    </div>
+                    
+                  </div>
+              </div>                 
+            </mt-cell-swipe> 
+          </li>                   
         </ul>
           <x-dialog v-model="isDirect" class="dialog-demo">
             <div class="img-box">
@@ -126,10 +210,11 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import SlideDelete from '../../../components/SlideDelete.vue';
 declare var mobiscroll:any;
 @Component({
    components:{
-     TabItem
+     TabItem,SlideDelete
    },
    mixins:[maskMixin],
    computed:{
@@ -156,6 +241,17 @@ export default class ReceiveGood extends Vue{
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
+    private rightButtons = [
+        // {
+        //   content: 'Mark as Unread',
+        //   style: { background: 'lightgray', color: '#fff' }
+        // },
+        {
+          content: '删除',
+          style: { background: 'red', color: '#fff' },
+          handler: () => alert('delete')
+        }
+      ]
     private orderType:any=[{
       name:'仓库1',
       id:'01'
@@ -275,6 +371,9 @@ export default class ReceiveGood extends Vue{
         display: flex;
         flex-direction: column;
         padding-bottom: 10px;
+        // margin: 8px 10px;
+        // padding: 12px 10px 12px 15px;
+        background: #fff;
     }
     //物料明细结束 
     .ezt-detail-good input{
@@ -326,5 +425,5 @@ export default class ReceiveGood extends Vue{
     }
     .remark-area{
       flex: .8;
-    }
+    } 
 </style>

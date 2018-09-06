@@ -142,13 +142,4 @@ export default class ReturnGood extends Vue{
   .mint-navbar{
     display: flex;
   }
-  .ezt-add-content{
-    // position: relative;
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding-bottom: 70px;
-    width: 100%;
-    height: 100%;
-  }
-
 </style>

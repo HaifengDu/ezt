@@ -72,53 +72,53 @@ const router = new Router({
       path:"/mine",
       name:"MineContent",
       component:MineContent
-    },{
+    },
+    {
       path:"/stocktaking",
       name:"StockTaking",
       component:StockTaking,
-      children: [  //二级路由的配置
-        {
-          path: '/addinventorylist',   //新增盘点单
-          name: 'AddinventoryList',
-          component: AddinventoryList,
-        },
-        {      
-          path: '/librarydetails',   //盘库详情
-          name: 'LibraryDetails',
-          component: LibraryDetails,
-        },
-        {
-          path: '/confirmationlist',  //确认盘点单
-          name: 'ConfirmationList',
-          component: ConfirmationList,
-        },
-        {
-          path: '/realdiscentry',   //实盘录入
-          name: 'RealdiscEntry',
-          component: RealdiscEntry,
-        },
-        {
-          path: '/auditchecklist',   //审核盘点单
-          name: 'AuditcheckList',
-          component: AuditcheckList,
-        },
-        {
-          path: '/queryresult',   //查询结果
-          name: 'QueryResult',
-          component: QueryResult,
-        },
-        {
-          path: '/selectthetemplate',   //选择模板
-          name: 'SelecttheTemplate',
-          component: SelecttheTemplate,
-        },
-        {
-          path: '/selectinginventory',   //选择盘点货品
-          name: 'SelectingInventory',
-          component: SelectingInventory,
-        }
-      ]
-    },{
+    },
+    {
+      path: '/addinventorylist',   //新增盘点单
+      name: 'AddinventoryList',
+      component: AddinventoryList,
+    },
+    {      
+      path: '/librarydetails',   //盘库详情
+      name: 'LibraryDetails',
+      component: LibraryDetails,
+    },
+    {
+      path: '/confirmationlist',  //确认盘点单
+      name: 'ConfirmationList',
+      component: ConfirmationList,
+    },
+    {
+      path: '/realdiscentry',   //实盘录入
+      name: 'RealdiscEntry',
+      component: RealdiscEntry,
+    },
+    {
+      path: '/auditchecklist',   //审核盘点单
+      name: 'AuditcheckList',
+      component: AuditcheckList,
+    },
+    {
+      path: '/queryresult',   //查询结果
+      name: 'QueryResult',
+      component: QueryResult,
+    },
+    {
+      path: '/selectthetemplate',   //选择模板
+      name: 'SelecttheTemplate',
+      component: SelecttheTemplate,
+    },
+    {
+      path: '/selectinginventory',   //选择盘点货品
+      name: 'SelectingInventory',
+      component: SelectingInventory,
+    },
+    {
       path:'/addGoods',
       name:'AddGoods',
       component: AddGoods,

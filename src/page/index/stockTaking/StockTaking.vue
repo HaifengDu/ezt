@@ -44,9 +44,6 @@
           </div>
       </div>    
   </div>
-  <div> 
-    <router-view/>
-  </div>
   <!-- 新增盘点单 -->
    <div> 
       <x-dialog v-model="newlyadded" class="dialog">
@@ -180,6 +177,8 @@ export default class stockTaking extends Vue{
    
     mounted(){
        this.getpkList();
+       this.isSearch = false;
+       this.hideMask();
     }
 
   /**
@@ -453,15 +452,13 @@ export default class stockTaking extends Vue{
 }
 // 查询盘点单
 .enquirylist{
-    position: absolute;
+    position: fixed;
     top: 40px;
     left: 0;
-    z-index: 99;
+    z-index: 99999;
     width: @width;
-    height: @height;
     .content{
       width: @width;
-      height:@height;
       display: flex;
       align-items: center;
       flex-direction: column;

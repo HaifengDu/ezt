@@ -179,7 +179,7 @@ export default class ReceiveGood extends Vue{
        this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
         this.isSearch=false; 
         this.hideMask();
-      });
+      });  
     }
     //详情页跳转
     private renderUrl(info:string){

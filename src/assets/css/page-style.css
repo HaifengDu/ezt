@@ -463,7 +463,7 @@ input.ezt-middle{
   /* 页面底部按钮样式  开始 */
      .ezt-foot-temporary{
         width: 100%;
-        height: 76px;       
+        /* height: 76px;        */
         position: absolute;
         bottom: 0;                
       }
@@ -505,5 +505,28 @@ input.ezt-middle{
       .ezt-add-content.main-menu{
         height: calc(100vh - 150px);
       }
+      /**没有任何单据的时候*/
+    .done-none{
+      width: 100%;
+      height: 100%;
+      background: #F1F6FF;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+    }
+    .done-none div{
+      width: 100%;
+      height: 150px;
+      display: flex;
+      flex-direction: column-reverse;
+      background: url('../images/no_order.png') no-repeat;
+      background-size: 150px 150px;
+      background-position: 50%;
+    }
+    .done-none span{
+      font-size: 14px;
+      color: #ADBFD3;
+      letter-spacing: 0;
+    }
 
    

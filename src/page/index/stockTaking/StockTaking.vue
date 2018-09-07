@@ -17,8 +17,12 @@
       <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-                <ul class="submitted">
-                  <li :key="index" v-for="(item,index) in inventoryList">
+                <div v-if="!inventoryList" class="done-none">
+                  <div></div>
+                  <span>目前还没有任何订单</span>
+                </div>
+                <ul class="submitted" v-if="inventoryList">
+                  <li :key="index" v-for="(item,index) in inventoryList.list">
                     <div @click="librarydetails('/librarydetails')">
                         <div class="state">
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
@@ -39,8 +43,8 @@
                         <div v-if="tabList.getActive().status==1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
                     </div>
                   </li>
-                </ul>
-                <span v-if="allLoaded">已全部加载</span>
+                  <span v-if="allLoaded">已全部加载</span>
+                </ul>                
           </div>
       </div>    
   </div>
@@ -131,7 +135,7 @@ export default class stockTaking extends Vue{
     private service: StockTakingService;
     private pager:Pager;      
     private getInventoryList:INoopPromise
-    private inventoryList:any[] = [];
+    private inventoryList:{list?:any[]} = {};
     private inventoryType:any[] = [{name:'数据整理'},{name:'日盘'},{name:'月盘'},{name:'周盘'}];
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
@@ -171,7 +175,6 @@ export default class stockTaking extends Vue{
       });
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
-      this.inventoryList = [];
       this.searchParam = {};
     }
    
@@ -207,12 +210,13 @@ export default class stockTaking extends Vue{
     }
      //获取列表
     private getpkList(){
+      const status = this.tabList.getActive().status;
       this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
         this.showMask();
         this.$vux.loading.show({
           text: '加载中...'
-          });
-        this.inventoryList=res.data.data[0].list;
+        });
+        this.inventoryList = res.data.data[0];
         // console.log(JSON.stringify(this.inventoryList))
         setTimeout(()=>{
           this.$vux.loading.hide()
@@ -230,11 +234,12 @@ export default class stockTaking extends Vue{
         text:'加载中..'
       });       
       this.pager.setNext();
+      const status = this.tabList.getActive().status;
       this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
           this.allLoaded=true
         }else{
-          this.inventoryList=this.inventoryList.concat(res.data.data)
+          this.inventoryList.list=this.inventoryList.list.concat(res.data.data)
         }
         setTimeout(()=>{
           this.$vux.loading.hide()

@@ -16,7 +16,7 @@ export class StockTakingService extends BaseService{
     }     
     getInventoryList(status:string,pager:IPagerData){
         const promise = Axios.post(`${this.reqUrl}inventory/post`,{
-            "data":[{"status":"0"}],
+            "data":[{"status":status}],
             "oper":"STOCK_LIST",
             "pagination":null
         })

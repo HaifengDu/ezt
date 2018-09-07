@@ -7,27 +7,27 @@
         <div class="from-main">
             <div class="login-form">
                 <div class="login-from-item">
-                    <group>
+                    <div>
                       <div class="i-index"><img src="../assets/images/merchant.png"/></div>
                       <x-input :max="20" v-model="user.shopname" placeholder="请输入商户"></x-input>
-                    </group>
+                    </div>
                 </div>
                 <div class="login-from-item">
-                    <group>
+                    <div>
                       <div class="i-index"><i class="fa fa-user" aria-hidden="true"></i></div>
                       <x-input :max="20" v-model="user.loginname" placeholder="请输入用户名"></x-input>
-                    </group>
+                    </div>
                 </div>
                 <div class="login-from-item">
-                     <group>
+                     <div>
                       <div class="i-index"><i class="fa fa-lock" aria-hidden="true"></i></div>
                       <x-input :max="20" type="password" v-model="user.pwd" placeholder="请输入密码"></x-input>
-                    </group>
+                    </div>
                 </div>
-            </div>
-            <div class="login-btn">
-                <p @click="login">登录</p>
-            </div>
+            </div>           
+        </div>
+        <div class="login-btn">
+            <p @click="login">登录</p>
         </div>
         <div class="footer">©北京普照天星科技有限公司</div>
     </div>
@@ -62,14 +62,11 @@ export default class Login extends Vue{
 </script>
 <style lang="less" scoped>
 .login{
-    position: absolute;
+    position: relative;
     display: flex;
-    top: 0;
-    left: 0;
     align-items: center;
     flex-direction: column;
-    right: 0;
-    bottom: 0;
+    height: 100%;
   .logo{
     display: flex;
     margin-top:60px;
@@ -91,7 +88,7 @@ export default class Login extends Vue{
     }
 }
 .from-main{
-    position:absolute;
+    // position:absolute;
     bottom: 20%;
     justify-content: center;
     text-align: center;
@@ -101,7 +98,7 @@ export default class Login extends Vue{
         margin:0 auto;
         margin-bottom:40px;
         .login-from-item{
-            margin-bottom:25px;
+            margin-bottom:8px;
             position: relative;
             .i-index{
                 position: absolute;
@@ -124,8 +121,14 @@ export default class Login extends Vue{
                 outline:none;
             }
         }
-    }
-    .login-btn p{
+    }   
+  }  
+  .login-btn{
+    width: 100%;
+    position: absolute;
+    bottom: 60px;
+  }
+   .login-btn p{
         width: 90%;
         height: 50px;
         line-height: 50px;
@@ -138,12 +141,16 @@ export default class Login extends Vue{
         background-image: linear-gradient(90deg, #3C82FB 0%, #5A12CC 100%);
         box-shadow: 0 3px 10px 0 rgba(60,130,251,0.43);
     }
-  }  
   .footer{
     position: absolute;
     bottom: 20px;
     font-size: 12px;
     color: #C1CFDE;
+    margin: 0 auto;
+    width: 100%;
  }
+}
+.login-from-item>div{
+    border-bottom: 1px solid #ccc;
 }
 </style>

@@ -9,7 +9,7 @@ input{
   border: none;
   border-radius: 6px;
   height: 20px;
-  text-align: center;
+  /* text-align: center; */
   background: #FFFFFF;
 }
 /* 小号的input */

@@ -91,6 +91,9 @@ export default class stockTaking extends Vue{
     mounted(){
       
     }
+    private goBack(){
+      this.$router.back();
+    }
 }
 </script>
 <style lang="less" scoped> 

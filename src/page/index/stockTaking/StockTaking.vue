@@ -13,7 +13,7 @@
     <div class="ezt-main ezt-pk">       
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
-      </tab>     
+      </tab>       
       <div class="ezt-add-content" ref="listContainer"   v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
@@ -23,7 +23,7 @@
                 </div>
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
-                    <div @click="librarydetails(item,'/librarydetails')">
+                    <div @click="librarydetails(item)">
                         <div class="state">
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
                         <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==2?'已生效':'待生效' || tabList.getActive().status==3?'审核失败':'' }}</span>
@@ -113,6 +113,7 @@ import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
 import '../../../assets/css/transition.css'
+import queryresult from './QueryResult.vue';
 declare var mobiscroll:any;
 @Component({
    components:{  
@@ -139,6 +140,7 @@ export default class stockTaking extends Vue{
     private getDataSorting:INoopPromise  //获取数据整理
     private getInventoryType:INoopPromise  //获取盘点类型
     private inventoryList:{list?:any[]} = {};//盘库列表
+    private inventoryDetails:any[] = [];  //盘库详情
     private tabList:TabList = new TabList();
     private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
@@ -222,8 +224,6 @@ export default class stockTaking extends Vue{
       (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getpkList();  
-
-
     }
      //获取列表
     private getpkList(){
@@ -269,11 +269,19 @@ export default class stockTaking extends Vue{
       }     
     }
     // 盘库详情
-    private librarydetails(info:string,item:any){
-      this.$router.push(info)
-      // const bill_type=this.inventoryType
-      this.service.getLibraryDetails(item.id,item.audit_status).then(res=>{  
-        
+    private librarydetails(item:any,audit_status:number){
+      this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+        this.$router.push({
+          name:'LibraryDetails',
+          params:{
+              warehouse_name:item.warehouse_name,
+              busi_date:item.busi_date,
+              bill_type_name:item.bill_type_name,
+              stock_count_mode_name:item.stock_count_mode_name
+            }});
+          this.inventoryList = res.data.data;
+          console.log(JSON.stringify(this.inventoryList))
+        //this.inventoryDetails=this.inventoryDetails.concat(res.data.data)
       },err=>{
           this.$toasted.show(err.message)
       })

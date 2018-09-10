@@ -1,7 +1,7 @@
 <!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='收货单查询'>
+    <ezt-header :back="true" title='收货单查询' @goBack="goBack">
        <div slot="action">
        </div>
     </ezt-header>    
@@ -136,6 +136,9 @@ export default class ReceiveGood extends Vue{
      */
     private confirmReceive(){
       console.log('确认收货！')
+    }
+    private goBack(){
+      this.$router.push('/ReceiveGood');
     }
    
 }

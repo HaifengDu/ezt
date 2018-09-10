@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist,XNumber,Search,InlineXNumber,Rater } from 'vux'
+import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist,XNumber,Search,InlineXNumber,Rater,Confirm} from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -136,3 +136,4 @@ Vue.use(InfiniteScroll);//更多加载
 Vue.component("x-dialog", Vue.extend(XDialog));
 Vue.component("x-number",Vue.extend(XNumber));
 Vue.component(CellSwipe.name,Vue.extend(CellSwipe));
+Vue.component('confirm',Vue.extend(Confirm));//确认弹框

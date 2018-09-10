@@ -1,7 +1,7 @@
 <!--收货修改页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='收货'>
+    <ezt-header :back="true" title='收货' @goBack="goBack">
        <div slot="action">
        </div>
     </ezt-header>    
@@ -285,6 +285,9 @@ export default class ReceiveGood extends Vue{
      */
     private handlerDirect(){
       this.isDirect = true;
+    }
+    private goBack(){
+      this.$router.push('/receiveGood');
     }
 
     // private getGoodList(){

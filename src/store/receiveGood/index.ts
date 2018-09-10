@@ -7,14 +7,19 @@ Vue.use(VueX);
 const receiveGood:Module<any,IRootState> = {
     namespaced:true,
     state:{
-        goodList:[]
+        goodList:[],
+        addReceiveGoodInfo:{}//添加采购入库单 单据信息
     },
     getters:{
-        goodList:state=>state.goodList
+        // goodList:state=>state.goodList,
+        addReceiveGoodInfo: state=> state.addReceiveGoodInfo
     },
     mutations:{
-        [ReceiveGoodType.UPDATE_GOODLIST](state,goodList:any[]){
-            state.goodList = goodList;
+        // [ReceiveGoodType.UPDATE_GOODLIST](state,goodList:any[]){
+        //     state.goodList = goodList;
+        // }
+         [ReceiveGoodType.ADD_RECEIVEGOODINFO](state,addReceiveGoodInfo:{}){
+            state.addReceiveGoodInfo = addReceiveGoodInfo;
         }
     },
     actions:{

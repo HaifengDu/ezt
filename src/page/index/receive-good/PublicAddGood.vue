@@ -154,7 +154,7 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
-   private userpp:any[];
+  private userpp:any[];
   private goodList:any[]=[{
     id:1,
     name:'草鱼半成品',
@@ -188,11 +188,11 @@ export default class AddGood extends Vue{
           id:2,
           name:'全部'
         },{
-          id:1-2,
-          name:'速冻类'
+          id:21,
+          name:'速冻类',
         },{
-          id:1-3,
-          name:'演示品项'
+          id:22,
+          name:'演示品项',
         }]
       },{
         id:3,
@@ -278,7 +278,7 @@ export default class AddGood extends Vue{
     console.log(this.selectedGood,'111')
   }
   private goBack(){
-    this.$router.back();
+    this.$router.push('/addReceiveGood');
   }
 }
 </script>

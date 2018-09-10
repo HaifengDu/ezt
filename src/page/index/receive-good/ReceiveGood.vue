@@ -5,7 +5,7 @@
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="收货">
+    <ezt-header :back="true" title="收货" @goBack="goBack">
        <div slot="action">
          <div class="add">
            <span class='ezt-action-point' @click="renderUrl('/addReceiveGood')">
@@ -259,6 +259,9 @@ export default class ReceiveGood extends Vue{
       this.isSearch = false;
       this.hideMask();
       this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
+    }
+    private goBack(){
+      this.$router.push('/');
     }
    
 }

@@ -2,7 +2,7 @@
 <template>
 <div>
    <div class="ezt-page-con stocktaking">
-    <ezt-header :back="true" title="盘库">
+    <ezt-header :back="true" title="盘库" @goBack="goBack">
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
@@ -23,7 +23,7 @@
                 </div>
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
-                    <div @click="librarydetails('/librarydetails')">
+                    <div @click="librarydetails(item,'/librarydetails')">
                         <div class="state">
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
                         <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==2?'已生效':'待生效' || tabList.getActive().status==3?'审核失败':'' }}</span>
@@ -212,7 +212,9 @@ export default class stockTaking extends Vue{
 /**
  * computed demo
  */ 
-    
+    private goBack(){
+      this.$router.back();
+    }
     //tab页面切换
     private tabClick(index:number){
       this.tabList.setActive(index);
@@ -267,10 +269,10 @@ export default class stockTaking extends Vue{
       }     
     }
     // 盘库详情
-    private librarydetails(info:string,id:number,audit_status:number){
+    private librarydetails(info:string,item:any){
       this.$router.push(info)
       // const bill_type=this.inventoryType
-      this.service.getLibraryDetails(id,audit_status).then(res=>{  
+      this.service.getLibraryDetails(item.id,item.audit_status).then(res=>{  
         
       },err=>{
           this.$toasted.show(err.message)

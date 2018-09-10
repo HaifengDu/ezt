@@ -1,7 +1,7 @@
 <!--选择模板-->
 <template>
    <div class="ezt-page-con selectthetemplate">
-    <ezt-header :back="true" title="选择模板">
+    <ezt-header :back="true" title="选择模板" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -56,6 +56,9 @@ export default class selectthetemplate extends Vue{
     mounted(){
        this.getInventoryDetails();
 
+    }
+    private goBack(){
+      this.$router.back();
     }
 
   /**

@@ -280,7 +280,6 @@ export default class stockTaking extends Vue{
               bill_type_name:item.bill_type_name,
               stock_count_mode_name:item.stock_count_mode_name
             }});
-          // debugger
           this.inventoryDetails = res.data.data;
           this.setInventoryDetails(this.inventoryDetails); 
       },err=>{
@@ -345,13 +344,17 @@ export default class stockTaking extends Vue{
 </script>
 <style lang="less" scoped> 
 @padding: 5px 6px;
-@width:100%;
+@width:100%;  
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
 .input-canlendar .ezt-canlendar{
   font-size: 16px!important;
   width: 100px!important;
+}
+.ezt-pk,.ezt-add-content{
+  padding-bottom: 0;
+  
 }
 .stocktaking{
   .addbtn{

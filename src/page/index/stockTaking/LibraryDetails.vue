@@ -150,13 +150,14 @@ export default class stockTaking extends Vue{
     z-index: 99;
     width: @width;
     height: @height;
+    background-color: #F1F6FF;
     .content{
       width: @width;
       height:@height;
-      position: absolute;
       display: flex;
       align-items: center;
       flex-direction: column;
+      margin-top: 10px;
       .pkdetails{
         display: flex;   
         flex-direction: column;
@@ -164,7 +165,6 @@ export default class stockTaking extends Vue{
         border-radius: 4px;
         width: 95%;
         background-color:@background-color;
-        position: absolute;
         .librarytype{
           ul{
             text-align: left;
@@ -188,6 +188,7 @@ export default class stockTaking extends Vue{
            }
         }
         .inventory{
+          background-color: @background-color;
            .pkmx{
               position: relative;
               .line{

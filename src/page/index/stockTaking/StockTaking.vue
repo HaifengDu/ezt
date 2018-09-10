@@ -121,17 +121,17 @@ declare var mobiscroll:any;
       
    },   
    mixins:[maskMixin],
-   computed:{
+  computed:{
      ...mapGetters({
-      //  'inventoryList':'stockTaking/inventoryList'
+       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },
-   
-  //  methods:{
-  //    ...mapActions({
-  //      'getInventoryList':'stockTaking/getInventoryList'
-  //    }),
-  //  }   
+   methods:{ 
+     ...mapActions({
+       'setInventoryDetails':"stockTaking/setInventoryDetails",
+     }),
+
+   }   
 })
 export default class stockTaking extends Vue{
     private service: StockTakingService;
@@ -140,7 +140,8 @@ export default class stockTaking extends Vue{
     private getDataSorting:INoopPromise  //获取数据整理
     private getInventoryType:INoopPromise  //获取盘点类型
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[] = [];  //盘库详情
+    private inventoryDetails:any[] = [];
+    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private tabList:TabList = new TabList();
     private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
@@ -279,13 +280,13 @@ export default class stockTaking extends Vue{
               bill_type_name:item.bill_type_name,
               stock_count_mode_name:item.stock_count_mode_name
             }});
-          this.inventoryList = res.data.data;
-          console.log(JSON.stringify(this.inventoryList))
-        //this.inventoryDetails=this.inventoryDetails.concat(res.data.data)
+          // debugger
+          this.inventoryDetails = res.data.data;
+          this.setInventoryDetails(this.inventoryDetails); 
       },err=>{
           this.$toasted.show(err.message)
       })
-    }   
+    }     
     // 数据整理  
     private datasorting(){
       this.service.getDataSorting().then(res=>{  

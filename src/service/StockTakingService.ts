@@ -9,7 +9,7 @@ import store from "../store"
 import { IPagerData } from "../interface/IPagerData";
 export class StockTakingService extends BaseService{   
     private static _instance: StockTakingService;
-    private loginService:LoginService;
+    private loginService:LoginService;  
     private constructor() {      
         super(ERequestType.AppOrder)
         this.loginService = LoginService.getInstance();
@@ -33,8 +33,6 @@ export class StockTakingService extends BaseService{
             "oper":"STOCK_DETAIL",
             "pagination":null
         }).then(res=>{   
-            // const details = res.data.data[0];
-            // console.log(JSON.stringify(details))
             return Promise.resolve(res);
         });
     }

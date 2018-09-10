@@ -7,14 +7,19 @@ Vue.use(VueX);
 const stockTaking:Module<any,IRootState> = {
     namespaced:true,
     state:{
-        inventoryList:[]
+        inventoryList:[],  //盘库列表
+        inventoryDetails:[], //盘库详情
     },
     getters:{
-        inventoryList:state=>state.inventoryList
+        inventoryList:state=>state.inventoryList,
+        inventoryDetails:state=>state.inventoryDetails
     },
     mutations:{
         [RootType.PK_GOODLIST](state,inventoryList:any[]){
             state.inventoryList = inventoryList;
+        },
+        [RootType.PK_Details](state,inventoryDetails:any[]){
+            state.inventoryDetails = inventoryDetails;
         }
     },
     actions:{

@@ -60,12 +60,12 @@ import LibraryDetailService from '../../../service/LibraryDetailService'
    },   
    computed:{
      ...mapGetters({
-       'inventoryDetails':'libraryDetails/inventoryDetails'
+      //  'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-       'getInventoryDetails':'libraryDetails/getInventoryDetails'
+      //  'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   

@@ -20,7 +20,7 @@ export class StockTakingService extends BaseService{
             "data":[{"status":status}],
             "oper":"STOCK_LIST",
             "pagination":null
-        }).then(res=>{           
+        }).then(res=>{              
             return Promise.resolve(res);
         });
         //const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
@@ -29,10 +29,12 @@ export class StockTakingService extends BaseService{
     //盘库详情
     getLibraryDetails(id:number,audit_status:number){
         return Axios.post(`${this.reqUrl}inventory/post`,{
-            "data":[{"id":id,"audit_status":audit_status}],   //audit_status单据状态
+            "data":[{"id":id,"audit_status":0}],   //audit_status单据状态
             "oper":"STOCK_DETAIL",
             "pagination":null
-        }).then(res=>{           
+        }).then(res=>{   
+            // const details = res.data.data[0];
+            // console.log(JSON.stringify(details))
             return Promise.resolve(res);
         });
     }

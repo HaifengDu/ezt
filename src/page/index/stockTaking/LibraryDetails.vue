@@ -1,7 +1,7 @@
 <!--盘库详情-->
 <template>
 <div class="ezt-page-con librarydetails">
-    <ezt-header :back="true" title="盘库详情">
+    <ezt-header :back="true" title="盘库详情" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -12,11 +12,11 @@
               <div class="librarytype">
                 <ul>
                   <li>
-                      <div><p>盘点仓库：<span>{{wd}}</span></p></div>
-                      <div><p>盘点日期：<span>{{sad}}</span></p></div>
-                      <div><p>盘库方式：<span>{{sadasd}}</span></p></div>
-                      <div><p>盘点类型：<span>{{asdsd}}</span></p></div>
-                      <div><p>未盘处理：<span>{{sadasd}}</span></p></div>
+                      <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
+                      <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
+                      <div><p>盘库方式：<span></span></p></div>
+                      <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
+                      <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                   </li>
                 </ul>
               </div>
@@ -27,11 +27,18 @@
                       </div>
                   </div>
                   <ul>
-                    <li :key="index" v-for="(item,index) in inventoryDetails">
-                      <p class="name">{{item.name}}<span class="code">编码：<em>{{item.code}}</em></span></p>
-                      <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmje}}</span></p></div>
-                      <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
+                    <!-- <li :key="index" v-for="(item,index) in inventoryDetails">
+                      <p class="name">{{item.material_name}}<span class="code">编码：<em>{{item.material_num}}</em></span></p>
+                      <div><p>规格：<span>{{item.material_model}}</span></p><p>账面数量：<span>{{item.acc_qty}}</span></p></div>
+                      <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty}}</span></p></div>
                       <div><p>整箱数量：<span>{{item.zxsl}}</span></p><p>散装数量：<span>{{item.szsl}}</span></p></div>
+                    </li> -->
+                     <li :key="index" v-for="(item,index) in inventoryDetails">
+                      <p class="name">{{item.material_name}}</p>
+                      <div><p>编码：<span>{{item.material_num}}</span></p><p>规格：<span>{{item.material_model}}</span></p></div>
+                      <div><p>账面数量：<span>{{item.acc_qty}}</span></p><p>理论库存：<span>{{item.thery_qty}}</span></p></div>
+                      <div><p>理论消耗：<span>{{item.consume_qty}}</span></p><p>采购单位：<span>{{item.pur_conversion}}</span></p></div>
+                      <div><p>库存主单位：<span>{{item.disperse_num}}</span></p><p>消耗单位：<span>{{item.consume_num}}</span></p></div>
                     </li>
                   </ul>
               </div>
@@ -70,16 +77,25 @@ export default class stockTaking extends Vue{
     private list:any[] = [];
     private inventoryDetails:any[];
     private getLibraryDetails:INoopPromise;
+    private warehouse_name:string;  
+    private busi_date:string;  
+    private bill_type_name:string;
+    private stock_count_mode_name:string;
     
     
     created() {
-      
+      this.service = StockTakingService.getInstance();
+      this.warehouse_name = this.$route.params.warehouse_name
+      this.busi_date = this.$route.params.busi_date
+      this.bill_type_name = this.$route.params.bill_type_name
+      this.stock_count_mode_name = this.$route.params.stock_count_mode_name
     }
 
     mounted(){
-      this.getLibraryDetails();
+      
     }
 
+    
   /**
    * watch demo
    */
@@ -88,6 +104,9 @@ export default class stockTaking extends Vue{
     })
     private listWatch(newValue:any[],oldValue:any[]){
 
+    }
+    private goBack(){
+      this.$router.back();
     }
 
     /**
@@ -98,6 +117,8 @@ export default class stockTaking extends Vue{
           return ori.uprice+item;
         },0);
       }
+  
+     
 
   
       

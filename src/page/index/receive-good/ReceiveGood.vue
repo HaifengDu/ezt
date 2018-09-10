@@ -176,7 +176,7 @@ export default class ReceiveGood extends Vue{
 
     mounted(){      
       this.getList();
-       this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
+      this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
         this.isSearch=false; 
         this.hideMask();
       });  

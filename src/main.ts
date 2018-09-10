@@ -1,5 +1,6 @@
 import "./config";
 import "./filter";
+import "./directive";
 import "./common/Extends";
 import '../src/assets/css/page-style.css'
 import '../src/assets/css/global.css'

@@ -19,7 +19,6 @@ export class LoginService extends BaseService{
     private constructor() {
         super(ERequestType.AppOrder)
     }
-    
     private check(user:IUser){
         if(!user.shopname){
             return new ErrorMsg(false,"商户名不能为空");

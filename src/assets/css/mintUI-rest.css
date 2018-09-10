@@ -42,6 +42,11 @@
   border-top:none!important;
 }
 /*盘库模块待提交*/
+.stocktaking .vux-tab{
+  position: fixed;
+  width: 100%;
+  z-index: 99;
+}
 .ezt-pk .vux-swiper,.ezt-pk .vux-slider{
    height: 100% !important;
    overflow: scroll !important;
@@ -61,6 +66,7 @@
   font-size: 16px;
   color: #395778;
 }
+
 /*选择模板*/
 .selectthetemplate .vux-checklist-label-left{
   text-align: left;

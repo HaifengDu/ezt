@@ -318,12 +318,7 @@ export default class stockTaking extends Vue{
     private addinventorylist(info:string){
        this.newlyadded = false
        this.$router.push(info)
-      //  const bill_type=this.inventoryType
-      //  this.service.getInventoryType(bill_type as string).then(res=>{  
-          
-      //   },err=>{
-      //       this.$toasted.show(err.message)
-      //   })
+     
     }
     //查询盘点单
     private query(){
@@ -357,6 +352,7 @@ export default class stockTaking extends Vue{
   
 }
 .stocktaking{
+  background-color: #F1F6FF;
   .addbtn{
       i{
         margin-right: 15px;

@@ -1,7 +1,7 @@
 <!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='添加采购入库单'>
+    <ezt-header :back="true" title='添加采购入库单' @goBack="goBack">
        <div slot="action">
        </div>
     </ezt-header>    
@@ -41,25 +41,25 @@
           <li>
             <!-- <span class="title-search-name">选择物料：</span> -->
             <span class="title-search-name">选择物料：</span>
-            <span class="title-search-right" @click="renderUrl('/addGoods')">
+            <span class="title-search-right" @click="renderUrl('/publicAddGood')">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
             
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content">
-              <div class="ezt-detail-good">
+           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
+              <div class="ezt-detail-good" >
                   <div class="good-detail-l">
                       <div>
-                          <span class="good-detail-name">猪肉
+                          <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
                           </span>
                           <span class="good-detail-sort">￥
                             <input type="number" class="good-detail-sort ezt-smart" placeholder="11.001">
-                            <span>/kg</span>
+                            <span>/{{item.utilname}}</span>
                           </span>
-                           <input type="number" placeholder="3" class="ezt-smart">
+                           <input type="number" placeholder="3" class="ezt-smart" v-model="item.num">
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
@@ -144,7 +144,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
+       'selectedGood':'publicAddGood/selectedGood'
      })
    },
   //  methods:{
@@ -166,6 +166,7 @@ export default class ReceiveGood extends Vue{
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
+    private selectedGood:any[];//store中selectedGood的值
     private orderType:any[] = [{
       name:"合同采购单",
       type:"q"
@@ -177,6 +178,7 @@ export default class ReceiveGood extends Vue{
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
        this.goodList = [];
+       console.log(this.selectedGood,'999999');
       //  this.getGoodList();
     }
 
@@ -207,6 +209,9 @@ export default class ReceiveGood extends Vue{
      //选择物料
     private renderUrl(info:string){
       this.$router.push(info);
+    }
+    private goBack(){
+      this.$router.back();
     }
 
     // private getGoodList(){

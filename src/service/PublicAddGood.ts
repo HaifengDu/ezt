@@ -1,9 +1,9 @@
 import { BaseService } from "./BaseService";//接口请求的地址
 import { ERequestType } from "../enum/ERequestType";//遍历请求接口的几个前缀
 import Axios from "axios";
-export class AddGoodService extends BaseService{
+export class PublicAddGood extends BaseService{
 
-    private static _instance: AddGoodService;
+    private static _instance: PublicAddGood;
     private constructor() {
         super(ERequestType.AppOrder)
     }
@@ -17,7 +17,7 @@ export class AddGoodService extends BaseService{
         return promise;
     }
     static createInstance() {
-        AddGoodService.getInstance();
+        PublicAddGood.getInstance();
     }
 
     static getInstance() {
@@ -26,4 +26,4 @@ export class AddGoodService extends BaseService{
 
 }
 
-export default AddGoodService;
+export default PublicAddGood;

@@ -37,7 +37,8 @@ export default class Header extends Vue{
     custom:boolean;
 
     goBack(){
-        this.$router.back();
+        this.$emit('goBack');
+        // this.$router.back();
     }
 }
 </script>

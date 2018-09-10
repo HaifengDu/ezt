@@ -1,7 +1,7 @@
 <!--查询结果-->
 <template>
 <div class="ezt-page-con queryresult">
-    <ezt-header :back="true" title="查询结果">
+    <ezt-header :back="true" title="查询结果" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -61,6 +61,9 @@ export default class queryresult extends Vue{
 
     mounted(){
       
+    }
+    private goBack(){
+      this.$router.back();
     }
 
     // 盘库详情

@@ -2,7 +2,7 @@
 <template>
 <div>
    <div class="ezt-page-con stocktaking">
-    <ezt-header :back="true" title="盘库">
+    <ezt-header :back="true" title="盘库" @goBack="goBack">
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
@@ -23,10 +23,10 @@
                 </div>
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
-                    <div @click="librarydetails('/librarydetails')">
+                    <div @click="librarydetails(item,'/librarydetails')">
                         <div class="state">
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
-                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==2?'已生效':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
+                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==2?'已生效':'待生效' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
                       <div class="content">
                           <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
@@ -38,9 +38,9 @@
                     <div class="footer">
                         <P>业务日期：<span>{{item.busi_date}}</span></P>
                         <div v-if="tabList.getActive().status==0" class="submit" @click="submission('/confirmationlist')">提交</div>
+                        <div v-if="tabList.getActive().status==1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
                          <!-- <div v-if="tabList.getActive().status==2" class="submit" @click="submission('/confirmationlist')">已生效</div> -->
                         <div v-if="tabList.getActive().status==2 || tabList.getActive().status==3"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
-                        <div v-if="tabList.getActive().status==1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
                     </div>
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -57,6 +57,7 @@
               <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
             </div>
             <ul>
+              <li @click="datasorting"><i></i>数据整理</li>
               <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist('/addinventorylist')"><i></i>{{type.name}}</li>
             </ul>
         </div>
@@ -134,10 +135,12 @@ declare var mobiscroll:any;
 export default class stockTaking extends Vue{
     private service: StockTakingService;
     private pager:Pager;      
-    private getInventoryList:INoopPromise
-    private inventoryList:{list?:any[]} = {};
-    private inventoryType:any[] = [{name:'数据整理'},{name:'日盘'},{name:'月盘'},{name:'周盘'}];
+    private getInventoryList:INoopPromise  //获取盘库列表
+    private getDataSorting:INoopPromise  //获取数据整理
+    private getInventoryType:INoopPromise  //获取盘点类型
+    private inventoryList:{list?:any[]} = {};//盘库列表
     private tabList:TabList = new TabList();
+    private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
@@ -157,21 +160,33 @@ export default class stockTaking extends Vue{
         name:"待提交",
         status:0,
         active:true,
-      });    
+      });   
+      this.tabList.push({
+        name:"待审核",
+        status:1,
+        active:false
+      }); 
       this.tabList.push({
         name:"待/已生效",
         status:2,
         active:false
       });
       this.tabList.push({
-        name:"待审核",
-        status:1,
-        active:false
-      });
-      this.tabList.push({
         name:"审核失败",
         status:3,
         active:false
+      });
+      this.inventoryType.push({
+        name:"日盘",
+        bill_type:'daily_inventory'
+      });
+      this.inventoryType.push({
+        name:"周盘",
+        bill_type:'week_inventory'
+      });
+      this.inventoryType.push({
+        name:"月盘",
+        bill_type:'period_inventory'
       });
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
@@ -197,7 +212,9 @@ export default class stockTaking extends Vue{
 /**
  * computed demo
  */ 
-    
+    private goBack(){
+      this.$router.back();
+    }
     //tab页面切换
     private tabClick(index:number){
       this.tabList.setActive(index);
@@ -251,9 +268,24 @@ export default class stockTaking extends Vue{
       this.pager.setLimit(20)
       }     
     }
-    private librarydetails(info:string){
+    // 盘库详情
+    private librarydetails(info:string,item:any){
       this.$router.push(info)
+      // const bill_type=this.inventoryType
+      this.service.getLibraryDetails(item.id,item.audit_status).then(res=>{  
+        
+      },err=>{
+          this.$toasted.show(err.message)
+      })
     }   
+    // 数据整理  
+    private datasorting(){
+      this.service.getDataSorting().then(res=>{  
+         console.log("数据整理")
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
     // 提交页面
     private submission(info:string){
       this.$router.push(info)
@@ -261,6 +293,11 @@ export default class stockTaking extends Vue{
     //实盘录入
     private realdiscentry(info:string){
       this.$router.push(info)
+      this.service.getRealdiscEntry().then(res=>{  
+          console.log("1111111")
+      },err=>{
+          this.$toasted.show(err.message)
+      })
     }
     //审核
     private toexamine(info:string){
@@ -273,6 +310,12 @@ export default class stockTaking extends Vue{
     private addinventorylist(info:string){
        this.newlyadded = false
        this.$router.push(info)
+      //  const bill_type=this.inventoryType
+      //  this.service.getInventoryType(bill_type as string).then(res=>{  
+          
+      //   },err=>{
+      //       this.$toasted.show(err.message)
+      //   })
     }
     //查询盘点单
     private query(){

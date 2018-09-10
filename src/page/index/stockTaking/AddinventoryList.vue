@@ -2,7 +2,7 @@
 <template>
  <div>
    <div class="ezt-page-con addinventorylist">
-    <ezt-header :back="true" title="新增盘库单">
+    <ezt-header :back="true" title="新增盘库单" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -105,6 +105,9 @@ export default class addinventorylist extends Vue{
     })
     private listWatch(newValue:any[],oldValue:any[]){
 
+    }
+    private goBack(){
+      this.$router.back();
     }
     // 手工制单
     manualproduction(info:string){

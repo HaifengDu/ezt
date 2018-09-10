@@ -12,11 +12,11 @@
               <div class="librarytype">
                 <ul>
                   <li>
-                      <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
-                      <div><p>盘点日期：<span>2017-07-11</span></p></div>
-                      <div><p>盘库方式：<span>模板导入</span></p></div>
-                      <div><p>盘点类型：<span>日盘</span></p></div>
-                      <div><p>未盘处理：<span>按当前库存量处理</span></p></div>
+                      <div><p>盘点仓库：<span>{{wd}}</span></p></div>
+                      <div><p>盘点日期：<span>{{sad}}</span></p></div>
+                      <div><p>盘库方式：<span>{{sadasd}}</span></p></div>
+                      <div><p>盘点类型：<span>{{asdsd}}</span></p></div>
+                      <div><p>未盘处理：<span>{{sadasd}}</span></p></div>
                   </li>
                 </ul>
               </div>
@@ -47,29 +47,29 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import LibraryDetailService from '../../../service/LibraryDetailService'
+import StockTakingService from '../../../service/StockTakingService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       'inventoryDetails':'libraryDetails/inventoryDetails'
+       
      }) 
    },
    methods:{ 
      ...mapActions({
-       'getInventoryDetails':'libraryDetails/getInventoryDetails'
+      
      })
 
    }   
 })  
 export default class stockTaking extends Vue{
     private pager:Pager;   
-    private service: LibraryDetailService;
+    private service: StockTakingService;
     private list:any[] = [];
     private inventoryDetails:any[];
-    private getInventoryDetails:INoopPromise;
+    private getLibraryDetails:INoopPromise;
     
     
     created() {
@@ -77,7 +77,7 @@ export default class stockTaking extends Vue{
     }
 
     mounted(){
-      this.getInventoryDetails();
+      this.getLibraryDetails();
     }
 
   /**
@@ -125,7 +125,7 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       .pkdetails{
-        display: flex;
+        display: flex;   
         flex-direction: column;
         justify-content: flex-start;
         border-radius: 4px;

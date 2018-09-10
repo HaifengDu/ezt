@@ -21,7 +21,7 @@ import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
-import SelectingInventory from '@/page/index/stockTaking/common/SelectingInventory.vue'
+import SelectingInventory from '@/page/index/stockTaking/SelectingInventory.vue'
 import ChangePsd from '@/page/mine/ChangePassword.vue';
 Vue.use(Router)
 

@@ -1,7 +1,7 @@
 <!--确认盘点单-->
 <template>
 <div class="ezt-page-con confirmationlist">
-    <ezt-header :back="true" title="确认盘点单">
+    <ezt-header :back="true" title="确认盘点单"  @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -84,6 +84,9 @@ export default class stockTaking extends Vue{
     private listWatch(newValue:any[],oldValue:any[]){
 
     }
+    private goBack(){
+      this.$router.back();
+    }
 
     /**
      * computed demo
@@ -114,6 +117,7 @@ export default class stockTaking extends Vue{
     z-index: 99;
     width: @width;
     height: @height;
+    background-color: #F1F6FF;
     .content{
       width: @width;
       height:@height;

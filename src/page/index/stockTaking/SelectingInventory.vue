@@ -2,7 +2,7 @@
 <template>
 <div>
    <div class="ezt-page-con selectinginventory">
-    <ezt-header :back="true" title="选择盘点货品">
+    <ezt-header :back="true" title="选择盘点货品"  @goBack="goBack">
        <div slot="action">
            <div class="addbtn">
              <i @click="query" class="fa fa-search" aria-hidden="true"></i>
@@ -73,13 +73,13 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import ErrorMsg from "../../model/ErrorMsg"
+import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../../common/Pager'
+import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
-import { INoop, INoopPromise } from '../../../../helper/methods'
-import LibraryDetailService from '../../../../service/LibraryDetailService'
-import '../../../../assets/css/transition.css'
+import { INoop, INoopPromise } from '../../../helper/methods'
+import LibraryDetailService from '../../../service/LibraryDetailService'
+import '../../../assets/css/transition.css'
 @Component({  
    components:{  
       
@@ -120,6 +120,9 @@ export default class selectinginventory extends Vue{
     })
     private listWatch(newValue:any[],oldValue:any[]){
 
+    }
+    private goBack(){
+      this.$router.back();
     }
 
     /**

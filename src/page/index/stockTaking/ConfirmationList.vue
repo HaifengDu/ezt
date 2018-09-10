@@ -114,6 +114,7 @@ export default class stockTaking extends Vue{
     z-index: 99;
     width: @width;
     height: @height;
+    background-color: #F1F6FF;
     .content{
       width: @width;
       height:@height;

@@ -1,7 +1,7 @@
 <!--审核盘点单-->
 <template>
 <div class="ezt-page-con auditchecklist">
-    <ezt-header :back="true" title="审核盘点单">
+    <ezt-header :back="true" title="审核盘点单" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -84,6 +84,11 @@ export default class auditchecklist extends Vue{
     mounted(){
       this.getInventoryDetails();
     }
+
+    private goBack(){
+      this.$router.back();
+    }
+   
 
   /**
    * watch demo

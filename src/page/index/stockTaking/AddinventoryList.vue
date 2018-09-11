@@ -11,10 +11,10 @@
        <div class="content">
           <div class="store">  
             <group>
-              <x-input title='门店名称' text-align="right" disabled  v-model="disabledValue">{{disabledValue}}</x-input>
-              <x-input title='盘点日期' text-align="right" disabled  v-model="value2">{{value2}}</x-input>
+              <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>
+              <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
               <x-input title='盘点类型' text-align="right" disabled  v-model="value3">{{value3}}</x-input>
-            </group>
+            </group>    
           </div>
           <div class="warehouse">
               <ul>
@@ -57,13 +57,16 @@ import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import IUser from "../../../interface/IUserModel"
+import LoginService from "../../../service/LoginService"
+import commonService from '../../../service/commonService.js';
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       
+       "user":"user"
      }) 
    },
    methods:{ 
@@ -74,8 +77,8 @@ import { INoop, INoopPromise } from '../../../helper/methods'
    }   
 })  
 export default class addinventorylist extends Vue{
-    private disabledValue:string = '黄焖鸡';
-    private value2:string = '2018-08-29';
+    private service:LoginService;
+    private user:IUser;
     private value3:string = '日盘';
     private warehouseType:any[] = [{
       name:"仓库A",
@@ -92,7 +95,7 @@ export default class addinventorylist extends Vue{
       type:"m"
     }];
     created() {
-      
+       this.service = LoginService.getInstance();  
     }
 
     mounted(){

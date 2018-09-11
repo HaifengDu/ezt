@@ -26,21 +26,21 @@
                     <div @click="librarydetails(item)">
                         <div class="state">
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
-                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==2?'已生效':'待生效' || tabList.getActive().status==3?'审核失败':'' }}</span>
+                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || item.is_stock_valid == 1?'已生效':''  ||item.is_stock_valid == null?'待生效':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
                       <div class="content">
                           <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
                           <p>盘点日期：<span>{{item.busi_date}}</span></p>
-                          <p>生成损溢：<span>{{item.is_profit_loss}}</span></p>
+                          <p>生成损溢：<span v-if="item.is_profit_loss === 1">是</span><span v-if="item.is_profit_loss === 0">否</span></p>
                           <p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p>
                       </div>
                     </div>
                     <div class="footer">
                         <P>业务日期：<span>{{item.busi_date}}</span></P>
-                        <div v-if="tabList.getActive().status==0" class="submit" @click="submission('/confirmationlist')">提交</div>
-                        <div v-if="tabList.getActive().status==1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
-                         <!-- <div v-if="tabList.getActive().status==2" class="submit" @click="submission('/confirmationlist')">已生效</div> -->
-                        <div v-if="tabList.getActive().status==2 || tabList.getActive().status==3"  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-if="tabList.getActive().status === 0" class="submit" @click="submission('/confirmationlist')">提交</div>
+                        <div v-if="tabList.getActive().status === 1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
+                        <div v-if="tabList.getActive().status === 2 && item.is_stock_valid === null"  class="submit" @click="realdiscentry('/realdiscentry')">生效</div>
+                        <div v-if="item.is_stock_valid === 1 || tabList.getActive().status === 3 "  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
                     </div>
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -58,7 +58,7 @@
             </div>
             <ul>
               <li @click="datasorting"><i></i>数据整理</li>
-              <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist('/addinventorylist')"><i></i>{{type.name}}</li>
+              <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist(type)"><i></i>{{type.name}}</li>
             </ul>
         </div>
       </x-dialog>
@@ -165,21 +165,21 @@ export default class stockTaking extends Vue{
         active:true,
       });   
       this.tabList.push({
-        name:"待审核",
-        status:1,
-        active:false
-      }); 
-      this.tabList.push({
         name:"待/已生效",
         status:2,
         active:false
       });
       this.tabList.push({
+        name:"待审核",
+        status:1,
+        active:false
+      }); 
+      this.tabList.push({
         name:"审核失败",
         status:3,
         active:false
-      });
-      this.inventoryType.push({
+      });   
+      this.inventoryType.push({  
         name:"日盘",
         bill_type:'daily_inventory'
       });
@@ -315,11 +315,24 @@ export default class stockTaking extends Vue{
     private add(){
       this.newlyadded = true
     }
-    private addinventorylist(info:string){
-       this.newlyadded = false
-       this.$router.push(info)
-     
-    }
+    private addinventorylist(type:any,bill_type:string){
+      // const bill_type = this.inventoryType.bill_type
+      this.service.getInventoryType(type.bill_type).then(res=>{ 
+        this.$router.push({
+          name:'AddinventoryList',
+          params:{
+              warehouse_name:type.warehouse_name,
+              busi_date:type.busi_date,
+              bill_type_name:type.bill_type_name,
+              stock_count_mode_name:type.stock_count_mode_name
+            }});
+            this.newlyadded = false
+          // this.inventoryDetails = res.data.data;
+          // this.setInventoryDetails(this.inventoryDetails); 
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }    
     //查询盘点单
     private query(){
       this.isSearch = !this.isSearch;
@@ -495,10 +508,10 @@ export default class stockTaking extends Vue{
             background-image: url("../../../assets/images/intentory_ico_day.png")
         }
         li:nth-child(3) i{
-            background-image: url("../../../assets/images/intentory_ico_month.png")
+            background-image: url("../../../assets/images/intentory_ico_week.png")
         }
         li:nth-child(4) i{
-            background-image: url("../../../assets/images/intentory_ico_week.png")
+            background-image: url("../../../assets/images/intentory_ico_month.png")
         }
         li:last-child{
           border-bottom:none;

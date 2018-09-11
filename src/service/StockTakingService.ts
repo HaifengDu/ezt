@@ -25,7 +25,7 @@ export class StockTakingService extends BaseService{
         });
         //const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/`)
-    }    
+    }       
     //盘库详情
     getLibraryDetails(id:number,audit_status:number){
         return Axios.post(`${this.reqUrl}inventory/post`,{

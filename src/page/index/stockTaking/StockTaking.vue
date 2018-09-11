@@ -358,13 +358,14 @@ export default class stockTaking extends Vue{
       const begin_date = this.searchParam.begin_date || null;
       const warehouse_id = this.warehouseType[0].id;
       this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
-        this.isSearch = false;
         this.hideMask();
         this.$router.push({name:'QueryResult'});
         this.queryResult = res.data.data;
         this.setqueryResult(this.queryResult); 
       },err=>{
           this.$toasted.show(err.message)
+          this.$router.push({name:'QueryResult'});
+          this.isSearch = false;
       })
      
     }

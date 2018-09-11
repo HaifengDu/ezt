@@ -5,18 +5,22 @@
        <div slot="action">
           <span></span>
        </div>        
-    </ezt-header>    
+    </ezt-header>       
     <div class="ezt-main">       
         <div class="content">
             <div class="pkdetails">
-              <div class="librarytype">   
-                <ul>
+              <div class="librarytype">  
+                <div v-if="!queryResult" class="done-none">
+                  <div></div>
+                  <span>目前还没有任何订单</span>
+                </div> 
+                <ul v-if="queryResult">
                   <li :key="index" v-for="(item,index) in queryResult">   
-                      <p><em>日</em><span>JJIHHJK35545</span></p>
-                      <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
-                      <div><p>盘点日期：<span>2017-07-11</span></p></div>
-                      <div><p>生成损溢：<span>是</span></p></div>
-                      <div><p>未盘处理：<span>按当前库存量处理</span></p></div>
+                      <p><em>{{item.bill_type_name}}</em><span>{{item.warehouse_name}}</span></p>
+                      <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
+                      <div><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
+                      <div><p>生成损溢：<span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span></p></div>
+                      <div><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
                           <p>业务日期：<span>2018-12-13</span></p>
                           <p class="see" @click="see('/librarydetails')">查看</p>
@@ -57,6 +61,7 @@ export default class stockTaking extends Vue{
     private service: StockTakingService;
     private pager:Pager;   
     private list:any[] = [];
+    private queryResult:any[] = [];
     created() {
       this.service = StockTakingService.getInstance();
     }

@@ -19,7 +19,7 @@
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select">
+              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -33,19 +33,25 @@
         <div class="detail-acount-title">
           物料明细
         </div> 
-        <ul> 
-          <li class="good-detail-content" > 
+        <ul>               
+          <li class="good-detail-content" v-for="(item,index) in goodList" :key="index"> 
             <mt-cell-swipe
-              :right="rightButtons"
+              :right="[
+                {
+                  content: '删除',
+                  style: { background: '#ccc', color: '#000' },
+                  handler: () => {deleteSection(item)}
+                }
+              ]"
              >
               <div class="ezt-detail-good">
                   <div class="good-detail-l">
                       <div>
-                          <span class="good-detail-name">猪肉
+                          <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
                           </span>
                           <span class="good-detail-sort">
-                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
+                            ￥<span class="good-detail-sort">{{item.price}}</span><span>/kg</span>
                           </span>
                             <span class="title-search-name">
                               发：1000
@@ -62,126 +68,39 @@
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect">拨</span>
                     <div class="park-input">
-                      <!-- <span>备注：</span>
-                      <div class="remark-area">
-                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
-                      </div> -->
                       <span class="title-search-name">备注：</span>
                       <input type="text" class="ezt-middle">
                     </div>
                     
                   </div>
-              </div>                 
-            </mt-cell-swipe> 
-          </li> 
-          <li class="good-detail-content" > 
-            <mt-cell-swipe
-              :right="rightButtons"
-             >
-              <div class="ezt-detail-good">
-                  <div class="good-detail-l">
-                      <div>
-                          <span class="good-detail-name">猪肉
-                              <span class="good-detail-sort">（规格）</span>
-                          </span>
-                          <span class="good-detail-sort">
-                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
-                          </span>
-                            <span class="title-search-name">
-                              发：1000
-                            </span>
-                      </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name">
-                            收：<input type="text" placeholder="10000" class="ezt-smart">
-                          </span>
-                      </div>                     
-                  </div>
-                  <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect">拨</span>
-                    <div class="park-input">
-                      <!-- <span>备注：</span>
-                      <div class="remark-area">
-                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
-                      </div> -->
-                      <span class="title-search-name">备注：</span>
-                      <input type="text" class="ezt-middle">
-                    </div>
-                    
-                  </div>
-              </div>                 
-            </mt-cell-swipe> 
-          </li>          
-          <li class="good-detail-content" > 
-            <mt-cell-swipe
-              :right="rightButtons"
-             >
-              <div class="ezt-detail-good">
-                  <div class="good-detail-l">
-                      <div>
-                          <span class="good-detail-name">猪肉
-                              <span class="good-detail-sort">（规格）</span>
-                          </span>
-                          <span class="good-detail-sort">
-                            ￥<span class="good-detail-sort">112</span><span>/kg</span>
-                          </span>
-                            <span class="title-search-name">
-                              发：1000
-                            </span>
-                      </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name">
-                            收：<input type="text" placeholder="10000" class="ezt-smart">
-                          </span>
-                      </div>                     
-                  </div>
-                  <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect">拨</span>
-                    <div class="park-input">
-                      <!-- <span>备注：</span>
-                      <div class="remark-area">
-                        <textarea name="" id="" cols="24" rows="4" style="width: 100%;"></textarea>
-                      </div> -->
-                      <span class="title-search-name">备注：</span>
-                      <input type="text" class="ezt-middle">
-                    </div>
-                    
-                  </div>
-              </div>                 
-            </mt-cell-swipe> 
-          </li>                   
-        </ul>
-          <x-dialog v-model="isDirect" class="dialog-demo">
-            <div class="img-box">
-              <div class="good-warehouse">
-                <div class="warehouse-title-num">
-                  <span>4</span>
-                  <span>可直拨</span>
-                </div>                
+              </div>                               
+            </mt-cell-swipe>
+             <div>
+              <x-dialog v-model="isDirect" class="dialog-demo">
+                <div @click="isDirect=false" class="ezt-dialog-header">
+                  <span class="header-name">
+                    直拨
+                  </span>
+                  <span class="ezt-close">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                  </span>
+                </div>
+                <div class="ezt-dialog-title">
+                  <span>可直拨：<span>{{roundValue.num}}</span></span>
+                  <span>已直拨：<span>{{roundValue.numed}}</span></span>
+                </div>
                 <div class="warehouse-list">
                     <ul class="warehouse-isDefault">
-                        <li>
-                          <span>江阳1仓</span>
-                          <input type="text" placeholder="11" class="ezt-smart">
-                        </li>
-                        <li>
-                          <span>江阳2仓</span>
-                          <input type="text" placeholder="22" class="ezt-smart">
+                        <li v-for="(item,index) in roundValue.list" :key="index">
+                          <span>{{item.name}}</span>
+                          <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
                         </li>
                     </ul>
-                </div>
-              </div>
-            </div>
-            <div @click="isDirect=false">
-              <span class="ezt-close">
-                <i class="fa fa-times" aria-hidden="true"></i>
-              </span>
-            </div>
-          </x-dialog>
+                </div>            
+              </x-dialog>
+            </div> 
+          </li>                   
+        </ul>
       </div> 
       <ezt-footer>
          <div class="ezt-foot-temporary" slot="confirm">
@@ -196,6 +115,10 @@
           </div>  
         </div>     
       </ezt-footer>
+      <!-- 切换仓库时校验 是否有以下物料 -->
+      <confirm v-model="isWarehouse" @on-cancel="onWarehouseCancel" :show-confirm-button="false">
+        <p style="text-align:center;"> 物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。</p>
+      </confirm>
     </div>
   </div>
 </template>
@@ -237,29 +160,40 @@ export default class ReceiveGood extends Vue{
     private showMask:()=>void;
     // private updateUser:INoop;
     private list:any[] = [];
-    private goodList:any[] = [];
+    private goodList:any[] = [{
+            id:21,
+            name:'牛肉',
+            price:'15',
+            utilname:'KG',
+        },{
+           id:2,
+            name:'白菜',
+            price:'1.5',
+            utilname:'KG',
+        }];
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
-    private rightButtons = [
-        // {
-        //   content: 'Mark as Unread',
-        //   style: { background: 'lightgray', color: '#fff' }
-        // },
-        {
-          content: '删除',
-          style: { background: 'red', color: '#fff' },
-          handler: () => alert('delete')
-        }
-      ]
+    private isWarehouse:boolean = false;//切换仓库校验物料
     private orderType:any=[{
       name:'仓库1',
       id:'01'
     }]
+    private roundValue:any={//可直拨的数据
+      num: 10,
+      numed:3,
+      list:[{
+        name:'仓库一号',
+        num:2
+      },{
+        name:'仓库二号',
+        num:6
+      }]
+    };
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
-       this.goodList = [];
+      //  this.goodList = [];
       //  this.getGoodList();
     }
 
@@ -286,25 +220,68 @@ export default class ReceiveGood extends Vue{
     private handlerDirect(){
       this.isDirect = true;
     }
+    /**
+     * 左滑删除某一项
+     */
+    private deleteSection(item:any){
+      let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+        return item.id == info.id;
+      })
+      this.goodList.splice(newIndex,1);
+    }
+    /**
+     * 切换仓库校验
+     */
+    private handlerWarehouse(){
+      this.service.checkWarehouse().then(res=>{
+        if(res.data.errcode==0){
+          this.isWarehouse= true;
+        }
+      })
+    }
+    /**
+     * 仓库切换校验 失败 返回
+     */
+    private onWarehouseCancel(){
+     
+    }
+    // 返回
     private goBack(){
       this.$router.push('/receiveGood');
     }
-
-    // private getGoodList(){
-    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
-
-    //     this.pager.setLimit(20);
-    // }
    
 }
 </script>
 
 <style lang="less" scoped>
+.warehouse-isDefault li{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  flex:1;
+  span{
+    flex:1;
+  }
+}    
+.ezt-dialog-header{
+  padding: 10px 0px;
+  display: flex;
+  flex-direction: row;
+  .header-name{
+    flex:1;
+    margin-right: -20px;
+  }
+  .ezt-close{
+    margin-right:20px;
+  }
+}
+.ezt-dialog-title{
+  padding: 10px 0px;
+  background: #ccc;
+}
+.weui-cell:before{
+  border:none;
+}
  .detail-acount-title{
       font-size: 12px;
       color: #95A7BA;

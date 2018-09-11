@@ -18,12 +18,12 @@
             <span>收藏</span>
           </span>
            <div class="good-type-list">
-             <span @click="changeSmallType(item)" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
+             <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
            </div>
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">全部</li>
+             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">{{item.name}}</li>
            </ul>
            <div class="good-content-list">
              <div class="good-item" v-for="(item,index) in goodList" :key='index'>
@@ -155,22 +155,31 @@ export default class AddGood extends Vue{
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
   private userpp:any[];
-  private goodList:any[]=[{
-    id:1,
-    name:'草鱼半成品',
-    price:'12',
-    utilname:'KG',
-    unit:'箱'
-  }]
+  // private goodList:any[]=[{
+  //   id:1,
+  //   name:'草鱼半成品',
+  //   price:'12',
+  //   utilname:'KG',
+  //   unit:'箱'
+  // },{
+  //  id:2,
+  //   name:'海参',
+  //   price:'9',
+  //   utilname:'KG',
+  //   unit:'箱'
+  // }]
   private goodBigType:any[] = [];
   private goodSmallType:any[] = [];
+  private goodList:any[]=[];
   private allType:any[] = [];
+  private typeName:any={};//记录type选择哪条
   // private userpp:any[]=[];
   created(){
     this.userpp=[]
-    console.log(this.userpp,'000000')
+    console.log(this.userpp,'000000')    
   }
   mounted() {
+   this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -179,17 +188,38 @@ export default class AddGood extends Vue{
         name:'牛羊肉',
         cdata:[{
           id:1,
-          name:"全部"
+          name:"全部",
+          goodList:[{
+            id:1,
+            name:'草鱼半成品',
+            price:'12',
+            utilname:'KG',
+            unit:'箱'
+          }]
         }]
       },{
         id:2,
         name:'成本类',
         cdata:[{
           id:2,
-          name:'全部'
+          name:'全部',
+          goodList:[{
+            id:2,
+            name:'海参',
+            price:'9',
+            utilname:'KG',
+            unit:'箱'
+          }]
         },{
           id:21,
           name:'速冻类',
+          goodList:[{
+            id:21,
+            name:'牛肉',
+            price:'15',
+            utilname:'KG',
+            unit:'斤'
+          }]
         },{
           id:22,
           name:'演示品项',
@@ -205,14 +235,19 @@ export default class AddGood extends Vue{
     //TODO:把收藏从货品类别里抽出来
     this.goodBigType = this.allType;
     this.goodSmallType = this.allType[0].cdata;
+    this.goodList = this.allType[0].cdata[0].goodList;
     //TODO:默认加载货品
   }
   private changeSmallType(item:any){
-    this.goodSmallType = item.cdata;
+    this.typeName = item;   
+    this.goodSmallType = item.cdata; 
+    this.goodList = item.cdata[0].goodList;  
     //TODO:加载货品this.goodSmallType[0]
   }
   private loadGood(item:any){
     //TODO:item.id加载货品
+    this.goodList = item.goodList;
+    this.typeName=item;
   }
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
@@ -303,6 +338,9 @@ export default class AddGood extends Vue{
     span{
       margin-right: 10px;
     }
+    span.active{
+      color: #1674fc;
+    }
   }
   .collect-good{
     height: 44px;
@@ -351,7 +389,13 @@ export default class AddGood extends Vue{
     padding: 13px 10px;
     font-size: 14px;
     text-align: center;
+    max-width: 30px;    
   }
+  .category-item.active{
+    background: #fff;
+    border-color: #fff;
+    border-right-width: 0;
+}
   .good-item-bot{
     display: flex;
     flex-direction: row;

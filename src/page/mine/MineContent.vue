@@ -1,7 +1,7 @@
   <!--首页我的页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title="我的"></ezt-header>  
+    <ezt-header :back="true" title="我的" @goBack="goBack"></ezt-header>  
     <div class="ezt-main">   
         <!--内容-->
          <div class="ezt-add-content">
@@ -60,7 +60,7 @@ declare var mobiscroll:any;
   }
 })
 export default class Mine extends Vue{
-  private user:IUser;
+  private users:IUser;
   private service:LoginService;
   private balancAmt:number=0;
   
@@ -88,6 +88,10 @@ export default class Mine extends Vue{
     this.service.checkBalance().then(res=>{
       this.balancAmt=res.data.data[0].balance_amount
     })
+  }
+  //后退
+  private goBack(){
+    this.$router.push("/")
   }
    
 }

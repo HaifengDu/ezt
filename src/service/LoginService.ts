@@ -117,6 +117,31 @@ export class LoginService extends BaseService{
             return Promise.resolve(res);
         });
     }
+    /**
+     * 修改密码
+     * @param user 
+     */
+    modifyPassword(oldPasswd:string,newPasswd:string){
+        let user = this.cache.getData(cacheKey.USER_MODEL);
+        let userName = JSON.parse(user);
+        console.log(userName,'000099');
+        console.log(RootType.UPDATE_USER,'qqqq');
+        let oldhash = crypto.createHash("md5");
+        let newhash = crypto.createHash("md5");
+        let enoldPasswd = oldhash.update((<string>oldPasswd).trim()).digest('hex');
+        let ennewPasswd = newhash.update((<string>newPasswd).trim()).digest('hex');
+        return Axios.post(`${this.reqUrl}login/post`,{
+            data: [{
+                user_name:userName.loginname,
+                old_passwd:(<string>enoldPasswd).toString(),
+                new_passwd:(<string>ennewPasswd).toString()
+            }],
+            "oper": "MODIFY_PASSWORD",
+            "pagination": null,
+        }).then(res=>{
+            return Promise.resolve(res);
+        });
+    }
 
     static createInstance() {
         LoginService.getInstance();

@@ -57,10 +57,10 @@
                               <span class="good-detail-sort">（规格）</span>
                           </span>
                           <span class="good-detail-sort">￥
-                            <input type="number" class="good-detail-sort ezt-smart" placeholder="11.001">
+                            <input type="number" class="good-detail-sort ezt-smart" placeholder="单价" v-model="item.price">
                             <span>/{{item.utilname}}</span>
                           </span>
-                           <input type="number" placeholder="3" class="ezt-smart" v-model="item.num">
+                           <input type="number" placeholder="数量" class="ezt-smart" v-model="item.num">
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
@@ -68,54 +68,45 @@
                   </div>
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect">拨</span>
-                    <div class="park-input">
-                      <!-- <span>备注：</span>
-                      <div class="remark-area">
-                         <textarea name="" id="" cols="24" rows="4" style="width:100%;"></textarea>
-                      </div>                      -->
+                    <div class="park-input"> 
                       <span class="title-search-name">备注：</span>
                       <input type="text" class="ezt-middle">
                     </div>                    
                   </div>
               </div>
-           </li>
-        </ul>
-        <div>
-          <x-dialog v-model="isDirect" class="dialog-demo">
-            <div class="img-box">
-              <div class="good-warehouse">
-                <div class="warehouse-title-num">
-                  <span>4</span>
-                  <span>可直拨</span>
-                </div>                
-                <div class="warehouse-list">
-                    <ul class="warehouse-isDefault">
-                        <li>
-                          <span>江阳1仓</span>
-                          <input type="text" placeholder="11" class="ezt-smart">
-                        </li>
-                        <li>
-                          <span>江阳2仓</span>
-                          <input type="text" placeholder="22" class="ezt-smart">
-                        </li>
-                    </ul>
+               <div>
+                  <x-dialog v-model="isDirect" class="dialog-demo">
+                    <div @click="isDirect=false" class="ezt-dialog-header">
+                      <span class="header-name">
+                        直拨
+                      </span>
+                      <span class="ezt-close">
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                      </span>
+                    </div>
+                    <div class="ezt-dialog-title">
+                      <span>可直拨：<span>{{roundValue.num}}</span></span>
+                      <span>已直拨：<span>{{roundValue.numed}}</span></span>
+                    </div>
+                    <div class="warehouse-list">
+                        <ul class="warehouse-isDefault">
+                            <li v-for="(item,index) in roundValue.list" :key="index">
+                              <span>{{item.name}}</span>
+                              <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
+                            </li>
+                        </ul>
+                    </div>            
+                  </x-dialog>
                 </div>
-              </div>
-            </div>
-            <div @click="isDirect=false">
-              <span class="ezt-close">
-                <i class="fa fa-times" aria-hidden="true"></i>
-              </span>
-            </div>
-          </x-dialog>
-        </div>
+           </li>
+        </ul>       
       </div> 
       <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
-          <div class="ezt-foot-total">合计：
-            <b>品项</b><span>12</span>，
-            <b>数量</b><span>100</span>，
-            <b>￥</b><span>22422.01</span>
+          <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
+            <b>品项</b><span>{{this.selectedGood.length}}</span>，
+            <b>数量</b><span>{{TotalNum}}</span>，
+            <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive"> 提交</a>  
@@ -124,11 +115,14 @@
         </div>
       </ezt-footer>
     </div>
-     <confirm v-model="isSave"
-      title=""
-      @on-confirm="onConfirm">
-        <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-      </confirm>
+    <!-- 返回时提示保存信息 -->
+    <confirm v-model="isSave" @on-confirm="onConfirm">
+      <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
+    </confirm>
+    <!-- 当有物料 单据类型发生变化时校验 -->
+    <confirm v-model="isBillType" @on-cancel="onBillTypeCancel" @on-confirm="onBillTypeConfirm">
+      <p style="text-align:center;"> 您已维护物料信息，如调整单据类型，须重新选择物料。</p>
+    </confirm>
   </div>
 </template>
 <script lang="ts">
@@ -163,6 +157,7 @@ declare var mobiscroll:any;
 })
 export default class ReceiveGood extends Vue{
     private isSave:boolean=false;//确认不保存？
+    private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
     private service: ReceiveGoodService;
     private pager:Pager;
     // private getGoodList:INoopPromise //调用store中的请求接口
@@ -176,9 +171,21 @@ export default class ReceiveGood extends Vue{
     private isDirect:boolean = false; //是否可直拨弹框
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
+    private beforeAddReceiveGoodInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addReceiveGoodInfo:any;//store中
     private setAddReceiveGoodInfo:INoopPromise//store中给addReceiveGoodInfo赋值
-    private orderType:any[] = [{//单据类型下拉数据
+    private roundValue:any={//可直拨的数据
+      num: 10,
+      numed:3,
+      list:[{
+        name:'仓库一号',
+        num:2
+      },{
+        name:'仓库二号',
+        num:6
+      }]
+    };
+    private orderType:any[] = [{//单据类型下拉数据    
       name:"合同采购单",
       type:"q"
     },{
@@ -188,7 +195,7 @@ export default class ReceiveGood extends Vue{
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
-       this.goodList = [];      
+       this.goodList = [];  
       //  this.getGoodList();
     }
 
@@ -197,12 +204,22 @@ export default class ReceiveGood extends Vue{
 
   /**
    * computed demo
+   * 物料总数量
    */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
+    private get TotalNum(){
+      return this.selectedGood.reduce((ori,item)=>{
+        return Number(ori)+Number(item.num);       
       },0);
     }
+    /**
+     * 物料总金额
+     */
+    private get TotalAmt(){
+      return this.selectedGood.reduce((ori,item)=>{
+        return ori+(item.num*item.price);       
+      },0);
+    }
+
     /**
      * 收货 提交
      */
@@ -239,8 +256,28 @@ export default class ReceiveGood extends Vue{
      * 选择单据类型
      */
     private handlerBillType(item:any){
-      debugger
+      if(this.selectedGood.length>0){
+        this.isBillType=true;
+      }
+      this.beforeAddReceiveGoodInfo.billType=this.addReceiveGoodInfo.billType;
+      
     }
+    /**
+     * 有物料时 单据类型 变化 确认校验
+     */
+    private onBillTypeConfirm(){
+      this.setSelectedGood([]);
+    }
+    /**
+     * 有物料时 单据类型变化 取消校验
+     */
+    private onBillTypeCancel(){
+      console.log(this.beforeAddReceiveGoodInfo,'之前 ')
+      this.addReceiveGoodInfo.billType = this.beforeAddReceiveGoodInfo.billType;
+    }
+
+
+
     /**
      * 返回
      */
@@ -271,6 +308,25 @@ export default class ReceiveGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+.ezt-dialog-header{
+  padding: 10px 0px;
+  display: flex;
+  flex-direction: row;
+  .header-name{
+    flex:1;
+    margin-right: -20px;
+  }
+  .ezt-close{
+    margin-right:20px;
+  }
+}
+.ezt-dialog-title{
+  padding: 10px 0px;
+  background: #ccc;
+}
+.weui-cell:before{
+  border:none;
+}
  //物料信息
     .good-detail-content{
         text-align: left;
@@ -293,6 +349,7 @@ export default class ReceiveGood extends Vue{
     }
     .good-detail-l>div>span{
        flex:1;
+       align-items: baseline;
     }
     .good-detail-r{
         display: inline-block;
@@ -388,5 +445,14 @@ export default class ReceiveGood extends Vue{
     .title-search-right{
       flex: 2;
       text-align: right;
+    }
+    .warehouse-isDefault li{
+      display:flex;
+      flex-direction: row;
+      align-items: center;
+      flex:1;
+      span{
+        flex:1;
+      }
     }    
 </style>

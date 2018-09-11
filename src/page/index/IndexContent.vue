@@ -187,6 +187,9 @@ export default class Index extends Vue{
     private handlerStatus(item:boolean){
       this.tabStatus = item;
     }
+    private noAction(){
+      this.$toasted.show("暂未开通！");
+    }
    
 }
 </script>

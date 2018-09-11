@@ -11,7 +11,7 @@
             <div class="pkdetails">
               <div class="librarytype">
                 <ul>
-                  <li>
+                  <li>  
                       <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                       <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
                       <div><p>盘库方式：<span></span></p></div>

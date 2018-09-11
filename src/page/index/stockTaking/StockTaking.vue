@@ -24,7 +24,7 @@
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
                     <div @click="librarydetails(item)">
-                        <div class="state">
+                        <div class="state">   
                         <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
                         <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || item.is_stock_valid == 1?'已生效':''  ||item.is_stock_valid == null?'待生效':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
@@ -39,8 +39,8 @@
                         <P>业务日期：<span>{{item.busi_date}}</span></P>
                         <div v-if="tabList.getActive().status === 0" class="submit" @click="submission('/confirmationlist')">提交</div>
                         <div v-if="tabList.getActive().status === 1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
-                        <div v-if="tabList.getActive().status === 2 && item.is_stock_valid === null"  class="submit" @click="realdiscentry('/realdiscentry')">生效</div>
-                        <div v-if="item.is_stock_valid === 1 || tabList.getActive().status === 3 "  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-show="hidebtn" v-if="tabList.getActive().status === 2 && item.is_stock_valid === null"  class="submit" @click="takeeffect">生效</div>
+                        <div v-show="showbtn" v-if="item.is_stock_valid === 1 || tabList.getActive().status === 3 "  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
                     </div>
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -148,6 +148,8 @@ export default class stockTaking extends Vue{
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
+    private showbtn:boolean= true;
+    private hidebtn:boolean= true;
     private sildename:string = 'slide-go';
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -235,7 +237,6 @@ export default class stockTaking extends Vue{
           text: '加载中...'
         });
         this.inventoryList = res.data.data[0];
-        // console.log(JSON.stringify(this.inventoryList))
         setTimeout(()=>{
           this.$vux.loading.hide()
           this.hideMask()
@@ -298,6 +299,12 @@ export default class stockTaking extends Vue{
     private submission(info:string){
       this.$router.push(info)
     }
+    //生效按钮
+    private takeeffect(){
+      alert("e")
+       this.hidebtn = false
+       this.showbtn = true
+    }
     //实盘录入
     private realdiscentry(info:string){
       this.$router.push(info)
@@ -316,19 +323,16 @@ export default class stockTaking extends Vue{
       this.newlyadded = true
     }
     private addinventorylist(type:any,bill_type:string){
-      // const bill_type = this.inventoryType.bill_type
       this.service.getInventoryType(type.bill_type).then(res=>{ 
+        this.newlyadded = false
+        this.inventoryType = res.data.data;
         this.$router.push({
           name:'AddinventoryList',
           params:{
-              warehouse_name:type.warehouse_name,
-              busi_date:type.busi_date,
-              bill_type_name:type.bill_type_name,
-              stock_count_mode_name:type.stock_count_mode_name
-            }});
-            this.newlyadded = false
-          // this.inventoryDetails = res.data.data;
-          // this.setInventoryDetails(this.inventoryDetails); 
+            type:res.data.data[0].bill_type
+          }
+         });
+        //  console.log(JSON.stringify(this.inventoryType))
       },err=>{
           this.$toasted.show(err.message)
       })

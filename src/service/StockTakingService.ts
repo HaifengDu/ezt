@@ -183,9 +183,9 @@ export class StockTakingService extends BaseService{
     }
 
     // 动态加载仓库
-    getWarehouse(){
+    getWarehouse(inventory_type:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
-            "data":[{"inventory_type":"daily_inventory"}],
+            "data":[{"inventory_type":inventory_type}],
             "oper":"INVENTORY_WAREHOUSE",
             "pagination":null
         }).then(res=>{           

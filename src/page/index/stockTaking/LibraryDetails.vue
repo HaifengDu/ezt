@@ -19,7 +19,7 @@
                       <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                   </li>
                 </ul>
-              </div>
+              </div>   
               <div class="inventory">
                 <div class="pkmx">
                       <div class="line">
@@ -61,28 +61,25 @@ import StockTakingService from '../../../service/StockTakingService'
    },   
    computed:{
      ...mapGetters({
-       
+       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },
    methods:{ 
      ...mapActions({
-      
-     })
+       'setInventoryDetails':"stockTaking/setInventoryDetails",
+     }),
 
    }   
 })  
 export default class stockTaking extends Vue{
     private pager:Pager;   
     private service: StockTakingService;
-    private list:any[] = [];
-    private inventoryDetails:any[];
+    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private getLibraryDetails:INoopPromise;
     private warehouse_name:string;  
     private busi_date:string;  
     private bill_type_name:string;
     private stock_count_mode_name:string;
-    
-    
     created() {
       this.service = StockTakingService.getInstance();
       this.warehouse_name = this.$route.params.warehouse_name
@@ -94,34 +91,9 @@ export default class stockTaking extends Vue{
     mounted(){
       
     }
-
-    
-  /**
-   * watch demo
-   */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-
-    }
     private goBack(){
       this.$router.back();
     }
-
-    /**
-     * computed demo
-     */
-      private get Total(){
-        return this.list.reduce((ori,item)=>{
-          return ori.uprice+item;
-        },0);
-      }
-  
-     
-
-  
-      
 }
 </script>
 <style lang="less" scoped> 
@@ -138,13 +110,14 @@ export default class stockTaking extends Vue{
     z-index: 99;
     width: @width;
     height: @height;
+    background-color: #F1F6FF;
     .content{
       width: @width;
       height:@height;
-      position: absolute;
       display: flex;
       align-items: center;
       flex-direction: column;
+      margin-top: 10px;
       .pkdetails{
         display: flex;   
         flex-direction: column;
@@ -152,7 +125,6 @@ export default class stockTaking extends Vue{
         border-radius: 4px;
         width: 95%;
         background-color:@background-color;
-        position: absolute;
         .librarytype{
           ul{
             text-align: left;
@@ -176,6 +148,7 @@ export default class stockTaking extends Vue{
            }
         }
         .inventory{
+          background-color: @background-color;
            .pkmx{
               position: relative;
               .line{

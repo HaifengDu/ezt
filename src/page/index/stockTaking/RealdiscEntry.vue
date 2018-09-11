@@ -1,7 +1,7 @@
 <!--实盘录入-->
 <template>
 <div class="ezt-page-con realdiscentry">
-    <ezt-header :back="true" title="实盘录入">
+    <ezt-header :back="true" title="实盘录入" @goBack="goBack">
        <div slot="action">
           <span></span>
        </div>        
@@ -98,6 +98,10 @@ export default class stockTaking extends Vue{
 
     mounted(){
       this.getInventoryDetails();
+    }
+
+    private goBack(){
+      this.$router.back();
     }
 
   /**

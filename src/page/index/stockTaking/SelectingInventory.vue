@@ -113,7 +113,7 @@ export default class selectinginventory extends Vue{
     }
 
   /**
-   * watch demo
+   * watch demo    
    */
     @Watch("list",{
       deep:true

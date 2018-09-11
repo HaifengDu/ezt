@@ -21,12 +21,11 @@
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select" v-model="Selected" 
-                @change="handlerwarehouseType()">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                    <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerwarehouseType()">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
                       <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select>   
-                  </span>
+                  </span>   
                 </li>
                  <li class="select-list">
                   <span class="title-search-name ">未盘处理：</span>
@@ -85,7 +84,6 @@ export default class stockTaking extends Vue{
     private period_inventory:string;
     private select:string;
     private warehouseType:any[] = [];  //动态加载仓库
-    private Selected:string;  //仓库默认显示第一个
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       type:"q"
@@ -125,7 +123,11 @@ export default class stockTaking extends Vue{
     }
     // 手工制单
     manualproduction(info:string){
-        this.$router.push(info)
+        if(!this.warehouseType){
+          this.$toasted.show("请选择仓库！");
+          return false;
+        }
+        // this.$router.push(info)
     }
     //盘点类型导入
      private inventorytype(info:string){
@@ -141,7 +143,6 @@ export default class stockTaking extends Vue{
       const inventory_type = this.$route.params.type;
       this.service.getWarehouse(inventory_type as string).then(res=>{ 
           this.warehouseType = res.data.data;
-          this.Selected = this.warehouseType[0].text
       },err=>{
           this.$toasted.show(err.message)
       })

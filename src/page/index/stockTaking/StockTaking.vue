@@ -25,7 +25,7 @@
                   <li :key="index" v-for="(item,index) in inventoryList.list">
                     <div @click="librarydetails(item)">
                         <div class="state">   
-                        <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
+                        <span><i>{{item.bill_type_name}}</i>{{item.bill_no}}</span>
                         <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || item.is_stock_valid == 1?'已生效':''  ||item.is_stock_valid == null?'待生效':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
                       <div class="content">

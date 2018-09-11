@@ -10,7 +10,9 @@ export const setGoodList:Action<any,IRootState> = ({commit},inventoryList:[])=>{
 export const setInventoryDetails:Action<any,IRootState> = ({commit},inventoryDetails:[])=>{
     commit(RootType.PK_Details, inventoryDetails);
 };      
-
+export const setqueryResult:Action<any,IRootState> = ({commit},queryResult:[])=>{
+    commit(RootType.PK_QueryResult, queryResult);
+};   
 // export const getInventoryList:Action<any,IRootState> = ({commit})=>{
 //     const pager = new Pager();
 //     return stockTakingService.getInventoryList(pager.getPage()).then(res=>{

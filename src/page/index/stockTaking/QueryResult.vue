@@ -9,9 +9,9 @@
     <div class="ezt-main">       
         <div class="content">
             <div class="pkdetails">
-              <div class="librarytype">
+              <div class="librarytype">   
                 <ul>
-                  <li>
+                  <li :key="index" v-for="(item,index) in queryResult">   
                       <p><em>日</em><span>JJIHHJK35545</span></p>
                       <div><p>盘点仓库：<span>CN00707-果蔬库房A</span></p></div>
                       <div><p>盘点日期：<span>2017-07-11</span></p></div>
@@ -36,27 +36,29 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import StockTakingService from '../../../service/StockTakingService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       
+       'queryResult':'stockTaking/queryResult',//查询结果
      }) 
    },
    methods:{ 
      ...mapActions({
-       
+       'setqueryResult':"stockTaking/setqueryResult",
      })
 
    }   
 })  
-export default class queryresult extends Vue{
+export default class stockTaking extends Vue{
+    private service: StockTakingService;
     private pager:Pager;   
     private list:any[] = [];
     created() {
-      
+      this.service = StockTakingService.getInstance();
     }
 
     mounted(){

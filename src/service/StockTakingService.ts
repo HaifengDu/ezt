@@ -38,14 +38,14 @@ export class StockTakingService extends BaseService{
     }
 
     //查询盘库单
-    getEnquiryList(){
+    getEnquiryList(bill_no:string,end_date:string,begin_date:string,warehouse_id:number){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
-                "bill_no":"11",
-                "end_date":"2018-08-27",
-                "begin_date":"2018-08-27",
-                "warehouse_id":""
-            }],
+                "bill_no":bill_no,
+                "end_date":end_date,  
+                "begin_date":begin_date,
+                "warehouse_id":warehouse_id,
+            }],   
             "oper":"INVENTORY_QUERY",
             "pagination":[{"asc":false,"orderby":null,"pageno":1,"pagesize":20,"totalcount":0}]
         }).then(res=>{           

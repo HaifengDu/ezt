@@ -71,24 +71,25 @@
             <ul>   
               <li>
                  <span>单据号</span>
-                 <p><input type="text" placeholder="请输入单据号"></p>
+                 <p><input type="text" placeholder="请输入单据号" v-model="djnumber"></p>
               </li>
               <li class="select-list">
                 <span class="title-search-name ">盘点库</span>
                 <span class="title-select-name item-select">
-                  <select name="" id="" placeholder="请选择" class="ezt-select">
-                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
-                    <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                  </select>
-                </span>
+                  <select name="" id="" placeholder="请选择" class="ezt-select" v-model="Selected" 
+                  @change="handlerwarehouseType()">
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                        <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
+                      </select>   
+                  </span>
               </li>
               <li>
                   <span>开始日期</span>
-                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.begin_date"></ezt-canlendar>
               </li>
               <li>
                   <span>结束日期</span>
-                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.end_date"></ezt-canlendar>
               </li>
             </ul>
              <p class="s_btn1" @click="toSearch">查询</p>
@@ -108,7 +109,7 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import librarydetails from './LibraryDetails'
-import confirmationlist from './ConfirmationList'
+import confirmationlist from './ConfirmationList'  
 import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
@@ -121,14 +122,16 @@ declare var mobiscroll:any;
       
    },   
    mixins:[maskMixin],
-  computed:{
+  computed:{  
      ...mapGetters({
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
+       'queryResult':'stockTaking/queryResult',//查询结果
      }) 
    },
    methods:{ 
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
+       'setqueryResult':"stockTaking/setqueryResult",
      }),
 
    }   
@@ -140,19 +143,24 @@ export default class stockTaking extends Vue{
     private getDataSorting:INoopPromise  //获取数据整理
     private getInventoryType:INoopPromise  //获取盘点类型
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[] = [];
+    private inventoryDetails:any[] = []; //列表详情
+    private queryResult:any[] = [];  //查询详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
+    private setqueryResult:INoopPromise//store中给setqueryResult赋值
     private tabList:TabList = new TabList();
     private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
+    private warehouseType:any[] = [];  //动态加载仓库
+    private Selected:string;  //仓库默认显示第一个
     private showbtn:boolean= true;
     private hidebtn:boolean= true;
     private sildename:string = 'slide-go';
     private hideMask:()=>void;
     private showMask:()=>void;
+    private djnumber:string; //单据号
     private orderType:any[] = [{
       name:"合同采购单",
       type:"q"
@@ -196,6 +204,7 @@ export default class stockTaking extends Vue{
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
+      this.iswarehouseType(); //动态加载仓库
     }
    
     mounted(){
@@ -337,16 +346,42 @@ export default class stockTaking extends Vue{
           this.$toasted.show(err.message)
       })
     }    
-    //查询盘点单
+    //查询盘点单   
     private query(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
     }
     //查询结果
     private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.$router.push({name:'QueryResult',params:{obj:this.searchParam}});
+      const bill_no = this.djnumber || null;
+      const end_date =  this.searchParam.end_date || null;
+      const begin_date = this.searchParam.begin_date || null;
+      const warehouse_id = this.warehouseType[0].id;
+      this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
+        this.isSearch = false;
+        this.hideMask();
+        this.$router.push({name:'QueryResult'});
+        this.queryResult = res.data.data;
+        this.setqueryResult(this.queryResult); 
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+     
+    }
+    //动态加载仓库
+    private iswarehouseType(){
+      const inventory_type = "week_inventory";
+      this.service.getWarehouse(inventory_type as string).then(res=>{ 
+          this.warehouseType = res.data.data;
+          this.Selected = this.warehouseType[0].text
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
+
+    //动态仓库切换
+    private handlerwarehouseType(){
+
     }
 
 
@@ -528,7 +563,7 @@ export default class stockTaking extends Vue{
     position: fixed;
     top: 40px;
     left: 0;
-    z-index: 99999;
+    z-index:10001;
     width: @width;
     .content{
       width: @width;

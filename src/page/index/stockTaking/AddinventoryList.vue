@@ -21,11 +21,11 @@
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select" v-model="type" 
+                    <select name="" id="" placeholder="请选择" class="ezt-select" v-model="Selected" 
                 @change="handlerwarehouseType()">
                       <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                       <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
-                    </select>
+                    </select>   
                   </span>
                 </li>
                  <li class="select-list">
@@ -51,7 +51,7 @@
       </div>    
    </div>    
  </div>
-</template>
+</template>  
 <script lang="ts">
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
@@ -85,6 +85,7 @@ export default class stockTaking extends Vue{
     private period_inventory:string;
     private select:string;
     private warehouseType:any[] = [];  //动态加载仓库
+    private Selected:string;  //仓库默认显示第一个
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       type:"q"
@@ -133,12 +134,14 @@ export default class stockTaking extends Vue{
     //模板导入
      private templateimport(info:string){
         this.$router.push(info)
+        
      }
     //  动态加载仓库
     private iswarehouseType(){
       const inventory_type = this.$route.params.type;
       this.service.getWarehouse(inventory_type as string).then(res=>{ 
           this.warehouseType = res.data.data;
+          this.Selected = this.warehouseType[0].text
       },err=>{
           this.$toasted.show(err.message)
       })

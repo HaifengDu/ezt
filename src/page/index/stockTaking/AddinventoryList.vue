@@ -10,22 +10,22 @@
     <div class="ezt-main">   
        <div class="content">
           <div class="store">  
-            <group>
+            <group>   
               <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
-              <x-input title='盘点类型' text-align="right" disabled  v-model="value3">{{value3}}</x-input>
-            </group>    
-          </div>
+              <x-input title='盘点类型' text-align="right" disabled v-model="type">{{type}}</x-input>
+            </group>       
+          </div> 
           <div class="warehouse">
               <ul>
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                      <option :value="item.type" :key="index" v-for="(item,index) in warehouseType">{{item.name}}</option>
-                    </select>
-                  </span>
+                    <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerwarehouseType()">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
+                      <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
+                    </select>   
+                  </span>   
                 </li>
                  <li class="select-list">
                   <span class="title-search-name ">未盘处理：</span>
@@ -50,7 +50,7 @@
       </div>    
    </div>    
  </div>
-</template>
+</template>  
 <script lang="ts">
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
@@ -58,8 +58,7 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import IUser from "../../../interface/IUserModel"
-import LoginService from "../../../service/LoginService"
-import commonService from '../../../service/commonService.js';
+import StockTakingService from "../../../service/StockTakingService"
 @Component({  
    components:{  
       
@@ -76,17 +75,15 @@ import commonService from '../../../service/commonService.js';
 
    }   
 })  
-export default class addinventorylist extends Vue{
-    private service:LoginService;
+export default class stockTaking extends Vue{
+    private service:StockTakingService;
     private user:IUser;
-    private value3:string = '日盘';
-    private warehouseType:any[] = [{
-      name:"仓库A",
-      type:"q"
-    },{
-      name:"仓库B",
-      type:"m"
-    }];
+    private type:string;
+    private daily_inventory:string;
+    private week_inventory:string;
+    private period_inventory:string;
+    private select:string;
+    private warehouseType:any[] = [];  //动态加载仓库
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       type:"q"
@@ -95,11 +92,14 @@ export default class addinventorylist extends Vue{
       type:"m"
     }];
     created() {
-       this.service = LoginService.getInstance();  
+       this.service = StockTakingService.getInstance();
+       this.type = this.$route.params.type
+       this.isType(); //判断盘点类型
+       this.iswarehouseType();//动态加载仓库
     }
 
     mounted(){
-      
+     
 
     }
 
@@ -112,9 +112,22 @@ export default class addinventorylist extends Vue{
     private goBack(){
       this.$router.back();
     }
+    private isType(){
+      if(this.type === 'daily_inventory'){
+          this.type = '日盘'
+       }else if(this.type === 'week_inventory'){
+          this.type = '周盘'
+       }else if(this.type === 'period_inventory'){
+         this.type = '月盘'
+       }
+    }
     // 手工制单
     manualproduction(info:string){
-        this.$router.push(info)
+        if(!this.warehouseType){
+          this.$toasted.show("请选择仓库！");
+          return false;
+        }
+        // this.$router.push(info)
     }
     //盘点类型导入
      private inventorytype(info:string){
@@ -123,8 +136,22 @@ export default class addinventorylist extends Vue{
     //模板导入
      private templateimport(info:string){
         this.$router.push(info)
+        
      }
-      
+    //  动态加载仓库
+    private iswarehouseType(){
+      const inventory_type = this.$route.params.type;
+      this.service.getWarehouse(inventory_type as string).then(res=>{ 
+          this.warehouseType = res.data.data;
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
+
+    // 仓库切换
+    private handlerwarehouseType(){
+
+    }
       
 }
 </script>
@@ -133,6 +160,15 @@ export default class addinventorylist extends Vue{
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
+.ezt-main{
+    background-color: #F1F6FF;
+    position: absolute; 
+    top: 0; 
+    width: 100%;
+    height: auto;
+    margin-top: 45px;
+    margin-bottom: 0px;
+}
 .demo3-slot{
   text-align: center;
   padding: 8px 0;
@@ -140,6 +176,7 @@ export default class addinventorylist extends Vue{
 }
 .addinventorylist{
     position: absolute;
+    background-color: #F1F6FF;
     top: 0;
     left: 0;
     z-index: 99;

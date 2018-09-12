@@ -11,7 +11,7 @@
             <div class="pkdetails">
               <div class="librarytype">
                 <ul>
-                  <li>
+                  <li>  
                       <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                       <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
                       <div><p>盘库方式：<span></span></p></div>
@@ -37,8 +37,8 @@
                       <p class="name">{{item.material_name}}</p>
                       <div><p>编码：<span>{{item.material_num}}</span></p><p>规格：<span>{{item.material_model}}</span></p></div>
                       <div><p>账面数量：<span>{{item.acc_qty}}</span></p><p>理论库存：<span>{{item.thery_qty}}</span></p></div>
-                      <div><p>理论消耗：<span>{{item.consume_qty}}</span></p><p>采购单位：<span>{{item.pur_conversion}}</span></p></div>
-                      <div><p>库存主单位：<span>{{item.disperse_num}}</span></p><p>消耗单位：<span>{{item.consume_num}}</span></p></div>
+                      <div><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p><p>采购单位：<span>{{item.pur_conversion || '0'}}斤</span></p></div>
+                      <div><p>库存主单位：<span>{{item.disperse_num || '0'}}斤</span></p><p>消耗单位：<span>{{item.consume_num || '0'}}斤</span></p></div>
                     </li>
                   </ul>
               </div>

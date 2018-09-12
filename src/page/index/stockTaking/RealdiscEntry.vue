@@ -11,40 +11,13 @@
           <div class="list">
            <div class="checklist">
               <ul>
-                <li>
-                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
+                <li :key="index" v-for="(item,index) in inventoryDetails">
+                  <div class="title"><p>擦擦擦<span>编码：<em>112352345</em></span></p></div>
                   <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
                   <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
                   <div class="purchase">
                       <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
                       <div><p>消耗单位：<span><input value="11" type="number">只</span></p></div>
-                  </div>
-                </li>
-                 <li>
-                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                  <div class="purchase">
-                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
-                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                  <div class="purchase">
-                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
-                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
-                  </div>
-                </li>
-                <li>
-                  <div class="title"><p>非象美乐干红葡萄酒<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
-                  <div class="purchase">
-                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
-                      <div><p>消耗单位：<span><input value="22"  type="number">只</span></p></div>
                   </div>
                 </li>
               </ul>

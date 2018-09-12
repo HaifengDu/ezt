@@ -24,8 +24,8 @@
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
                     <div @click="librarydetails(item)">
-                        <div class="state">
-                        <span><i>{{item.bill_type_name}}</i>{{item.warehouse_name}}</span>
+                        <div class="state">   
+                        <span><i>{{item.bill_type_name}}</i>{{item.bill_no}}</span>
                         <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || item.is_stock_valid == 1?'已生效':''  ||item.is_stock_valid == null?'待生效':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
                       </div>
                       <div class="content">
@@ -39,8 +39,8 @@
                         <P>业务日期：<span>{{item.busi_date}}</span></P>
                         <div v-if="tabList.getActive().status === 0" class="submit" @click="submission('/confirmationlist')">提交</div>
                         <div v-if="tabList.getActive().status === 1" class="submit" @click="toexamine('./auditchecklist')">审核</div>
-                        <div v-if="tabList.getActive().status === 2 && item.is_stock_valid === null"  class="submit" @click="realdiscentry('/realdiscentry')">生效</div>
-                        <div v-if="item.is_stock_valid === 1 || tabList.getActive().status === 3 "  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
+                        <div v-show="hidebtn" v-if="tabList.getActive().status === 2 && item.is_stock_valid === null"  class="submit" @click="takeeffect">生效</div>
+                        <div v-show="showbtn" v-if="item.is_stock_valid === 1 || tabList.getActive().status === 3 "  class="submit" @click="realdiscentry('/realdiscentry')">实盘录入</div>
                     </div>
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -71,24 +71,25 @@
             <ul>   
               <li>
                  <span>单据号</span>
-                 <p><input type="text" placeholder="请输入单据号"></p>
+                 <p><input type="text" placeholder="请输入单据号" v-model="djnumber"></p>
               </li>
               <li class="select-list">
                 <span class="title-search-name ">盘点库</span>
                 <span class="title-select-name item-select">
-                  <select name="" id="" placeholder="请选择" class="ezt-select">
-                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
-                    <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                  </select>
-                </span>
+                  <select name="" id="" placeholder="请选择" class="ezt-select" v-model="Selected" 
+                  @change="handlerwarehouseType()">
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                        <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
+                      </select>   
+                  </span>
               </li>
               <li>
                   <span>开始日期</span>
-                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.begin_date"></ezt-canlendar>
               </li>
               <li>
                   <span>结束日期</span>
-                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.end_date"></ezt-canlendar>
               </li>
             </ul>
              <p class="s_btn1" @click="toSearch">查询</p>
@@ -108,7 +109,7 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import librarydetails from './LibraryDetails'
-import confirmationlist from './ConfirmationList'
+import confirmationlist from './ConfirmationList'  
 import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
@@ -121,14 +122,16 @@ declare var mobiscroll:any;
       
    },   
    mixins:[maskMixin],
-  computed:{
+  computed:{  
      ...mapGetters({
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
+       'queryResult':'stockTaking/queryResult',//查询结果
      }) 
    },
    methods:{ 
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
+       'setqueryResult':"stockTaking/setqueryResult",
      }),
 
    }   
@@ -140,17 +143,24 @@ export default class stockTaking extends Vue{
     private getDataSorting:INoopPromise  //获取数据整理
     private getInventoryType:INoopPromise  //获取盘点类型
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[] = [];
+    private inventoryDetails:any[] = []; //列表详情
+    private queryResult:any[] = [];  //查询详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
+    private setqueryResult:INoopPromise//store中给setqueryResult赋值
     private tabList:TabList = new TabList();
     private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
+    private warehouseType:any[] = [];  //动态加载仓库
+    private Selected:string;  //仓库默认显示第一个
+    private showbtn:boolean= true;
+    private hidebtn:boolean= true;
     private sildename:string = 'slide-go';
     private hideMask:()=>void;
     private showMask:()=>void;
+    private djnumber:string; //单据号
     private orderType:any[] = [{
       name:"合同采购单",
       type:"q"
@@ -194,6 +204,7 @@ export default class stockTaking extends Vue{
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
+      this.iswarehouseType(); //动态加载仓库
     }
    
     mounted(){
@@ -235,7 +246,6 @@ export default class stockTaking extends Vue{
           text: '加载中...'
         });
         this.inventoryList = res.data.data[0];
-        // console.log(JSON.stringify(this.inventoryList))
         setTimeout(()=>{
           this.$vux.loading.hide()
           this.hideMask()
@@ -298,6 +308,12 @@ export default class stockTaking extends Vue{
     private submission(info:string){
       this.$router.push(info)
     }
+    //生效按钮
+    private takeeffect(){
+      alert("e")
+       this.hidebtn = false
+       this.showbtn = true
+    }
     //实盘录入
     private realdiscentry(info:string){
       this.$router.push(info)
@@ -316,33 +332,57 @@ export default class stockTaking extends Vue{
       this.newlyadded = true
     }
     private addinventorylist(type:any,bill_type:string){
-      // const bill_type = this.inventoryType.bill_type
       this.service.getInventoryType(type.bill_type).then(res=>{ 
+        this.newlyadded = false
+        this.inventoryType = res.data.data;
         this.$router.push({
           name:'AddinventoryList',
           params:{
-              warehouse_name:type.warehouse_name,
-              busi_date:type.busi_date,
-              bill_type_name:type.bill_type_name,
-              stock_count_mode_name:type.stock_count_mode_name
-            }});
-            this.newlyadded = false
-          // this.inventoryDetails = res.data.data;
-          // this.setInventoryDetails(this.inventoryDetails); 
+            type:res.data.data[0].bill_type
+          }
+         });
+        //  console.log(JSON.stringify(this.inventoryType))
       },err=>{
           this.$toasted.show(err.message)
       })
     }    
-    //查询盘点单
+    //查询盘点单   
     private query(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
     }
     //查询结果
     private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.$router.push({name:'QueryResult',params:{obj:this.searchParam}});
+      const bill_no = this.djnumber || null;
+      const end_date =  this.searchParam.end_date || null;
+      const begin_date = this.searchParam.begin_date || null;
+      const warehouse_id = this.warehouseType[0].id;
+      this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
+        this.hideMask();
+        this.$router.push({name:'QueryResult'});
+        this.queryResult = res.data.data;
+        this.setqueryResult(this.queryResult); 
+      },err=>{
+          this.$toasted.show(err.message)
+          this.$router.push({name:'QueryResult'});
+          this.isSearch = false;
+      })
+     
+    }
+    //动态加载仓库
+    private iswarehouseType(){
+      const inventory_type = "week_inventory";
+      this.service.getWarehouse(inventory_type as string).then(res=>{ 
+          this.warehouseType = res.data.data;
+          this.Selected = this.warehouseType[0].text
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
+
+    //动态仓库切换
+    private handlerwarehouseType(){
+
     }
 
 
@@ -524,7 +564,7 @@ export default class stockTaking extends Vue{
     position: fixed;
     top: 40px;
     left: 0;
-    z-index: 99999;
+    z-index:10001;
     width: @width;
     .content{
       width: @width;

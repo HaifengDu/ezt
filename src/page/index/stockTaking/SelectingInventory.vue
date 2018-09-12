@@ -1,6 +1,6 @@
 <!--选择盘点货品-->
 <template>
-<div v-if="selectinginventory">
+<div>
    <div class="ezt-page-con selectinginventory">
     <ezt-header :back="true" title="选择盘点货品"  @goBack="goBack">
        <div slot="action">
@@ -94,7 +94,6 @@ import './AddinventoryList'
    }   
 })  
 export default class selectinginventory extends Vue{
-    private selectinginventory:boolean = true;
     private list:any[] = [];
     private newlyadded:boolean = false;
     private inventoryList:any[] = [];
@@ -117,7 +116,7 @@ export default class selectinginventory extends Vue{
 
     }
     private goBack(){
-      this.selectinginventory = false
+      this.$router.back();
     }
 
     /**

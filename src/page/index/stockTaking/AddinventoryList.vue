@@ -1,23 +1,8 @@
 <!--新增盘库单-->
 <template>
  <div>
-  <!-- 新增盘点类型 -->
-   <div> 
-      <x-dialog v-model="newlyadded" class="dialog">
-        <div class="newlytype">
-           <div class="title" @click="close">
-              <p>请选择盘点类型</p>
-              <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
-            </div>
-            <ul>
-              <li @click="datasorting"><i></i>数据整理</li>
-              <li :key="index" v-for="(inventory,index) in inventoryType" @click="list(inventory)"><i></i>{{inventory.name}}</li>
-            </ul>
-        </div>
-      </x-dialog>
-  </div>
   <!-- 新增盘点单 -->
-   <div class="ezt-page-con addinventorylist" v-if="addlist">
+   <div class="ezt-page-con addinventorylist">
     <ezt-header :back="true" title="新增盘库单" @goBack="goBack">
        <div slot="action">
           <span></span>
@@ -29,7 +14,7 @@
             <group>   
               <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
-              <x-input title='盘点类型' text-align="right" disabled v-model="type.name">{{type.name}}</x-input>
+              <x-input title='盘点类型' text-align="right" disabled v-model="inventory">{{inventory}}</x-input>
             </group>       
           </div> 
           <div class="warehouse">
@@ -57,7 +42,7 @@
           <div class="method">
               <p>盘点方式</p>
               <ul>
-                <li @click="manualproduction()">手工制单</li>
+                <li @click="manualproduction('/selectinginventory')">手工制单</li>
                 <li @click="templateimport('/selectthetemplate')">模板导入</li>
                 <li @click="inventorytype('/confirmationlist')">盘点类型导入</li>
               </ul>
@@ -69,10 +54,7 @@
     <confirm v-model="isSave" @on-confirm="onConfirm">
       <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
     </confirm> 
-
-    <!-- 选择货品   -->
-    <SelectingInventory v-if="SelectingInventory"></SelectingInventory>
- </div>
+  </div>
 </template>  
 <script lang="ts">
 import Vue from 'vue'
@@ -91,33 +73,33 @@ import SelectingInventory from './SelectingInventory'
      ...mapGetters({
        "user":"user",
        'addInventory':'stockTaking/addInventory',//新增盘库单数据
+       'inventory':'stockTaking/inventory',//盘点类型
      }) 
    },
    methods:{ 
      ...mapActions({
        'setAddinventory':"stockTaking/setAddinventory",
+       'setInventoryType':"stockTaking/setInventoryType",
      })
 
    }   
 })  
+
 export default class stockTaking extends Vue{
     private user:IUser;
     private service:StockTakingService;
-    private type:string; //盘点类型数据
     private bill_type:string; //弹层盘点类型
     private daily_inventory:string;
     private week_inventory:string;
     private period_inventory:string;
-    private getDataSorting:INoopPromise  //获取数据整理
-    private getInventoryType:INoopPromise  //获取盘点类型
+    private inventory:string;
     private inventoryType:any[] = [];//盘点类型
     private warehouseType:any[] = [];  //动态加载仓库
     private isSave:boolean = false;//确认不保存
-    private addlist:boolean = false; //新增盘点页面显示隐藏
-    private newlyadded:boolean = true;//默认显示弹层
     private addinventory:any = {};//store中
     private setAddinventory:INoopPromise//store中给setAddinventory赋值
     private SelectingInventory:boolean = false;
+    private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       type:"q"
@@ -125,22 +107,10 @@ export default class stockTaking extends Vue{
       name:"按照0库存量处理",
       type:"m"
     }];
-    
-
     created() {
-        this.inventoryType.push({  
-          name:"日盘",
-          bill_type:'daily_inventory'
-        });
-        this.inventoryType.push({
-          name:"周盘",
-          bill_type:'week_inventory'
-        });
-        this.inventoryType.push({
-          name:"月盘",
-          bill_type:'period_inventory'
-        });
        this.service = StockTakingService.getInstance();
+       this.setInventoryType(this.inventory);
+      //  this.isType(); //判断盘点类型
     }
 
     mounted(){
@@ -154,52 +124,23 @@ export default class stockTaking extends Vue{
     private listWatch(newValue:any[],oldValue:any[]){
 
     }
-    private close(){
-      this.$router.push('/stocktaking');
-    }
+   
     private goBack(){
-      if(this.addinventory.stock){
-        this.isSave=true;
-      }else{
-        this.$router.push('/stocktaking');
-      }
+      this.$router.back();
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
       this.setAddinventory({}),
       this.$router.push('/stocktaking');
     }
-     // 数据整理  
-    private datasorting(){
-      this.service.getDataSorting().then(res=>{  
-         console.log("数据整理")
-      },err=>{
-          this.$toasted.show(err.message)
-          this.newlyadded = false
-          this.$router.push('/stocktaking');
-      })
-    }
-    //获取盘点类型
-    private list(inventory:any){
-      this.service.getInventoryType(inventory).then(res=>{ 
-         this.type = res.data.data[0].bill_type
-         this.newlyadded = false
-         this.addlist = true
-         //this.setAddinventory({})
-      },err=>{
-          this.$toasted.show(err.message)
-      })
-    }
-   
     // 手工制单
-    manualproduction(){
-       if(this.addinventory){
-         if(!this.addinventory.stock){
-            this.$toasted.show("请选择仓库！");
-            return false;
-         }
-        this.setAddinventory(this.addinventory);
-        this.SelectingInventory = true
-       }
+    manualproduction(info:string){
+        this.$router.push(info)
+        this.setInventoryType(this.inventory);
+        // if(!this.warehouseType){
+        //   this.$toasted.show("请选择仓库！");
+        //   return false;
+        // }
+        // this.$router.push(info)
     }
     //盘点类型导入
      private inventorytype(info:string){
@@ -212,7 +153,7 @@ export default class stockTaking extends Vue{
      }
     //  动态加载仓库
     private iswarehouseType(type:any){
-      this.service.getWarehouse(this.type['bill_type']).then(res=>{ 
+      this.service.getWarehouse(this.inventory).then(res=>{ 
           this.warehouseType = res.data.data;
       },err=>{
           this.$toasted.show(err.message)
@@ -312,69 +253,7 @@ export default class stockTaking extends Vue{
    }
 }
 
-// 新增盘点单
-.dialog {
-    height: 350px;
-    .newlytype{
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-       .title{
-         margin-top: 10px;
-         font-size: 13px;
-         color: #95A7BA;
-       }
-      .close {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        width: 30px;
-        height: 30px;
-        display: block;
-        right: 5px;
-        position: absolute;
-        z-index: 9999;
-        top: -5px;
-        font-size: 20px;
-      }
-      ul{
-        width: 90%;
-        margin-top: 10px;
-        li{
-          border-bottom: 1px dashed #C1CFDE;
-          height: 59px;
-          line-height: 59px;
-          text-align: left;
-          cursor: pointer;
-          font-size: 14px;
-          color: #395778;
-          i{
-            width: 30px;
-            height: 30px;
-            display: block;
-            float: left;
-            margin: 17px 10px 0 0;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-          }
-        }
-        li:nth-child(1) i{
-            background-image: url("../../../assets/images/inventory_ico_data.png")
-        }
-        li:nth-child(2) i{
-            background-image: url("../../../assets/images/intentory_ico_day.png")
-        }
-        li:nth-child(3) i{
-            background-image: url("../../../assets/images/intentory_ico_week.png")
-        }
-        li:nth-child(4) i{
-            background-image: url("../../../assets/images/intentory_ico_month.png")
-        }
-        li:last-child{
-          border-bottom:none;
-        }
-      }
-    }    
-}
+
 </style>
 
 

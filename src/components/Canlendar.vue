@@ -43,6 +43,7 @@
         theme: 'material', 
         display: 'bottom',
         lang: 'zh',
+        dateFormat: 'yyyy-mm-dd',
         onSet: function(val){
           _this.$emit(val.valueText)
         }

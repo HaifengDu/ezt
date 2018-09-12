@@ -48,7 +48,20 @@
           </div>
       </div>    
   </div>
-  
+  <div>
+      <x-dialog v-model="newlyadded" class="dialog">
+      <div class="newlytype">
+          <div class="title" @click="close = false">
+            <p>请选择盘点类型</p>
+            <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
+          </div>
+          <ul>
+            <li @click="datasorting"><i></i>数据整理</li>
+            <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist(type)"><i></i>{{type.name}}</li>
+          </ul>
+      </div>   
+    </x-dialog>
+  </div>
   <!-- 查询盘点单 -->
   <transition :name="sildename">
     <div class="enquirylist" v-if="isSearch">
@@ -72,7 +85,7 @@
               <li>
                   <span>开始日期</span>
                   <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.begin_date"></ezt-canlendar>
-              </li>
+              </li>   
               <li>
                   <span>结束日期</span>
                   <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.end_date"></ezt-canlendar>
@@ -112,12 +125,14 @@ declare var mobiscroll:any;
      ...mapGetters({
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
        'queryResult':'stockTaking/queryResult',//查询结果
+       'inventory':'stockTaking/inventory',//盘点类型
      }) 
    },
    methods:{ 
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
        'setQueryResult':"stockTaking/setQueryResult",
+       'setInventoryType':"stockTaking/setInventoryType",
      }),
      
    }     
@@ -131,6 +146,8 @@ export default class stockTaking extends Vue{
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private queryResult:any;  //查询详情
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
+    private inventory:any;  //盘点类型
+    private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
@@ -144,6 +161,10 @@ export default class stockTaking extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     private djnumber:string; //单据号
+    private inventoryType:any[] = [];//盘点类型
+    private getInventoryType:INoopPromise  //获取盘点类型
+    private getDataSorting:INoopPromise  //获取数据整理
+    private type:string; //盘点类型数据
     private orderType:any[] = [{
       name:"合同采购单",
       type:"q"
@@ -172,6 +193,19 @@ export default class stockTaking extends Vue{
         status:3,
         active:false
       });   
+
+       this.inventoryType.push({  
+          name:"日盘",
+          bill_type:'daily_inventory'
+        });
+        this.inventoryType.push({
+          name:"周盘",
+          bill_type:'week_inventory'
+        });
+        this.inventoryType.push({
+          name:"月盘",
+          bill_type:'period_inventory'
+        });
       
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
@@ -294,7 +328,29 @@ export default class stockTaking extends Vue{
     }
     //新增盘点单
     private add(){
-       this.$router.push({name:'AddinventoryList'});
+      this.newlyadded = true
+    }
+    private addinventorylist(type:any,bill_type:string){
+      this.service.getInventoryType(type.bill_type).then(res=>{ 
+        this.$router.push({
+          name:'AddinventoryList',
+         });
+         this.newlyadded = false
+         this.type = res.data.data[0].bill_type;
+         this.setInventoryType(this.type);
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }    
+     // 数据整理  
+    private datasorting(){
+      this.service.getDataSorting().then(res=>{  
+         console.log("数据整理")
+      },err=>{
+          this.$toasted.show(err.message)
+          this.newlyadded = false
+          this.$router.push('/stocktaking');
+      })
     }
     //查询盘点单   
     private query(){
@@ -303,12 +359,12 @@ export default class stockTaking extends Vue{
     }
     //查询结果
     private toSearch(){
-      const bill_no = this.djnumber || null;
-      const end_date =  this.searchParam.end_date || null;
-      const begin_date = this.searchParam.begin_date || null;
+      const bill_no = this.djnumber || '';
+      const end_date =  this.searchParam.end_date || '';
+      const begin_date = this.searchParam.begin_date || '';
       const warehouse_id = this.warehouseType[0].id;
       this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
-        this.hideMask();
+        this.hideMask();   
         this.$router.push({name:'QueryResult'});
         this.queryResult = res.data.data;
         this.setQueryResult(this.queryResult); 
@@ -518,6 +574,69 @@ export default class stockTaking extends Vue{
        }
      }
    }
+}
+// 新增盘点单
+.dialog {
+    height: 350px;
+    .newlytype{
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       .title{
+         margin-top: 10px;
+         font-size: 13px;
+         color: #95A7BA;
+       }
+      .close {
+        margin-top: 8px;
+        margin-bottom: 8px;
+        width: 30px;
+        height: 30px;
+        display: block;
+        right: 5px;
+        position: absolute;
+        z-index: 9999;
+        top: -5px;
+        font-size: 20px;
+      }
+      ul{
+        width: 90%;
+        margin-top: 10px;
+        li{
+          border-bottom: 1px dashed #C1CFDE;
+          height: 59px;
+          line-height: 59px;
+          text-align: left;
+          cursor: pointer;
+          font-size: 14px;
+          color: #395778;
+          i{
+            width: 30px;
+            height: 30px;
+            display: block;
+            float: left;
+            margin: 17px 10px 0 0;
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+          }
+        }
+        li:nth-child(1) i{
+            background-image: url("../../../assets/images/inventory_ico_data.png")
+        }
+        li:nth-child(2) i{
+            background-image: url("../../../assets/images/intentory_ico_day.png")
+        }
+        li:nth-child(3) i{
+            background-image: url("../../../assets/images/intentory_ico_week.png")
+        }
+        li:nth-child(4) i{
+            background-image: url("../../../assets/images/intentory_ico_month.png")
+        }
+        li:last-child{
+          border-bottom:none;
+        }
+      }
+    }    
 }
 </style>
 

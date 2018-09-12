@@ -45,30 +45,25 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import LibraryDetailService from '../../../service/LibraryDetailService'
 @Component({  
    components:{  
       
    },   
     computed:{
      ...mapGetters({
-       'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-       'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
 })  
 export default class stockTaking extends Vue{
-    private service: LibraryDetailService;
     private list:any[] = [];
     private getInventoryDetails:INoopPromise;
     private inventoryList:any[] = [];
     created() {
-      this.service = LibraryDetailService.getInstance();
     }
 
     mounted(){

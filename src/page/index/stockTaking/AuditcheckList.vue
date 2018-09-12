@@ -53,25 +53,21 @@ import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import LibraryDetailService from '../../../service/LibraryDetailService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-      //  'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-      //  'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
 })  
 export default class auditchecklist extends Vue{
-    private service: LibraryDetailService;
     private list:any[] = [];
     private inventoryDetails:any[];
     private getInventoryDetails:INoopPromise;

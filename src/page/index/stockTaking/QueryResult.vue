@@ -52,7 +52,7 @@ import StockTakingService from '../../../service/StockTakingService'
    },
    methods:{ 
      ...mapActions({
-       'setqueryResult':"stockTaking/setqueryResult",
+       'setQueryResult':"stockTaking/setQueryResult",
      })
 
    }   

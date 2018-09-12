@@ -78,7 +78,6 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import LibraryDetailService from '../../../service/LibraryDetailService'
 import '../../../assets/css/transition.css'
 @Component({  
    components:{  
@@ -86,30 +85,24 @@ import '../../../assets/css/transition.css'
    },   
     computed:{
      ...mapGetters({
-       'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-       'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
 })  
 export default class selectinginventory extends Vue{
-    private service: LibraryDetailService;
     private list:any[] = [];
-    private getInventoryDetails:INoopPromise;
     private inventoryList:any[] = [];
     private search:boolean = false;
     private data3:string =  '1';
     private sildename:string = 'slide-go';
     created() {
-      this.service = LibraryDetailService.getInstance();
     }
 
     mounted(){
-      this.getInventoryDetails();
     }
 
   /**

@@ -48,21 +48,7 @@
           </div>
       </div>    
   </div>
-  <!-- 新增盘点单 -->
-   <div> 
-      <x-dialog v-model="newlyadded" class="dialog">
-        <div class="newlytype">
-           <div class="title" @click="show=false">
-              <p>请选择盘点类型</p>
-              <span class="close" @click="newlyadded=false"><i class="fa fa-times" aria-hidden="true"></i></span>
-            </div>
-            <ul>
-              <li @click="datasorting"><i></i>数据整理</li>
-              <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist(type)"><i></i>{{type.name}}</li>
-            </ul>
-        </div>
-      </x-dialog>
-  </div>
+  
   <!-- 查询盘点单 -->
   <transition :name="sildename">
     <div class="enquirylist" v-if="isSearch">
@@ -131,24 +117,21 @@ declare var mobiscroll:any;
    methods:{ 
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
-       'setqueryResult':"stockTaking/setqueryResult",
+       'setQueryResult':"stockTaking/setQueryResult",
      }),
-
+     
    }   
 })
 export default class stockTaking extends Vue{
     private service: StockTakingService;
     private pager:Pager;      
     private getInventoryList:INoopPromise  //获取盘库列表
-    private getDataSorting:INoopPromise  //获取数据整理
-    private getInventoryType:INoopPromise  //获取盘点类型
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[] = []; //列表详情
-    private queryResult:any[] = [];  //查询详情
+    private inventoryDetails:any; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private setqueryResult:INoopPromise//store中给setqueryResult赋值
+    private queryResult:any;  //查询详情
+    private setQueryResult:INoopPromise//store中给setQueryResult赋值
     private tabList:TabList = new TabList();
-    private inventoryType:any[] = [];//盘点类型
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
@@ -189,18 +172,7 @@ export default class stockTaking extends Vue{
         status:3,
         active:false
       });   
-      this.inventoryType.push({  
-        name:"日盘",
-        bill_type:'daily_inventory'
-      });
-      this.inventoryType.push({
-        name:"周盘",
-        bill_type:'week_inventory'
-      });
-      this.inventoryType.push({
-        name:"月盘",
-        bill_type:'period_inventory'
-      });
+      
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
@@ -227,7 +199,7 @@ export default class stockTaking extends Vue{
  * computed demo
  */ 
     private goBack(){
-      this.$router.back();
+      this.$router.push('/');
     }
     //tab页面切换
     private tabClick(index:number){
@@ -296,14 +268,7 @@ export default class stockTaking extends Vue{
           this.$toasted.show(err.message)
       })
     }     
-    // 数据整理  
-    private datasorting(){
-      this.service.getDataSorting().then(res=>{  
-         console.log("数据整理")
-      },err=>{
-          this.$toasted.show(err.message)
-      })
-    }
+   
     // 提交页面
     private submission(info:string){
       this.$router.push(info)
@@ -329,23 +294,8 @@ export default class stockTaking extends Vue{
     }
     //新增盘点单
     private add(){
-      this.newlyadded = true
+       this.$router.push({name:'AddinventoryList'});
     }
-    private addinventorylist(type:any,bill_type:string){
-      this.service.getInventoryType(type.bill_type).then(res=>{ 
-        this.newlyadded = false
-        this.inventoryType = res.data.data;
-        this.$router.push({
-          name:'AddinventoryList',
-          params:{
-            type:res.data.data[0].bill_type
-          }
-         });
-        //  console.log(JSON.stringify(this.inventoryType))
-      },err=>{
-          this.$toasted.show(err.message)
-      })
-    }    
     //查询盘点单   
     private query(){
       this.isSearch = !this.isSearch;
@@ -361,7 +311,7 @@ export default class stockTaking extends Vue{
         this.hideMask();
         this.$router.push({name:'QueryResult'});
         this.queryResult = res.data.data;
-        this.setqueryResult(this.queryResult); 
+        this.setQueryResult(this.queryResult); 
       },err=>{
           this.$toasted.show(err.message)
           this.$router.push({name:'QueryResult'});
@@ -496,69 +446,7 @@ export default class stockTaking extends Vue{
         }
     }
 }
-// 新增盘点单
-.dialog {
-    height: 350px;
-    .newlytype{
-       display: flex;
-       flex-direction: column;
-       align-items: center;
-       .title{
-         margin-top: 10px;
-         font-size: 13px;
-         color: #95A7BA;
-       }
-      .close {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        width: 30px;
-        height: 30px;
-        display: block;
-        right: 5px;
-        position: absolute;
-        z-index: 9999;
-        top: -5px;
-        font-size: 20px;
-      }
-      ul{
-        width: 90%;
-        margin-top: 10px;
-        li{
-          border-bottom: 1px dashed #C1CFDE;
-          height: 59px;
-          line-height: 59px;
-          text-align: left;
-          cursor: pointer;
-          font-size: 14px;
-          color: #395778;
-          i{
-            width: 30px;
-            height: 30px;
-            display: block;
-            float: left;
-            margin: 17px 10px 0 0;
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-          }
-        }
-        li:nth-child(1) i{
-            background-image: url("../../../assets/images/inventory_ico_data.png")
-        }
-        li:nth-child(2) i{
-            background-image: url("../../../assets/images/intentory_ico_day.png")
-        }
-        li:nth-child(3) i{
-            background-image: url("../../../assets/images/intentory_ico_week.png")
-        }
-        li:nth-child(4) i{
-            background-image: url("../../../assets/images/intentory_ico_month.png")
-        }
-        li:last-child{
-          border-bottom:none;
-        }
-      }
-    }    
-}
+
 // 查询盘点单
 .enquirylist{
     position: fixed;

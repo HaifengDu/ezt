@@ -26,19 +26,16 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import LibraryDetailService from '../../../service/LibraryDetailService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
-       'inventoryDetails':'libraryDetails/inventoryDetails'
      }) 
    },
    methods:{ 
      ...mapActions({
-       'getInventoryDetails':'libraryDetails/getInventoryDetails'
      })
 
    }   
@@ -46,15 +43,12 @@ import LibraryDetailService from '../../../service/LibraryDetailService'
 export default class selectthetemplate extends Vue{
     private pager:Pager;   
     private labelPosition= 'left';
-    private service: LibraryDetailService;
-    private getInventoryDetails:INoopPromise;
     private inventoryList:any[] = ['模板1','模板2','模板3'];
     created() {
       
     }
 
     mounted(){
-       this.getInventoryDetails();
 
     }
     private goBack(){
@@ -99,6 +93,9 @@ export default class selectthetemplate extends Vue{
   padding: 8px 0;
   color: #888;
 }
+.ezt-main{
+  height: auto;
+}
 .selectthetemplate{
     position: absolute;
     top: 0;
@@ -126,7 +123,6 @@ export default class selectthetemplate extends Vue{
         box-shadow: 0 -1px 3px 0 rgba(204,216,228,0.80);
      }
    }
-   
 }
 </style>
 

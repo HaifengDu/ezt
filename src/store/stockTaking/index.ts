@@ -10,11 +10,13 @@ const stockTaking:Module<any,IRootState> = {
         inventoryList:[],  //盘库列表
         inventoryDetails:[], //盘库详情
         queryResult:[], //查询结果详情
+        addinventory:{}, //新增盘库单数据
     },
     getters:{
         inventoryList:state=>state.inventoryList,
         inventoryDetails:state=>state.inventoryDetails,
-        queryResult:state=>state.queryResult
+        queryResult:state=>state.queryResult,
+        addinventory:state=>state.addinventory
     },    
     mutations:{
         [RootType.PK_GOODLIST](state,inventoryList:any[]){
@@ -25,7 +27,11 @@ const stockTaking:Module<any,IRootState> = {
         },
         [RootType.PK_QueryResult](state,queryResult:any[]){
             state.queryResult = queryResult;
-        }
+        },
+        [RootType.PK_AddInventory](state,addinventory:{}){
+            state.addinventory = addinventory;
+        },
+        
     },
     actions:{
         ...actions

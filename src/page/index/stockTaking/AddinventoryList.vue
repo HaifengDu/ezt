@@ -22,7 +22,7 @@
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select"  @click="iswarehouseType(type)" v-model="addinventory.stock">
+                    <select name="" id="" placeholder="请选择" class="ezt-select"  @click="iswarehouseType()" v-model="addinventory.stock">
                       <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
                       <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select>   
@@ -93,7 +93,6 @@ export default class stockTaking extends Vue{
     private week_inventory:string;
     private period_inventory:string;
     private inventory:string;
-    private inventoryType:any[] = [];//盘点类型
     private warehouseType:any[] = [];  //动态加载仓库
     private isSave:boolean = false;//确认不保存
     private addinventory:any = {};//store中

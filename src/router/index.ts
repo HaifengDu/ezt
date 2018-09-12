@@ -25,6 +25,7 @@ import SelectingInventory from '@/page/index/stockTaking/SelectingInventory.vue'
 import ChangePsd from '@/page/mine/ChangePassword.vue';//修改密码
 import InitStock from '@/page/index/init-stock/InitStock.vue';//库存初始化
 import AddInitStock from '@/page/index/init-stock/AddInitStock.vue';//添加库存初始化
+import InitSet from '@/page/index/init-stock/InitSet.vue';//库存初始化设置
 Vue.use(Router)
 
 const router = new Router({
@@ -137,6 +138,11 @@ const router = new Router({
       path:'/addInitStock',
       name:'AddInitStock',
       component: AddInitStock
+    },
+    {
+      path: '/initSet',
+      name:"InitSet",
+      component: InitSet
     }
   ]
 });

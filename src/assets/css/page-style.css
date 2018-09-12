@@ -440,6 +440,7 @@ input.ezt-middle{
       text-align: left;
       display: flex;
       flex-direction: row;
+      align-items: center;
   }
   /* .ezt-title-search li:last-child{
     background:none;

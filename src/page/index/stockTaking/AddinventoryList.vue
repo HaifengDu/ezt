@@ -142,6 +142,18 @@ export default class stockTaking extends Vue{
         // }
         // this.$router.push(info)
     }
+    // manualproduction(){
+    //   this.SelectingInventory = false
+    //    if(this.addinventory){
+    //      if(!this.addinventory.stock){
+    //         this.$toasted.show("请选择仓库！");
+    //         return false;
+    //      }
+    //     this.setAddinventory(this.addinventory);
+    //     debugger
+    //     this.SelectingInventory = true
+    //    }
+    // }
     //盘点类型导入
      private inventorytype(info:string){
         this.$router.push(info)

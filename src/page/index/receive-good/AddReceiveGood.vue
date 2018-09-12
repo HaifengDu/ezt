@@ -63,7 +63,9 @@
                             <input type="number" class="good-detail-sort ezt-smart" placeholder="单价" v-model="item.price">
                             <span>/{{item.utilname}}</span>
                           </span>
-                           <input type="number" placeholder="数量" class="ezt-smart" v-model="item.num">
+                          <span>
+                            <input type="number" placeholder="数量" class="ezt-smart" v-model="item.num">
+                          </span>
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
@@ -78,32 +80,32 @@
                   </div>
               </div>
                <div>
-                  <x-dialog v-model="isDirect" class="dialog-demo">
-                    <div @click="isDirect=false" class="ezt-dialog-header">
-                      <span class="header-name">
-                        直拨
-                      </span>
-                      <span class="ezt-close">
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                      </span>
-                    </div>
-                    <div class="ezt-dialog-title">
-                      <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
-                      <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
-                    </div>
-                    <div class="warehouse-list">
-                        <ul class="warehouse-isDefault">
-                            <li v-for="(item,index) in roundValue.list" :key="index">
-                              <span>{{item.name}}</span>
-                              <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="mine-bot-btn">
-                      <span class="ezt-lone-btn">提交</span>
-                    </div>             
-                  </x-dialog>
-                </div>
+                <x-dialog v-model="isDirect" class="dialog-demo">
+                  <div class="ezt-dialog-header">
+                    <span class="header-name">
+                      直拨
+                    </span>
+                    <span class="ezt-close" @click="isDirect=false" >
+                      <i class="fa fa-times" aria-hidden="true"></i>
+                    </span>
+                  </div>
+                  <div class="ezt-dialog-title">
+                    <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
+                    <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
+                  </div>
+                  <div class="warehouse-list">
+                      <ul class="warehouse-isDefault">
+                          <li v-for="(item,index) in roundValue.list" :key="index">
+                            <span>{{item.name}}</span>
+                            <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="mine-bot-btn">
+                    <span class="ezt-lone-btn">提交</span>
+                  </div>             
+                </x-dialog>
+              </div>
            </li>
         </ul>       
       </div> 
@@ -242,14 +244,14 @@ export default class ReceiveGood extends Vue{
         return Number(ori)+Number(item.num);       
       },0);
     }
-    /**
-     * 物料总金额
-     */
-    private get TotalAmt(){
-      return this.selectedGood.reduce((ori,item)=>{
-        return ori+(item.num*item.price);       
-      },0);
-    }
+  /**
+   * 物料总金额
+   */
+  private get TotalAmt(){
+    return this.selectedGood.reduce((ori,item)=>{
+      return ori+(item.num*item.price);       
+    },0);
+  }
 
     /**
      * 收货 提交
@@ -408,28 +410,27 @@ export default class ReceiveGood extends Vue{
   border:none;
 }
  //物料信息
-    .good-detail-content{
-        text-align: left;
-        margin: 8px 10px;
-        padding: 12px 10px 12px 15px;
-        background: #FFFFFF;
-        border: 1px solid #DDECFD;
-        box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-        display: flex;
-        flex: row;
-        flex-direction: column;
-    }
+.good-detail-content{
+    text-align: left;
+    margin: 8px 10px;
+    padding: 12px 10px 12px 15px;
+    background: #FFFFFF;
+    border: 1px solid #DDECFD;
+    box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
+    display: flex;
+    flex: row;
+    flex-direction: column;
     .good-detail-l{
         display: inline-block;
         flex:.8;
     }
     .good-detail-l>div{
-       display:flex;
-       flex-direction: row;
+      display:flex;
+      flex-direction: row;
     }
     .good-detail-l>div>span{
-       flex:1;
-       align-items: baseline;
+      padding: 5px 0px;
+      align-items: baseline;
     }
     .good-detail-r{
         display: inline-block;
@@ -471,6 +472,8 @@ export default class ReceiveGood extends Vue{
         flex-direction: column;
         padding-bottom: 10px;
     }
+}
+   
     //物料明细结束 
     .ezt-detail-good input{
       // width: 50px;

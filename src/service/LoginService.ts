@@ -124,8 +124,6 @@ export class LoginService extends BaseService{
     modifyPassword(oldPasswd:string,newPasswd:string){
         let user = this.cache.getData(cacheKey.USER_MODEL);
         let userName = JSON.parse(user);
-        console.log(userName,'000099');
-        console.log(RootType.UPDATE_USER,'qqqq');
         let oldhash = crypto.createHash("md5");
         let newhash = crypto.createHash("md5");
         let enoldPasswd = oldhash.update((<string>oldPasswd).trim()).digest('hex');

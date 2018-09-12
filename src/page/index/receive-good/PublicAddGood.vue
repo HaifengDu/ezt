@@ -309,11 +309,11 @@ export default class AddGood extends Vue{
    * */ 
   private goToCommit(){
     this.setSelectedGood(this.selectedGoodList);
-    this.$router.push('/addReceiveGood');
+    this.$router.back();
     console.log(this.selectedGood,'111')
   }
   private goBack(){
-    this.$router.push('/addReceiveGood');
+    this.$router.back();
   }
 }
 </script>

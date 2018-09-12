@@ -7,39 +7,6 @@
     </ezt-header>    
     <div class="ezt-main"> 
       <div class="ezt-add-content">
-        <!-- <ul class="ezt-title-search">
-          <li>
-            <span class="title-search-name">收货类型：</span>
-            <span class="title-select-name">配送收货<i class="icon-trun-on"></i></span>
-          </li>
-          <li>
-            <span class="title-search-name">来货单位：</span>
-            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
-          </li>
-          <li>
-            <span class="title-search-name">收货日期：</span>
-            <span>
-              <ezt-canlendar type="text" class="input-canlendar"></ezt-canlendar>
-               <span>至</span>
-              <ezt-canlendar type="text" class="input-canlendar"></ezt-canlendar>
-            </span>
-          </li>
-          <li>
-            <span class="title-search-name">仓库：</span>
-            <span class="title-select-name">全部<i class="icon-trun-on"></i></span>
-          </li>
-          <li>
-            <span class="title-search-name">源单号：</span>
-            <input type="text">
-          </li>
-           <li>
-            <span class="title-search-name">单据或物料：</span>
-            <input type="text">
-          </li>
-          <li>
-            <div class="ezt-two-btn">查询</div>
-          </li>
-        </ul> -->
         <ul>
           <li>
               <!-- 收货单列表       -->

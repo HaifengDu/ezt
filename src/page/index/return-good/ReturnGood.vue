@@ -1,7 +1,7 @@
 <!--整体页面的头部布局-->
 <template>
 <div class="ezt-page-con">
-    <ezt-header :back="true" title="退货">
+    <ezt-header :back="true" title="退货" @goBack="goBack">
        <div slot="action">
            <span>退货</span>
        </div>
@@ -103,7 +103,12 @@ export default class ReturnGood extends Vue{
         return ori.uprice+item;
       },0);
     }
-
+    /**
+     * 返回
+     */
+    private goBack(){
+      this.$router.push("/");
+    }
     // private getGoodList(){
     //     this.service.getGoodList(this.pager.getPage()).then(res=>{
     //        this.list = res.data.data;

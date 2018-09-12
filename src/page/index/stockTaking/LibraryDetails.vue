@@ -69,7 +69,7 @@ import StockTakingService from '../../../service/StockTakingService'
        'setInventoryDetails':"stockTaking/setInventoryDetails",
      }),
 
-   }   
+   }        
 })  
 export default class stockTaking extends Vue{
     private pager:Pager;   

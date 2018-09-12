@@ -10,6 +10,9 @@ const initStockService = InitStockService.getInstance();
 export const setAddInitStockInfo:Action<any,IRootState> = ({commit},addInitStockInfo:{})=>{
     commit(initStockType.ADD_INITSTOCKINFO, addInitStockInfo);
 }
+export const setBeforeAddInitStockInfo:Action<any,IRootState> = ({commit},beforeAddInitStockInfo:{})=>{
+    commit(initStockType.ADD_BEFOREINITSTOCKINFO, beforeAddInitStockInfo);
+}
 
 // export const getGoodList:Action<any,IRootState> = ({commit})=>{
 //     const pager = new Pager();

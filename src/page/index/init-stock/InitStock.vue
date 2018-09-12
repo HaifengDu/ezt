@@ -103,167 +103,176 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import ErrorMsg from "../model/ErrorMsg"
-import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager';
-import {TabItem,LoadingPlugin} from 'vux'
-import { mapActions, mapGetters } from 'vuex';
-import {maskMixin} from "../../../helper/maskMixin";
-import { INoop, INoopPromise } from '../../../helper/methods';
-import { TabList } from '../../../common/ITab';
-import { InitStockService} from '../../../service/InitStockService';
+import Vue from "vue";
+import ErrorMsg from "../model/ErrorMsg";
+import { Component, Watch } from "vue-property-decorator";
+import Pager from "../../../common/Pager";
+import { TabItem, LoadingPlugin } from "vux";
+import { mapActions, mapGetters } from "vuex";
+import { maskMixin } from "../../../helper/maskMixin";
+import { INoop, INoopPromise } from "../../../helper/methods";
+import { TabList } from "../../../common/ITab";
+import { InitStockService } from "../../../service/InitStockService";
 @Component({
-   components:{
-     TabItem
-   },
-   mixins:[maskMixin],
-   computed:{
-     ...mapGetters({
+  components: {
+    TabItem
+  },
+  mixins: [maskMixin],
+  computed: {
+    ...mapGetters({
       //  'goodList':'receiveGood/goodList'
-     })
-   },
+    })
+  }
   //  methods:{
   //    ...mapActions({
   //      'getGoodList':"receiveGood/getGoodList"
   //    })
   //  }
 })
-export default class InitStock extends Vue{
-    private selected:String = 'deliver';
-    private service: InitStockService;
-    private pager:Pager;
-    private getGoodList:INoopPromise
-    private addMaskClickListener:(...args:any[])=>void;
-    private hideMask:()=>void;
-    private showMask:()=>void;
-    // private updateUser:INoop;
-    private goodList:any[] = [];//列表页list数据
-    private allLoaded:boolean= false;//数据是否已经全部加载完
-    private isSearch:boolean= false; //搜索的条件
-    private searchParam:any={};//搜索时的查询条件
+export default class InitStock extends Vue {
+  private selected: String = "deliver";
+  private service: InitStockService;
+  private pager: Pager;
+  private getGoodList: INoopPromise;
+  private addMaskClickListener: (...args: any[]) => void;
+  private hideMask: () => void;
+  private showMask: () => void;
+  // private updateUser:INoop;
+  private goodList: any[] = []; //列表页list数据
+  private allLoaded: boolean = false; //数据是否已经全部加载完
+  private isSearch: boolean = false; //搜索的条件
+  private searchParam: any = {}; //搜索时的查询条件
 
-    private tabList:TabList = new TabList();
-    private orderType:any=[{
-      name:'仓库1',
-      id:'01'
-    }]
-    created() {
-      this.tabList.push({
-        name:"待审核",
-        status:1,
-        active:true,
-      });
-      // this.tabList.push({
-      //   name:"待入库",
-      //   status:2,
-      //   active:false
-      // });
-      this.tabList.push({
-        name:"已完成",
-        status:3,
-        active:false
-      });
-       this.pager = new Pager()
-       this.service = InitStockService.getInstance();
-       this.goodList = [];
-       this.searchParam = {};
-      //  this.getGoodList();
+  private tabList: TabList = new TabList();
+  private orderType: any = [
+    {
+      name: "仓库1",
+      id: "01"
     }
+  ];
+  created() {
+    this.tabList.push({
+      name: "待审核",
+      status: 1,
+      active: true
+    });
+    // this.tabList.push({
+    //   name:"待入库",
+    //   status:2,
+    //   active:false
+    // });
+    this.tabList.push({
+      name: "已完成",
+      status: 3,
+      active: false
+    });
+    this.pager = new Pager();
+    this.service = InitStockService.getInstance();
+    this.goodList = [];
+    this.searchParam = {};
+    //  this.getGoodList();
+  }
 
-    mounted(){      
-      this.getList();
-      this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
-        this.isSearch=false; 
-        this.hideMask();
-      });  
+  mounted() {
+    this.getList();
+    this.addMaskClickListener(() => {
+      //点击遮罩隐藏下拉
+      this.isSearch = false;
+      this.hideMask();
+    });
+  }
+  //详情页跳转
+  private renderUrl(info: string) {
+    if (info) {
+      this.$router.push(info);
+      return false;
     }
-    //详情页跳转
-    private renderUrl(info:string){
-      if(info){
-         this.$router.push(info);
-         return false;
-      }
-      if(this.tabList.getActive().status==1){
-        this.$router.push('/comfirmAccept');
-      }else if(this.tabList.getActive().status==3){
-        this.$router.push('/checkDetail');
-      }
-      
+    if (this.tabList.getActive().status == 1) {
+      this.$router.push("/comfirmAccept");
+    } else if (this.tabList.getActive().status == 3) {
+      this.$router.push("/checkDetail");
     }
+  }
   /**
    * computed demo
    */
-    private get Total(){
-      return this.goodList.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
-    }
-    private tabClick(index:number){
-      this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
-      this.pager.resetStart();//分页加载还原pageNum值
-      this.getList();     
-    }
-    //下拉加载更多
-    private loadMore() {
-      if(!this.allLoaded){
-         this.showMask();
+  private get Total() {
+    return this.goodList.reduce((ori, item) => {
+      return ori.uprice + item;
+    }, 0);
+  }
+  private tabClick(index: number) {
+    this.tabList.setActive(index);
+    this.allLoaded = false;
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+    this.pager.resetStart(); //分页加载还原pageNum值
+    this.getList();
+  }
+  //下拉加载更多
+  private loadMore() {
+    if (!this.allLoaded) {
+      this.showMask();
       this.$vux.loading.show({
-        text:'加载中..'
+        text: "加载中.."
       });
       this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }else{
-          this.goodList=this.goodList.concat(res.data.data);
-        }
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
+      this.service.getGoodList(status as string, this.pager.getPage()).then(
+        res => {
+          if (this.pager.getPage().limit > res.data.data.length) {
+            this.allLoaded = true;
+          } else {
+            this.goodList = this.goodList.concat(res.data.data);
+          }
+          setTimeout(() => {
+            this.$vux.loading.hide();
+            this.hideMask();
+          }, 500);
+        },
+        err => {
           this.$toasted.show(err.message);
-      })
+        }
+      );
       this.pager.setLimit(20);
-      }     
     }
-    //获取列表
-    private getList(){
-      const status = this.tabList.getActive().status;
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+  }
+  //获取列表
+  private getList() {
+    const status = this.tabList.getActive().status;
+    this.service.getGoodList(status as string, this.pager.getPage()).then(
+      res => {
         this.showMask();
         this.$vux.loading.show({
-          text: '加载中...'
-          });
-        this.goodList=res.data.data;
-        setTimeout(()=>{
+          text: "加载中..."
+        });
+        this.goodList = res.data.data;
+        setTimeout(() => {
           this.$vux.loading.hide();
           this.hideMask();
-        },400); 
-        },err=>{
-          this.$toasted.show(err.message);
-      });
-    }
-    //搜索选择的条件显示/隐藏
-    private searchTitle(){
-      this.isSearch = !this.isSearch;
-      this.isSearch?this.showMask():this.hideMask();
-    }
-    private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
-    }
-    private goBack(){
-      this.$router.push('/');
-    }
-   
+        }, 400);
+      },
+      err => {
+        this.$toasted.show(err.message);
+      }
+    );
+  }
+  //搜索选择的条件显示/隐藏
+  private searchTitle() {
+    this.isSearch = !this.isSearch;
+    this.isSearch ? this.showMask() : this.hideMask();
+  }
+  private toSearch() {
+    this.isSearch = false;
+    this.hideMask();
+    this.$router.push({
+      name: "SearchReceiveGood",
+      params: { obj: this.searchParam }
+    });
+  }
+  private goBack() {
+    this.$router.push("/");
+  }
 }
 </script>
 
-<style lang="less" scoped> 
-
+<style lang="less" scoped>
 </style>

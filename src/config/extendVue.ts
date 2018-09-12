@@ -1,10 +1,10 @@
 import Vue from "vue";
-import { Tab, XInput , Group , LoadingPlugin,XDialog ,PopupRadio ,Cell ,CellBox,Checklist,XNumber,Search,InlineXNumber,Rater,Confirm} from 'vux'
+import { Tab, XInput, Group, LoadingPlugin, XDialog, PopupRadio, Cell, CellBox, Checklist, XNumber, Search, InlineXNumber, Rater, Confirm, ButtonTab, ButtonTabItem } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
 import Tabbar from 'mint-ui/lib/tabbar';
-import TabItem from  'mint-ui/lib/tab-item';
+import TabItem from 'mint-ui/lib/tab-item';
 import Navbar from 'mint-ui/lib/navbar';
 import TabContainerItem from 'mint-ui/lib/tab-container-item';
 import TabContainer from 'mint-ui/lib/tab-container';
@@ -82,7 +82,7 @@ import 'mint-ui/lib/cell-swipe/style.css';
 // import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 Vue.prototype.$message = MessageBox;
 Button.install(Vue);
-Vue.use(Toasted,{duration:1000,position:"top-center"});
+Vue.use(Toasted, { duration: 1000, position: "top-center" });
 // Vue.prototype.$notify = Notification;
 // DatePicker.install(Vue);
 // TimePicker.install(Vue);
@@ -110,30 +110,32 @@ Vue.use(Toasted,{duration:1000,position:"top-center"});
  * 布局 end  
  */
 // Vue.component("tree-select", Vue.extend(Treeselect));
-Vue.component(Tabbar.name,Vue.extend(Tabbar));
-Vue.component(TabItem.name,Vue.extend(TabItem));
-Vue.component(Navbar.name,Vue.extend(Navbar));
-Vue.component(TabContainerItem.name,Vue.extend(TabContainerItem));
-Vue.component(TabContainer.name,Vue.extend(TabContainer));
-Vue.component('EztHeader',Vue.extend(EztHeader));//页面header组件
-Vue.component('EztFooter',Vue.extend(EztFooter));//页面footer组件
-Vue.component('EztCanlendar',Vue.extend(EztCanlendar));//页面日历
+Vue.component(Tabbar.name, Vue.extend(Tabbar));
+Vue.component(TabItem.name, Vue.extend(TabItem));
+Vue.component(Navbar.name, Vue.extend(Navbar));
+Vue.component(TabContainerItem.name, Vue.extend(TabContainerItem));
+Vue.component(TabContainer.name, Vue.extend(TabContainer));
+Vue.component('EztHeader', Vue.extend(EztHeader));//页面header组件
+Vue.component('EztFooter', Vue.extend(EztFooter));//页面footer组件
+Vue.component('EztCanlendar', Vue.extend(EztCanlendar));//页面日历
 Vue.component("x-input", Vue.extend(XInput));
 Vue.component("group", Vue.extend(Group));
-Vue.component(IndexList.name,Vue.extend(IndexList));
-Vue.component(IndexSection.name,Vue.extend(IndexSection));
+Vue.component(IndexList.name, Vue.extend(IndexList));
+Vue.component(IndexSection.name, Vue.extend(IndexSection));
 Vue.component("tab", Vue.extend(Tab));
-Vue.component('x-dialog',Vue.extend(XDialog))
-Vue.component('popup-radio',Vue.extend(PopupRadio))
-Vue.component('cell',Vue.extend(Cell))
-Vue.component('cell-box',Vue.extend(CellBox))
-Vue.component('checklist',Vue.extend(Checklist))
-Vue.component('search',Vue.extend(Search))
-Vue.component('inline-x-number',Vue.extend(InlineXNumber))
-Vue.component('rater',Vue.extend(Rater))
+Vue.component('x-dialog', Vue.extend(XDialog))
+Vue.component('popup-radio', Vue.extend(PopupRadio))
+Vue.component('cell', Vue.extend(Cell))
+Vue.component('cell-box', Vue.extend(CellBox))
+Vue.component('checklist', Vue.extend(Checklist))
+Vue.component('search', Vue.extend(Search))
+Vue.component('inline-x-number', Vue.extend(InlineXNumber))
+Vue.component('rater', Vue.extend(Rater))
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
 Vue.component("x-dialog", Vue.extend(XDialog));
-Vue.component("x-number",Vue.extend(XNumber));
-Vue.component(CellSwipe.name,Vue.extend(CellSwipe));
-Vue.component('confirm',Vue.extend(Confirm));//确认弹框
+Vue.component("x-number", Vue.extend(XNumber));
+Vue.component(CellSwipe.name, Vue.extend(CellSwipe));
+Vue.component('confirm', Vue.extend(Confirm));//确认弹框
+Vue.component('button-tab', Vue.extend(ButtonTab))
+Vue.component('button-tab-item', Vue.extend(ButtonTabItem))

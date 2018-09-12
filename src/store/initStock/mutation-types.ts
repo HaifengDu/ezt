@@ -1,5 +1,5 @@
 
 export const initStockType = {
-    ADD_RECEIVEGOODINFO:'ADD_RECEIVEGOODINFO'
+    ADD_INITSTOCKINFO:'ADD_INITSTOCKINFO'
 };
 export default initStockType;

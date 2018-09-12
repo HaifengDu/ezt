@@ -7,8 +7,8 @@ const initStockService = InitStockService.getInstance();
 // export const updateGoodList:Action<any,IRootState> = ({commit},goodList:[])=>{
 //     commit(ReceiveGoodType.UPDATE_GOODLIST, goodList);
 // };
-export const setAddReceiveGoodInfo:Action<any,IRootState> = ({commit},addReceiveGoodInfo:{})=>{
-    commit(initStockType.ADD_RECEIVEGOODINFO, addReceiveGoodInfo);
+export const setAddInitStockInfo:Action<any,IRootState> = ({commit},addInitStockInfo:{})=>{
+    commit(initStockType.ADD_INITSTOCKINFO, addInitStockInfo);
 }
 
 // export const getGoodList:Action<any,IRootState> = ({commit})=>{

@@ -8,18 +8,18 @@ const initStock:Module<any,IRootState> = {
     namespaced:true,
     state:{
         goodList:[],
-        addReceiveGoodInfo:{}//添加采购入库单 单据信息
+        addInitStockInfo:{}//添加采购入库单 单据信息
     },
     getters:{
         // goodList:state=>state.goodList,
-        addReceiveGoodInfo: state=> state.addReceiveGoodInfo
+        addInitStockInfo: state=> state.addInitStockInfo
     },
     mutations:{
         // [ReceiveGoodType.UPDATE_GOODLIST](state,goodList:any[]){
         //     state.goodList = goodList;
         // }
-         [initStockType.ADD_RECEIVEGOODINFO](state,addReceiveGoodInfo:{}){
-            state.addReceiveGoodInfo = addReceiveGoodInfo;
+         [initStockType.ADD_INITSTOCKINFO](state,addInitStockInfo:{}){
+            state.addInitStockInfo = addInitStockInfo;
         }
     },
     actions:{

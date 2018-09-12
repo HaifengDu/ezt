@@ -317,6 +317,7 @@ export default class ReceiveGood extends Vue{
 }
 .ezt-dialog-title>span{
   flex:1;
+  padding: 5px 0px;
 }
 .weui-cell:before{
   border:none;

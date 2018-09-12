@@ -9,6 +9,7 @@ import needGood from "./needGood";
 import stockTaking from "./stockTaking"
 import receiveGood from './receiveGood'
 import publicAddGood from './PublicAddGood';
+import initStock from './initStock'
 Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
@@ -34,5 +35,6 @@ export default new Store<IRootState>({
         stockTaking,//盘库
         receiveGood,//收货
         publicAddGood,//选择货品
+        initStock,//库存初始化
     }
 })

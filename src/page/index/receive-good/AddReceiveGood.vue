@@ -21,15 +21,18 @@
           <li class="select-list">
             <span class="title-search-name ">供应商：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addReceiveGoodInfo.supplier">
+              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addReceiveGoodInfo.supplier"
+              @change="handlerSupplier">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
+          </li>
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addReceiveGoodInfo.warehouse">
+              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addReceiveGoodInfo.warehouse"
+              @change="handlerWarehouse">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -85,8 +88,8 @@
                       </span>
                     </div>
                     <div class="ezt-dialog-title">
-                      <span>可直拨：<span>{{roundValue.num}}</span></span>
-                      <span>已直拨：<span>{{roundValue.numed}}</span></span>
+                      <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
+                      <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
                     </div>
                     <div class="warehouse-list">
                         <ul class="warehouse-isDefault">
@@ -95,7 +98,10 @@
                               <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
                             </li>
                         </ul>
-                    </div>            
+                    </div>
+                    <div class="mine-bot-btn">
+                      <span class="ezt-lone-btn">提交</span>
+                    </div>             
                   </x-dialog>
                 </div>
            </li>
@@ -120,8 +126,16 @@
       <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
     </confirm>
     <!-- 当有物料 单据类型发生变化时校验 -->
-    <confirm v-model="isBillType" @on-cancel="onBillTypeCancel" @on-confirm="onBillTypeConfirm">
+    <confirm v-model="isBillType" @on-cancel="onBillTypeCancel('billType')" @on-confirm="onBillTypeConfirm('billType')">
       <p style="text-align:center;"> 您已维护物料信息，如调整单据类型，须重新选择物料。</p>
+    </confirm>
+    <!-- 当有物料 供应商发生变化时校验 -->
+    <confirm v-model="isSupplier" @on-cancel="onBillTypeCancel('supplier')" @on-confirm="onBillTypeConfirm('supplier')">
+      <p style="text-align:center;"> 您已维护物料信息，如调整供应商，须重新选择物料。</p>
+    </confirm>
+    <!-- 当有物料 仓库发生变化时校验 -->
+    <confirm v-model="isWarehouse" @on-cancel="onBillTypeCancel('warehouse')" @on-confirm="onBillTypeConfirm('warehouse')">
+      <p style="text-align:center;"> 您已维护物料信息，如调整仓库，须重新选择物料。</p>
     </confirm>
   </div>
 </template>
@@ -146,18 +160,22 @@ declare var mobiscroll:any;
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
        'addReceiveGoodInfo':'receiveGood/addReceiveGoodInfo',//添加采购入库单的单据信息
+       'beforeAddReceiveGoodInfo':'receiveGood/beforeAddReceiveGoodInfo',//当改变单据信息的时候，取消时还原之前的值
      })
    },
    methods:{
      ...mapActions({
       'setAddReceiveGoodInfo':"receiveGood/setAddReceiveGoodInfo",
-      'setSelectedGood':'publicAddGood/setSelectedGood'
+      'setSelectedGood':'publicAddGood/setSelectedGood',
+      "setBeforeAddReceiveGoodInfo":"receiveGood/setBeforeAddReceiveGoodInfo",
      })
    }
 })
 export default class ReceiveGood extends Vue{
     private isSave:boolean=false;//确认不保存？
     private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
+    private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
+    private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
     private service: ReceiveGoodService;
     private pager:Pager;
     // private getGoodList:INoopPromise //调用store中的请求接口
@@ -171,7 +189,8 @@ export default class ReceiveGood extends Vue{
     private isDirect:boolean = false; //是否可直拨弹框
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private beforeAddReceiveGoodInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    private beforeAddReceiveGoodInfo:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    private setBeforeAddReceiveGoodInfo:INoopPromise;
     private addReceiveGoodInfo:any;//store中
     private setAddReceiveGoodInfo:INoopPromise//store中给addReceiveGoodInfo赋值
     private roundValue:any={//可直拨的数据
@@ -182,6 +201,18 @@ export default class ReceiveGood extends Vue{
         num:2
       },{
         name:'仓库二号',
+        num:6
+      },{
+        name:'仓库三号',
+        num:6
+      },{
+        name:'仓库四号',
+        num:6
+      },{
+        name:'仓库五号',
+        num:6
+      },{
+        name:'仓库六号',
         num:6
       }]
     };
@@ -248,6 +279,7 @@ export default class ReceiveGood extends Vue{
           return false;
         }
         this.setAddReceiveGoodInfo(this.addReceiveGoodInfo);//将选择的单据信息保存在store中   
+        this.setBeforeAddReceiveGoodInfo(this.beforeAddReceiveGoodInfo);    
         this.$router.push(info);
       }
       
@@ -258,22 +290,42 @@ export default class ReceiveGood extends Vue{
     private handlerBillType(item:any){
       if(this.selectedGood.length>0){
         this.isBillType=true;
+      }else{
+        this.beforeAddReceiveGoodInfo.billType=this.addReceiveGoodInfo.billType;            
       }
-      this.beforeAddReceiveGoodInfo.billType=this.addReceiveGoodInfo.billType;
-      
+    }
+     /**
+     * 选择供应商
+     */
+    private handlerSupplier(item:any){
+      if(this.selectedGood.length>0){
+        this.isSupplier=true;
+      }else{
+        this.beforeAddReceiveGoodInfo.supplier=this.addReceiveGoodInfo.supplier;            
+      }
+    }
+     /**
+     * 选择仓库
+     */
+    private handlerWarehouse(item:any){
+      if(this.selectedGood.length>0){
+        this.isWarehouse=true;
+      }else{
+        this.beforeAddReceiveGoodInfo.warehouse=this.addReceiveGoodInfo.warehouse;            
+      }
     }
     /**
-     * 有物料时 单据类型 变化 确认校验
+     * 有物料时 单据类型、供应商、仓库 变化 确认校验
      */
-    private onBillTypeConfirm(){
+    private onBillTypeConfirm(val:any){
       this.setSelectedGood([]);
+      this.beforeAddReceiveGoodInfo[val]=this.addReceiveGoodInfo[val];
     }
     /**
-     * 有物料时 单据类型变化 取消校验
+     * 有物料时 单据类型变化、供应商、仓库变化  取消校验
      */
-    private onBillTypeCancel(){
-      console.log(this.beforeAddReceiveGoodInfo,'之前 ')
-      this.addReceiveGoodInfo.billType = this.beforeAddReceiveGoodInfo.billType;
+    private onBillTypeCancel(val:any){
+      this.addReceiveGoodInfo[val] = this.beforeAddReceiveGoodInfo[val];
     }
 
 
@@ -291,6 +343,7 @@ export default class ReceiveGood extends Vue{
     private onConfirm(){//确认离开，清空store中的物料和单据信息
       this.setAddReceiveGoodInfo({}),
       this.setSelectedGood([]);
+      this.setBeforeAddReceiveGoodInfo({});
       this.$router.push('/receiveGood');
     }
     // private getGoodList(){
@@ -308,6 +361,24 @@ export default class ReceiveGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+.mine-bot-btn{
+    width: 100%;
+    // position: absolute;
+    margin-top: 20px;
+        .ezt-lone-btn{
+        display: inline-block;
+        font-size: 14px;
+        color: #FFFFFF;
+        letter-spacing: 0;
+        padding: 8px 90px;
+        margin-bottom: 10px;
+        border-radius: 40px;
+        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
+    }
+  }
 .ezt-dialog-header{
   padding: 10px 0px;
   display: flex;
@@ -322,7 +393,16 @@ export default class ReceiveGood extends Vue{
 }
 .ezt-dialog-title{
   padding: 10px 0px;
-  background: #ccc;
+  background: #FFF8DD;
+  display:flex;
+  flex-direction: row;
+  span.num{
+    font-size: 15px;
+    color:red;
+  }
+}
+.ezt-dialog-title>span{
+  flex:1;
 }
 .weui-cell:before{
   border:none;
@@ -414,20 +494,17 @@ export default class ReceiveGood extends Vue{
     .title-search-name.remark{
       margin-left: 10px;
     }
-    //直拨仓库
-    .good-warehouse{
-        display: flex;
-        flex-direction: row;
-        padding: 4px;
-        .warehouse-list{
-            flex: 1;
-             text-align: left;
-             margin-left: 10px;
-            .warehouse-isDefault{           
-                display: inline-block;               
-                        
-            }            
-        }       
+    //直拨仓库   
+    .warehouse-list{
+        flex: 1;
+        text-align: center;
+        margin-left: 10px;
+        max-height: 240px;
+        overflow-x: auto;
+        .warehouse-isDefault{           
+          display: inline-block;               
+            
+        }   
     }
     .warehouse-title-num{
       display: flex;

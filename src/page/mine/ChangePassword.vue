@@ -8,15 +8,15 @@
             <ul class="ezt-title-search">
                 <li>
                     <span class="title-search-name">原密码：</span>
-                    <input type="password" class="ezt-middle" placeholder="输入旧密码" v-model="password.oldPassword">
+                    <input type="password" class="ezt-middle" placeholder="请输入密码" v-model="password.oldPassword">
                 </li>
                  <li>
                     <span class="title-search-name">新密码：</span>
-                    <input type="password" class="ezt-middle" placeholder="请设置新密码" v-model="password.newPassword">
+                    <input type="password" class="ezt-middle" placeholder="请输入新密码" v-model="password.newPassword">
                 </li>
                  <li>
                     <span class="title-search-name">确认新密码：</span>
-                    <input type="password" class="ezt-middle" placeholder="确认密码" v-model="password.rePassword">
+                    <input type="password" class="ezt-middle" placeholder="请再次输入新密码" v-model="password.rePassword">
                 </li>
             </ul>
             <div class="mine-bot-btn">
@@ -56,7 +56,7 @@ export default class Index extends Vue{
      */
     private confirmModify(){
         if(!this.password.oldPassword){
-            this.$toasted.show("请输入旧密码！");
+            this.$toasted.show("请输入原始密码！");
             return false;
         }
         if(!this.password.newPassword){
@@ -64,21 +64,21 @@ export default class Index extends Vue{
             return false;
         }
         if(!this.password.rePassword){
-            this.$toasted.show("请输入确认密码！");
+            this.$toasted.show("请再次输入新密码！");
             return false;
         }
         let user = this.cache.getData(cacheKey.USER_MODEL);
         let userName = JSON.parse(user);
         if(userName.pwd!=this.password.oldPassword){
-            this.$toasted.show("原用户密码不正确！");
+            this.$toasted.show("原始密码不正确！");
             return false;
         }
         if(this.password.oldPassword==this.password.newPassword){
-            this.$toasted.show("新密码不能与旧密码相同！");
+            this.$toasted.show("新密码不能与原始密码相同！");
             return false;
         }
         if(this.password.newPassword != this.password.rePassword){
-            this.$toasted.show("确认密码与新密码不匹配！");
+            this.$toasted.show("确认密码与新密码不相同！");
             return false;
         }
         this.service.modifyPassword(this.password.oldPassword,this.password.newPassword).then(res=>{            
@@ -106,19 +106,20 @@ export default class Index extends Vue{
     width: 100%;
     // position: absolute;
     margin-top: 60px;
+        .ezt-lone-btn{
+        display: inline-block;
+        font-size: 14px;
+        color: #FFFFFF;
+        letter-spacing: 0;
+        padding: 10px 120px;
+        border-radius: 40px;
+        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
+    }
   }
-  .ezt-lone-btn{
-    display: inline-block;
-    font-size: 14px;
-    color: #FFFFFF;
-    letter-spacing: 0;
-    padding: 10px 120px;
-    border-radius: 40px;
-    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-    background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-}
+  
 .ezt-title-search li{
     margin: 0px 10px;
     padding: 10px 0px;

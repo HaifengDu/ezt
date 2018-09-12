@@ -78,7 +78,7 @@ export default class Mine extends Vue{
   //退出
   private logout(){
     this.service.logout().then(res=>{
-      this.$router.replace('/login');
+      this.$router.replace({path:'/login'});
     });
   }
   /**

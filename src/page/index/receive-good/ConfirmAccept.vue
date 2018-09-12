@@ -19,7 +19,7 @@
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse">
+              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse" v-model="addInfo.warehouse">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -77,17 +77,17 @@
             </mt-cell-swipe>
              <div>
               <x-dialog v-model="isDirect" class="dialog-demo">
-                <div @click="isDirect=false" class="ezt-dialog-header">
+                <div class="ezt-dialog-header">
                   <span class="header-name">
                     直拨
                   </span>
-                  <span class="ezt-close">
+                  <span class="ezt-close" @click="isDirect=false">
                     <i class="fa fa-times" aria-hidden="true"></i>
                   </span>
                 </div>
                 <div class="ezt-dialog-title">
-                  <span>可直拨：<span>{{roundValue.num}}</span></span>
-                  <span>已直拨：<span>{{roundValue.numed}}</span></span>
+                  <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
+                  <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
                 </div>
                 <div class="warehouse-list">
                     <ul class="warehouse-isDefault">
@@ -96,7 +96,10 @@
                           <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
                         </li>
                     </ul>
-                </div>            
+                </div> 
+                <div class="mine-bot-btn">
+                  <span class="ezt-lone-btn" >提交</span>
+                </div>           
               </x-dialog>
             </div> 
           </li>                   
@@ -152,7 +155,10 @@ declare var mobiscroll:any;
   //  }
 })
 export default class ReceiveGood extends Vue{
-    private title:String = '';
+    private beforeWarehouse:string="";//切换仓库校验物品失败的时候，还原之前的仓库值
+    private addInfo:any={
+      warehouse:"01"
+    };
     private service: ReceiveGoodService;
     private pager:Pager;
     private getGoodList:INoopPromise
@@ -177,7 +183,10 @@ export default class ReceiveGood extends Vue{
     private isWarehouse:boolean = false;//切换仓库校验物料
     private orderType:any=[{
       name:'仓库1',
-      id:'01'
+      type:'01'
+    },{
+      name:'仓库2',
+      type:'02'
     }]
     private roundValue:any={//可直拨的数据
       num: 10,
@@ -193,6 +202,7 @@ export default class ReceiveGood extends Vue{
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
+       this.beforeWarehouse = this.addInfo.warehouse;
       //  this.goodList = [];
       //  this.getGoodList();
     }
@@ -243,7 +253,7 @@ export default class ReceiveGood extends Vue{
      * 仓库切换校验 失败 返回
      */
     private onWarehouseCancel(){
-     
+      this.addInfo.warehouse = this.beforeWarehouse;
     }
     // 返回
     private goBack(){
@@ -254,6 +264,24 @@ export default class ReceiveGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+.mine-bot-btn{
+    width: 100%;
+    // position: absolute;
+    margin-top: 20px;
+        .ezt-lone-btn{
+        display: inline-block;
+        font-size: 14px;
+        color: #FFFFFF;
+        letter-spacing: 0;
+        padding: 8px 90px;
+        margin-bottom: 10px;
+        border-radius: 40px;
+        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
+    }
+  }
 .warehouse-isDefault li{
   display:flex;
   flex-direction: row;
@@ -267,6 +295,8 @@ export default class ReceiveGood extends Vue{
   padding: 10px 0px;
   display: flex;
   flex-direction: row;
+  // background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+  // color: #fff;
   .header-name{
     flex:1;
     margin-right: -20px;
@@ -277,7 +307,16 @@ export default class ReceiveGood extends Vue{
 }
 .ezt-dialog-title{
   padding: 10px 0px;
-  background: #ccc;
+  background: #FFF8DD;
+  display:flex;
+  flex-direction: row;
+  span.num{
+    font-size: 15px;
+    color:red;
+  }
+}
+.ezt-dialog-title>span{
+  flex:1;
 }
 .weui-cell:before{
   border:none;
@@ -378,20 +417,17 @@ export default class ReceiveGood extends Vue{
     .title-search-name.remark{
       margin-left: 10px;
     }
-        //直拨仓库
-    .good-warehouse{
-        display: flex;
-        flex-direction: row;
-        padding: 4px;
-        .warehouse-list{
-            flex: 1;
-             text-align: left;
-             margin-left: 10px;
-            .warehouse-isDefault{           
-                display: inline-block;               
-                        
-            }            
-        }       
+    //直拨仓库
+  .warehouse-list{
+      flex: 1;
+      text-align: center;
+      margin-left: 10px;
+      max-height: 240px;
+      overflow-x: auto;
+      .warehouse-isDefault{           
+          display: inline-block;               
+        
+      }  
     }
     .warehouse-title-num{
       display: flex;

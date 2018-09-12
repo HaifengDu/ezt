@@ -43,7 +43,9 @@
         </div>
         <ul class="icon-menu"><!--主页内容菜单-->
             <li @click="renderUrl('/needGood')">
-                <div class="yaohuo"></div>
+                <div class="yaohuo">
+                   <span class="ezt-reddot-s"></span>
+                </div>
                 <span>要货</span></li>
             <li @click="noAction()">
                 <div class="jiadan"></div>
@@ -57,6 +59,9 @@
             <li @click="renderUrl('/stocktaking')">
                 <div class="panku"></div>
                 <span>盘库</span></li>
+            <li @click="renderUrl('/initStock')">
+            <div class="panku"></div>
+            <span>库存初始化</span></li>
         </ul>
         <!--内容-->
         
@@ -220,6 +225,16 @@ export default class Index extends Vue{
     width: 64px;
     height: 64px;
     display: inline-block;
+    position: relative;
+  }
+  .ezt-reddot-s{
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    background: red;
+    position: absolute;
+    top: 0px;
+    right: -4px;
   }
 
   .icon-menu .yaohuo {
@@ -258,6 +273,7 @@ export default class Index extends Vue{
     height: 30px;
     background-image: linear-gradient(139deg, #018BFF -11%, #4A39F3 100%);
     margin-top: -5px;
+    z-index: 4;
 }
 .busiDate {
     /*display: flex;*/
@@ -295,7 +311,7 @@ export default class Index extends Vue{
     width: 100%;
     height: 100%;
     position: absolute;
-    top: auto;
+    top: 30px;
     left: 0;
     background: #F1F6FF;
     z-index: 3;

@@ -33,7 +33,7 @@
             </group>       
           </div> 
           <div class="warehouse">
-              <ul>
+              <ul>   
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
@@ -57,7 +57,7 @@
           <div class="method">
               <p>盘点方式</p>
               <ul>
-                <li @click="manualproduction('/selectinginventory')">手工制单</li>
+                <li @click="manualproduction()">手工制单</li>
                 <li @click="templateimport('/selectthetemplate')">模板导入</li>
                 <li @click="inventorytype('/confirmationlist')">盘点类型导入</li>
               </ul>
@@ -68,7 +68,10 @@
     <!-- 返回提示信息 -->
     <confirm v-model="isSave" @on-confirm="onConfirm">
       <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-    </confirm>   
+    </confirm> 
+
+    <!-- 选择货品   -->
+    <SelectingInventory v-if="SelectingInventory"></SelectingInventory>
  </div>
 </template>  
 <script lang="ts">
@@ -79,9 +82,10 @@ import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import IUser from "../../../interface/IUserModel"
 import StockTakingService from "../../../service/StockTakingService"
+import SelectingInventory from './SelectingInventory'
 @Component({  
    components:{    
-      
+      SelectingInventory
    },   
    computed:{  
      ...mapGetters({
@@ -113,6 +117,7 @@ export default class stockTaking extends Vue{
     private newlyadded:boolean = true;//默认显示弹层
     private addinventory:any = {};//store中
     private setAddinventory:INoopPromise//store中给setAddinventory赋值
+    private SelectingInventory:boolean = false;
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       type:"q"
@@ -186,14 +191,14 @@ export default class stockTaking extends Vue{
     }
    
     // 手工制单
-    manualproduction(info:string){
+    manualproduction(){
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
             return false;
          }
         this.setAddinventory(this.addinventory);
-        this.$router.push(info);
+        this.SelectingInventory = true
        }
     }
     //盘点类型导入

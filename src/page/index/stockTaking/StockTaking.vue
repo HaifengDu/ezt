@@ -120,7 +120,7 @@ declare var mobiscroll:any;
        'setQueryResult':"stockTaking/setQueryResult",
      }),
      
-   }   
+   }     
 })
 export default class stockTaking extends Vue{
     private service: StockTakingService;

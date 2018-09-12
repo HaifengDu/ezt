@@ -1,6 +1,6 @@
 <!--选择盘点货品-->
 <template>
-<div>
+<div v-if="selectinginventory">
    <div class="ezt-page-con selectinginventory">
     <ezt-header :back="true" title="选择盘点货品"  @goBack="goBack">
        <div slot="action">
@@ -78,14 +78,14 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import '../../../assets/css/transition.css'
+import './AddinventoryList'
 @Component({  
    components:{  
       
    },   
     computed:{
      ...mapGetters({
-     }) 
+     })    
    },
    methods:{ 
      ...mapActions({
@@ -94,7 +94,9 @@ import '../../../assets/css/transition.css'
    }   
 })  
 export default class selectinginventory extends Vue{
+    private selectinginventory:boolean = true;
     private list:any[] = [];
+    private newlyadded:boolean = false;
     private inventoryList:any[] = [];
     private search:boolean = false;
     private data3:string =  '1';
@@ -115,7 +117,7 @@ export default class selectinginventory extends Vue{
 
     }
     private goBack(){
-      this.$router.back();
+      this.selectinginventory = false
     }
 
     /**

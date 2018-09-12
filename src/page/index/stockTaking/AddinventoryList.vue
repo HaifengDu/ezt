@@ -192,12 +192,14 @@ export default class stockTaking extends Vue{
    
     // 手工制单
     manualproduction(){
+      this.SelectingInventory = false
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
             return false;
          }
         this.setAddinventory(this.addinventory);
+        debugger
         this.SelectingInventory = true
        }
     }

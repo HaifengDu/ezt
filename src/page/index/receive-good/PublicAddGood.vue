@@ -31,13 +31,13 @@
                  <span class="good-item-name">{{item.name}}</span>
                  <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
                  <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-                   <b>价格：</b>
-                   <input type="text" class="ezt-smart" v-model="item.price">
+                    <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
-                 <span class="good-remark" @click="handlerRemark">
+                 <span class="good-remark" @click="handlerRemark(item)">
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 收藏图标 -->
@@ -49,10 +49,10 @@
                  </span>
                </div>
                 <!-- 编辑备注时 -->
-                <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
+                <confirm v-model="isRemark" @on-confirm="remarkConfirm" :on-cancel="remarkCancel">
                   <span class="confirm-title">备注</span>
                   <div class="confirm-content">
-                    <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
+                    <textarea style="height: 7em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
                   </div>
                 </confirm>
                 <!-- 编辑价格信息时  -->
@@ -67,30 +67,30 @@
                         <ul class="edit-good-list">
                             <li>
                                 <span class="title-select-name">数量：</span>
-                                <x-number v-model="item.num" button-style="round" :min="0"></x-number>
+                                <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
                             </li>
                             <li v-if="addBillInfo.costType==0">
                                 <span class="title-dialog-name">价格：</span>
                                 <span class="icon-input price">
-                                    <input type="number" class="ezt-smart" v-model="item.price">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.price">
                                 </span>                                       
                             </li>
                             <li v-if="addBillInfo.costType==1">
                                 <span class="title-dialog-name">含税额：</span>
                                 <span class="icon-input price">
-                                    <input type="number" class="ezt-smart" v-model="item.amt">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.amt">
                                 </span>                                       
                             </li>
                             <li>
                                 <span class="title-dialog-name">税率：</span>
                                 <span class="icon-input">
-                                    <input type="number" class="ezt-smart" v-model="item.rate">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.rate">
                                 </span>
                             </li>
                             <li class="select-list">
                                 <span class="title-dialog-name">供应商：</span>
                                 <span class="title-select-name item-select">
-                                <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
+                                <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
                                     <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                                     <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                                 </select>
@@ -98,7 +98,7 @@
                             </li>
                             <li>
                                 <span class="title-dialog-name">备注：</span>
-                                <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
+                                <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
                             </li>
                         </ul>
                     </div>
@@ -128,13 +128,13 @@
               <span class="good-item-name">{{item.name}}</span>
               <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
               <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-                <b>价格：</b>
-                <input type="text" class="ezt-smart" v-model="item.price">
+                <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
               </span>
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
-              <span class="good-remark" @click="handlerRemark">
+              <span class="good-remark" @click="handlerRemark(item)">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
               <!-- 收藏图标 -->
@@ -144,65 +144,6 @@
               <span>
                 <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
               </span>
-            </div>
-             <!-- 编辑备注时 -->
-            <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
-              <span class="confirm-title">备注</span>
-              <div class="confirm-content">
-                <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
-              </div>
-            </confirm>
-            <!-- 编辑价格信息时  -->
-            <div>
-                <x-dialog v-model="isPrice" class="dialog-demo">
-                <div class="ezt-dialog-header">                                
-                    <span class="ezt-close" @click="isPrice=false" >
-                    <i class="fa fa-times" aria-hidden="true"></i>
-                    </span>
-                </div>                            
-                <div class="warehouse-list">
-                    <ul class="edit-good-list">
-                        <li>
-                            <span class="title-select-name">数量：</span>
-                            <x-number v-model="item.num" button-style="round" :min="0"></x-number>
-                        </li>
-                        <li v-if="addBillInfo.costType==0">
-                            <span class="title-dialog-name">价格：</span>
-                            <span class="icon-input price">
-                                <input type="number" class="ezt-smart" v-model="item.price">
-                            </span>                                       
-                        </li>
-                        <li v-if="addBillInfo.costType==1">
-                            <span class="title-dialog-name">含税额：</span>
-                            <span class="icon-input price">
-                                <input type="number" class="ezt-smart" v-model="item.amt">
-                            </span>                                       
-                        </li>
-                        <li>
-                            <span class="title-dialog-name">税率：</span>
-                            <span class="icon-input">
-                                <input type="number" class="ezt-smart" v-model="item.rate">
-                            </span>
-                        </li>
-                        <li class="select-list">
-                            <span class="title-dialog-name">供应商：</span>
-                            <span class="title-select-name item-select">
-                            <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
-                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                            </select>
-                            </span>
-                        </li>
-                        <li>
-                            <span class="title-dialog-name">备注：</span>
-                            <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
-                        </li>
-                    </ul>
-                </div>
-                <div class="mine-bot-btn">
-                    <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
-                </div>             
-                </x-dialog>
             </div>
           </div>          
           <div @click="selectedDelGood(item)" class="item-delete">
@@ -230,13 +171,13 @@
             <span class="good-item-name">{{item.name}}</span>
             <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
             <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-              <b>价格：</b>
-              <input type="text" class="ezt-smart" v-model="item.price">
+              <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+              <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
             </span>
           </div>
           <div class="good-item-bot">
             <!-- 编辑图标 -->
-            <span class="good-remark" @click="handlerRemark">
+            <span class="good-remark" @click="handlerRemark(item)">
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
@@ -246,65 +187,6 @@
             <span>
               <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
             </span>
-          </div>
-          <!-- 编辑备注时 -->
-          <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
-            <span class="confirm-title">备注</span>
-            <div class="confirm-content">
-              <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
-            </div>
-          </confirm>
-          <!-- 编辑价格信息时  -->
-          <div>
-              <x-dialog v-model="isPrice" class="dialog-demo">
-              <div class="ezt-dialog-header">                                
-                  <span class="ezt-close" @click="isPrice=false" >
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                  </span>
-              </div>                            
-              <div class="warehouse-list">
-                  <ul class="edit-good-list">
-                      <li>
-                          <span class="title-select-name">数量：</span>
-                          <x-number v-model="item.num" button-style="round" :min="0"></x-number>
-                      </li>
-                      <li v-if="addBillInfo.costType==0">
-                          <span class="title-dialog-name">价格：</span>
-                          <span class="icon-input price">
-                              <input type="number" class="ezt-smart" v-model="item.price">
-                          </span>                                       
-                      </li>
-                      <li v-if="addBillInfo.costType==1">
-                          <span class="title-dialog-name">含税额：</span>
-                          <span class="icon-input price">
-                              <input type="number" class="ezt-smart" v-model="item.amt">
-                          </span>                                       
-                      </li>
-                      <li>
-                          <span class="title-dialog-name">税率：</span>
-                          <span class="icon-input">
-                              <input type="number" class="ezt-smart" v-model="item.rate">
-                          </span>
-                      </li>
-                      <li class="select-list">
-                          <span class="title-dialog-name">供应商：</span>
-                          <span class="title-select-name item-select">
-                          <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
-                              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                              <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                          </select>
-                          </span>
-                      </li>
-                      <li>
-                          <span class="title-dialog-name">备注：</span>
-                          <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
-                      </li>
-                  </ul>
-              </div>
-              <div class="mine-bot-btn">
-                  <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
-              </div>             
-              </x-dialog>
           </div>
         </div>
       </div>
@@ -387,7 +269,8 @@ export default class AddGood extends Vue{
   private goodSmallType:any[] = [];
   private goodList:any[]=[];
   private allType:any[] = [];
-  private typeName:any={};//记录type选择哪条
+  private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
+  private bindRemark:any={};//编辑备注时绑定的值 
   // private userpp:any[]=[];
   created(){ 
   }
@@ -407,7 +290,12 @@ export default class AddGood extends Vue{
             name:'草鱼半成品',
             price:'12',
             utilname:'KG',
-            unit:'箱'
+            unit:'箱',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[]
+            }
           }]
         }]
       },{
@@ -421,7 +309,12 @@ export default class AddGood extends Vue{
             name:'海参',
             price:'9',
             utilname:'KG',
-            unit:'箱'
+            unit:'箱',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[]
+            }
           }]
         },{
           id:21,
@@ -431,7 +324,30 @@ export default class AddGood extends Vue{
             name:'牛肉',
             price:'15',
             utilname:'KG',
-            unit:'斤'
+            unit:'斤',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              },{
+                name:'仓库三号',
+                num:0
+              },{
+                name:'仓库四号',
+                num:0
+              },{
+                name:'仓库五号',
+                num:0
+              },{
+                name:'仓库六号',
+                num:0
+              }]
+            }
           }]
         },{
           id:22,
@@ -526,13 +442,13 @@ export default class AddGood extends Vue{
     console.log(this.selectedGood,'111')
   }
   //点击备注
-  private handlerRemark(){
+  private handlerRemark(item:any){
     if(!this.addBillInfo.editPrice){
       this.isRemark=true;
     }else{
       this.isPrice=true;
     }
-    
+    this.bindRemark = item;
   }
   //备注，价格弹框取消
   private remarkCancel(){
@@ -715,7 +631,7 @@ export default class AddGood extends Vue{
       flex:1;
     }
     .good-item-sort{
-      flex:1;
+      // flex:1;
     }
     .good-item-sort.edit{
       border: 1px solid #ccc;

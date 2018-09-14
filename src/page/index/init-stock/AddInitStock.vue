@@ -26,12 +26,17 @@
                     </li>
                     <li>
                         <span class="title-search-name">成本录入方式</span>
-                        <span class="costType-info">                            
+                        <div class="auditDisabled" v-if="selectedGood.length>0">
+                            <span :class="[{active:addBillInfo.costType==0}]">含税单价</span>
+                            <span :class="[{active:addBillInfo.costType==1}]">含税金额</span>
+                        </div>
+                        <span class="costType-info" v-else>                            
                             <button-tab v-model="addBillInfo.costType" @click.native="handlerChangeType(addBillInfo.costType)">
                                 <button-tab-item selected>含税单价</button-tab-item>
                                 <button-tab-item>含税金额</button-tab-item>
                             </button-tab>
                         </span>
+                        
                     </li>
                     <li>
                         <!-- <span class="title-search-name">选择物料：</span> -->
@@ -58,7 +63,7 @@
                                         <span class="good-detail-name">{{item.name}}
                                             <span class="good-detail-sort">（规格）</span>
                                         </span>
-                                        <span @click="editStatus">
+                                        <span @click="editStatus(item)">
                                             <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
                                         </span>                                   
                                     </div>
@@ -92,30 +97,30 @@
                                 <ul class="edit-good-list">
                                     <li>
                                         <span class="title-select-name">数量：</span>
-                                        <x-number v-model="item.num" button-style="round" :min="0"></x-number>
+                                        <x-number v-model="activeRound.num" button-style="round" :min="0"></x-number>
                                     </li>
                                     <li v-if="addBillInfo.costType==0">
                                         <span class="title-dialog-name">价格：</span>
                                         <span class="icon-input price">
-                                            <input type="number" class="ezt-smart" v-model="item.price">
+                                            <input type="number" class="ezt-smart" v-model="activeRound.price">
                                         </span>                                       
                                     </li>
                                     <li v-if="addBillInfo.costType==1">
                                         <span class="title-dialog-name">含税额：</span>
                                         <span class="icon-input price">
-                                            <input type="number" class="ezt-smart" v-model="item.amt">
+                                            <input type="number" class="ezt-smart" v-model="activeRound.amt">
                                         </span>                                       
                                     </li>
                                     <li>
                                         <span class="title-dialog-name">税率：</span>
                                         <span class="icon-input">
-                                            <input type="number" class="ezt-smart" v-model="item.rate">
+                                            <input type="number" class="ezt-smart" v-model="activeRound.rate">
                                         </span>
                                     </li>
                                     <li class="select-list">
                                         <span class="title-dialog-name">供应商：</span>
                                         <span class="title-select-name item-select">
-                                        <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
+                                        <select name="" id="" placeholder="请选择" class="ezt-select" v-model="activeRound.supplier">
                                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                                             <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                                         </select>
@@ -123,7 +128,7 @@
                                     </li>
                                     <li>
                                         <span class="title-dialog-name">备注：</span>
-                                        <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
+                                        <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="activeRound.remark">
                                     </li>
                                 </ul>
                             </div>
@@ -194,6 +199,7 @@ export default class InitStock extends Vue {
   private isSave:boolean = false;//返回的时候是否保存单据信息
   private isWarehouse:boolean = false;//仓库
   private isFirstStore:boolean;
+  private activeRound:any={};
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -211,7 +217,7 @@ export default class InitStock extends Vue {
     this.addBillInfo.date = new Date().format("yyyy-MM-dd");
     this.addBillInfo.warehouse = this.orderType[0].type;
     this.addBeforeBillInfo.warehouse = this.orderType[0].type;
-    this.addBillInfo.costType = 1;
+    // this.addBillInfo.costType = 1;
     this.addBillInfo.editPrice=true;
   }
   //选择物料
@@ -220,8 +226,9 @@ export default class InitStock extends Vue {
     this.$router.push(info);
   }
  //点击物料进行编辑数据
-  private editStatus() {
+  private editStatus(item:any) {
     this.isEdit = true;
+    this.activeRound=item;
   }
 
     /**
@@ -312,6 +319,24 @@ export default class InitStock extends Vue {
 }
 </script>
 <style lang="less" scoped>
+.auditDisabled{
+    border: 1px solid #ccc;
+    span{
+        color: #000;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        white-space: nowrap;
+        background: #fdfdfd;
+        padding: 2px 6px;
+    }
+    span.active{
+        background:#ccc;
+        color: #FFF;
+        line-height: 30px;
+        display: inline-block;
+    }
+}
 //物料信息
 .good-detail-content {
   text-align: left;

@@ -126,20 +126,87 @@
           <div>
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-              <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+                <b>价格：</b>
+                <input type="text" class="ezt-smart" v-model="item.price">
+              </span>
             </div>
             <div class="good-item-bot">
-              <span class="good-remark" >备</span>
-              <span>
+              <!-- 编辑图标 -->
+              <span class="good-remark" @click="handlerRemark">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              </span>
+              <!-- 收藏图标 -->
+              <span v-if="!addBillInfo.editPrice">
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
               <span>
                 <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
               </span>
             </div>
+             <!-- 编辑备注时 -->
+            <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
+              <span class="confirm-title">备注</span>
+              <div class="confirm-content">
+                <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
+              </div>
+            </confirm>
+            <!-- 编辑价格信息时  -->
+            <div>
+                <x-dialog v-model="isPrice" class="dialog-demo">
+                <div class="ezt-dialog-header">                                
+                    <span class="ezt-close" @click="isPrice=false" >
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                    </span>
+                </div>                            
+                <div class="warehouse-list">
+                    <ul class="edit-good-list">
+                        <li>
+                            <span class="title-select-name">数量：</span>
+                            <x-number v-model="item.num" button-style="round" :min="0"></x-number>
+                        </li>
+                        <li v-if="addBillInfo.costType==0">
+                            <span class="title-dialog-name">价格：</span>
+                            <span class="icon-input price">
+                                <input type="number" class="ezt-smart" v-model="item.price">
+                            </span>                                       
+                        </li>
+                        <li v-if="addBillInfo.costType==1">
+                            <span class="title-dialog-name">含税额：</span>
+                            <span class="icon-input price">
+                                <input type="number" class="ezt-smart" v-model="item.amt">
+                            </span>                                       
+                        </li>
+                        <li>
+                            <span class="title-dialog-name">税率：</span>
+                            <span class="icon-input">
+                                <input type="number" class="ezt-smart" v-model="item.rate">
+                            </span>
+                        </li>
+                        <li class="select-list">
+                            <span class="title-dialog-name">供应商：</span>
+                            <span class="title-select-name item-select">
+                            <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
+                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            </select>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="title-dialog-name">备注：</span>
+                            <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
+                        </li>
+                    </ul>
+                </div>
+                <div class="mine-bot-btn">
+                    <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+                </div>             
+                </x-dialog>
+            </div>
           </div>          
-          <div @click="selectedDelGood(item)">
-            删除
+          <div @click="selectedDelGood(item)" class="item-delete">
+            <i class="fa fa-trash" aria-hidden="true"></i>
           </div>
         </div>
       </div>
@@ -161,16 +228,83 @@
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
-            <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+              <b>价格：</b>
+              <input type="text" class="ezt-smart" v-model="item.price">
+            </span>
           </div>
           <div class="good-item-bot">
-            <span class="good-remark">备</span>
-            <span>
+            <!-- 编辑图标 -->
+            <span class="good-remark" @click="handlerRemark">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </span>
+            <!-- 收藏图标 -->
+            <span v-if="!addBillInfo.editPrice">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span>
               <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
             </span>
+          </div>
+          <!-- 编辑备注时 -->
+          <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
+            <span class="confirm-title">备注</span>
+            <div class="confirm-content">
+              <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
+            </div>
+          </confirm>
+          <!-- 编辑价格信息时  -->
+          <div>
+              <x-dialog v-model="isPrice" class="dialog-demo">
+              <div class="ezt-dialog-header">                                
+                  <span class="ezt-close" @click="isPrice=false" >
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                  </span>
+              </div>                            
+              <div class="warehouse-list">
+                  <ul class="edit-good-list">
+                      <li>
+                          <span class="title-select-name">数量：</span>
+                          <x-number v-model="item.num" button-style="round" :min="0"></x-number>
+                      </li>
+                      <li v-if="addBillInfo.costType==0">
+                          <span class="title-dialog-name">价格：</span>
+                          <span class="icon-input price">
+                              <input type="number" class="ezt-smart" v-model="item.price">
+                          </span>                                       
+                      </li>
+                      <li v-if="addBillInfo.costType==1">
+                          <span class="title-dialog-name">含税额：</span>
+                          <span class="icon-input price">
+                              <input type="number" class="ezt-smart" v-model="item.amt">
+                          </span>                                       
+                      </li>
+                      <li>
+                          <span class="title-dialog-name">税率：</span>
+                          <span class="icon-input">
+                              <input type="number" class="ezt-smart" v-model="item.rate">
+                          </span>
+                      </li>
+                      <li class="select-list">
+                          <span class="title-dialog-name">供应商：</span>
+                          <span class="title-select-name item-select">
+                          <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
+                              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                              <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                          </select>
+                          </span>
+                      </li>
+                      <li>
+                          <span class="title-dialog-name">备注：</span>
+                          <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
+                      </li>
+                  </ul>
+              </div>
+              <div class="mine-bot-btn">
+                  <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+              </div>             
+              </x-dialog>
           </div>
         </div>
       </div>
@@ -419,6 +553,12 @@ export default class AddGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+  .item-delete{
+    flex:1;
+    text-align: center;
+    align-self: center;
+    font-size: 20px;
+  }
   .good-type{
     height: 45px;
     top: 0;
@@ -478,8 +618,7 @@ export default class AddGood extends Vue{
     padding: 10px;
     text-align: left;
     margin: 8px 0;
-    .good-remark{
-      border: 1px solid #ccc;
+    .good-remark{     
       padding: 1px;
       display:inline-block;
       margin-right: 20px;

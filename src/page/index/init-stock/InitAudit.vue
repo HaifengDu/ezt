@@ -201,6 +201,7 @@ export default class InitStock extends Vue{
    created() {
         this.service = InitStockService.getInstance();
         this.addBillInfo.costType = 1;
+        this.addBillInfo.editPrice = true;
     }
     /**
      * 切换成本录入方式

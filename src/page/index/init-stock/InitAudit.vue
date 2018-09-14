@@ -1,36 +1,33 @@
-<!--添加初始化单-->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back="true" title="添加初始化单" @goBack="goBack">
-
-        </ezt-header>
+        <ezt-header title="审核初始化单" :back="true" @goBack="goBack"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
-                    <li class="select-list">
-                        <span class="title-search-name ">库存初始日：</span>
-                        <span >
-                           {{addInitStockInfo.date}}
-                        </span>
+                    <li>
+                        <span class="title-search-name">单号：</span>
+                        <span></span>
+                    </li>
+                    <li>
+                        <span class="title-search-name">仓库：</span>
+                        <span></span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name ">仓库：</span>
-                        <span class="title-select-name item-select">
-                        <select placeholder="请选择" class="ezt-select" v-model="addInitStockInfo.warehouse"
-                        @change="handleWarehouse"
-                        >
-                            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                        </select>
+                        <span class="title-search-name ">库存初始日：</span>
+                        <span class="">                        
                         </span>
                     </li>
                     <li>
                         <span class="title-search-name">成本录入方式</span>
                         <span class="costType-info">                            
-                            <button-tab v-model="addInitStockInfo.costType" @click.native="handlerChangeType(addInitStockInfo.costType)">
+                            <!-- <button-tab v-model="addInitStockInfo.costType" @click.native="handlerChangeType(addInitStockInfo.costType)">
                                 <button-tab-item selected>含税单价</button-tab-item>
                                 <button-tab-item>含税金额</button-tab-item>
-                            </button-tab>
+                            </button-tab> -->
+                            <div class="auditDisabled">
+                                <span :class="[{active:addInitStockInfo.costType==0}]">含税单价</span>
+                                <span :class="[{active:addInitStockInfo.costType==1}]">含税金额</span>
+                            </div>
                         </span>
                     </li>
                     <li>
@@ -39,7 +36,7 @@
                         <span class="title-search-right" @click="renderUrl('/publicAddGood')">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </span>                        
-                    </li>
+                    </li>        
                 </ul>
                 <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
@@ -133,40 +130,37 @@
                             </x-dialog>
                         </div>                       
                     </li>
-                </ul>   
-            </div> 
-            <ezt-footer>
-                <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                    <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                    <b>数量</b><span>{{TotalNum}}</span>，
-                    <b>含税金额￥</b><span>{{TotalAmt}}</span>
-                </div>
-                <div class="ezt-foot-button">
-                    <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">提交</a>  
-                    <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">审核</a>   
-                </div>  
-                </div>
-            </ezt-footer>           
+                </ul> 
+                 
+            </div>
         </div>
-        <!-- 返回时提示保存信息 -->
+        <ezt-footer>
+            <div class="ezt-foot-temporary" slot="confirm">
+            <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
+                <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                <b>数量</b><span>{{TotalNum}}</span>，
+                <b>含税金额￥</b><span>{{TotalAmt}}</span>
+            </div>
+            <div class="ezt-foot-button">
+                <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">提交</a>  
+                <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">提交并审核</a>   
+            </div>  
+            </div>
+        </ezt-footer>  
+         <!-- 返回时提示保存信息 -->
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-        </confirm>
-        <!-- 当有物料 仓库发生变化时校验 -->
-        <confirm v-model="isWarehouse" @on-cancel="onBillTypeCancel('warehouse')" @on-confirm="onBillTypeConfirm('warehouse')">
-            <p style="text-align:center;"> 您已选择物料，如调整仓库，须重新选择物料。</p>
-        </confirm>
+        </confirm> 
     </div>
 </template>
 <script lang="ts">
-import Vue from "vue";
-import { mapActions, mapGetters } from "vuex";
-import { Component, Watch } from "vue-property-decorator";
+import Vue from 'vue'
+import {Component,Watch} from 'vue-property-decorator';
+import {mapActions,mapGetters} from 'vuex';
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { InitStockService } from "../../../service/InitStockService";
 @Component({
-  computed: {
+ computed: {
     ...mapGetters({
       addInitStockInfo: "initStock/addInitStockInfo", //添加采购入库单的单据信息
       selectedGood: "publicAddGood/selectedGood", //选择物料的物品
@@ -181,77 +175,38 @@ import { InitStockService } from "../../../service/InitStockService";
     })
   }
 })
-export default class InitStock extends Vue {
-  private service: InitStockService;
-  private addInitStockInfo: any; //store中
-  private beforeAddInitStockInfo: any;
-  private setAddInitStockInfo: INoopPromise; //store中给addInitStockInfo赋值
-  private setBeforeAddInitStockInfo: INoopPromise;
-  private setSelectedGood: INoopPromise;
-  private selectedGood: any[]; //store中selectedGood的值
-  private isEdit: boolean = false; //物料是否可编辑
-  private isSave:boolean = false;//返回的时候是否保存单据信息
-  private isWarehouse:boolean = false;//仓库
-  private orderType: any[] = [
-    {
-      //单据类型下拉数据
-      name: "合同采购单",
-      type: "q"
-    },
-    {
-      name: "采购单",
-      type: "m"
-    }
-  ];
-
-  created() {
-    this.service = InitStockService.getInstance();
-    this.addInitStockInfo.date = new Date().format("yyyy-MM-dd");
-    this.addInitStockInfo.warehouse = this.orderType[0].type;
-    this.beforeAddInitStockInfo.warehouse = this.orderType[0].type;
-    this.addInitStockInfo.costType = 1;
-  }
-  //选择物料
-  private renderUrl(info: string) {
-    this.setAddInitStockInfo(this.addInitStockInfo); //将选择的单据信息保存在store中
-    this.$router.push(info);
-  }
- //点击物料进行编辑数据
-  private editStatus() {
-    this.isEdit = true;
-  }
-
-    /**
-     * 左滑删除某一项
-     */
-    private deleteSection(item:any){
-        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
-        })
-        this.selectedGood.splice(newIndex,1);
-    }
-  /**
-   * 切换仓库 校验
-   */
-    private handleWarehouse(){
-        if(this.selectedGood.length>0){
-            this.isWarehouse=true;
-        }else{
-            this.beforeAddInitStockInfo.warehouse=this.addInitStockInfo.warehouse;            
+export default class InitStock extends Vue{
+    private service: InitStockService;
+    private addInitStockInfo: any; //store中
+    private beforeAddInitStockInfo: any;
+    private setAddInitStockInfo: INoopPromise; //store中给addInitStockInfo赋值
+    private setBeforeAddInitStockInfo: INoopPromise;
+    private setSelectedGood: INoopPromise;
+    private selectedGood: any[]; //store中selectedGood的值
+    private isEdit: boolean = false; //物料是否可编辑
+    private isSave:boolean = false;//返回的时候是否保存单据信息
+    private isWarehouse:boolean = false;//仓库
+    private orderType: any[] = [
+        {
+            //单据类型下拉数据
+            name: "合同采购单",
+            type: "q"
+        },
+        {
+            name: "采购单",
+            type: "m"
         }
-    }
-     /**
-     * 有物料时 仓库 变化 确认校验
-     */
-    private onBillTypeConfirm(val:any){
-      this.setSelectedGood([]);
-      this.beforeAddInitStockInfo[val]=this.addInitStockInfo[val];
+    ];
+
+   created() {
+        this.service = InitStockService.getInstance();
+        this.addInitStockInfo.costType = 1;
     }
     /**
-     * 有物料时 仓库变化  取消校验
+     * 切换成本录入方式
      */
-    private onBillTypeCancel(val:any){
-      this.addInitStockInfo[val] = this.beforeAddInitStockInfo[val];
+    private handlerChangeType(item:any){
+
     }
     /**
      * computed demo
@@ -270,37 +225,133 @@ export default class InitStock extends Vue {
         return ori + item.num * item.price;
         }, 0);
     }
-    /**
-     * 初始化提交
-     */
-    private confirmReceive() {
-        console.log("确认提交！");
+    //选择物料
+    private renderUrl(info: string) {
+        this.setAddInitStockInfo(this.addInitStockInfo); //将选择的单据信息保存在store中
+        this.$router.push(info);
     }
-    /**
-     * 切换成本录入方式
-     */
-    private handlerChangeType(item:any){
+    //点击物料进行编辑数据
+    private editStatus() {
+        this.isEdit = true;
+    }
 
+    /**
+     * 左滑删除某一项
+     */
+    private deleteSection(item:any){
+        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+        return item.id == info.id;
+        })
+        this.selectedGood.splice(newIndex,1);
     }
     /**
+     * 提交
+     */
+    private confirmReceive(){
+        console.log("提交")
+    }
+   /**
      * 返回
      */
     private goBack() {
         if((this.addInitStockInfo&&this.addInitStockInfo.warehouse)||this.selectedGood.length>0){
             this.isSave=true;
         }else{
-            this.$router.push('/initSet');
+            this.$router.push('/initStock');
         }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
         this.setAddInitStockInfo({}),
         this.setSelectedGood([]);
         this.setBeforeAddInitStockInfo({});
-        this.$router.push('/initSet');
+        this.$router.push('/initStock');
     }
 }
 </script>
 <style lang="less" scoped>
+.auditDisabled{
+    border: 1px solid #1188FC;
+    span{
+        color: #000;
+        font-size: 14px;
+        line-height: 30px;
+        text-align: center;
+        white-space: nowrap;
+        background: #fdfdfd;
+        padding: 2px 6px;
+    }
+    span.active{
+        background:#1188FC;
+        color: #FFF;
+        line-height: 30px;
+        display: inline-block;
+    }
+}
+//按钮
+.mine-bot-btn {
+  width: 100%;
+  // position: absolute;
+  margin-top: 20px;
+  .ezt-lone-btn {
+    display: inline-block;
+    font-size: 14px;
+    color: #ffffff;
+    letter-spacing: 0;
+    padding: 8px 90px;
+    margin-bottom: 10px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(
+      linear,
+      left top,
+      right top,
+      from(#5a12cc),
+      to(#3c82fb)
+    );
+    background-image: linear-gradient(90deg, #018bff 0%, #4a39f3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+  }
+}
+//编辑物品 修改的字段
+.dialog-demo {
+  .ezt-dialog-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+  .edit-good-list {
+    flex-direction: column;
+    text-align: center;
+    display: inline-block;
+    li {
+      display: flex;
+      // flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      .title-dialog-name {
+        flex: inherit;
+        padding: 10px 0px;
+        font-size: 13px;
+        color: #5f7b9a;
+      }
+      .weui-cell:before {
+        border: none;
+      }
+      select {
+        height: 36px;
+      }
+      .icon-input::before {
+        display: inline-block;
+        content: "%";
+        position: absolute;
+        right: 40px;
+      }
+      .icon-input.price::before {
+        content: "￥";
+      }
+    }
+  }
+}
 //物料信息
 .good-detail-content {
   text-align: left;
@@ -372,71 +423,6 @@ export default class InitStock extends Vue {
     padding-bottom: 10px;
   }
 }
-//编辑物品 修改的字段
-.dialog-demo {
-  .ezt-dialog-header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 10px;
-  }
-  .edit-good-list {
-    flex-direction: column;
-    text-align: center;
-    display: inline-block;
-    li {
-      display: flex;
-      // flex-direction: row;
-      align-items: center;
-      border-bottom: 1px solid #ccc;
-      .title-dialog-name {
-        flex: inherit;
-        padding: 10px 0px;
-        font-size: 13px;
-        color: #5f7b9a;
-      }
-      .weui-cell:before {
-        border: none;
-      }
-      select {
-        height: 36px;
-      }
-      .icon-input::before {
-        display: inline-block;
-        content: "%";
-        position: absolute;
-        right: 40px;
-      }
-      .icon-input.price::before {
-        content: "￥";
-      }
-    }
-  }
-}
-//按钮
-.mine-bot-btn {
-  width: 100%;
-  // position: absolute;
-  margin-top: 20px;
-  .ezt-lone-btn {
-    display: inline-block;
-    font-size: 14px;
-    color: #ffffff;
-    letter-spacing: 0;
-    padding: 8px 90px;
-    margin-bottom: 10px;
-    border-radius: 40px;
-    background-image: -webkit-gradient(
-      linear,
-      left top,
-      right top,
-      from(#5a12cc),
-      to(#3c82fb)
-    );
-    background-image: linear-gradient(90deg, #018bff 0%, #4a39f3 100%);
-    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-  }
-}
 .costType-info a {
 //   color: #000;
 }
@@ -448,4 +434,5 @@ export default class InitStock extends Vue {
     padding: 2px 6px;
 }
 </style>
+
 

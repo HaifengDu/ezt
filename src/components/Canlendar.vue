@@ -26,7 +26,8 @@
        value:String,
        type:String,
        disabled:Boolean,
-       placeholder:String
+       placeholder:String,
+       defaultValue:String,
     },
     computed: {
 
@@ -37,13 +38,14 @@
       }
     },
     mounted(){
-        let _this=this;
+      let _this=this;
       //日历
       mobiscroll.date(this.$refs.canlendar, {
         theme: 'material', 
         display: 'bottom',
         lang: 'zh',
         dateFormat: 'yyyy-mm-dd',
+        defaultValue: new Date(this.defaultValue),
         onSet: function(val){
           _this.$emit(val.valueText)
         }

@@ -26,6 +26,8 @@ import ChangePsd from '@/page/mine/ChangePassword.vue';//修改密码
 import InitStock from '@/page/index/init-stock/InitStock.vue';//库存初始化
 import AddInitStock from '@/page/index/init-stock/AddInitStock.vue';//添加库存初始化
 import InitSet from '@/page/index/init-stock/InitSet.vue';//库存初始化设置
+import InitAudit from '@/page/index/init-stock/InitAudit.vue';//审核库存初始化单
+import InitDetail from '@/page/index/init-stock/InitDetail.vue';//初始化单详情
 Vue.use(Router)
 
 const router = new Router({
@@ -143,6 +145,16 @@ const router = new Router({
       path: '/initSet',
       name:"InitSet",
       component: InitSet
+    },
+    {
+      path: '/initAudit',
+      name:'InitAudit',
+      component: InitAudit
+    },
+    {
+      path: '/initDetail',
+      name:"InitDetail",
+      component: InitDetail
     }
   ]
 });

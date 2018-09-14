@@ -72,42 +72,42 @@
                       </div>                     
                   </div>
                   <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect">拨</span>
+                    <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input"> 
                       <span class="title-search-name">备注：</span>
                       <input type="text" class="ezt-middle">
                     </div>                    
                   </div>
-              </div>
-               <div>
-                <x-dialog v-model="isDirect" class="dialog-demo">
-                  <div class="ezt-dialog-header">
-                    <span class="header-name">
-                      直拨
-                    </span>
-                    <span class="ezt-close" @click="isDirect=false" >
-                      <i class="fa fa-times" aria-hidden="true"></i>
-                    </span>
-                  </div>
-                  <div class="ezt-dialog-title">
-                    <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
-                    <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
-                  </div>
-                  <div class="warehouse-list">
-                      <ul class="warehouse-isDefault">
-                          <li v-for="(item,index) in roundValue.list" :key="index">
-                            <span>{{item.name}}</span>
-                            <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
-                          </li>
-                      </ul>
-                  </div>
-                  <div class="mine-bot-btn">
-                    <span class="ezt-lone-btn">提交</span>
-                  </div>             
-                </x-dialog>
-              </div>
+              </div>              
            </li>
-        </ul>       
+        </ul> 
+         <div>
+            <x-dialog v-model="isDirect" class="dialog-demo">
+              <div class="ezt-dialog-header">
+                <span class="header-name">
+                  直拨
+                </span>
+                <span class="ezt-close" @click="isDirect=false" >
+                  <i class="fa fa-times" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div class="ezt-dialog-title">
+                <span>可直拨：<span class="num">{{(activeRound.roundValue&&activeRound.roundValue.num)||0}}</span></span>
+                <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
+              </div>
+              <div class="warehouse-list">
+                  <ul class="warehouse-isDefault">
+                      <li v-for="(item,index) in ((activeRound.roundValue&&activeRound.roundValue.list)||[])" :key="index">
+                        <span>{{item.name}}</span>
+                        <x-number v-model="item.num" @on-change="changeDirect" button-style="round" :min="0" :max="5"></x-number>
+                      </li>
+                  </ul>
+              </div>
+              <div class="mine-bot-btn">
+                <span class="ezt-lone-btn">提交</span>
+              </div>             
+            </x-dialog>
+          </div>      
       </div> 
       <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
@@ -186,6 +186,7 @@ export default class ReceiveGood extends Vue{
     // private updateUser:INoop;
     private list:any[] = [];
     private goodList:any[] = [];
+    private DirectedNum:number=0;//已直拨的数量
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
@@ -195,6 +196,7 @@ export default class ReceiveGood extends Vue{
     private setAddBeforeBillInfo:INoopPromise;
     private addBillInfo:any;//store中
     private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
+    private activeRound:any={};
     private roundValue:any={//可直拨的数据
       num: 10,
       numed:3,
@@ -253,19 +255,35 @@ export default class ReceiveGood extends Vue{
       return ori+(item.num*item.price);       
     },0);
   }
+   /**
+   * 改变直拨的 数量
+   */
+  private changeDirect(){    
+    let oonum=0;
+    if(this.activeRound.roundValue.list&&this.activeRound.roundValue.list.length>0){
+      this.activeRound.roundValue.list.forEach((item:any,index:any)=>{
+        this.DirectedNum = item.num + oonum;
+      })
+    }else{
+      this.DirectedNum = 0;
+    }
+  }
+  /**
+  *可直拨
+    */
+  private handlerDirect(item:any){
+    this.activeRound=item;
+    this.isDirect = true;
+    this.DirectedNum=0;
+    
+  }
 
     /**
      * 收货 提交
      */
     private confirmReceive(){
       console.log('确认收货！')
-    }
-    /**
-    *可直拨
-     */
-    private handlerDirect(){
-      this.isDirect = true;
-    }
+    }    
      //选择物料
     private renderUrl(info:string){
       if(this.addBillInfo){

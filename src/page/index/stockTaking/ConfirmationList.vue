@@ -11,27 +11,27 @@
           <div class="list">
             <div class="details">
              <ul>
-               <div><li>盘点日期：<span>2017-07-11</span></li><li>盘点方式：<span>模板导入</span></li></div>
-               <div><li>盘点类型：<span>日盘</span></li></div>
-               <div><li>未盘处理：<span>按当前库存量处理</span></li></div>
-               <div><li>盘点仓库：<span>CN00707-果蔬库房A</span></li></div>
+               <div><li>盘点日期：<span>{{busi_date}}</span></li><li>盘点方式：<span></span></li></div>
+               <div><li>盘点类型：<span>{{bill_type_name}}</span></li></div>
+               <div><li>未盘处理：<span>{{stock_count_mode_name}}</span></li></div>
+               <div><li>盘点仓库：<span>{{warehouse_name}}</span></li></div>
              </ul>
            </div>
            <div class="checklist">
               <p class="title">盘点单</p>
               <ul>
                 <li :key="index" v-for="(item,index) in inventoryDetails">
-                  <div><p>{{item.name}}<span>编码：<em>{{item.code}}</em></span></p></div>
-                  <div><p>规格：<span>{{item.guige}}</span></p><p>账面数量：<span>{{item.zmsl}}</span></p></div>
-                  <div><p>理论库存：<span>{{item.llkc}}</span></p><p>理论消耗：<span>{{item.llxh}}</span></p></div>
+                  <div><p>{{item.material_name}}<span>编码：<em>{{item.material_num}}</em></span></p></div>
+                  <div><p>规格：<span>{{item.material_model}}</span></p><p>账面数量：<span>{{item.acc_qty}}</span></p></div>
+                  <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p></div>
                 </li>
               </ul>
            </div>
           </div>
           <div class="temporary" slot="confirm">
-            <div class="total">货品数量合计：<span>27182</span></div>
+            <div class="total">货品数量合计：<span v-html="total"></span></div>
             <div class="button">
-              <div class="storage">暂存</div><div class="sub" @click="sub">提交</div>
+              <div class="storage" @click="storage">暂存</div><div class="sub" @click="sub">提交</div>
             </div>
           </div>  
         </div>
@@ -45,56 +45,85 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import StockTakingService from '../../../service/StockTakingService'
 @Component({  
    components:{  
       
    },   
     computed:{
      ...mapGetters({
+       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },
    methods:{ 
      ...mapActions({
+       'setInventoryDetails':"stockTaking/setInventoryDetails",
      })
 
-   }   
+   }      
 })  
 export default class stockTaking extends Vue{
-    private list:any[] = [];
-    private getInventoryDetails:INoopPromise;
-    private inventoryList:any[] = [];
+    private pager:Pager;   
+    private service: StockTakingService;
+    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
+    private getLibraryDetails:INoopPromise;
+    private warehouse_name:string;  
+    private busi_date:string;  
+    private bill_type_name:string;
+    private stock_count_mode_name:string;
+    private inventoryDetails:any; //列表详情
+    private total:any = []; //合计
+    private getRealdiscEntry:INoopPromise //暂存提交接口
     created() {
+      this.service = StockTakingService.getInstance();
+      this.warehouse_name = this.$route.params.warehouse_name
+      this.busi_date = this.$route.params.busi_date
+      this.bill_type_name = this.$route.params.bill_type_name
+      this.stock_count_mode_name = this.$route.params.stock_count_mode_name
+      this.total = JSON.stringify(this.inventoryDetails.length)
     }
 
     mounted(){
-      this.getInventoryDetails();
+      
     }
-
-  /**
-   * watch demo
-   */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-
-    }
+    // 返回上一页
     private goBack(){
       this.$router.back();
     }
-
-    /**
-     * computed demo
-     */
-      private get Total(){
-        return this.list.reduce((ori,item)=>{
-          return ori.uprice+item;
-        },0);
+    // 暂存
+      private storage(){
+        const whole_num = this.inventoryDetails[0].whole_num
+        const id = this.inventoryDetails[0].id
+        const consume_num = this.inventoryDetails[0].consume_num
+        const disperse_num = this.inventoryDetails[0].disperse_num
+        const ids = this.$route.params.ids
+        const is_stock_report = 0  //0是暂存   1是提交
+        const stock_count_mode = this.$route.params.stock_count_mode
+        this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+            this.inventoryDetails = res.data.data;
+            this.setInventoryDetails(this.inventoryDetails); 
+            this.$router.push('/stocktaking')
+        },err=>{
+            this.$toasted.show(err.message)
+        })
       }
-
-      private sub(){
-        this.$router.push('/')
-      }
+      // 提交
+      private sub(){  
+      const whole_num = this.inventoryDetails[0].whole_num
+      const id = this.inventoryDetails[0].id
+      const consume_num = this.inventoryDetails[0].consume_num
+      const disperse_num = this.inventoryDetails[0].disperse_num
+      const ids = this.$route.params.ids
+      const is_stock_report = 1  //0是暂存   1是提交
+      const stock_count_mode = this.$route.params.stock_count_mode
+      this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+          this.inventoryDetails = res.data.data;
+          this.setInventoryDetails(this.inventoryDetails); 
+          this.$router.push('/stocktaking')
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
 
   
       
@@ -115,7 +144,6 @@ export default class stockTaking extends Vue{
     background-color: #F1F6FF;
     .content{
       width: @width;
-      height:@height;
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -124,7 +152,6 @@ export default class stockTaking extends Vue{
         background-color:@background-color;
         width: 95%;
         margin-top: 10px;
-        padding-bottom: 70px;
         .details{
         padding: 15px 0;
         border-radius: @border-radius;
@@ -177,7 +204,6 @@ export default class stockTaking extends Vue{
                    p{
                     font-size: 12px;
                     color: #5F7B9A;
-                    padding: 0 10px;
                   span{
                     font-size: 13px;
                     color: #395778; 

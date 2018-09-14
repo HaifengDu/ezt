@@ -37,6 +37,7 @@ const stockTaking:Module<any,IRootState> = {
             state.inventory = inventory;
         },
         
+        
     },
     actions:{
         ...actions

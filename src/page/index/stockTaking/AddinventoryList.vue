@@ -22,17 +22,15 @@
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select"  @click="iswarehouseType()" v-model="addinventory.stock">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
-                      <option :value="type.text" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
+                    <select name="" id="" placeholder="请选择仓库" class="ezt-select"  @click="iswarehouseType()" v-model="addinventory.stock">
+                      <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select>   
                   </span>   
                 </li>
                  <li class="select-list">
                   <span class="title-search-name ">未盘处理：</span>
                   <span class="title-select-name item-select">
-                    <select name="" id="" placeholder="请选择" class="ezt-select"  v-model="addinventory.treatment">
-                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择未盘处理方式</option>
+                    <select name="" id="" placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment">
                       <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                     </select>
                   </span>
@@ -125,34 +123,43 @@ export default class stockTaking extends Vue{
     }
    
     private goBack(){
-      this.$router.back();
+      if((this.addinventory&&this.addinventory.stock)||this.addinventory.length>0){
+        this.isSave=true;
+      }else{
+        this.$router.push('/stocktaking');
+      }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
       this.setAddinventory({}),
       this.$router.push('/stocktaking');
     }
+    // 从store中取出的数据bill_type
+    private isType(){
+       if(this.inventory == 'daily_inventory'){
+          this.setInventoryType(this.inventory = '日盘');
+       }
+       if(this.inventory == 'week_inventory'){
+         this.setInventoryType(this.inventory = '周盘');
+       }
+       if(this.inventory == 'period_inventory'){
+         this.setInventoryType(this.inventory = '月盘');
+       }
+    }
+    
     // 手工制单
     manualproduction(info:string){
         this.$router.push(info)
         this.setInventoryType(this.inventory);
-        // if(!this.warehouseType){
-        //   this.$toasted.show("请选择仓库！");
-        //   return false;
-        // }
-        // this.$router.push(info)
+        if(this.addinventory){
+         if(!this.addinventory.stock){
+            this.$toasted.show("请选择仓库！");
+            return false;
+         }
+        this.setAddinventory(this.addinventory);
+        this.setInventoryType(this.inventory);
+        }
     }
-    // manualproduction(){
-    //   this.SelectingInventory = false
-    //    if(this.addinventory){
-    //      if(!this.addinventory.stock){
-    //         this.$toasted.show("请选择仓库！");
-    //         return false;
-    //      }
-    //     this.setAddinventory(this.addinventory);
-    //     debugger
-    //     this.SelectingInventory = true
-    //    }
-    // }
+   
     //盘点类型导入
      private inventorytype(info:string){
         this.$router.push(info)
@@ -163,7 +170,7 @@ export default class stockTaking extends Vue{
         
      }
     //  动态加载仓库
-    private iswarehouseType(type:any){
+    private iswarehouseType(){
       this.service.getWarehouse(this.inventory).then(res=>{ 
           this.warehouseType = res.data.data;
       },err=>{

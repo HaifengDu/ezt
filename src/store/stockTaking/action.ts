@@ -19,6 +19,8 @@ export const setAddinventory:Action<any,IRootState> = ({commit},addInventory:{})
 export const setInventoryType:Action<any,IRootState> = ({commit},inventory:{})=>{
     commit(RootType.PK_Inventory, inventory);
 }
+
+ 
   
 // export const getInventoryList:Action<any,IRootState> = ({commit})=>{
 //     const pager = new Pager();

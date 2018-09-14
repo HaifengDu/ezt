@@ -1,6 +1,6 @@
 <!--实盘录入-->
 <template>
-<div class="ezt-page-con realdiscentry">
+<div class="ezt-page-con realdiscentry">   
     <ezt-header :back="true" title="实盘录入" @goBack="goBack">
        <div slot="action">
           <span></span>
@@ -12,21 +12,26 @@
            <div class="checklist">
               <ul>
                 <li :key="index" v-for="(item,index) in inventoryDetails">
-                  <div class="title"><p>擦擦擦<span>编码：<em>112352345</em></span></p></div>
-                  <div><p>规格：<span>10个/袋</span></p><p>账面数量：<span>1233</span></p></div>
-                  <div><p>理论库存：<span>10</span></p><p>理论消耗：<span>1233</span></p></div>
+                  <div class="title"><p>{{item.material_name}}<span>编码：<em>{{item.material_num}}</em></span></p></div>
+                  <div><p>规格：<span>{{item.material_model}}</span></p><p>账面数量：<span>{{item.acc_qty}}</span></p></div>
+                  <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p></div>
                   <div class="purchase">
-                      <div><p>采购单位：<span><input value="22" type="number">箱</span></p><p>库存主单位：<span><input type="number" value="22">斤</span></p></div>
-                      <div><p>消耗单位：<span><input value="11" type="number">只</span></p></div>
+                      <div>
+                        <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">斤</span></p>
+                        <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">斤</span></p>
+                      </div>
+                      <div>
+                        <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">只</span></p>
+                      </div>
                   </div>
                 </li>
               </ul>
            </div>
           </div>
           <div class="temporary" slot="confirm">
-            <div class="total">货品数量合计：<span>27182</span></div>
+            <div class="total">货品数量合计：<span v-html="total"></span></div>
             <div class="button">
-              <div class="storage">暂存</div><div class="sub" @click="sub">提交</div>
+              <div class="storage" @click="storage">暂存</div><div class="sub" @click="sub">提交</div>
             </div>
           </div>
         </div>
@@ -40,31 +45,41 @@ import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import StockTakingService from '../../../service/StockTakingService'
 @Component({  
    components:{  
       
    },   
    computed:{
      ...mapGetters({
+      'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },
    methods:{ 
      ...mapActions({
+      'setInventoryDetails':"stockTaking/setInventoryDetails",
      })
 
    }   
 })  
 export default class stockTaking extends Vue{
     private pager:Pager;   
-    private list:any[] = [];
-    private inventoryDetails:any[];
-    
-    
+    private service: StockTakingService;
+    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
+    private getLibraryDetails:INoopPromise;
+    private ids:string;
+    private stock_count_mode:any; //未盘处理方式
+    private inventoryDetails:any; //列表详情
+    private total:any = []; //合计
+    private getRealdiscEntry:INoopPromise //实盘录入接口
     created() {
+      this.service = StockTakingService.getInstance();
+      this.total = JSON.stringify(this.inventoryDetails.length)
       
     }
 
     mounted(){
+      
     }
 
     private goBack(){
@@ -84,17 +99,45 @@ export default class stockTaking extends Vue{
     /**
      * computed demo
      */
-      private get Total(){
-        return this.list.reduce((ori,item)=>{
-          return ori.uprice+item;
-        },0);
+      // private get Total(){
+      //   return this.list.reduce((ori,item)=>{
+      //     return ori.uprice+item;
+      //   },0);
+      // }
+      // 暂存
+      private storage(){
+        const whole_num = this.inventoryDetails[0].whole_num
+        const id = this.inventoryDetails[0].id
+        const consume_num = this.inventoryDetails[0].consume_num
+        const disperse_num = this.inventoryDetails[0].disperse_num
+        const ids = this.$route.params.ids
+        const is_stock_report = 0  //0是暂存   1是提交
+        const stock_count_mode = this.$route.params.stock_count_mode
+        this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+            this.inventoryDetails = res.data.data;
+            this.setInventoryDetails(this.inventoryDetails); 
+            this.$router.push('/stocktaking')
+        },err=>{
+            this.$toasted.show(err.message)
+        })
       }
-      private sub(){
-        this.$router.push('/')
-      }
-
-  
-      
+      // 提交
+      private sub(){  
+      const whole_num = this.inventoryDetails[0].whole_num
+      const id = this.inventoryDetails[0].id
+      const consume_num = this.inventoryDetails[0].consume_num
+      const disperse_num = this.inventoryDetails[0].disperse_num
+      const ids = this.$route.params.ids
+      const is_stock_report = 1  //0是暂存   1是提交
+      const stock_count_mode = this.$route.params.stock_count_mode
+      this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+          this.inventoryDetails = res.data.data;
+          this.setInventoryDetails(this.inventoryDetails); 
+          this.$router.push('/stocktaking')
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
 }
 </script>
 <style lang="less" scoped> 
@@ -111,7 +154,6 @@ export default class stockTaking extends Vue{
     height: @height;
     .content{
       width: @width;
-      height:@height;
       display: flex;
       align-items: center;
       flex-direction: column;
@@ -155,6 +197,9 @@ export default class stockTaking extends Vue{
                 margin-top: 10px;
                 padding-top: 10px;
                 box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
+                input{
+                    width: 105px;
+                  }
                 div{
                     margin-bottom: 10px;
                     border-bottom: 1px solid #D2DFEE; 
@@ -168,9 +213,6 @@ export default class stockTaking extends Vue{
                   }
                   p:last-child{
                     border-right: none;
-                  }
-                  input{
-                    width: 50px;
                   }
                 }
                 div:last-child{

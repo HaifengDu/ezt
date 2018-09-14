@@ -18,7 +18,6 @@ import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
-import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
 import SelectingInventory from '@/page/index/stockTaking/SelectingInventory.vue'
@@ -87,7 +86,7 @@ const router = new Router({
       component: AddinventoryList,
     },
     {      
-      path: '/librarydetails',   //盘库详情
+      path: '/librarydetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',
       component: LibraryDetails,
     },
@@ -100,11 +99,6 @@ const router = new Router({
       path: '/realdiscentry',   //实盘录入
       name: 'RealdiscEntry',
       component: RealdiscEntry,
-    },
-    {
-      path: '/auditchecklist',   //审核盘点单
-      name: 'AuditcheckList',
-      component: AuditcheckList,
     },
     {
       path: '/queryresult',   //查询结果

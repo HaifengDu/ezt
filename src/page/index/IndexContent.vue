@@ -43,25 +43,25 @@
         </div>
         <ul class="icon-menu"><!--主页内容菜单-->
             <li @click="renderUrl('/needGood')">
-                <div class="yaohuo">
-                   <span class="ezt-reddot-s"></span>
-                </div>
-                <span>要货</span></li>
+              <div class="yaohuo">
+                  <span class="ezt-reddot-s"></span>
+              </div>
+              <span>要货</span></li>
             <li @click="noAction()">
-                <div class="jiadan"></div>
-                <span>加单</span></li>
+              <div class="jiadan"></div>
+              <span>加单</span></li>
             <li @click="renderUrl('/receiveGood')">
-                <div class="shouhuo"></div>
-                <span>收货</span></li>
+              <div class="shouhuo"></div>
+              <span>收货</span></li>
             <li @click="renderUrl('/returnGood')">
-                <div class="tuihuo"></div>
-                <span>退货</span></li>
+              <div class="tuihuo"></div>
+              <span>退货</span></li>
             <li @click="renderUrl('/stocktaking')">
-                <div class="panku"></div>
-                <span>盘库</span></li>
-            <li @click="renderUrl('/initStock')">
-            <div class="panku"></div>
-            <span>库存初始化</span></li>
+              <div class="panku"></div>
+              <span>盘库</span></li>
+            <li @click="renderUrl()">
+              <div class="panku"></div>
+              <span>库存初始化</span></li>
         </ul>
         <!--内容-->
         
@@ -74,7 +74,7 @@ import Vue from 'vue'
 import {Component} from "vue-property-decorator"
 import IUser from "../../interface/IUserModel"
 import LoginService from "../../service/LoginService"
-import {mapGetters} from "vuex";
+import {mapGetters,mapActions} from "vuex";
 import {maskMixin} from "../../helper/maskMixin";
 import ErrorMsg from "../model/ErrorMsg";
 import commonService from '../../service/commonService.js';
@@ -87,11 +87,18 @@ declare var mobiscroll:any;//全局定义日历
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       "user":"user"
-     })
-   }
+       "user":"user",
+      'isFirstStore':'initStock/isFirstStore'//是否是新门店未初始化
+     })   
+   },
+  methods:{
+    ...mapActions({
+      'setIsFirstStore':'initStock/setIsFirstStore'//是否是新门店未初始化
+    })
+  }
 })
 export default class Index extends Vue{
+   private isFirstStore:boolean;
    private selected = 'index';
    private service:LoginService;
    private user:IUser;
@@ -174,7 +181,16 @@ export default class Index extends Vue{
     }
     //首页菜单跳转
     private renderUrl(info:string){
+      if(info){
         this.$router.push(info);
+      }else{
+        if(this.isFirstStore){
+          this.$router.push('/initSet');
+        }else{
+          this.$router.push('/initStock');
+        }
+      }
+        
     }
     //日结事件
     private checkDate(date:string){

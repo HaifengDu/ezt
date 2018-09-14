@@ -3,10 +3,24 @@
   font-size: 16px;
   font-weight: 550;
   padding: 6px;
+  display: inline-block;
 }
 .confirm-info-icon{
   color: #92CCF0;
   margin: 8px;
+}
+.confirm-content{
+  background:#F8FBFF;
+  padding: 14px;
+}
+textarea{
+  background: white;
+  flex-direction: column;
+  resize: auto;
+  cursor: text;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding: 2px;
 }
 
 /* 确定按钮 */

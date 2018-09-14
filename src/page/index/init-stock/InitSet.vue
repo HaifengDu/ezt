@@ -142,7 +142,7 @@ export default class InitStock extends Vue{
      * 返回
      */
     private goBack(){
-        this.$router.push("/initStock");
+        this.$router.push("/");
     }
 }
 </script>

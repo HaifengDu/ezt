@@ -7,6 +7,12 @@ const addGoodService = PublicAddGood.getInstance();
 export const setSelectedGood:Action<any,IRootState> = ({commit},selectedGood:[])=>{
     commit(PublicAddGoodType.UPDATE_SELECTEDGOOD, selectedGood);
 };
+export const setAddBillInfo:Action<any,IRootState> = ({commit},addBillInfo:{})=>{
+    commit(PublicAddGoodType.ADD_BILLINFO, addBillInfo);
+};
+export const setAddBeforeBillInfo:Action<any,IRootState> = ({commit},addBeforeBillInfo:{})=>{
+    commit(PublicAddGoodType.ADD_BEFOREBILLINFO, addBeforeBillInfo);
+}
 
 // export const getGoodList:Action<any,IRootState> = ({commit})=>{
 //     const pager = new Pager();

@@ -10,13 +10,13 @@
                     <li class="select-list">
                         <span class="title-search-name ">库存初始日：</span>
                         <span >
-                           {{addInitStockInfo.date}}
+                           {{addBillInfo.date}}
                         </span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name ">仓库：</span>
                         <span class="title-select-name item-select">
-                        <select placeholder="请选择" class="ezt-select" v-model="addInitStockInfo.warehouse"
+                        <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
                         @change="handleWarehouse"
                         >
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
@@ -27,7 +27,7 @@
                     <li>
                         <span class="title-search-name">成本录入方式</span>
                         <span class="costType-info">                            
-                            <button-tab v-model="addInitStockInfo.costType" @click.native="handlerChangeType(addInitStockInfo.costType)">
+                            <button-tab v-model="addBillInfo.costType" @click.native="handlerChangeType(addBillInfo.costType)">
                                 <button-tab-item selected>含税单价</button-tab-item>
                                 <button-tab-item>含税金额</button-tab-item>
                             </button-tab>
@@ -94,13 +94,13 @@
                                         <span class="title-select-name">数量：</span>
                                         <x-number v-model="item.num" button-style="round" :min="0"></x-number>
                                     </li>
-                                    <li v-if="addInitStockInfo.costType==0">
+                                    <li v-if="addBillInfo.costType==0">
                                         <span class="title-dialog-name">价格：</span>
                                         <span class="icon-input price">
                                             <input type="number" class="ezt-smart" v-model="item.price">
                                         </span>                                       
                                     </li>
-                                    <li v-if="addInitStockInfo.costType==1">
+                                    <li v-if="addBillInfo.costType==1">
                                         <span class="title-dialog-name">含税额：</span>
                                         <span class="icon-input price">
                                             <input type="number" class="ezt-smart" v-model="item.amt">
@@ -168,30 +168,32 @@ import { InitStockService } from "../../../service/InitStockService";
 @Component({
   computed: {
     ...mapGetters({
-      addInitStockInfo: "initStock/addInitStockInfo", //添加采购入库单的单据信息
+      addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
       selectedGood: "publicAddGood/selectedGood", //选择物料的物品
-      beforeAddInitStockInfo:'initStock/beforeAddInitStockInfo'
+      addBeforeBillInfo:'publicAddGood/addBeforeBillInfo',
+      isFirstStore:'initStock/isFirstStore'
     })
   },
   methods: {
     ...mapActions({
-      setAddInitStockInfo: "initStock/setAddInitStockInfo",
-      setBeforeAddInitStockInfo:"initStock/setBeforeAddInitStockInfo",
+      setAddBillInfo: "publicAddGood/setAddBillInfo",
+      setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
       setSelectedGood: "publicAddGood/setSelectedGood"
     })
   }
 })
 export default class InitStock extends Vue {
   private service: InitStockService;
-  private addInitStockInfo: any; //store中
-  private beforeAddInitStockInfo: any;
-  private setAddInitStockInfo: INoopPromise; //store中给addInitStockInfo赋值
-  private setBeforeAddInitStockInfo: INoopPromise;
+  private addBillInfo: any; //store中
+  private addBeforeBillInfo: any;
+  private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
+  private setAddBeforeBillInfo: INoopPromise;
   private setSelectedGood: INoopPromise;
   private selectedGood: any[]; //store中selectedGood的值
   private isEdit: boolean = false; //物料是否可编辑
   private isSave:boolean = false;//返回的时候是否保存单据信息
   private isWarehouse:boolean = false;//仓库
+  private isFirstStore:boolean;
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -206,14 +208,15 @@ export default class InitStock extends Vue {
 
   created() {
     this.service = InitStockService.getInstance();
-    this.addInitStockInfo.date = new Date().format("yyyy-MM-dd");
-    this.addInitStockInfo.warehouse = this.orderType[0].type;
-    this.beforeAddInitStockInfo.warehouse = this.orderType[0].type;
-    this.addInitStockInfo.costType = 1;
+    this.addBillInfo.date = new Date().format("yyyy-MM-dd");
+    this.addBillInfo.warehouse = this.orderType[0].type;
+    this.addBeforeBillInfo.warehouse = this.orderType[0].type;
+    this.addBillInfo.costType = 1;
+    this.addBillInfo.editPrice=true;
   }
   //选择物料
   private renderUrl(info: string) {
-    this.setAddInitStockInfo(this.addInitStockInfo); //将选择的单据信息保存在store中
+    this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
     this.$router.push(info);
   }
  //点击物料进行编辑数据
@@ -237,7 +240,7 @@ export default class InitStock extends Vue {
         if(this.selectedGood.length>0){
             this.isWarehouse=true;
         }else{
-            this.beforeAddInitStockInfo.warehouse=this.addInitStockInfo.warehouse;            
+            this.addBeforeBillInfo.warehouse=this.addBillInfo.warehouse;            
         }
     }
      /**
@@ -245,13 +248,13 @@ export default class InitStock extends Vue {
      */
     private onBillTypeConfirm(val:any){
       this.setSelectedGood([]);
-      this.beforeAddInitStockInfo[val]=this.addInitStockInfo[val];
+      this.addBeforeBillInfo[val]=this.addBillInfo[val];
     }
     /**
      * 有物料时 仓库变化  取消校验
      */
     private onBillTypeCancel(val:any){
-      this.addInitStockInfo[val] = this.beforeAddInitStockInfo[val];
+      this.addBillInfo[val] = this.addBeforeBillInfo[val];
     }
     /**
      * computed demo
@@ -286,17 +289,25 @@ export default class InitStock extends Vue {
      * 返回
      */
     private goBack() {
-        if((this.addInitStockInfo&&this.addInitStockInfo.warehouse)||this.selectedGood.length>0){
+        if((this.addBillInfo&&this.addBillInfo.warehouse)||this.selectedGood.length>0){
             this.isSave=true;
         }else{
-            this.$router.push('/initSet');
+            if(this.isFirstStore){
+                this.$router.push("/initSet");
+            }else{
+                this.$router.push("/initStock");
+            }
         }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-        this.setAddInitStockInfo({}),
+        this.setAddBillInfo({}),
         this.setSelectedGood([]);
-        this.setBeforeAddInitStockInfo({});
-        this.$router.push('/initSet');
+        this.setAddBeforeBillInfo({});
+        if(this.isFirstStore){
+            this.$router.push("/initSet");
+        }else{
+            this.$router.push("/initStock");
+        }
     }
 }
 </script>

@@ -85,7 +85,9 @@
     <confirm v-model="isFinish" @on-confirm="isFinishConfirm"  :show-cancel-button="false">
       <span class="confirm-title">
         <i class="fa fa-info-circle confirm-info-icon" aria-hidden="true"></i>库存初始化完成</span>
-        <p style="text-align:center;">{{confirmTitle}}</p>
+        <div class="confirm-content">
+          <p style="text-align:center;">{{confirmTitle}}</p>
+        </div>        
     </confirm> 
 </div> 
 </template>
@@ -109,7 +111,8 @@ import { InitStockService } from "../../../service/InitStockService";
   mixins: [maskMixin],
   computed: {
     ...mapGetters({
-      'user':'user'
+      'user':'user',
+      'isFirstStore':'initStock/isFirstStore'//是否是新门店未初始化
     })
   }
   //  methods:{
@@ -278,7 +281,12 @@ export default class InitStock extends Vue {
     this.isFinish=false;
   }
   private goBack() {
-    this.$router.push("/");
+    // if(this.isFirstStore){
+    //   this.$router.push("/initSet");
+    // }else{
+      this.$router.push("/");
+    // }
+    
   }
 }
 </script>

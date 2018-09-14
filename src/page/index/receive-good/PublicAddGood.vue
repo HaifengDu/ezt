@@ -29,19 +29,86 @@
              <div class="good-item" v-for="(item,index) in goodList" :key='index'>
                <div class="good-item-title">
                  <span class="good-item-name">{{item.name}}</span>
-                 <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+                   <b>价格：</b>
+                   <input type="text" class="ezt-smart" v-model="item.price">
+                 </span>
                </div>
                <div class="good-item-bot">
-                 <span class="good-remark">备</span>
-                 <span>
+                 <!-- 编辑图标 -->
+                 <span class="good-remark" @click="handlerRemark">
+                   <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                 </span>
+                 <!-- 收藏图标 -->
+                 <span v-if="!addBillInfo.editPrice">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
                     <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
                  </span>
                </div>
-             </div>
-           </div>
+                <!-- 编辑备注时 -->
+                <confirm v-model="isRemark" @on-confirm="remarkConfirm"  :on-cancel="remarkCancel">
+                  <span class="confirm-title">备注</span>
+                  <div class="confirm-content">
+                    <textarea style="height: 7em;" class="ezt-pri-remark" v-model="item.remark"></textarea>
+                  </div>
+                </confirm>
+                <!-- 编辑价格信息时  -->
+                 <div>
+                    <x-dialog v-model="isPrice" class="dialog-demo">
+                    <div class="ezt-dialog-header">                                
+                        <span class="ezt-close" @click="isPrice=false" >
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+                    </div>                            
+                    <div class="warehouse-list">
+                        <ul class="edit-good-list">
+                            <li>
+                                <span class="title-select-name">数量：</span>
+                                <x-number v-model="item.num" button-style="round" :min="0"></x-number>
+                            </li>
+                            <li v-if="addBillInfo.costType==0">
+                                <span class="title-dialog-name">价格：</span>
+                                <span class="icon-input price">
+                                    <input type="number" class="ezt-smart" v-model="item.price">
+                                </span>                                       
+                            </li>
+                            <li v-if="addBillInfo.costType==1">
+                                <span class="title-dialog-name">含税额：</span>
+                                <span class="icon-input price">
+                                    <input type="number" class="ezt-smart" v-model="item.amt">
+                                </span>                                       
+                            </li>
+                            <li>
+                                <span class="title-dialog-name">税率：</span>
+                                <span class="icon-input">
+                                    <input type="number" class="ezt-smart" v-model="item.rate">
+                                </span>
+                            </li>
+                            <li class="select-list">
+                                <span class="title-dialog-name">供应商：</span>
+                                <span class="title-select-name item-select">
+                                <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
+                                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                    <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                </select>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="title-dialog-name">备注：</span>
+                                <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mine-bot-btn">
+                        <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+                    </div>             
+                    </x-dialog>
+                </div>
+             </div>           
+          </div>
         </div>
       </div>
     </div>
@@ -62,7 +129,7 @@
               <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
             </div>
             <div class="good-item-bot">
-              <span class="good-remark">备</span>
+              <span class="good-remark" >备</span>
               <span>
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
@@ -136,7 +203,8 @@ import _ from "lodash";
   mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       'selectedGood':'publicAddGood/selectedGood'
+       'selectedGood':'publicAddGood/selectedGood',
+       'addBillInfo':'publicAddGood/addBillInfo',
      }),
    },
    methods:{
@@ -154,7 +222,20 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
-  private userpp:any[];
+  private isRemark:boolean=false;//编辑备注
+  private isPrice:boolean=false;//编辑价格
+  private addBillInfo:any;//价格与备注显示切换
+  private orderType: any[] = [
+    {
+      //单据类型下拉数据
+      name: "合同采购单",
+      type: "q"
+    },
+    {
+      name: "采购单",
+      type: "m"
+    }
+  ];
   // private goodList:any[]=[{
   //   id:1,
   //   name:'草鱼半成品',
@@ -174,9 +255,7 @@ export default class AddGood extends Vue{
   private allType:any[] = [];
   private typeName:any={};//记录type选择哪条
   // private userpp:any[]=[];
-  created(){
-    this.userpp=[]
-    console.log(this.userpp,'000000')    
+  created(){ 
   }
   mounted() {
     this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
@@ -312,6 +391,27 @@ export default class AddGood extends Vue{
     this.$router.back();
     console.log(this.selectedGood,'111')
   }
+  //点击备注
+  private handlerRemark(){
+    if(!this.addBillInfo.editPrice){
+      this.isRemark=true;
+    }else{
+      this.isPrice=true;
+    }
+    
+  }
+  //备注，价格弹框取消
+  private remarkCancel(){
+    this.isRemark = false;
+  }
+  //备注弹框确定
+  private remarkConfirm(){
+    alert('备注保存成功');
+  }
+ //价格弹框确定
+  private priceConfirm(){
+    alert('价格修改成功');
+  }
   private goBack(){
     this.$router.back();
   }
@@ -337,6 +437,9 @@ export default class AddGood extends Vue{
     white-space: nowrap;
     span{
       margin-right: 10px;
+      max-width: 82px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     span.active{
       color: #1674fc;
@@ -466,6 +569,84 @@ export default class AddGood extends Vue{
     display:flex;
     flex-direction: row;
   }
+  // 编辑备注时样式
+  .good-item-title{
+    display: flex;
+    .good-item-name{
+      flex:1;
+    }
+    .good-item-sort{
+      flex:1;
+    }
+    .good-item-sort.edit{
+      border: 1px solid #ccc;
+    }
+  }
+  //编辑物品 修改的字段
+.dialog-demo {
+  .ezt-dialog-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+  .edit-good-list {
+    flex-direction: column;
+    text-align: center;
+    display: inline-block;
+    li {
+      display: flex;
+      // flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      .title-dialog-name {
+        flex: inherit;
+        padding: 10px 0px;
+        font-size: 13px;
+        color: #5f7b9a;
+      }
+      .weui-cell:before {
+        border: none;
+      }
+      select {
+        height: 36px;
+      }
+      .icon-input::before {
+        display: inline-block;
+        content: "%";
+        position: absolute;
+        right: 40px;
+      }
+      .icon-input.price::before {
+        content: "￥";
+      }
+    }
+  }
+}
+//按钮
+.mine-bot-btn {
+  width: 100%;
+  // position: absolute;
+  margin-top: 20px;
+  .ezt-lone-btn {
+    display: inline-block;
+    font-size: 14px;
+    color: #ffffff;
+    letter-spacing: 0;
+    padding: 8px 90px;
+    margin-bottom: 10px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(
+      linear,
+      left top,
+      right top,
+      from(#5a12cc),
+      to(#3c82fb)
+    );
+    background-image: linear-gradient(90deg, #018bff 0%, #4a39f3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+  }
+}
   
   
 

@@ -178,3 +178,6 @@
 .good-detail-content .mint-cell-value{
   display:inherit;
 }
+.weui-dialog__bd:first-child{
+  padding: 0.7em 13px 1.7em !important;
+}

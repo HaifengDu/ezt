@@ -3,6 +3,7 @@ export const RootType = {
     PK_Details:"PK_Details",
     PK_QueryResult:"PK_QueryResult",
     PK_AddInventory:'PK_AddInventory',
-    PK_Inventory:'PK_Inventory',
+    PK_InventoryType:'PK_InventoryType',
+    PK_TemplateImport:'PK_TemplateImport',
 };
 export default RootType;

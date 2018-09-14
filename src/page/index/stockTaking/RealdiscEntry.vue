@@ -6,7 +6,7 @@
           <span></span>
        </div>        
     </ezt-header>    
-    <div class="ezt-main">       
+    <div class="ezt-main">          
         <div class="content">
           <div class="list">
            <div class="checklist">
@@ -17,11 +17,11 @@
                   <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p></div>
                   <div class="purchase">
                       <div>
-                        <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">斤</span></p>
-                        <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">斤</span></p>
+                        <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">{{item.pur_unit_name}}</span></p>
+                        <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">{{item.unit_name}}</span></p>
                       </div>
                       <div>
-                        <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">只</span></p>
+                        <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">{{item.bom_name}}</span></p>
                       </div>
                   </div>
                 </li>

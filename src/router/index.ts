@@ -16,7 +16,6 @@ import MineContent from '@/page/mine/MineContent.vue'
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
-import ConfirmationList from '@/page/index/stockTaking/ConfirmationList.vue'
 import RealdiscEntry from '@/page/index/stockTaking/RealdiscEntry.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
@@ -91,11 +90,6 @@ const router = new Router({
       path: '/librarydetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',
       component: LibraryDetails,
-    },
-    {
-      path: '/confirmationlist',  //确认盘点单
-      name: 'ConfirmationList',
-      component: ConfirmationList,
     },
     {
       path: '/realdiscentry',   //实盘录入

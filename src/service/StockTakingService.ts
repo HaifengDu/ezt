@@ -54,9 +54,9 @@ export class StockTakingService extends BaseService{
     }
 
     //模板导入
-    getTemplateImport(){
+    getTemplateImport(warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
-            "data":[{"warehouse_id":"44"}],
+            "data":[{"warehouse_id":warehouse_id}],
             "oper":"INVENTORY_TEMPLATE",
             "pagination":null
         }).then(res=>{           
@@ -66,12 +66,12 @@ export class StockTakingService extends BaseService{
 
 
     //模板详情
-    getTemplateDetails(){
+    getTemplateDetails(template_id:string,flag:string,warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
-                "template_id":"25",   //模板id
-                "flag":"week_inventory",  //盘点类型
-                "warehouse_id":"39"  //仓库id
+                "template_id":template_id,   //模板id
+                "flag":flag,  //盘点类型
+                "warehouse_id":warehouse_id  //仓库id
             }],
             "oper":"TEMPLATE_DETAIL",
             "pagination":null
@@ -82,11 +82,11 @@ export class StockTakingService extends BaseService{
 
 
     //盘点批量类型导入（点击盘点类型导入）  新增盘点类型导入
-    getInventorytypeImport(){
+    getInventorytypeImport(flag:string,warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
-                "flag":"week_inventory",  //盘点类型
-                "warehouse_id":"44"
+                "flag":flag,  //盘点类型
+                "warehouse_id":warehouse_id
             }],   
             "oper":"BATCH_STOCK",
             "pagination":null

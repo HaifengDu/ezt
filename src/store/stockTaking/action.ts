@@ -16,9 +16,13 @@ export const setQueryResult:Action<any,IRootState> = ({commit},queryResult:[])=>
 export const setAddinventory:Action<any,IRootState> = ({commit},addInventory:{})=>{
     commit(RootType.PK_AddInventory, addInventory);
 };
-export const setInventoryType:Action<any,IRootState> = ({commit},inventory:{})=>{
-    commit(RootType.PK_Inventory, inventory);
-}
+export const setInventoryType:Action<any,IRootState> = ({commit},pkinventory:{})=>{
+    commit(RootType.PK_InventoryType, pkinventory);
+};
+export const setPktemplateimport:Action<any,IRootState> = ({commit},pktemplateimport:[])=>{
+    commit(RootType.PK_TemplateImport, pktemplateimport);
+};   
+
 
  
   

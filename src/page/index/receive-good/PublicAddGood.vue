@@ -179,7 +179,7 @@ export default class AddGood extends Vue{
     console.log(this.userpp,'000000')    
   }
   mounted() {
-   this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
+    this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -287,9 +287,9 @@ export default class AddGood extends Vue{
    * 删除已选择货品
    */
   private selectedDelGood(item:any){
-     const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-     this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
-      this.selectedGoodList.splice(index,1);
+    const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+    this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
+    this.selectedGoodList.splice(index,1);
   }
   /**
    * 搜索所有物品 显示/隐藏

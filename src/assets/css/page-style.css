@@ -1,3 +1,35 @@
+/*弹框的title名称*/
+.confirm-title{
+  font-size: 16px;
+  font-weight: 550;
+  padding: 6px;
+}
+.confirm-info-icon{
+  color: #92CCF0;
+  margin: 8px;
+}
+
+/* 确定按钮 */
+.ezt-confirm-btn{
+  padding: 6px 30px;
+  font-size: 14px;
+  color: #fff;
+  background: #1081EF;
+  letter-spacing: 0;
+  border-radius: 100px;
+}
+
+/* 取消按钮 */
+.ezt-cancel-btn{
+  padding: 6px 30px;
+  font-size: 14px;
+  color: #5F7B9A;
+  background: #fff;
+  letter-spacing: 0;
+  border: 1px solid #BACAD9;
+  border-radius: 100px;
+}
+
 /* 金额字体 */
 .ezt-money-font{
   font-size: 20px;
@@ -502,11 +534,7 @@ input.ezt-middle{
       cursor: pointer;
       background-color: #1188FC;
       color: #fff;
-    }
-      /* 页面底部按钮样式 结束  */
-      .ezt-add-content.main-menu{
-        height: calc(100vh - 150px);
-      }
+    }     
       /**没有任何单据的时候*/
     .done-none{
       width: 100%;

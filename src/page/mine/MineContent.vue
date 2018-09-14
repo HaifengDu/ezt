@@ -102,19 +102,20 @@ export default class Mine extends Vue{
     width: 100%;
     position: absolute;
     bottom: 60px;
+    .ezt-lone-btn{
+      display: inline-block;
+      font-size: 14px;
+      color: #FFFFFF;
+      letter-spacing: 0;
+      padding: 10px 130px;
+      border-radius: 40px;
+      background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+      background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+      -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+      box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
+    }
   }
-  .ezt-lone-btn{
-    display: inline-block;
-    font-size: 14px;
-    color: #FFFFFF;
-    letter-spacing: 0;
-    padding: 10px 130px;
-    border-radius: 40px;
-    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-    background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-}
+ 
  /* 我的用户头像 */
   .mine-css{
     display: inline-block;

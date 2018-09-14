@@ -152,6 +152,11 @@ export default class Index extends Vue{
           display: 'bottom',
           lang: 'zh',
           dateFormat:'yyyy-mm-dd',
+          valid:[
+            {start: new Date(new Date().getFullYear(),1,1),end: new Date(new Date().getFullYear(),1,1)},
+            {start: new Date(new Date().getFullYear(),2,1),end: new Date(new Date().getFullYear(),2,1)},
+            {start: new Date(new Date().getFullYear(),12,1),end: new Date(new Date().getFullYear(),12,1)},
+          ],
           onSet: (val:{
               valueText:string
           })=>{

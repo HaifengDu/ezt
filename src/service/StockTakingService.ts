@@ -96,20 +96,20 @@ export class StockTakingService extends BaseService{
     }
 
 
-    //新增盘点
-    getAdditionalcheckList(){
+    //新增盘点   (盘点类型导入暂存提交接口)
+    getAdditionalcheckList(material_id:string,entry_name:string,bill_status:number,bill_type_name:string,warehouse_id:string,bill_type:string,stock_count_mode_name:string,busi_date:string,organ_brief_code:string,stock_count_mode:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
-            "data":[{
-                "rows":[{"material_id":"10"}],//物料id
-                "entry_name":"zyl",    //制单人姓名
-                "bill_status":1,       //单据状态
-                "bill_type_name":"周盘",   //单据盘点类型名称
-                "warehouse_id":"45",      //仓库id
-                "bill_type":"week_inventory",   //单据盘点类型
-                "stock_count_mode_name":"按照当前库存量处理",  //未盘处理方式
-                "busi_date":"2018-08-16",      //盘点日期
-                "organ_brief_code":"CN0007",  //仓库简编码
-                "stock_count_mode":"is_quanlity"  //未盘处理方式编号
+            "data":[{    
+                "rows":[{"material_id":material_id}],//物料id
+                "entry_name":entry_name,    //制单人姓名
+                "bill_status":bill_status,       //单据状态   0是暂存   1是提交
+                "bill_type_name":bill_type_name,   //单据盘点类型名称
+                "warehouse_id":warehouse_id,      //仓库id
+                "bill_type":bill_type,   //单据盘点类型
+                "stock_count_mode_name":stock_count_mode_name,  //未盘处理方式
+                "busi_date":busi_date,      //盘点日期
+                "organ_brief_code":organ_brief_code,  //仓库简编码
+                "stock_count_mode":stock_count_mode  //未盘处理方式编号
             }],
             "oper":"CREATE_STOCK",
             "pagination":null

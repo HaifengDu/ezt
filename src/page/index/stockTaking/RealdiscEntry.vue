@@ -61,7 +61,7 @@ import StockTakingService from '../../../service/StockTakingService'
      })
 
    }   
-})  
+})     
 export default class stockTaking extends Vue{
     private pager:Pager;   
     private service: StockTakingService;

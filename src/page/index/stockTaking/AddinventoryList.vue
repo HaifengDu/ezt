@@ -14,7 +14,7 @@
             <group>   
               <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
-              <x-input title='盘点类型' text-align="right" disabled v-model="name">{{name}}</x-input>
+              <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input>
             </group>       
           </div> 
           <div class="warehouse">
@@ -22,7 +22,7 @@
                  <li class="select-list">
                   <span class="title-search-name ">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select placeholder="请选择仓库" class="ezt-select"  @click="iswarehouseType()" v-model="addinventory.stock">
+                    <select placeholder="请选择仓库" class="ezt-select" @change="warehouseStock"  v-model="addinventory.stock">
                       <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select>   
                   </span>   
@@ -30,8 +30,8 @@
                  <li class="select-list">
                   <span class="title-search-name ">未盘处理：</span>
                   <span class="title-select-name item-select">
-                    <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment">
-                      <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment" @change="isTreatment">
+                      <option :value="item.value" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                     </select>
                   </span>
                 </li>
@@ -42,7 +42,7 @@
               <ul>
                 <li @click="manualproduction('/selectinginventory')">手工制单</li>
                 <li @click="templateimport()">模板导入</li>
-                <li @click="inventorytype('c')">盘点类型导入</li>
+                <li @click="inventorytype('d')">盘点类型导入</li>
               </ul>
           </div>
        </div>
@@ -71,15 +71,18 @@ import librarydetails from './LibraryDetails'
    computed:{  
      ...mapGetters({
        "user":"user",
-       'addInventory':'stockTaking/addInventory',//新增盘库单数据
+       'addinventory':'stockTaking/addinventory',//新增盘库单数据
+       'addBeforeInventory':'stockTaking/addBeforeInventory',//新增盘库单数据变化
        'pkinventory':'stockTaking/pkinventory',//盘点类型
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情  确认盘点单
        'pktemplateimport':'stockTaking/pktemplateimport',//模板导入
+       
      }) 
    },
    methods:{ 
      ...mapActions({
        'setAddinventory':"stockTaking/setAddinventory",
+       'setAddBeforeInventory':"stockTaking/setAddBeforeInventory",
        'setInventoryType':"stockTaking/setInventoryType",
        'setInventoryDetails':"stockTaking/setInventoryDetails",
        'setPktemplateimport':"stockTaking/setPktemplateimport"
@@ -99,36 +102,39 @@ export default class stockTaking extends Vue{
     private inventory:string;
     private warehouseType:any[] = [];  //动态加载仓库
     private isSave:boolean = false;//确认不保存
-    private addinventory:any = {};//store中
-    private SelectingInventory:boolean = false;
-    private addInventory:any;   
+    private addinventory:any;//store中
     private setAddinventory:INoopPromise//store中给setAddinventory赋值
+    private addBeforeInventory:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    private setAddBeforeInventory:INoopPromise;
     private pkinventory:any;
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private inventoryDetails:any[] = []; //列表详情  确认盘点单
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private pktemplateimport:any[] = []; //模板
     private setPktemplateimport:INoopPromise//store中给setPktemplateimport赋值
-    private name:string;
+    private SelectingInventory:boolean = false;
+    private name:any;
     private warehouse_name:string;  
     private busi_date:string;  
     private bill_type_name:string;
     private stock_count_mode_name:string;
     private orderType:any[] = [{
       name:"按照当前库存量处理",
-      type:"q"
+      value:"is_quanlity"
     },{
       name:"按照0库存量处理",
-      type:"m"
+      value:"is_zero"
     }];
     created() {
        this.service = StockTakingService.getInstance();
-       this.name = this.$route.params.name
+       this.addinventory.name = this.$route.params.name
+       this.addinventory.bill_type =  this.$route.params.bill_type
       //  this.setInventoryType(this.pkinventory,this.name);
-       
+      //  选择仓库
+      this.iswarehouseType();
     }
 
-    mounted(){
+    mounted(){   
      
 
     }
@@ -145,7 +151,7 @@ export default class stockTaking extends Vue{
       this.$router.push('/stocktaking');
     }
     
-    // 手工制单
+    //手工制单
     manualproduction(info:string){
         if(this.addinventory){
          if(!this.addinventory.stock){
@@ -153,43 +159,48 @@ export default class stockTaking extends Vue{
             return false;
          }
          this.$router.push(info)
-        this.setInventoryType(this.pkinventory);
         this.setAddinventory(this.addinventory);
         }
     }
    
     //盘点类型导入
-     private inventorytype(types:any){
+     private inventorytype(types:any,){
         if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
             return false;
-         }
+         }   
         const flag = this.pkinventory;
         const warehouse_id = this.addinventory.stock;
+        debugger
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
+             this.setAddinventory(this.addinventory);
+             this.setAddBeforeInventory(this.addBeforeInventory);
              this.$router.push({
                 name:'LibraryDetails',
                  params:{
                     busi_date:this.user.auth.busi_date,
-                    bill_type_name:this.name,
+                    bill_type:this.addinventory.bill_type,
+                    bill_type_name:this.addinventory.name,
                     warehouse_name: this.addinventory.stock,
                     stock_count_mode_name:this.addinventory.treatment,
+                    treatment : this.addinventory.treatment,
                     types:types,
+                    warehouse_method:"手工制单",
+                   
                 }
               });
               this.inventoryDetails = res.data.data;
-              console.log("确认盘点单--------"+JSON.stringify(this.inventoryDetails))
               this.setInventoryDetails(this.inventoryDetails); 
-              this.setInventoryType(this.pkinventory);
-              this.setAddinventory(this.addinventory);
+              
           },err=>{
               this.$toasted.show(err.message)
           })
-        }
+        }   
      }
     //模板导入
-     private templateimport(info:string){
+     private templateimport(){
+       debugger
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
@@ -197,11 +208,14 @@ export default class stockTaking extends Vue{
          }
         const warehouse_id = this.addinventory.stock;
         this.service.getTemplateImport(warehouse_id).then(res=>{ 
+              this.setAddinventory(this.addinventory);
+              this.setAddBeforeInventory(this.addBeforeInventory);
+              this.setInventoryType(this.pkinventory);
               this.$router.push({
                 name:'SelecttheTemplate',
                  params:{
                     busi_date:this.user.auth.busi_date,
-                    bill_type_name:this.name,
+                    bill_type_name:this.addinventory.name,
                     warehouse_name: this.addinventory.stock,
                     stock_count_mode_name:this.addinventory.treatment,
                     pdtype : this.pkinventory
@@ -212,7 +226,6 @@ export default class stockTaking extends Vue{
           },err=>{
               this.$toasted.show(err.message)
           })
-        
         }
      }
     //  动态加载仓库
@@ -222,6 +235,13 @@ export default class stockTaking extends Vue{
       },err=>{
           this.$toasted.show(err.message)
       })
+    }
+    private warehouseStock(){
+        this.addBeforeInventory.stock=this.addinventory.stock;  
+    }
+    // 未盘处理
+    private isTreatment(){
+        this.addBeforeInventory.treatment=this.addinventory.treatment;  
     }
 
    

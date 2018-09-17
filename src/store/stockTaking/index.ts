@@ -11,6 +11,7 @@ const stockTaking:Module<any,IRootState> = {
         inventoryDetails:[], //盘库详情
         queryResult:[], //查询结果详情
         addinventory:{}, //新增盘库单数据
+        addBeforeInventory:{},//新增单据中有可能修改信息，需要还原回去的值
         pkinventory:{},// 盘点类型
         pktemplateimport:[],//模板导入
     },
@@ -19,6 +20,7 @@ const stockTaking:Module<any,IRootState> = {
         inventoryDetails:state=>state.inventoryDetails,
         queryResult:state=>state.queryResult,
         addinventory:state=>state.addinventory,
+        addBeforeInventory:state=>state.addBeforeInventory,
         pkinventory:state=>state.pkinventory,
         pktemplateimport:state=>state.pktemplateimport,
     },    
@@ -34,6 +36,9 @@ const stockTaking:Module<any,IRootState> = {
         },
         [RootType.PK_AddInventory](state,addinventory:{}){
             state.addinventory = addinventory;
+        },
+        [RootType.PK_AddBeforeInventory](state,addBeforeInventory:{}){
+            state.addBeforeInventory = addBeforeInventory;
         },
         [RootType.PK_InventoryType](state,pkinventory:{}){
             state.pkinventory = pkinventory;

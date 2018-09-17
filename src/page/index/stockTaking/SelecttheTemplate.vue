@@ -6,10 +6,10 @@
           <span></span>
        </div>        
     </ezt-header>    
-    <div class="ezt-main">   
+    <div class="ezt-main">     
        <div class="content"> 
          <checklist style="width:100%;" :label-position="labelPosition" :options="templateList"  :max="1"></checklist>
-         <div class="nextstep" @click="nextstep('c')">下一步</div>   
+         <div class="nextstep" @click="nextstep('d')">下一步</div>   
        </div>   
      </div>    
    </div>    
@@ -60,7 +60,6 @@ export default class stockTaking extends Vue{
     private stock_count_mode_name:any;
     private pdtype:any;
     created() {
-      debugger
       this.service = StockTakingService.getInstance();
       
     }
@@ -96,18 +95,13 @@ export default class stockTaking extends Vue{
 
     
      //下一步
-     private nextstep(types:any){
+     private nextstep(types:any){   
       if(this.templateList){
-        //  if(!this.templateList.value){
-        //     this.$toasted.show("请选择模板！");
-        //     return false;
-        //  }
         debugger
-        const template_id = this.templateList[0]['key']
+        const template_id = this.templateList[0]['key']    //选中模板id
         const flag = this.$route.params.pdtype
         const warehouse_id = this.$route.params.warehouse_name
         this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 
-               debugger
               this.$router.push({
                 name:'LibraryDetails',
                  params:{
@@ -116,15 +110,14 @@ export default class stockTaking extends Vue{
                     warehouse_name:this.$route.params.warehouse_name,
                     stock_count_mode_name:this.$route.params.stock_count_mode_name,
                     types:types,
+                    warehouse_method:"模板导入"
                 }
               });
               this.inventoryDetails = res.data.data;
-              console.log("确认盘点单--------"+JSON.stringify(this.inventoryDetails))
               this.setInventoryDetails(this.inventoryDetails); 
           },err=>{
               this.$toasted.show(err.message)
           })
-        
         }
      }
     

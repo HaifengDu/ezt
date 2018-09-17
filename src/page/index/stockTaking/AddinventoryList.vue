@@ -127,11 +127,11 @@ export default class stockTaking extends Vue{
     }];
     created() {
        this.service = StockTakingService.getInstance();
-       this.addinventory.name = this.$route.params.name
-       this.addinventory.bill_type =  this.$route.params.bill_type
-      //  this.setInventoryType(this.pkinventory,this.name);
-      //  选择仓库
-      this.iswarehouseType();
+       this.addinventory.name = this.$route.query.name
+       this.addinventory.bill_type =  this.$route.query.bill_type
+       //选择仓库
+       this.iswarehouseType();
+       
     }
 
     mounted(){   
@@ -198,6 +198,7 @@ export default class stockTaking extends Vue{
      }
     //模板导入
      private templateimport(){
+       debugger
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");

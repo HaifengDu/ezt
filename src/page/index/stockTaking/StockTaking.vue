@@ -139,7 +139,7 @@ export default class stockTaking extends Vue{
     private pager:Pager;       
     private getInventoryList:INoopPromise;  //获取盘库列表接口
     private getLibraryDetails:INoopPromise; //盘库详情
-    private getInventoryType:INoopPromise;  //获取盘点类型
+    private getInventoryType:INoopPromise;  //获取盘点类型 
     private getDataSorting:INoopPromise;  //获取数据整理
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
@@ -359,7 +359,7 @@ export default class stockTaking extends Vue{
         this.setInventoryType(this.type);
         this.$router.push({
             name:'AddinventoryList',
-            params:{
+            query:{
              name:type.name,
              bill_type:type.bill_type
            }
@@ -373,10 +373,10 @@ export default class stockTaking extends Vue{
                 this.newlyadded = false
                 this.$router.push({
                     name:'AddinventoryList',
-                    params:{
-                    name:type.name,
-                    bill_type:type.bill_type
-                  }
+                    query:{
+                      name:type.name,
+                      bill_type:type.bill_type
+                    }
                 });
                 this.type = err.data.data[0].bill_type;
                 this.setInventoryType(this.type);

@@ -8,7 +8,7 @@
     </ezt-header>    
     <div class="ezt-main">     
        <div class="content"> 
-         <checklist style="width:100%;" :label-position="labelPosition" :options="templateList"  :max="1"></checklist>
+         <checklist style="width:100%;" :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1" @on-change="change11(inlineDescListValue)"></checklist>
          <div class="nextstep" @click="nextstep('d')">下一步</div>   
        </div>   
      </div>    
@@ -54,15 +54,18 @@ export default class stockTaking extends Vue{
     private pktemplateimport:any; 
     private setPktemplateimport:INoopPromise;//store中给setPktemplateimport赋值
     private templateList:any= [];
+    private inlineDescListValue:any;
     private busi_date:any;
     private bill_type_name:any;
     private warehouse_name:any;
     private stock_count_mode_name:any;
     private pdtype:any;
+    
     created() {
       this.service = StockTakingService.getInstance();
       this.templateList.pdtype = this.$route.params.pdtype
       this.templateList.stock_count_mode_name = this.$route.params.stock_count_mode_name
+     
     }
 
     mounted(){
@@ -71,34 +74,29 @@ export default class stockTaking extends Vue{
     private goBack(){
       this.$router.back();
     }
-
-  /**
-   * watch demo
-   */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-       
+    private change11(item:any){
+       debugger
     }
 
-     private list(){
-        let obj={
-          key:'',
-          value:''
-        }
+    private list(){
         this.pktemplateimport.forEach((item:any,index:any)=>{
+           let obj={
+            key:'',
+            value:''
+          }
            obj.key=item.id;
            obj.value=item.text;
-           this.templateList.push(obj);
+           this.templateList.push(obj);         
         })
+        this.inlineDescListValue = [this.templateList[0]['key']]
      }
 
     
      //下一步
      private nextstep(types:any){   
+      debugger
       if(this.templateList){  
-        const template_id = this.templateList[0]['key']    //选中模板id
+        const template_id = this.inlineDescListValue[0]  //选中模板id
         const flag = this.$route.params.pdtype
         const warehouse_id = this.$route.params.warehouse_name
         this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 

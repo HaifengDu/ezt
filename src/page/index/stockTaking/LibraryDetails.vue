@@ -234,6 +234,7 @@ import StockTakingService from '../../../service/StockTakingService'
    methods:{ 
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
+       'setAddinventory':"stockTaking/setAddinventory",
      }),
    
    }        
@@ -254,6 +255,7 @@ export default class stockTaking extends Vue{
     private stock_count_mode_name:string;
     private inventoryDetails:any; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
+    private setAddinventory:INoopPromise//store中给setAddinventory赋值
     private total:any = []; //合计
     private types:string;
     private warehouse_method:string;
@@ -351,7 +353,7 @@ export default class stockTaking extends Vue{
     }
 
 
-    // 盘点类型导入之后的暂存提交接口
+    // 盘点类型导入之后的暂存提交接口    模板导入
     private temporarystorage(){   
         const material_id = this.inventoryDetails[0]['material_id']
         const entry_name = this.user.auth.username
@@ -368,6 +370,7 @@ export default class stockTaking extends Vue{
             this.setInventoryDetails(this.inventoryDetails); 
             this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
+            this.setAddinventory({})
         },err=>{
             this.$toasted.show(err.message)
         })
@@ -389,6 +392,7 @@ export default class stockTaking extends Vue{
             this.setInventoryDetails(this.inventoryDetails); 
             this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
+            this.setAddinventory({})
         },err=>{
             this.$toasted.show(err.message)
         })

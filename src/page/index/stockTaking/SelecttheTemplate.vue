@@ -8,7 +8,7 @@
     </ezt-header>    
     <div class="ezt-main">     
        <div class="content"> 
-         <checklist style="width:100%;" :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1" @on-change="change11(inlineDescListValue)"></checklist>
+         <checklist style="width:100%;" :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
          <div class="nextstep" @click="nextstep('d')">下一步</div>   
        </div>   
      </div>    
@@ -31,7 +31,7 @@ import librarydetails from './LibraryDetails'
    computed:{
      ...mapGetters({
        "user":"user",
-       'pktemplateimport':'stockTaking/pktemplateimport',//盘点导入
+       'pktemplateimport':'stockTaking/pktemplateimport',//模板导入
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情  确认盘点单
      }) 
    },
@@ -63,8 +63,9 @@ export default class stockTaking extends Vue{
     
     created() {
       this.service = StockTakingService.getInstance();
-      this.templateList.pdtype = this.$route.params.pdtype
-      this.templateList.stock_count_mode_name = this.$route.params.stock_count_mode_name
+      this.pktemplateimport.pdtype = this.$route.query.pdtype
+      this.pktemplateimport.warehouse_name = this.$route.query.warehouse_name
+      this.pktemplateimport.stock_count_mode_name = this.$route.query.stock_count_mode_name
      
     }
 
@@ -73,9 +74,6 @@ export default class stockTaking extends Vue{
     }
     private goBack(){
       this.$router.back();
-    }
-    private change11(item:any){
-       debugger
     }
 
     private list(){
@@ -94,21 +92,21 @@ export default class stockTaking extends Vue{
     
      //下一步
      private nextstep(types:any){   
-      debugger
-      if(this.templateList){  
+       debugger
+      if(this.pktemplateimport){  
         const template_id = this.inlineDescListValue[0]  //选中模板id
-        const flag = this.$route.params.pdtype
-        const warehouse_id = this.$route.params.warehouse_name
+        const flag = this.pktemplateimport.pdtype
+        const warehouse_id = this.pktemplateimport.warehouse_name
         this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 
               this.$router.push({
                 name:'LibraryDetails',
-                 params:{
-                    busi_date:this.$route.params.busi_date,
-                    bill_type:this.templateList.pdtype,
-                    bill_type_name:this.$route.params.bill_type_name,
-                    warehouse_name:this.$route.params.warehouse_name,
-                    stock_count_mode_name:this.$route.params.stock_count_mode_name,
-                    treatment : this.templateList.stock_count_mode_name,
+                 query:{
+                    busi_date:this.$route.query.busi_date,
+                    bill_type:this.pktemplateimport.pdtype,
+                    bill_type_name:this.$route.query.bill_type_name,
+                    warehouse_name:this.pktemplateimport.warehouse_name,
+                    stock_count_mode_name:this.pktemplateimport.stock_count_mode_name,
+                    treatment : this.pktemplateimport.stock_count_mode_name,
                     types:types,
                     warehouse_method:"模板导入"
                 }
@@ -120,14 +118,6 @@ export default class stockTaking extends Vue{
           })
         }
      }
-    
-    //单选值改变
-    // private change(val:any,label:any){
-    //   console.log('change', val, label)
-    // }
-      
-
-  
       
 }
 </script>

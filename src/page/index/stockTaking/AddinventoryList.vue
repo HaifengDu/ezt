@@ -177,7 +177,7 @@ export default class stockTaking extends Vue{
              this.setAddBeforeInventory(this.addBeforeInventory);
              this.$router.push({
                 name:'LibraryDetails',
-                 params:{
+                 query:{
                     busi_date:this.user.auth.busi_date,
                     bill_type:this.addinventory.bill_type,
                     bill_type_name:this.addinventory.name,
@@ -198,7 +198,6 @@ export default class stockTaking extends Vue{
      }
     //模板导入
      private templateimport(){
-       debugger
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
@@ -211,7 +210,7 @@ export default class stockTaking extends Vue{
               this.setInventoryType(this.pkinventory);
               this.$router.push({
                 name:'SelecttheTemplate',
-                 params:{
+                 query:{
                     busi_date:this.user.auth.busi_date,
                     bill_type_name:this.addinventory.name,
                     warehouse_name: this.addinventory.stock,

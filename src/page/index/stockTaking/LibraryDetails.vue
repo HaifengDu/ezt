@@ -263,14 +263,14 @@ export default class stockTaking extends Vue{
     private treatment:string;
     created() {
       this.service = StockTakingService.getInstance();
-      this.warehouse_name = this.$route.params.warehouse_name
-      this.busi_date = this.$route.params.busi_date
-      this.bill_type = this.$route.params.bill_type
-      this.bill_type_name = this.$route.params.bill_type_name
-      this.stock_count_mode_name = this.$route.params.stock_count_mode_name
-      this.types = this.$route.params.types
-      this.warehouse_method = this.$route.params.warehouse_method
-      this.treatment = this.$route.params.treatment
+      this.warehouse_name = this.$route.query.warehouse_name
+      this.busi_date = this.$route.query.busi_date
+      this.bill_type = this.$route.query.bill_type
+      this.bill_type_name = this.$route.query.bill_type_name
+      this.stock_count_mode_name = this.$route.query.stock_count_mode_name
+      this.types = this.$route.query.types
+      this.warehouse_method = this.$route.query.warehouse_method
+      this.treatment = this.$route.query.treatment
       this.total = JSON.stringify(this.inventoryDetails.length)
 
     }
@@ -284,7 +284,7 @@ export default class stockTaking extends Vue{
     //审核不通过
     private reviewpass(){
         const audit_name = this.user.auth.username
-        const ids = this.$route.params.ids
+        const ids = this.$route.query.ids
         const opinion = ""
         this.service.getAuditchecklistno(audit_name,ids,opinion).then(res=>{  
             this.inventoryDetails = res.data.data;
@@ -302,10 +302,10 @@ export default class stockTaking extends Vue{
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
         const store_name = this.user.auth.store_name
-        const warehouse_name = this.$route.params.warehouse_name
+        const warehouse_name = this.$route.query.warehouse_name
         const audit_name = this.user.auth.username
-        const ids = this.$route.params.ids
-        const stock_count_mode = this.$route.params.stock_count_mode
+        const ids = this.$route.query.ids
+        const stock_count_mode = this.$route.query.stock_count_mode
         const organ_brief_code = this.user.auth.organ_brief_code
         this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
             this.inventoryDetails = res.data.data;
@@ -322,9 +322,9 @@ export default class stockTaking extends Vue{
         const id = this.inventoryDetails[0]['id']
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
-        const ids = this.$route.params.ids
+        const ids = this.$route.query.ids
         const is_stock_report = 0  //0是暂存   1是提交
-        const stock_count_mode = this.$route.params.stock_count_mode
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -340,9 +340,9 @@ export default class stockTaking extends Vue{
         const id = this.inventoryDetails[0]['id']
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
-        const ids = this.$route.params.ids
+        const ids = this.$route.query.ids
         const is_stock_report = 1  //0是暂存   1是提交
-        const stock_count_mode = this.$route.params.stock_count_mode
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -358,13 +358,13 @@ export default class stockTaking extends Vue{
         const material_id = this.inventoryDetails[0]['material_id']
         const entry_name = this.user.auth.username
         const bill_status = 0   //暂存
-        const bill_type_name = this.$route.params.bill_type_name
-        const warehouse_id = this.$route.params.warehouse_name
-        const bill_type = this.$route.params.bill_type
-        const stock_count_mode_name = this.$route.params.stock_count_mode_name
-        const busi_date = this.$route.params.busi_date
+        const bill_type_name = this.$route.query.bill_type_name
+        const warehouse_id = this.$route.query.warehouse_name
+        const bill_type = this.$route.query.bill_type
+        const stock_count_mode_name = this.$route.query.stock_count_mode_name
+        const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.params.treatment
+        const stock_count_mode = this.$route.query.treatment
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -380,13 +380,13 @@ export default class stockTaking extends Vue{
         const material_id = this.inventoryDetails[0]['material_id']
         const entry_name = this.user.auth.username
         const bill_status = 1   //提交
-        const bill_type_name = this.$route.params.bill_type_name
-        const warehouse_id = this.$route.params.warehouse_name
-        const bill_type = this.$route.params.bill_type
-        const stock_count_mode_name = this.$route.params.stock_count_mode_name
-        const busi_date = this.$route.params.busi_date
+        const bill_type_name = this.$route.query.bill_type_name
+        const warehouse_id = this.$route.query.warehouse_name
+        const bill_type = this.$route.query.bill_type
+        const stock_count_mode_name = this.$route.query.stock_count_mode_name
+        const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.params.treatment
+        const stock_count_mode = this.$route.query.treatment
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 

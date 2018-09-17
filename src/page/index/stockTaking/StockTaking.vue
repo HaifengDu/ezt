@@ -289,7 +289,7 @@ export default class stockTaking extends Vue{
       this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
         this.$router.push({
           name:'LibraryDetails',
-          params:{
+          query:{
               warehouse_name:item.warehouse_name,
               busi_date:item.busi_date,
               bill_type_name:item.bill_type_name,
@@ -309,7 +309,7 @@ export default class stockTaking extends Vue{
       this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
         this.$router.push({
           name:'LibraryDetails',
-          params:{
+          query:{
               ids:item.id,
               stock_count_mode:item.stock_count_mode,
               types:types,
@@ -327,7 +327,7 @@ export default class stockTaking extends Vue{
       this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
         this.$router.push({
           name:'LibraryDetails',
-          params:{
+          query:{
               warehouse_name:item.warehouse_name,
               busi_date:item.busi_date,
               bill_type_name:item.bill_type_name,
@@ -350,7 +350,7 @@ export default class stockTaking extends Vue{
        this.showbtn = true
     }
     
-    //新增盘点单
+    //新增盘点单  
     private add(){
       this.newlyadded = true
     }  

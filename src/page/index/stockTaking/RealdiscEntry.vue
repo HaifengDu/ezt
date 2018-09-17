@@ -110,9 +110,9 @@ export default class stockTaking extends Vue{
         const id = this.inventoryDetails[0].id
         const consume_num = this.inventoryDetails[0].consume_num
         const disperse_num = this.inventoryDetails[0].disperse_num
-        const ids = this.$route.params.ids
+        const ids = this.$route.query.ids
         const is_stock_report = 0  //0是暂存   1是提交
-        const stock_count_mode = this.$route.params.stock_count_mode
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -127,9 +127,9 @@ export default class stockTaking extends Vue{
       const id = this.inventoryDetails[0].id
       const consume_num = this.inventoryDetails[0].consume_num
       const disperse_num = this.inventoryDetails[0].disperse_num
-      const ids = this.$route.params.ids
+      const ids = this.$route.query.ids
       const is_stock_report = 1  //0是暂存   1是提交
-      const stock_count_mode = this.$route.params.stock_count_mode
+      const stock_count_mode = this.$route.query.stock_count_mode
       this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
           this.inventoryDetails = res.data.data;
           this.setInventoryDetails(this.inventoryDetails); 

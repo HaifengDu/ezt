@@ -136,7 +136,7 @@ declare var mobiscroll:any;
 })
 export default class stockTaking extends Vue{
     private service: StockTakingService;
-    private pager:Pager;      
+    private pager:Pager;       
     private getInventoryList:INoopPromise;  //获取盘库列表接口
     private getLibraryDetails:INoopPromise; //盘库详情
     private getInventoryType:INoopPromise;  //获取盘点类型

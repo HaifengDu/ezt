@@ -12,7 +12,7 @@
        <div class="content">
           <div class="store">  
             <group>   
-              <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>
+              <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>  
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
               <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input>
             </group>       
@@ -172,7 +172,6 @@ export default class stockTaking extends Vue{
          }   
         const flag = this.pkinventory;
         const warehouse_id = this.addinventory.stock;
-        debugger
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
              this.setAddinventory(this.addinventory);
              this.setAddBeforeInventory(this.addBeforeInventory);
@@ -187,7 +186,6 @@ export default class stockTaking extends Vue{
                     treatment : this.addinventory.treatment,
                     types:types,
                     warehouse_method:"手工制单",
-                   
                 }
               });
               this.inventoryDetails = res.data.data;
@@ -200,7 +198,6 @@ export default class stockTaking extends Vue{
      }
     //模板导入
      private templateimport(){
-       debugger
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");

@@ -61,7 +61,8 @@ export default class stockTaking extends Vue{
     private pdtype:any;
     created() {
       this.service = StockTakingService.getInstance();
-      
+      this.templateList.pdtype = this.$route.params.pdtype
+      this.templateList.stock_count_mode_name = this.$route.params.stock_count_mode_name
     }
 
     mounted(){
@@ -96,8 +97,7 @@ export default class stockTaking extends Vue{
     
      //下一步
      private nextstep(types:any){   
-      if(this.templateList){
-        debugger
+      if(this.templateList){  
         const template_id = this.templateList[0]['key']    //选中模板id
         const flag = this.$route.params.pdtype
         const warehouse_id = this.$route.params.warehouse_name
@@ -106,9 +106,11 @@ export default class stockTaking extends Vue{
                 name:'LibraryDetails',
                  params:{
                     busi_date:this.$route.params.busi_date,
+                    bill_type:this.templateList.pdtype,
                     bill_type_name:this.$route.params.bill_type_name,
                     warehouse_name:this.$route.params.warehouse_name,
                     stock_count_mode_name:this.$route.params.stock_count_mode_name,
+                    treatment : this.templateList.stock_count_mode_name,
                     types:types,
                     warehouse_method:"模板导入"
                 }

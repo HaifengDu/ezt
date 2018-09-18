@@ -137,7 +137,7 @@ export class LoginService extends BaseService{
             "oper": "MODIFY_PASSWORD",
             "pagination": null,
         }).then(res=>{
-            return Promise.resolve(res);
+            return this.logout().then(()=>res);
         });
     }
 

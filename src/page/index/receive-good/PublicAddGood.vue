@@ -26,7 +26,7 @@
              <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">{{item.name}}</li>
            </ul>
            <div class="good-content-list">
-             <div class="good-item" v-for="(item,index) in goodList" :key='index'>
+             <div class="good-item" v-for="(item) in goodList" :key='item.id'>
                <div class="good-item-title">
                  <span class="good-item-name">{{item.name}}</span>
                  <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
@@ -45,7 +45,9 @@
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
-                    <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                    <group>
+                      <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                    </group>
                  </span>
                </div>
                 <!-- 编辑备注时 -->
@@ -213,6 +215,7 @@ import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
+import ObjectHelper from '../../../common/objectHelper'
 import _ from "lodash";
 
 @Component({
@@ -270,12 +273,13 @@ export default class AddGood extends Vue{
   private goodList:any[]=[];
   private allType:any[] = [];
   private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
-  private bindRemark:any={};//编辑备注时绑定的值 
+  private bindRemark:any={};//深拷贝存储的值 
+  private restBindRemark:any={};//编辑备注时绑定的值
   // private userpp:any[]=[];
   created(){ 
   }
   mounted() {
-    this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -308,6 +312,7 @@ export default class AddGood extends Vue{
             id:2,
             name:'海参',
             price:'9',
+            num:0,
             utilname:'KG',
             unit:'箱',
             roundValue:{//可直拨的数据
@@ -363,14 +368,22 @@ export default class AddGood extends Vue{
     }];
     //TODO:把收藏从货品类别里抽出来
     this.goodBigType = this.allType;
-    this.goodSmallType = this.allType[0].cdata;
-    this.goodList = this.allType[0].cdata[0].goodList;
-    //TODO:默认加载货品
+    this.changeSmallType(this.allType[0]);
+    //TODO:默认加载货品   
+   
   }
   private changeSmallType(item:any){
     this.typeName = item;   
     this.goodSmallType = item.cdata; 
-    this.goodList = item.cdata[0].goodList;  
+    const goodList = item.cdata[0].goodList;  
+    _.forEach(goodList,item=>{
+        const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+        if(index>=0){
+          ObjectHelper.merge(item,this.selectedGoodList[index],true);
+          this.selectedGoodList[index] = item;
+        }
+    });
+    this.goodList = goodList;
     //TODO:加载货品this.goodSmallType[0]
   }
   private loadGood(item:any){
@@ -396,7 +409,9 @@ export default class AddGood extends Vue{
     }else{
       //删除
       const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-      this.selectedGoodList.splice(index,1);
+      if(index>=0){
+        this.selectedGoodList.splice(index,1);
+      }
     }
   }
   /**
@@ -448,7 +463,8 @@ export default class AddGood extends Vue{
     }else{
       this.isPrice=true;
     }
-    this.bindRemark = item;
+    this.restBindRemark = item;
+    this.bindRemark = ObjectHelper.serialize(this.restBindRemark);//深拷贝
   }
   //备注，价格弹框取消
   private remarkCancel(){
@@ -457,10 +473,14 @@ export default class AddGood extends Vue{
   //备注弹框确定
   private remarkConfirm(){
     alert('备注保存成功');
+    ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
+    this.isRemark=false;
   }
  //价格弹框确定
   private priceConfirm(){
     alert('价格修改成功');
+    ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
+    this.isPrice=false;
   }
   private goBack(){
     this.$router.back();

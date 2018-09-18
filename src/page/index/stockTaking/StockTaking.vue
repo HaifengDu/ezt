@@ -30,12 +30,12 @@
                           <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
                           <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
                         {{item.bill_no}}</span>   
-                        <span class="" v-if="tabList.getActive().status==0">暂存</span>
+                        <span class="" v-if="tabList.getActive().status==0" style="color:#9182E1">暂存</span>
                         <span class="" v-if="tabList.getActive().status==2 && item.is_stock_valid ==null">待生效</span>
                         <span v-if="tabList.getActive().status==2 && item.is_stock_valid ==1">已生效</span>
                         <span class="" v-if="tabList.getActive().status==1" style="color:#FFA32C">待审核</span>
                         <span class="" v-if="tabList.getActive().status==3" style="color:#FF7563">审核失败</span>
-                      </div>
+                      </div> 
                       <div class="content">
                           <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
                           <p>盘点日期：<span>{{item.busi_date}}</span></p>

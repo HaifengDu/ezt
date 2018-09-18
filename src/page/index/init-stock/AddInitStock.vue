@@ -133,7 +133,7 @@
                                 </ul>
                             </div>
                             <div class="mine-bot-btn">
-                                <span class="ezt-lone-btn">确定</span>
+                                <span class="ezt-lone-btn" @click="submitDerict">确定</span>
                             </div>             
                             </x-dialog>
                         </div>                       
@@ -148,7 +148,7 @@
                     <b>含税金额￥</b><span>{{TotalAmt}}</span>
                 </div>
                 <div class="ezt-foot-button">
-                    <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">提交</a>  
+                    <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
                     <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">审核</a>   
                 </div>  
                 </div>
@@ -170,6 +170,7 @@ import { mapActions, mapGetters } from "vuex";
 import { Component, Watch } from "vue-property-decorator";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { InitStockService } from "../../../service/InitStockService";
+import ObjectHelper from '../../../common/objectHelper'
 @Component({
   computed: {
     ...mapGetters({
@@ -199,7 +200,8 @@ export default class InitStock extends Vue {
   private isSave:boolean = false;//返回的时候是否保存单据信息
   private isWarehouse:boolean = false;//仓库
   private isFirstStore:boolean;
-  private activeRound:any={};
+  private activeRound:any={};//深拷贝的值
+  private restActiveRound:any={};//编辑绑定的值
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -217,7 +219,6 @@ export default class InitStock extends Vue {
     this.addBillInfo.date = new Date().format("yyyy-MM-dd");
     this.addBillInfo.warehouse = this.orderType[0].type;
     this.addBeforeBillInfo.warehouse = this.orderType[0].type;
-    // this.addBillInfo.costType = 1;
     this.addBillInfo.editPrice=true;
   }
   //选择物料
@@ -225,10 +226,18 @@ export default class InitStock extends Vue {
     this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
     this.$router.push(info);
   }
+
+
  //点击物料进行编辑数据
   private editStatus(item:any) {
     this.isEdit = true;
-    this.activeRound=item;
+    this.restActiveRound = item;
+    this.activeRound=ObjectHelper.serialize(this.restActiveRound);
+  }
+  // 点击物料编辑的确定 提交
+  private submitDerict(){
+    ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
+    this.isEdit=false;
   }
 
     /**
@@ -281,10 +290,32 @@ export default class InitStock extends Vue {
         }, 0);
     }
     /**
-     * 初始化提交
+     * 页面列表页初始化提交
      */
     private confirmReceive() {
-        console.log("确认提交！");
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        this.setAddBillInfo({}),
+        this.setSelectedGood([]);
+        this.setAddBeforeBillInfo({});
+        this.$toasted.success("提交成功！");
+        this.$router.push("/initStock");
+    }
+    /**
+     * 页面保存
+     */
+    private saveReceive(){
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        this.setAddBillInfo({}),
+        this.setSelectedGood([]);
+        this.setAddBeforeBillInfo({});
+        this.$toasted.success("保存成功！");
+        this.$router.push("/initStock");
     }
     /**
      * 切换成本录入方式

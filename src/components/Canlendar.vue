@@ -2,7 +2,7 @@
 <template>
 <div class="ezt-sanjiao">
     <input class="ezt-canlendar" :placeholder="placeholder" ref="canlendar" 
-    :disabled="disabled" :type="type" @change="selectChange"/>
+    :disabled="disabled" :type="type" @change="selectChange" :value="defaultValue"/>
 </div>
 
 </template>
@@ -30,7 +30,7 @@
        defaultValue:String,
     },
     computed: {
-
+    
     },
     methods: {
       selectChange(val){
@@ -40,16 +40,20 @@
     mounted(){
       let _this=this;
       //日历
-      mobiscroll.date(this.$refs.canlendar, {
+      const instance = mobiscroll.date(this.$refs.canlendar, {
         theme: 'material', 
         display: 'bottom',
         lang: 'zh',
         dateFormat: 'yyyy-mm-dd',
-        defaultValue: new Date(this.defaultValue),
+        // defaultValue: new Date(this.defaultValue),
         onSet: function(val){
           _this.$emit(val.valueText)
         }
       });
+      if(this.defaultValue){
+        instance.setVal(new Date(this.defaultValue));
+      }
+     
      
     },
     watch: {

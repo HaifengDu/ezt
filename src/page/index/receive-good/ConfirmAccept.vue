@@ -60,13 +60,13 @@
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name">
-                            收：<input type="text" placeholder="10000" class="ezt-smart">
+                          <span class="title-search-name ezt-dense-box">
+                            收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart">
                           </span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect">拨</span>
+                    <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input">
                       <span class="title-search-name">备注：</span>
                       <input type="text" class="ezt-middle">
@@ -86,19 +86,19 @@
                   </span>
                 </div>
                 <div class="ezt-dialog-title">
-                  <span>可直拨：<span class="num">{{roundValue.num}}</span></span>
-                  <span>已直拨：<span class="num">{{roundValue.numed}}</span></span>
+                  <span>可直拨：<span class="num">{{(activeRound.roundValue&&activeRound.roundValue.num)||0}}</span></span>
+                  <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
                 </div>
                 <div class="warehouse-list">
                     <ul class="warehouse-isDefault">
-                        <li v-for="(item,index) in roundValue.list" :key="index">
+                        <li v-for="(item,index) in ((activeRound.roundValue&&activeRound.roundValue.list)||[])" :key="index">
                           <span>{{item.name}}</span>
-                          <x-number v-model="item.num" button-style="round" :min="0" :max="5"></x-number>
+                          <x-number v-model="item.num"  @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
                         </li>
                     </ul>
                 </div> 
                 <div class="mine-bot-btn">
-                  <span class="ezt-lone-btn" >提交</span>
+                  <span class="ezt-lone-btn" @click="submitDerict">提交</span>
                 </div>           
               </x-dialog>
             </div> 
@@ -108,9 +108,9 @@
       <ezt-footer>
          <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total">合计：
-            <b>品项</b><span>12</span>，
-            <b>数量</b><span>100</span>，
-            <b>￥</b><span>22422.01</span>
+            <b>品项</b><span>{{this.goodList.length}}</span>，
+            <b>数量</b><span>{{TotalNum}}</span>，
+            <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive"> 提交</a>  
@@ -137,6 +137,7 @@ import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import SlideDelete from '../../../components/SlideDelete.vue';
+import ObjectHelper from '../../../common/objectHelper'
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -166,16 +167,43 @@ export default class ReceiveGood extends Vue{
     private showMask:()=>void;
     // private updateUser:INoop;
     private list:any[] = [];
+    private DirectedNum:number=0;//已直拨的数量
+    private restActiveRound:any={};
+    private activeRound:any={};
     private goodList:any[] = [{
             id:21,
             name:'牛肉',
             price:'15',
             utilname:'KG',
+            num:2,
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:0,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              }]
+            }
         },{
            id:2,
             name:'白菜',
             price:'1.5',
             utilname:'KG',
+            num:3,
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:0,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              }]
+            }
         }];
 
     private tabList:TabList = new TabList();
@@ -183,41 +211,51 @@ export default class ReceiveGood extends Vue{
     private isWarehouse:boolean = false;//切换仓库校验物料
     private orderType:any=[{
       name:'仓库1',
-      type:'01'
+      type:'01',     
     },{
       name:'仓库2',
-      type:'02'
+      type:'02',      
     }]
-    private roundValue:any={//可直拨的数据
-      num: 10,
-      numed:3,
-      list:[{
-        name:'仓库一号',
-        num:2
-      },{
-        name:'仓库二号',
-        num:6
-      }]
-    };
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
        this.beforeWarehouse = this.addInfo.warehouse;
-      //  this.goodList = [];
-      //  this.getGoodList();
     }
 
     mounted(){  
     }
 
-  /**
+ /**
    * computed demo
+   * 物料总数量
    */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
+    private get TotalNum(){
+      return this.goodList.reduce((ori,item)=>{
+        return Number(ori)+Number(item.num);       
       },0);
     }
+  /**
+   * 物料总金额
+   */
+  private get TotalAmt(){
+    return this.goodList.reduce((ori,item)=>{
+      return ori+(item.num*item.price);       
+    },0).toFixed(2);
+  }
+   /**
+   * 改变直拨的 数量
+   */
+  private changeDirect(item:any){  
+    if(!this.activeRound.roundValue.list){
+       this.DirectedNum = 0;
+    }
+    this.DirectedNum = this.activeRound.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
+    if(this.DirectedNum<=this.activeRound.roundValue.num){
+      item.oldNum = item.num;
+    }else{
+      item.num = item.oldNum;
+    }
+  }  
     /**
      * 确认收货
      */
@@ -227,8 +265,15 @@ export default class ReceiveGood extends Vue{
     /**
     *可直拨
      */
-    private handlerDirect(){
+    private handlerDirect(item:any){
+      this.restActiveRound = item;
+      this.activeRound=ObjectHelper.serialize(this.restActiveRound);//深拷贝
       this.isDirect = true;
+    }
+    // 修改直拨提交
+    private submitDerict(){
+      ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
+      this.isDirect=false;
     }
     /**
      * 左滑删除某一项
@@ -376,6 +421,7 @@ export default class ReceiveGood extends Vue{
         letter-spacing: 0;
         display: flex;
         flex-direction: row;
+        flex:.7 !important;
     }
     .good-detail-billno,.good-num-t{
         font-size: 10px;
@@ -417,6 +463,9 @@ export default class ReceiveGood extends Vue{
     }
     .title-search-name.remark{
       margin-left: 10px;
+    }
+    .title-search-name.ezt-dense-box input{
+      border: 1px solid #ccc;
     }
     //直拨仓库
   .warehouse-list{

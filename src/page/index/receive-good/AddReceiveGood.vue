@@ -53,32 +53,44 @@
         </ul>
         <ul>
            <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
+              <mt-cell-swipe
+              :right="[
+                  {
+                  content: '删除',
+                  style: { background: '#ccc', color: '#000' },
+                  handler: () => {deleteSection(item)}
+                  }
+              ]"
+              >
               <div class="ezt-detail-good" >
                   <div class="good-detail-l">
                       <div>
-                          <span class="good-detail-name">{{item.name}}
-                              <span class="good-detail-sort">（规格）</span>
+                          <span class="good-detail-name">
+                            <span class="good-detail-break">{{item.name}}</span>
+                            <span class="good-detail-sort">（规格）</span>
                           </span>
                           <span class="good-detail-sort">￥
-                            <input type="number" class="good-detail-sort ezt-smart" placeholder="单价" v-model="item.price">
+                            <input @change="limitBit(item,'price')" type="number" class="ezt-smart" placeholder="单价" v-model="item.price">
                             <span>/{{item.utilname}}</span>
                           </span>
-                          <span>
+                         
+                      </div>
+                      <div class="good-detail-nobreak">
+                          <span class="good-detail-sort ">编码：003222</span>
+                          <span class="ezt-dense-box">
                             <input type="number" placeholder="数量" class="ezt-smart" v-model="item.num">
                           </span>
-                      </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input"> 
                       <span class="title-search-name">备注：</span>
-                      <input type="text" class="ezt-middle">
+                      <input type="text" class="ezt-middle" v-model="item.remark">
                     </div>                    
                   </div>
-              </div>              
+              </div> 
+              </mt-cell-swipe>             
            </li>
         </ul> 
          <div>
@@ -99,12 +111,12 @@
                   <ul class="warehouse-isDefault">
                       <li v-for="(item,index) in ((activeRound.roundValue&&activeRound.roundValue.list)||[])" :key="index">
                         <span>{{item.name}}</span>
-                        <x-number v-model="item.num" @on-change="changeDirect" button-style="round" :min="0" :max="5"></x-number>
+                        <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
                       </li>
                   </ul>
               </div>
               <div class="mine-bot-btn">
-                <span class="ezt-lone-btn">提交</span>
+                <span class="ezt-lone-btn" @click="submitDerict">提交</span>
               </div>             
             </x-dialog>
           </div>      
@@ -117,7 +129,7 @@
             <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive"> 提交</a>  
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
             <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
         </div>
@@ -152,6 +164,7 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import ObjectHelper from '../../../common/objectHelper'
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -196,30 +209,31 @@ export default class ReceiveGood extends Vue{
     private setAddBeforeBillInfo:INoopPromise;
     private addBillInfo:any;//store中
     private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
-    private activeRound:any={};
-    private roundValue:any={//可直拨的数据
-      num: 10,
-      numed:3,
-      list:[{
-        name:'仓库一号',
-        num:2
-      },{
-        name:'仓库二号',
-        num:6
-      },{
-        name:'仓库三号',
-        num:6
-      },{
-        name:'仓库四号',
-        num:6
-      },{
-        name:'仓库五号',
-        num:6
-      },{
-        name:'仓库六号',
-        num:6
-      }]
-    };
+    private activeRound:any={};//深拷贝存储的值
+    private restActiveRound:any={};//编辑时绑定的值
+    // private roundValue:any={//可直拨的数据
+    //   num: 10,
+    //   numed:3,
+    //   list:[{
+    //     name:'仓库一号',
+    //     num:2
+    //   },{
+    //     name:'仓库二号',
+    //     num:6
+    //   },{
+    //     name:'仓库三号',
+    //     num:6
+    //   },{
+    //     name:'仓库四号',
+    //     num:6
+    //   },{
+    //     name:'仓库五号',
+    //     num:6
+    //   },{
+    //     name:'仓库六号',
+    //     num:6
+    //   }]
+    // };
     private orderType:any[] = [{//单据类型下拉数据    
       name:"合同采购单",
       type:"q"
@@ -236,6 +250,21 @@ export default class ReceiveGood extends Vue{
     }
 
     mounted(){ 
+      if(!this.addBeforeBillInfo.billType){
+        this.addBillInfo.billType="";
+        this.addBillInfo.supplier="";
+        this.addBillInfo.warehouse="";
+      }
+    
+    }
+    /**
+     * 限制输入的位数
+     */
+    private limitBit(item:any,msg:any){
+      if(msg=="price"){
+        item.price = Number(item.price).toFixed(2);
+      }
+     
     }
 
   /**
@@ -253,57 +282,121 @@ export default class ReceiveGood extends Vue{
   private get TotalAmt(){
     return this.selectedGood.reduce((ori,item)=>{
       return ori+(item.num*item.price);       
-    },0);
+    },0).toFixed(2);
   }
    /**
    * 改变直拨的 数量
    */
-  private changeDirect(){    
-    let oonum=0;
-    if(this.activeRound.roundValue.list&&this.activeRound.roundValue.list.length>0){
-      this.activeRound.roundValue.list.forEach((item:any,index:any)=>{
-        this.DirectedNum = item.num + oonum;
-      })
-    }else{
-      this.DirectedNum = 0;
+  private changeDirect(item:any){  
+    if(!this.activeRound.roundValue.list){
+       this.DirectedNum = 0;
     }
+    this.DirectedNum = this.activeRound.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
+    if(this.DirectedNum<=this.activeRound.roundValue.num){
+      item.oldNum = item.num;
+    }else{
+      item.num = item.oldNum;
+    }
+  }
+    /**
+   * 左滑删除某一项
+   */
+  private deleteSection(item:any){
+      let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+      return item.id == info.id;
+      })
+      this.selectedGood.splice(newIndex,1);
   }
   /**
   *可直拨
     */
   private handlerDirect(item:any){
-    this.activeRound=item;
+    this.restActiveRound = item;
+    this.activeRound=ObjectHelper.serialize(this.restActiveRound);//深拷贝
     this.isDirect = true;
-    this.DirectedNum=0;
-    
+    // this.DirectedNum=0;    
+  }
+  // 修改直拨提交
+  private submitDerict(){
+    ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
+    this.isDirect=false;
   }
 
     /**
      * 收货 提交
      */
+    private saveReceive(){
+      if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
+        this.$toasted.show("请选择单据类型！");
+        return false;
+      }
+      if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
+        this.$toasted.show("请选择供应商！");
+        return false;
+      }
+      if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
+        this.$toasted.show("请选择仓库！");
+        return false;
+      }   
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      } 
+      this.setAddBillInfo({}),
+      this.setSelectedGood([]);
+      this.setAddBeforeBillInfo({});
+      this.$toasted.success("提交成功！");
+      this.$router.push("/receiveGood");
+    }
+    /**
+     * 收货 提交并审核
+     */
     private confirmReceive(){
-      console.log('确认收货！')
+      if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
+        this.$toasted.show("请选择单据类型！");
+        return false;
+      }
+      if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
+        this.$toasted.show("请选择供应商！");
+        return false;
+      }
+      if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
+        this.$toasted.show("请选择仓库！");
+        return false;
+      }
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.setAddBillInfo({}),
+      this.setSelectedGood([]);
+      this.setAddBeforeBillInfo({});
+      this.$toasted.success("审核成功！");
+      this.$router.push("/receiveGood");
     }    
      //选择物料
     private renderUrl(info:string){
       if(this.addBillInfo){
-        if(!this.addBillInfo.billType){
+        if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
           this.$toasted.show("请选择单据类型！");
           return false;
         }
-        if(!this.addBillInfo.supplier){
+        if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
           this.$toasted.show("请选择供应商！");
           return false;
         }
-        if(!this.addBillInfo.warehouse){
+        if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
           this.$toasted.show("请选择仓库！");
           return false;
         }
         this.setAddBillInfo(this.addBillInfo);//将选择的单据信息保存在store中   
         this.setAddBeforeBillInfo(this.addBeforeBillInfo);    
         this.$router.push(info);
-      }
+      }      
+    }
+    private checkEmpty(errorMsg:any){
       
+     
     }
     /**
      * 选择单据类型
@@ -382,6 +475,9 @@ export default class ReceiveGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+input.ezt-smart{
+  border: 1px solid #ccc;
+}
 .mine-bot-btn{
     width: 100%;
     // position: absolute;
@@ -448,7 +544,7 @@ export default class ReceiveGood extends Vue{
       flex-direction: row;
     }
     .good-detail-l>div>span{
-      padding: 5px 0px;
+      // padding: 5px 0px;
       align-items: baseline;
     }
     .good-detail-r{
@@ -468,18 +564,32 @@ export default class ReceiveGood extends Vue{
         color: #395778;
         letter-spacing: 0;
         display: flex;
+        align-items: center !important;
+        flex:1;
     }
     .good-detail-sort{
-        font-size: 13px;
-        color: #5F7B9A;
-        letter-spacing: 0;
-        display: flex;
-        flex-direction: row;
+      font-size: 13px;
+      color: #5F7B9A;
+      letter-spacing: 0;
+      display: flex;
+      flex-direction: row;
+      flex:1;
+    }
+    .good-detail-nobreak{
+      display:flex;
+      flex:1;
+      padding: 6px 0px 6px 0px;
+      .ezt-dense-box{
+        align-items: center;
+        flex: 1;
+        margin-left: 26px;
+      }
     }
     .good-detail-billno,.good-num-t{
         font-size: 10px;
         color: #A3B3C2;
         letter-spacing: 0;
+        padding: 0px 0px 5px;
     }
     .good-num-t{
         display: inline-block;

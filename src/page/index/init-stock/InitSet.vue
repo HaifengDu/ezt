@@ -69,7 +69,6 @@ declare var mobiscroll:any;//全局定义日历
 export default class InitStock extends Vue{
     private isCheckDay:boolean=false;
     private service:LoginService;
-
     private setObj:any={
         accountCheckDate:"12-31",//财务结算日期
         stockMonthDate:'A',//库存月结日
@@ -82,24 +81,27 @@ export default class InitStock extends Vue{
     }
     mounted(){
          //日历
-      mobiscroll.date(this.$refs.canlendar, {
+      const instance = mobiscroll.date(this.$refs.canlendar, {
           theme: 'material', 
           display: 'bottom',
           lang: 'zh',
           dateFormat:'mm-dd',
-          valid:[
-            {start: new Date(new Date().getFullYear(),1,1),end: new Date(new Date().getFullYear(),1,1)},
-            {start: new Date(new Date().getFullYear(),2,1),end: new Date(new Date().getFullYear(),2,1)},
-            {start: new Date(new Date().getFullYear(),12,1),end: new Date(new Date().getFullYear(),12,1)},
+        //   defaultValue: new Date(this.setObj.accountCheckDate),
+          invalid:[
+            { start: new Date(new Date().getFullYear() + '/3/1'), end: new Date(new Date().getFullYear()+ '/3/31') },
+            { start: new Date(new Date().getFullYear() + '/4/1'), end: new Date(new Date().getFullYear() +'/4/30') },
+            { start: new Date(new Date().getFullYear() + '/5/1'), end: new Date(new Date().getFullYear() +'/5/31') },
+            { start: new Date(new Date().getFullYear() + '/6/1'), end: new Date(new Date().getFullYear() +'/6/30') },
+            { start: new Date(new Date().getFullYear() + '/7/1'), end: new Date(new Date().getFullYear() +'/7/31') },
+            { start: new Date(new Date().getFullYear() + '/8/1'), end: new Date(new Date().getFullYear() +'/8/31') },
+            { start: new Date(new Date().getFullYear() + '/9/1'), end: new Date(new Date().getFullYear() +'/9/30') },
+            { start: new Date(new Date().getFullYear() + '/10/1'), end: new Date(new Date().getFullYear() +'/10/31') },
+            { start: new Date(new Date().getFullYear() + '/11/1'), end: new Date(new Date().getFullYear() +'/11/30') },
           ],
           onSet: (val:{
               valueText:string
           })=>{
             this.setObj.accountCheckDate =val.valueText;
-          },
-          onShow:(event:any,inst:any)=>{
-            // this.hideMask();
-            // this.titleSelect=false;
           }
         });
     }

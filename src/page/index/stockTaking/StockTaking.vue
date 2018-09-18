@@ -44,7 +44,7 @@
                       </div>
                     </div>
                     <div class="footer">
-                        <P>业务日期：<span>{{item.busi_date}}</span></P>
+                        <P>业务日期：<span>2017-07-28</span></P>
                         <div v-if="tabList.getActive().status === 0" class="submit" @click="submission(item,'c')">提交</div>
                         <div v-if="tabList.getActive().status === 1" class="submit" @click="librarydetails(item,'b')">审核</div>
                         <div v-show="hidebtn" v-if="tabList.getActive().status==2 && item.is_stock_valid ==null"  class="submit">生效</div>

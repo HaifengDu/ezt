@@ -15,7 +15,7 @@
                     <li>  
                         <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                         <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
-                        <div><p>盘库方式：<span>{{warehouse_method}}</span></p></div>
+                        <div><p>盘库方式：<span>{{template_name}}</span></p></div>
                         <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
                         <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                     </li>
@@ -56,7 +56,7 @@
                     <li>  
                         <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                         <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
-                        <div><p>盘库方式：<span>{{warehouse_method}}</span></p></div>
+                        <div><p>盘库方式：<span>{{template_name}}</span></p></div>
                         <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
                         <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                     </li>
@@ -89,7 +89,7 @@
       </div>
    </div>
    <!-- 确认盘点单 -->
-   <!-- 待提交状态下的暂存提交 -->
+   <!-- 待提交状态下提交按钮的暂存提交 -->
    <div v-if="this.types=='c'" class="ezt-page-con librarydetails">
       <ezt-header :back="true" title="确认盘点单" @goBack="goBack">
         <div slot="action">
@@ -103,8 +103,14 @@
              <ul>
                <li>
                   <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
-                  <div><p>盘点方式：<span>{{warehouse_method}}</span></p></div>
-                  <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
+                  <div><p>盘库方式：<span>{{template_name}}</span></p></div>
+                  <div>
+                      <p>盘点类型：
+                        <span v-if="bill_type_name === '日盘'">日盘</span>
+                        <span v-if="bill_type_name === '周盘'">周盘</span>
+                        <span v-if="bill_type_name === '周期盘点'">月盘</span>
+                      </p>
+                  </div>
                   <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                   <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                </li>
@@ -145,9 +151,14 @@
              <ul>
                <li>
                   <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
-                  <div><p>盘点方式：<span>{{warehouse_method}}</span></p></div>
+                  <div><p>盘库方式：<span>{{template_name}}</span></p></div>
                   <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
-                  <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
+                  <div>
+                    <p>未盘处理：
+                       <span v-if= "stock_count_mode_name === 'is_quanlity'">按照当前库存量处理</span>
+                       <span v-if=" stock_count_mode_name === 'is_zero'">按照0库存量处理</span>
+                    </p>
+                  </div>
                   <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                </li>
              </ul>
@@ -258,7 +269,7 @@ export default class stockTaking extends Vue{
     private setAddinventory:INoopPromise//store中给setAddinventory赋值
     private total:any = []; //合计
     private types:string;
-    private warehouse_method:string;
+    private template_name:string;
     private stock_count_mode:string;
     private treatment:string;
     created() {
@@ -269,7 +280,7 @@ export default class stockTaking extends Vue{
       this.bill_type_name = this.$route.query.bill_type_name
       this.stock_count_mode_name = this.$route.query.stock_count_mode_name
       this.types = this.$route.query.types
-      this.warehouse_method = this.$route.query.warehouse_method
+      this.template_name = this.$route.query.template_name
       this.treatment = this.$route.query.treatment
       this.total = JSON.stringify(this.inventoryDetails.length)
 
@@ -341,7 +352,7 @@ export default class stockTaking extends Vue{
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
         const ids = this.$route.query.ids
-        const is_stock_report = 1  //0是暂存   1是提交
+        const is_stock_report = 1  // 1是提交
         const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
@@ -355,6 +366,9 @@ export default class stockTaking extends Vue{
 
     // 盘点类型导入之后的暂存提交接口    模板导入
     private temporarystorage(){   
+       if(this.inventoryDetails.length === 0){
+            this.$toasted.show("没有数据可保存！")
+        }
         const material_id = this.inventoryDetails[0]['material_id']
         const entry_name = this.user.auth.username
         const bill_status = 0   //暂存
@@ -368,8 +382,9 @@ export default class stockTaking extends Vue{
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
+            this.template_name =  this.$route.query.template_name
             this.$toasted.show("操作成功！")
-            this.$router.push('/stocktaking')
+            this.$router.push('/')   
             this.setAddinventory({})
         },err=>{
             this.$toasted.show(err.message)
@@ -377,6 +392,9 @@ export default class stockTaking extends Vue{
     }
 
     private Submission(){   
+        if(this.inventoryDetails.length === 0){
+            this.$toasted.show("没有数据可提交！")
+        }
         const material_id = this.inventoryDetails[0]['material_id']
         const entry_name = this.user.auth.username
         const bill_status = 1   //提交
@@ -389,16 +407,15 @@ export default class stockTaking extends Vue{
         const stock_count_mode = this.$route.query.treatment
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
+            this.template_name =  this.$route.query.template_name
             this.setInventoryDetails(this.inventoryDetails); 
             this.$toasted.show("操作成功！")
-            this.$router.push('/stocktaking')
+            this.$router.push('/')
             this.setAddinventory({})
         },err=>{
             this.$toasted.show(err.message)
         })
     }
-
-
 }   
 </script>
 <style lang="less" scoped> 
@@ -445,7 +462,7 @@ export default class stockTaking extends Vue{
                   font-size: 12px;
                   color: #5F7B9A;
                   span{
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #395778;
                   }
                 }
@@ -501,7 +518,7 @@ export default class stockTaking extends Vue{
                   font-size: 12px;
                   color: #5F7B9A;
                   span{
-                    font-size: 13px;
+                    font-size: 12px;
                     color: #395778;
                   }
                 }
@@ -629,7 +646,7 @@ export default class stockTaking extends Vue{
         height: 76px;
         background: #FFF8DD;
         position: fixed;
-        bottom: 0;
+        bottom: -1px;
         .total{
           height: 25px;
           line-height: 25px;

@@ -302,7 +302,7 @@ export default class AddGood extends Vue{
    * 搜索
    */
   private handlerSearchData(){
-    debugger
+    
   }
   /**
    * 选择完货品去提交

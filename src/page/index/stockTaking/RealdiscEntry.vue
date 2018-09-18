@@ -6,7 +6,7 @@
           <span></span>
        </div>        
     </ezt-header>    
-    <div class="ezt-main">       
+    <div class="ezt-main">          
         <div class="content">
           <div class="list">
            <div class="checklist">
@@ -17,11 +17,11 @@
                   <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p></div>
                   <div class="purchase">
                       <div>
-                        <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">斤</span></p>
-                        <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">斤</span></p>
+                        <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">{{item.pur_unit_name}}</span></p>
+                        <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">{{item.unit_name}}</span></p>
                       </div>
                       <div>
-                        <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">只</span></p>
+                        <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">{{item.bom_name}}</span></p>
                       </div>
                   </div>
                 </li>
@@ -61,7 +61,7 @@ import StockTakingService from '../../../service/StockTakingService'
      })
 
    }   
-})  
+})     
 export default class stockTaking extends Vue{
     private pager:Pager;   
     private service: StockTakingService;
@@ -110,9 +110,9 @@ export default class stockTaking extends Vue{
         const id = this.inventoryDetails[0].id
         const consume_num = this.inventoryDetails[0].consume_num
         const disperse_num = this.inventoryDetails[0].disperse_num
-        const ids = this.$route.params.ids
+        const ids = this.$route.query.ids
         const is_stock_report = 0  //0是暂存   1是提交
-        const stock_count_mode = this.$route.params.stock_count_mode
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -127,9 +127,9 @@ export default class stockTaking extends Vue{
       const id = this.inventoryDetails[0].id
       const consume_num = this.inventoryDetails[0].consume_num
       const disperse_num = this.inventoryDetails[0].disperse_num
-      const ids = this.$route.params.ids
+      const ids = this.$route.query.ids
       const is_stock_report = 1  //0是暂存   1是提交
-      const stock_count_mode = this.$route.params.stock_count_mode
+      const stock_count_mode = this.$route.query.stock_count_mode
       this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
           this.inventoryDetails = res.data.data;
           this.setInventoryDetails(this.inventoryDetails); 

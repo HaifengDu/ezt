@@ -11,14 +11,18 @@ const stockTaking:Module<any,IRootState> = {
         inventoryDetails:[], //盘库详情
         queryResult:[], //查询结果详情
         addinventory:{}, //新增盘库单数据
-        inventory:{},// 盘点类型
+        addBeforeInventory:{},//新增单据中有可能修改信息，需要还原回去的值
+        pkinventory:{},// 盘点类型
+        pktemplateimport:[],//模板导入
     },
     getters:{
         inventoryList:state=>state.inventoryList,
         inventoryDetails:state=>state.inventoryDetails,
         queryResult:state=>state.queryResult,
         addinventory:state=>state.addinventory,
-        inventory:state=>state.inventory,
+        addBeforeInventory:state=>state.addBeforeInventory,
+        pkinventory:state=>state.pkinventory,
+        pktemplateimport:state=>state.pktemplateimport,
     },    
     mutations:{
         [RootType.PK_GOODLIST](state,inventoryList:any[]){
@@ -33,8 +37,14 @@ const stockTaking:Module<any,IRootState> = {
         [RootType.PK_AddInventory](state,addinventory:{}){
             state.addinventory = addinventory;
         },
-        [RootType.PK_Inventory](state,inventory:{}){
-            state.inventory = inventory;
+        [RootType.PK_AddBeforeInventory](state,addBeforeInventory:{}){
+            state.addBeforeInventory = addBeforeInventory;
+        },
+        [RootType.PK_InventoryType](state,pkinventory:{}){
+            state.pkinventory = pkinventory;
+        },
+        [RootType.PK_TemplateImport](state,pktemplateimport:any[]){
+            state.pktemplateimport = pktemplateimport;
         },
         
         

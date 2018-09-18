@@ -1,6 +1,7 @@
 import Axios from "axios";
 import _ from "lodash";
 import store from "../store";
+import ResponseError from "../exception/ResponseError";
 
 const host = "/",
     emptyResMsg="返回数据为空，请联系管理员",
@@ -92,12 +93,17 @@ _.extend(Axios.defaults,{
     }],
     // 返回数据预处理
     transformResponse: [(respData:any) =>{
+        (<any>window).test = ResponseError;
         // 检查返回status值
         if (!respData){
             throw new Error(emptyResMsg)
         }
         if (respData.errcode == 0) {
             return respData
+        }
+        if(respData.errcode==1){
+            (<any>window).ResponseError = ResponseError;
+           throw new (<any>ResponseError)(respData.errmsg||errorResMsg,respData);
         }
         throw new Error(respData.errmsg||errorResMsg)
     }],

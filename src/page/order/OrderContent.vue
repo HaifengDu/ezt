@@ -56,6 +56,7 @@
                 <div>
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
                 </div>
+                <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
               </div>
             </div>
             <div class="ezt-list-del" @click="deleteSection(item)">删除</div>

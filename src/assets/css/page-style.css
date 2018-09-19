@@ -329,6 +329,20 @@ input.ezt-middle{
     color: #1188FC;
     letter-spacing: 0;
   }
+  .receive-ys{
+    background-color: red;
+    border-radius: 50%;
+    color: #fff;
+    position: absolute;
+    bottom: 20px;
+    right: 10px;
+    width: 40px;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    -webkit-transform: rotate(7deg);
+    transform: rotate(-22deg);
+  }
   .receive-status{
     font-size: 12px;
     margin-right: 15px;

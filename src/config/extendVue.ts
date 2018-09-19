@@ -11,11 +11,11 @@ import TabContainer from 'mint-ui/lib/tab-container';
 import EztHeader from '../components/Header.vue';
 import EztFooter from '../components/Footer.vue';
 import EztCanlendar from '../components/Canlendar';
+import EztNumber from "../components/EztNumber";
 import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
 import InfiniteScroll from 'mint-ui/lib/infinite-scroll';
 import CellSwipe from 'mint-ui/lib/cell-swipe';
-import InputNumber from 'element-ui/lib/input-number';
 
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
@@ -84,7 +84,6 @@ import 'mint-ui/lib/cell-swipe/style.css';
 // import '@riophae/vue-treeselect/dist/vue-treeselect.css';
 Vue.prototype.$message = MessageBox;
 Button.install(Vue);
-InputNumber.install(Vue);
 Vue.use(Toasted, { duration: 1000, position: "top-center" });
 // Vue.prototype.$notify = Notification;
 // DatePicker.install(Vue);
@@ -121,6 +120,7 @@ Vue.component(TabContainer.name, Vue.extend(TabContainer));
 Vue.component('EztHeader', Vue.extend(EztHeader));//页面header组件
 Vue.component('EztFooter', Vue.extend(EztFooter));//页面footer组件
 Vue.component('EztCanlendar', Vue.extend(EztCanlendar));//页面日历
+Vue.component('EztNumber',Vue.extend(EztNumber));//计数器
 Vue.component("x-input", Vue.extend(XInput));
 Vue.component("group", Vue.extend(Group));
 Vue.component(IndexList.name, Vue.extend(IndexList));

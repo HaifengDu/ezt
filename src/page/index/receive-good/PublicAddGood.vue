@@ -48,7 +48,7 @@
                     <!-- <group>
                       <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
                     </group> -->
-                    <el-input-number v-model="item.num" @change="handlerNum(item)" :min="0"></el-input-number>
+                    <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
                 <!-- 编辑备注时 -->

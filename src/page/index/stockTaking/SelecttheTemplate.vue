@@ -7,10 +7,15 @@
        </div>        
     </ezt-header>    
     <div class="ezt-main">     
-       <div class="content"> 
+       <div class="ezt-add-content"> 
+          <div class="done-none" v-if="!inlineDescListValue">
+            <div></div>
+            <span>没有搜索结果</span>
+            <em @click="goBack">返回</em>
+          </div>  
          <checklist style="width:100%;" :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
          <div class="nextstep" @click="nextstep('d')">下一步</div>   
-       </div>   
+       </div> 
      </div>    
    </div>    
 </template>
@@ -92,7 +97,6 @@ export default class stockTaking extends Vue{
     
      //下一步
      private nextstep(types:any){   
-       debugger
       if(this.pktemplateimport){  
         const template_id = this.inlineDescListValue[0]  //选中模板id
         const flag = this.pktemplateimport.pdtype
@@ -108,7 +112,7 @@ export default class stockTaking extends Vue{
                     stock_count_mode_name:this.pktemplateimport.stock_count_mode_name,
                     treatment : this.pktemplateimport.stock_count_mode_name,
                     types:types,
-                    warehouse_method:"模板导入"
+                    template_name:"模板导入"
                 }
               });
               this.inventoryDetails = res.data.data;
@@ -133,6 +137,7 @@ export default class stockTaking extends Vue{
 }
 .ezt-main{
   height: auto;
+  background-color:@background-color!important;
 }
 .selectthetemplate{
     position: absolute;
@@ -141,13 +146,34 @@ export default class stockTaking extends Vue{
     z-index: 99;
     width: @width;
     height: @height;
-    .content{
+    overflow: hidden;
+    background-color: @background-color;
+    .ezt-add-content{
       width: @width;
       height:@height;
       display: flex;
       align-items: center;
       flex-direction: column;
-    .nextstep{
+      .done-none{
+        height: 499px;
+        z-index: 9999;
+        overflow: hidden;
+        position: absolute;
+        em{
+          border: 1px solid #ccc;
+          padding: 0 15px;
+          width: 53px;
+          height: 30px;
+          line-height: 30px;
+          margin: 70px auto;
+          border-radius: 19px;
+          font-size: 12px;
+          font-style: normal;
+          cursor: pointer;
+          color: #ADBFD3;
+        }
+      }
+     .nextstep{
         width: 100%;
         height: 45px;
         line-height: 45px;
@@ -156,6 +182,7 @@ export default class stockTaking extends Vue{
         left: 0;
         font-size: 15px;
         color: #1188FC;
+        z-index: 0;
         cursor: pointer;
         background-color: @background-color;
         box-shadow: 0 -1px 3px 0 rgba(204,216,228,0.80);

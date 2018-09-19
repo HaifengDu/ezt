@@ -25,9 +25,17 @@
                   <li :key="index" v-for="(item,index) in inventoryList.list">
                     <div @click="librarydetails(item,'a')">
                         <div class="state">   
-                        <span><i>{{item.bill_type_name}}</i>{{item.bill_no}}</span>
-                        <span>{{tabList.getActive().status==0?'暂存':'' || tabList.getActive().status==1?'待审核':'' || tabList.getActive().status==2?'待生效':'' && item.is_stock_valid == 1?'已生效':'' || tabList.getActive().status==3?'审核失败':'' }}</span>
-                      </div>
+                        <span>
+                          <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
+                          <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
+                          <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
+                        {{item.bill_no}}</span>   
+                        <span class="" v-if="tabList.getActive().status==0" style="color:#9182E1">暂存</span>
+                        <span class="" v-if="tabList.getActive().status==2 && item.is_stock_valid ==null">待生效</span>
+                        <span v-if="tabList.getActive().status==2 && item.is_stock_valid ==1">已生效</span>
+                        <span class="" v-if="tabList.getActive().status==1" style="color:#FFA32C">待审核</span>
+                        <span class="" v-if="tabList.getActive().status==3" style="color:#FF7563">审核失败</span>
+                      </div> 
                       <div class="content">
                           <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
                           <p>盘点日期：<span>{{item.busi_date}}</span></p>
@@ -36,12 +44,11 @@
                       </div>
                     </div>
                     <div class="footer">
-                        <P>业务日期：<span>{{item.busi_date}}</span></P>
+                        <P>业务日期：<span>2017-07-28</span></P>
                         <div v-if="tabList.getActive().status === 0" class="submit" @click="submission(item,'c')">提交</div>
                         <div v-if="tabList.getActive().status === 1" class="submit" @click="librarydetails(item,'b')">审核</div>
-                        <div v-show="hidebtn" v-if="tabList.getActive().status === 2 && item.is_stock_valid
- === null && item.is_stock_valid === 1"  class="submit" @click="takeeffect">生效</div>
-                        <div v-show="showbtn" v-if="tabList.getActive().status === 3"  class="submit" @click="realdiscen(item,'e')">实盘录入</div>
+                        <div v-show="hidebtn" v-if="tabList.getActive().status==2 && item.is_stock_valid ==null"  class="submit">生效</div>
+                        <div v-show="showbtn" v-if="tabList.getActive().status === 3 || tabList.getActive().status==2 && item.is_stock_valid ==1"  class="submit" @click="realdiscen(item,'e')">实盘录入</div>
                     </div>   
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -125,7 +132,7 @@ declare var mobiscroll:any;
        'pkinventory':'stockTaking/pkinventory',//盘点类型
      }) 
    },
-   methods:{ 
+   methods:{    
      ...mapActions({
        'setInventoryDetails':"stockTaking/setInventoryDetails",
        'setQueryResult':"stockTaking/setQueryResult",
@@ -356,7 +363,7 @@ export default class stockTaking extends Vue{
     }  
     private addinventorylist(type:any,name:any,bill_type:string,){
       this.service.getInventoryType(type.bill_type).then(res=>{ 
-        this.setInventoryType(this.type);
+        this.setInventoryType(this.type);        
         this.$router.push({
             name:'AddinventoryList',
             query:{
@@ -369,21 +376,21 @@ export default class stockTaking extends Vue{
       },err=>{
           if(err instanceof ResponseError){
             if(err.data.errmsg  === 'unreview'){
-                this.isSave=true
-                this.newlyadded = false
+                this.setInventoryType(this.type);        
                 this.$router.push({
                     name:'AddinventoryList',
                     query:{
-                      name:type.name,
-                      bill_type:type.bill_type
-                    }
+                    name:type.name,
+                    bill_type:type.bill_type
+                  }
                 });
+                this.newlyadded = false
                 this.type = err.data.data[0].bill_type;
-                this.setInventoryType(this.type);
             }
           }
       })
     }   
+   
      // 数据整理  
     private datasorting(){
       this.service.getDataSorting().then(res=>{  
@@ -403,10 +410,10 @@ export default class stockTaking extends Vue{
     }
     //查询结果
     private toSearch(){
-      const bill_no = this.djnumber || '';
-      const end_date =  this.searchParam.end_date || '';
-      const begin_date = this.searchParam.begin_date || '';
-      const warehouse_id = this.Selectedwarehouse || '';
+      const bill_no = this.djnumber || null;
+      const end_date =  this.searchParam.end_date || null;
+      const begin_date = this.searchParam.begin_date || null;
+      const warehouse_id = this.Selectedwarehouse || null;
       this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
         this.hideMask();     
         this.isSearch = false;
@@ -471,6 +478,15 @@ export default class stockTaking extends Vue{
             span{
               font-size: 15px;
               color: #395778;
+              .day{
+                background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
+              }
+              .week{
+                background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
+              }
+              .year{
+                background: linear-gradient(-134deg, #97DBFF 0%, #7AC0FF 100%);
+              }
               i{
                 opacity: 0.7;
                 background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);

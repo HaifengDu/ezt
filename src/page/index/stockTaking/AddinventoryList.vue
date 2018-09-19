@@ -1,4 +1,3 @@
-<!--新增盘库单-->
 <template>
  <div>
   <!-- 新增盘点单 -->
@@ -26,7 +25,7 @@
                       <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select>   
                   </span>   
-                </li>
+                </li>   
                  <li class="select-list">
                   <span class="title-search-name ">未盘处理：</span>
                   <span class="title-select-name item-select">
@@ -95,6 +94,7 @@ export default class stockTaking extends Vue{
     private user:IUser;
     private service:StockTakingService;
     private getTemplateImport:INoopPromise;  //模板导入
+    private getWarehouse:INoopPromise;  //动态加载仓库
     private bill_type:string; //弹层盘点类型
     private daily_inventory:string;
     private week_inventory:string;
@@ -121,7 +121,7 @@ export default class stockTaking extends Vue{
     private orderType:any[] = [{
       name:"按照当前库存量处理",
       value:"is_quanlity"
-    },{
+    },{   
       name:"按照0库存量处理",
       value:"is_zero"
     }];
@@ -159,7 +159,7 @@ export default class stockTaking extends Vue{
             return false;
          }
          this.$router.push(info)
-        this.setAddinventory(this.addinventory);
+         this.setAddinventory(this.addinventory);
         }
     }
    
@@ -170,7 +170,7 @@ export default class stockTaking extends Vue{
             this.$toasted.show("请选择仓库！");
             return false;
          }   
-        const flag = this.pkinventory;
+        const flag = this.addinventory.bill_type;
         const warehouse_id = this.addinventory.stock;
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
              this.setAddinventory(this.addinventory);
@@ -185,12 +185,11 @@ export default class stockTaking extends Vue{
                     stock_count_mode_name:this.addinventory.treatment,
                     treatment : this.addinventory.treatment,
                     types:types,
-                    warehouse_method:"手工制单",
+                    template_name:"手工制单",
                 }
               });
               this.inventoryDetails = res.data.data;
               this.setInventoryDetails(this.inventoryDetails); 
-              
           },err=>{
               this.$toasted.show(err.message)
           })
@@ -207,7 +206,7 @@ export default class stockTaking extends Vue{
         this.service.getTemplateImport(warehouse_id).then(res=>{ 
               this.setAddinventory(this.addinventory);
               this.setAddBeforeInventory(this.addBeforeInventory);
-              this.setInventoryType(this.pkinventory);
+              this.setInventoryType(this.addinventory.bill_type);
               this.$router.push({
                 name:'SelecttheTemplate',
                  query:{
@@ -215,7 +214,7 @@ export default class stockTaking extends Vue{
                     bill_type_name:this.addinventory.name,
                     warehouse_name: this.addinventory.stock,
                     stock_count_mode_name:this.addinventory.treatment,
-                    pdtype : this.pkinventory
+                    pdtype : this.addinventory.bill_type,
                 }
               });
               this.pktemplateimport = res.data.data;
@@ -227,7 +226,7 @@ export default class stockTaking extends Vue{
      }
     //  动态加载仓库
     private iswarehouseType(){
-      this.service.getWarehouse(this.pkinventory).then(res=>{ 
+      this.service.getWarehouse(this.addinventory.bill_type).then(res=>{ 
           this.warehouseType = res.data.data;
       },err=>{
           this.$toasted.show(err.message)

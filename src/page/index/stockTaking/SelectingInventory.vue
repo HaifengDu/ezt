@@ -26,22 +26,116 @@
              <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">{{item.name}}</li>
            </ul>
            <div class="good-content-list">
-             <div class="good-item" v-for="(item,index) in goodList" :key='index'>
+             <div class="good-item" v-for="(item) in goodList" :key='item.id'>
                <div class="good-item-title">
                  <span class="good-item-name">{{item.name}}</span>
-                 <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+                    <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>                    
+                 </span>
                </div>
                <div class="good-item-bot">
-                 <span class="good-remark">备</span>
-                 <span>
+                 <!-- 编辑图标 -->
+                 <span class="good-remark" @click="handlerRemark(item)">
+                   <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+                 </span>
+                 <!-- 收藏图标 -->
+                 <span v-if="!addBillInfo.editPrice">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
-                    <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                    <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
-             </div>
-           </div>
+                <!-- 编辑备注时 -->
+                <!-- <confirm v-model="isRemark" class="dialog-demo" @on-confirm="remarkConfirm" :on-cancel="remarkCancel"> -->
+                  <!-- <span class="confirm-title">备注</span>
+                  <div class="confirm-content">
+                    <textarea style="height: 7em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
+                  </div> -->
+                  <div>
+                    <x-dialog v-model="isRemark" class="dialog-demo"> 
+                      <div class="ezt-dialog-header">
+                        <span class="header-name">
+                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
+                        </span>
+                        <span class="ezt-close" @click="isRemark=false" >
+                          <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+                      </div>
+                      <div class="ezt-dialog-title">
+                        <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
+                        <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
+                      </div>
+                      <div class="warehouse-list">
+                          <ul class="warehouse-isDefault">
+                              <li v-for="(item,index) in ((bindRemark.roundValue&&bindRemark.roundValue.list)||[])" :key="index">
+                                <span>{{item.name}}</span>
+                                <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
+                              </li>
+                          </ul>
+                      </div>
+                      <div class="mine-bot-btn">
+                        <span class="ezt-lone-btn" @click="remarkConfirm">提交</span>
+                      </div>
+                    </x-dialog>
+                  </div>
+                <!-- </confirm> -->
+                <!-- 编辑价格信息时  -->
+                 <div>
+                    <x-dialog v-model="isPrice" class="dialog-demo">
+                    <div class="ezt-dialog-header">                                
+                        <span class="ezt-close" @click="isPrice=false" >
+                        <i class="fa fa-times" aria-hidden="true"></i>
+                        </span>
+                    </div>                            
+                    <div class="warehouse-list">
+                        <ul class="edit-good-list">
+                            <li>
+                                <span class="title-select-name">数量：</span>
+                                <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
+                            </li>
+                            <li v-if="addBillInfo.costType==0">
+                                <span class="title-dialog-name">价格：</span>
+                                <span class="icon-input price">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.price">
+                                </span>                                       
+                            </li>
+                            <li v-if="addBillInfo.costType==1">
+                                <span class="title-dialog-name">含税额：</span>
+                                <span class="icon-input price">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.amt">
+                                </span>                                       
+                            </li>
+                            <li>
+                                <span class="title-dialog-name">税率：</span>
+                                <span class="icon-input">
+                                    <input type="number" class="ezt-smart" v-model="bindRemark.rate">
+                                </span>
+                            </li>
+                            <li class="select-list">
+                                <span class="title-dialog-name">供应商：</span>
+                                <span class="title-select-name item-select">
+                                <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
+                                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                    <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                </select>
+                                </span>
+                            </li>
+                            <li>
+                                <span class="title-dialog-name">备注：</span>
+                                <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="mine-bot-btn">
+                        <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+                    </div>             
+                    </x-dialog>
+                </div>
+             </div>           
+          </div>
         </div>
       </div>
     </div>
@@ -59,11 +153,19 @@
           <div>
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-              <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+                <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+              </span>
             </div>
             <div class="good-item-bot">
-              <span class="good-remark">备</span>
-              <span>
+              <!-- 编辑图标 -->
+              <span class="good-remark" @click="handlerRemark(item)">
+                <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+              </span>
+              <!-- 收藏图标 -->
+              <span v-if="!addBillInfo.editPrice">
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
               <span>
@@ -71,8 +173,8 @@
               </span>
             </div>
           </div>          
-          <div @click="selectedDelGood(item)">
-            删除
+          <div @click="selectedDelGood(item)" class="item-delete">
+            <i class="fa fa-trash" aria-hidden="true"></i>
           </div>
         </div>
       </div>
@@ -94,11 +196,19 @@
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
-            <span class="good-item-sort">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
+              <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+              <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+            </span>
           </div>
           <div class="good-item-bot">
-            <span class="good-remark">备</span>
-            <span>
+            <!-- 编辑图标 -->
+            <span class="good-remark" @click="handlerRemark(item)">
+              <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            </span>
+            <!-- 收藏图标 -->
+            <span v-if="!addBillInfo.editPrice">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span>
@@ -130,13 +240,15 @@ import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
+import ObjectHelper from '../../../common/objectHelper'
 import _ from "lodash";
 
 @Component({
   mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       'selectedGood':'publicAddGood/selectedGood'
+       'selectedGood':'publicAddGood/selectedGood',
+       'addBillInfo':'publicAddGood/addBillInfo',
      }),
    },
    methods:{
@@ -154,7 +266,20 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
-  private userpp:any[];
+  private isRemark:boolean=false;//编辑备注
+  private isPrice:boolean=false;//编辑价格
+  private addBillInfo:any;//价格与备注显示切换
+  private orderType: any[] = [
+    {
+      //单据类型下拉数据
+      name: "合同采购单",
+      type: "q"
+    },
+    {
+      name: "采购单",
+      type: "m"
+    }
+  ];
   // private goodList:any[]=[{
   //   id:1,
   //   name:'草鱼半成品',
@@ -172,14 +297,16 @@ export default class AddGood extends Vue{
   private goodSmallType:any[] = [];
   private goodList:any[]=[];
   private allType:any[] = [];
-  private typeName:any={};//记录type选择哪条
+  private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
+  private bindRemark:any={};//深拷贝存储的值 
+  private restBindRemark:any={};//编辑备注时绑定的值
+   private DirectedNum:number=0;//已直拨的数量
+  private countFlag = 0;
   // private userpp:any[]=[];
-  created(){
-    this.userpp=[]
-    console.log(this.userpp,'000000')    
+  created(){ 
   }
   mounted() {
-    this.selectedGoodList=this.selectedGood;//添加物料把已经选过的物料从store中拿过来给页面
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -194,7 +321,12 @@ export default class AddGood extends Vue{
             name:'草鱼半成品',
             price:'12',
             utilname:'KG',
-            unit:'箱'
+            unit:'箱',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[]
+            }
           }]
         }]
       },{
@@ -207,8 +339,14 @@ export default class AddGood extends Vue{
             id:2,
             name:'海参',
             price:'9',
+            num:0,
             utilname:'KG',
-            unit:'箱'
+            unit:'箱',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[]
+            }
           }]
         },{
           id:21,
@@ -218,7 +356,30 @@ export default class AddGood extends Vue{
             name:'牛肉',
             price:'15',
             utilname:'KG',
-            unit:'斤'
+            unit:'斤',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              },{
+                name:'仓库三号',
+                num:0
+              },{
+                name:'仓库四号',
+                num:0
+              },{
+                name:'仓库五号',
+                num:0
+              },{
+                name:'仓库六号',
+                num:0
+              }]
+            }
           }]
         },{
           id:22,
@@ -234,18 +395,26 @@ export default class AddGood extends Vue{
     }];
     //TODO:把收藏从货品类别里抽出来
     this.goodBigType = this.allType;
-    this.goodSmallType = this.allType[0].cdata;
-    this.goodList = this.allType[0].cdata[0].goodList;
-    //TODO:默认加载货品
+    this.changeSmallType(this.allType[0]);
+    //TODO:默认加载货品   
+   
   }
   private changeSmallType(item:any){
     this.typeName = item;   
     this.goodSmallType = item.cdata; 
-    this.goodList = item.cdata[0].goodList;  
+    this.loadGood(item.cdata[0]);
     //TODO:加载货品this.goodSmallType[0]
   }
   private loadGood(item:any){
     //TODO:item.id加载货品
+     _.forEach(item.goodList,item=>{
+        this.$set(item,'active',false);
+        const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+        if(index>=0){
+          ObjectHelper.merge(item,this.selectedGoodList[index],true);
+          this.selectedGoodList[index] = item;
+        }
+    });
     this.goodList = item.goodList;
     this.typeName=item;
   }
@@ -267,7 +436,9 @@ export default class AddGood extends Vue{
     }else{
       //删除
       const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-      this.selectedGoodList.splice(index,1);
+      if(index>=0){
+        this.selectedGoodList.splice(index,1);
+      }
     }
   }
   /**
@@ -298,11 +469,30 @@ export default class AddGood extends Vue{
     this.isSearch = true;
     this.isSelected=false;
   }
+  // 修改直拨提交
+  private submitDerict(){
+    ObjectHelper.merge(this.bindRemark,this.bindRemark,true);
+    this.isRemark=false;
+  }
+  /**
+ * 改变直拨的 数量
+ */
+private changeDirect(item:any){  
+  if(!this.bindRemark.roundValue.list){
+      this.DirectedNum = 0;
+  }
+  this.DirectedNum = this.bindRemark.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
+  if(this.DirectedNum<=this.bindRemark.roundValue.num){
+    item.oldNum = item.num;
+  }else{
+    item.num = item.oldNum;
+  }
+}
   /**
    * 搜索
    */
   private handlerSearchData(){
-    
+    debugger
   }
   /**
    * 选择完货品去提交
@@ -312,6 +502,32 @@ export default class AddGood extends Vue{
     this.$router.back();
     console.log(this.selectedGood,'111')
   }
+  //点击备注
+  private handlerRemark(item:any){
+    if(!this.addBillInfo.editPrice){
+      this.isRemark=true;
+    }else{
+      this.isPrice=true;
+    }
+    this.restBindRemark = item;
+    this.bindRemark = ObjectHelper.serialize(this.restBindRemark);//深拷贝
+  }
+  //备注，价格弹框取消
+  private remarkCancel(){
+    this.isRemark = false;
+  }
+  //备注弹框确定
+  private remarkConfirm(){
+    alert('备注保存成功');
+    ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
+    this.isRemark=false;
+  }
+ //价格弹框确定
+  private priceConfirm(){
+    alert('价格修改成功');
+    ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
+    this.isPrice=false;
+  }
   private goBack(){
     this.$router.back();
   }
@@ -319,6 +535,30 @@ export default class AddGood extends Vue{
 </script>
 
 <style lang="less" scoped>
+.mine-bot-btn{
+    width: 100%;
+    // position: absolute;
+    margin-top: 20px;
+        .ezt-lone-btn{
+        display: inline-block;
+        font-size: 14px;
+        color: #FFFFFF;
+        letter-spacing: 0;
+        padding: 8px 90px;
+        margin-bottom: 10px;
+        border-radius: 40px;
+        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
+    }
+  }
+  .item-delete{
+    flex:1;
+    text-align: center;
+    align-self: center;
+    font-size: 20px;
+  }
   .good-type{
     height: 45px;
     top: 0;
@@ -337,6 +577,9 @@ export default class AddGood extends Vue{
     white-space: nowrap;
     span{
       margin-right: 10px;
+      max-width: 82px;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     span.active{
       color: #1674fc;
@@ -375,8 +618,7 @@ export default class AddGood extends Vue{
     padding: 10px;
     text-align: left;
     margin: 8px 0;
-    .good-remark{
-      border: 1px solid #ccc;
+    .good-remark{     
       padding: 1px;
       display:inline-block;
       margin-right: 20px;
@@ -466,7 +708,150 @@ export default class AddGood extends Vue{
     display:flex;
     flex-direction: row;
   }
-  
+  // 编辑备注时样式
+  .good-item-title{
+    display: flex;
+    .good-item-name{
+      flex:1;
+    }
+    .good-item-sort{
+      // flex:1;
+    }
+    .good-item-sort.edit{
+      border: 1px solid #ccc;
+    }
+  }
+  //编辑物品 修改的字段
+.dialog-demo {
+  .ezt-dialog-header {
+    display: flex;
+    justify-content: flex-end;
+    padding: 10px;
+  }
+  .edit-good-list {
+    flex-direction: column;
+    text-align: center;
+    display: inline-block;
+    li {
+      display: flex;
+      // flex-direction: row;
+      align-items: center;
+      border-bottom: 1px solid #ccc;
+      .title-dialog-name {
+        flex: inherit;
+        padding: 10px 0px;
+        font-size: 13px;
+        color: #5f7b9a;
+      }
+      .weui-cell:before {
+        border: none;
+      }
+      select {
+        height: 36px;
+      }
+      .icon-input::before {
+        display: inline-block;
+        content: "%";
+        position: absolute;
+        right: 40px;
+      }
+      .icon-input.price::before {
+        content: "￥";
+      }
+    }
+  }
+}
+//按钮
+.mine-bot-btn {
+  width: 100%;
+  // position: absolute;
+  margin-top: 20px;
+  .ezt-lone-btn {
+    display: inline-block;
+    font-size: 14px;
+    color: #ffffff;
+    letter-spacing: 0;
+    padding: 8px 90px;
+    margin-bottom: 10px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(
+      linear,
+      left top,
+      right top,
+      from(#5a12cc),
+      to(#3c82fb)
+    );
+    background-image: linear-gradient(90deg, #018bff 0%, #4a39f3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+  }
+}
+  //直拨仓库   
+  .warehouse-list{
+      flex: 1;
+      text-align: center;
+      margin-left: 10px;
+      max-height: 160px;
+      overflow-x: auto;
+      .warehouse-isDefault{           
+        display: inline-block;               
+          
+      }   
+  }
+  .warehouse-title-num{
+    display: flex;
+    flex-direction: column;
+    background: #ccc;
+  }
+  .good-warehouse-num{
+    margin-left: 10px;
+    color: #95A7BA;
+    letter-spacing: 0;
+  }
+  .remark-area{
+    flex: .8;
+  }  
+  .title-search-right{
+    flex: 2;
+    text-align: right;
+  }
+  .warehouse-isDefault li{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    flex:1;
+    span{
+      flex:1;
+    }
+  }    
+  .ezt-dialog-header{
+  padding: 10px 0px;
+  display: flex;
+  flex-direction: row;
+  .header-name{
+    flex:1;
+    margin-right: -20px;
+  }
+  .ezt-close{
+    margin-right:20px;
+  }
+}
+.ezt-dialog-title{
+  padding: 10px 0px;
+  background: #FFF8DD;
+  display:flex;
+  flex-direction: row;
+  span.num{
+    font-size: 15px;
+    color:red;
+  }
+}
+.ezt-dialog-title>span{
+  flex:1;
+}
+.weui-cell:before{
+  border:none;
+}
   
 
 </style>

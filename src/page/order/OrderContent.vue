@@ -53,9 +53,9 @@
                 <div class="glow-1">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
-                <div>
+                <!-- <div>
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
-                </div>
+                </div> -->
                 <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
               </div>
             </div>
@@ -84,14 +84,14 @@ import {OrderGoodsService} from '../../service/OrderGoodsService';
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
+
      })
    },
-  //  methods:{
-  //    ...mapActions({
-  //      'getGoodList':"receiveGood/getGoodList"
-  //    })
-  //  }
+   methods:{
+     ...mapActions({
+
+     })
+   }
 })
 export default class OrderGoods extends Vue{
     private pager:Pager;
@@ -208,6 +208,14 @@ export default class OrderGoods extends Vue{
 }
 </script>
 <style lang="less" scoped>
+    .ezt-header{
+      padding: 0;
+      height: 45px;
+      align-items: center;
+    }
+    .ezt-action-point{
+      margin-top: 10px;
+    }
     .main-menu{
       background-color: #F1F6FF;
     }
@@ -249,7 +257,7 @@ export default class OrderGoods extends Vue{
     //
     .addgoods{
       position: absolute;
-      top: 49px;
+      top: 44px;
       right: 0;
       width: 120px;
       background: #fff;

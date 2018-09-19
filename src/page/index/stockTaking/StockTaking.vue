@@ -491,11 +491,11 @@ export default class stockTaking extends Vue{
                 opacity: 0.7;
                 background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
                 border-radius: 4px;
-                font-size: 4px;
+                font-size: 12px;
                 color: #fff;
                 width: 20px;
                 height: 20px;
-                line-height: 20px; 
+                line-height: 22px; 
                 text-align: center;
                 font-style: normal;
                 display: block;

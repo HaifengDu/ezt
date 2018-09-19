@@ -40,7 +40,7 @@
                 </ul>
                 <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
-                        <mt-cell-swipe
+                        <!-- <mt-cell-swipe
                         :right="[
                             {
                             content: '删除',
@@ -48,36 +48,38 @@
                             handler: () => {deleteSection(item)}
                             }
                         ]"
-                        >
-                            <div class="ezt-detail-good" >
-                                <div class="good-detail-l">
-                                    <div>
-                                        <span class="good-detail-name">{{item.name}}
-                                            <span class="good-detail-sort">（规格）</span>
-                                        </span>
-                                        <span @click="editStatus">
-                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
-                                        </span>                                   
-                                    </div>
-                                    <div>
-                                        <span class="good-detail-billno">编码：003222</span>
-                                        <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
-                                        </span>
-                                        <span>{{item.num}}</span>
-                                    </div>                     
+                        > -->
+                        <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
+                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+                            <div class="good-detail-l">
+                                <div>
+                                    <span class="good-detail-name">{{item.name}}
+                                        <span class="good-detail-sort">（规格）</span>
+                                    </span>
+                                    <!-- <span @click="editStatus">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
+                                    </span>                                    -->
                                 </div>
-                                <div class="good-detail-r">
-                                    <div class="park-input">
-                                        <span class="title-search-name">税率：</span>
-                                        <span class="receive-dc-content">{{item.rate||0}}%</span>
-                                    </div>
-                                    <div class="park-input"> 
-                                        <span class="title-search-name">供应商：</span>
-                                        <span class="receive-dc-content">{{item.supplier||'无'}}</span>
-                                    </div>                    
-                                </div>
+                                <div>
+                                    <span class="good-detail-billno">编码：003222</span>
+                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
+                                    </span>
+                                    <span class="good-detail-sort">数量：{{item.num}}</span>
+                                </div>                     
                             </div>
-                        </mt-cell-swipe>
+                            <div class="good-detail-r">
+                                <div class="park-input">
+                                    <span class="title-search-name">税率：</span>
+                                    <span class="receive-dc-content">{{item.rate||0}}%</span>
+                                </div>
+                                <div class="park-input"> 
+                                    <span class="title-search-name">供应商：</span>
+                                    <span class="receive-dc-content">{{item.supplier||'无'}}</span>
+                                </div>                    
+                            </div>
+                        </div>
+                         <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>   
+                        <!-- </mt-cell-swipe> -->
                          <div>
                             <x-dialog v-model="isEdit" class="dialog-demo">
                             <div class="ezt-dialog-header">                                
@@ -202,6 +204,7 @@ export default class InitStock extends Vue{
         this.service = InitStockService.getInstance();
         this.addBillInfo.costType = 1;
         this.addBillInfo.editPrice = true;
+        (this.selectedGood||[]).forEach(item=>item.active = false);
     }
     /**
      * 切换成本录入方式
@@ -231,9 +234,15 @@ export default class InitStock extends Vue{
         this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
         this.$router.push(info);
     }
-    //点击物料进行编辑数据
-    private editStatus() {
-        this.isEdit = true;
+    // //点击物料进行编辑数据
+    // private editStatus() {
+    //     this.isEdit = true;
+    // }
+    private handlerLeft(item:any){     
+      item.active = true;
+    }
+    private handlerRight(item:any){
+      item.active = false;
     }
 
     /**
@@ -355,6 +364,8 @@ export default class InitStock extends Vue{
 }
 //物料信息
 .good-detail-content {
+  position: relative;
+  overflow: hidden;
   text-align: left;
   margin: 8px 10px;
   padding: 12px 10px 12px 15px;
@@ -375,6 +386,7 @@ export default class InitStock extends Vue{
   .good-detail-l > div > span {
     padding: 5px 0px;
     align-items: baseline;
+    flex:1;
   }
   .good-detail-r {
     display: inline-block;
@@ -404,7 +416,6 @@ export default class InitStock extends Vue{
     letter-spacing: 0;
     display: flex;
     flex-direction: row;
-    flex: 1;
   }
   .good-detail-billno,
   .good-num-t {
@@ -422,6 +433,9 @@ export default class InitStock extends Vue{
     display: flex;
     flex-direction: column;
     padding-bottom: 10px;
+    transition: transform .5s;
+    background: #fff;
+    z-index: 2;
   }
 }
 .costType-info a {
@@ -434,6 +448,18 @@ export default class InitStock extends Vue{
     height: inherit;
     padding: 2px 6px;
 }
+ // 左侧滑动删除
+  .swipe-transform{
+    transform: translateX(-50px);
+  }
+  .ezt-detail-del{
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    background: pink;
+    width: 50px;
+    height: 50px;
+  }
 </style>
 
 

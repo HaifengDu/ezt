@@ -35,7 +35,7 @@
         </div> 
         <ul>               
           <li class="good-detail-content" v-for="(item,index) in goodList" :key="index"> 
-            <mt-cell-swipe
+            <!-- <mt-cell-swipe
               :right="[
                 {
                   content: '删除',
@@ -43,38 +43,35 @@
                   handler: () => {deleteSection(item)}
                 }
               ]"
-             >
-              <div class="ezt-detail-good">
+             > -->
+              <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
+                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
                   <div class="good-detail-l">
                       <div>
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
-                          </span>
-                          <span class="good-detail-sort">
-                            ￥<span class="good-detail-sort">{{item.price}}</span><span>/kg</span>
-                          </span>
-                            <span class="title-search-name">
-                              发：1000
-                            </span>
+                          </span>                         
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">
                             收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart">
+                            <!-- 收：{{item.num}} -->
                           </span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
                     <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input">
-                      <span class="title-search-name">备注：</span>
-                      <input type="text" class="ezt-middle">
+                      <span class="title-search-name">备注：{{item.remark}}</span>
+                      <!-- <input type="text" class="ezt-middle"> -->
                     </div>
                     
-                  </div>
-              </div>                               
-            </mt-cell-swipe>
+                  </div>                 
+              </div> 
+              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>                              
+            <!-- </mt-cell-swipe> -->
              <div>
               <x-dialog v-model="isDirect" class="dialog-demo">
                 <div class="ezt-dialog-header">
@@ -113,7 +110,7 @@
             <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive"> 提交</a>  
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
             <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
         </div>     
@@ -136,12 +133,11 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
-import SlideDelete from '../../../components/SlideDelete.vue';
 import ObjectHelper from '../../../common/objectHelper'
 declare var mobiscroll:any;
 @Component({
    components:{
-     TabItem,SlideDelete
+     TabItem
    },
    mixins:[maskMixin],
    computed:{
@@ -188,7 +184,7 @@ export default class ReceiveGood extends Vue{
               }]
             }
         },{
-           id:2,
+            id:2,
             name:'白菜',
             price:'1.5',
             utilname:'KG',
@@ -220,6 +216,7 @@ export default class ReceiveGood extends Vue{
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
        this.beforeWarehouse = this.addInfo.warehouse;
+       this.goodList.forEach(item=> this.$set(item,'active',false));
     }
 
     mounted(){  
@@ -242,6 +239,13 @@ export default class ReceiveGood extends Vue{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
   }
+
+  private handlerLeft(item:any){     
+    item.active = true;
+  }
+  private handlerRight(item:any){
+    item.active = false;
+  }
    /**
    * 改变直拨的 数量
    */
@@ -260,7 +264,15 @@ export default class ReceiveGood extends Vue{
      * 确认收货
      */
     private confirmReceive(){
-      console.log('确认收货！')
+      this.$toasted.success("审核成功！")
+      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
+    }
+    /**
+     * 提交收货
+     */
+    private saveReceive(){
+      this.$toasted.success("提交成功！");
+      this.$router.push("/receiveGood");
     }
     /**
     *可直拨
@@ -376,6 +388,8 @@ export default class ReceiveGood extends Vue{
   }
   //物料信息
     .good-detail-content{
+       position: relative;
+       overflow: hidden;
         text-align: left;
         margin: 8px 10px;
         padding: 12px 10px 12px 15px;
@@ -393,6 +407,7 @@ export default class ReceiveGood extends Vue{
     .good-detail-l>div{
        display:flex;
        flex-direction: row;
+       align-items: center;
     }
     .good-detail-l>div>span{
        flex:1;
@@ -421,25 +436,22 @@ export default class ReceiveGood extends Vue{
         letter-spacing: 0;
         display: flex;
         flex-direction: row;
-        flex:.7 !important;
     }
-    .good-detail-billno,.good-num-t{
+    .good-detail-billno{
         font-size: 10px;
         color: #A3B3C2;
         letter-spacing: 0;
-    }
-    .good-num-t{
-        display: inline-block;
-        text-align: center;
-        width: 100%;
+        margin: 12px 0px;
     }
     .ezt-detail-good{
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 10px;
-        // margin: 8px 10px;
-        // padding: 12px 10px 12px 15px;
-        background: #fff;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 10px;
+      // margin: 8px 10px;
+      // padding: 12px 10px 12px 15px;
+      transition: transform .5s;
+      background: #fff;
+      z-index: 2;
     }
     //物料明细结束 
     .ezt-detail-good input{
@@ -492,4 +504,17 @@ export default class ReceiveGood extends Vue{
     .remark-area{
       flex: .8;
     } 
+    // 结束 
+  // 左侧滑动删除
+  .swipe-transform{
+    transform: translateX(-50px);
+  }
+  .ezt-detail-del{
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    background: pink;
+    width: 50px;
+    height: 50px;
+  }
 </style>

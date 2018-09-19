@@ -52,8 +52,8 @@
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
-              <mt-cell-swipe
+           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">
+              <!-- <mt-cell-swipe
               :right="[
                   {
                   content: '删除',
@@ -61,63 +61,37 @@
                   handler: () => {deleteSection(item)}
                   }
               ]"
-              >
-              <div class="ezt-detail-good" >
-                  <div class="good-detail-l">
-                      <div>
-                          <span class="good-detail-name">
-                            <span class="good-detail-break">{{item.name}}</span>
-                            <span class="good-detail-sort">（规格）</span>
-                          </span>
-                          <span class="good-detail-sort">￥
-                            <input @change="limitBit(item,'price')" type="number" class="ezt-smart" placeholder="单价" v-model="item.price">
-                            <span>/{{item.utilname}}</span>
-                          </span>
-                         
-                      </div>
-                      <div class="good-detail-nobreak">
-                          <span class="good-detail-sort ">编码：003222</span>
-                          <span class="ezt-dense-box">
-                            <input type="number" placeholder="数量" class="ezt-smart" v-model="item.num">
-                          </span>
-                      </div>                     
-                  </div>
-                  <div class="good-detail-r">
-                    <span class="icon-dail" @click="handlerDirect(item)">拨</span>
-                    <div class="park-input"> 
-                      <span class="title-search-name">备注：</span>
-                      <input type="text" class="ezt-middle" v-model="item.remark">
-                    </div>                    
-                  </div>
-              </div> 
-              </mt-cell-swipe>             
+              > -->
+                <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
+                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+                    <div class="good-detail-l">
+                        <div>
+                            <span class="good-detail-name">
+                              <span class="good-detail-break">{{item.name}}</span> 
+                              <span class="good-detail-sort">（规格）</span>
+                            </span>
+                        </div>
+                        <div class="good-detail-nobreak">
+                            <span class="good-detail-billno ">编码：003222</span>
+                            <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
+                            <span class="title-search-name ezt-dense-box">收：{{item.num}}</span>                         
+                        </div>                     
+                    </div>
+                    <div class="good-detail-r">
+                      <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
+                      <div class="park-input"> 
+                        <span class="title-search-name">备注：{{item.remark}}</span>
+                        <!-- <input type="text" class="ezt-middle" v-model="item.remark"> -->
+                      </div>                    
+                    </div>
+                </div> 
+                <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>
+              <!-- </mt-cell-swipe>              -->
            </li>
         </ul> 
          <div>
             <x-dialog v-model="isDirect" class="dialog-demo">
-              <div class="ezt-dialog-header">
-                <span class="header-name">
-                  直拨
-                </span>
-                <span class="ezt-close" @click="isDirect=false" >
-                  <i class="fa fa-times" aria-hidden="true"></i>
-                </span>
-              </div>
-              <div class="ezt-dialog-title">
-                <span>可直拨：<span class="num">{{(activeRound.roundValue&&activeRound.roundValue.num)||0}}</span></span>
-                <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
-              </div>
-              <div class="warehouse-list">
-                  <ul class="warehouse-isDefault">
-                      <li v-for="(item,index) in ((activeRound.roundValue&&activeRound.roundValue.list)||[])" :key="index">
-                        <span>{{item.name}}</span>
-                        <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
-                      </li>
-                  </ul>
-              </div>
-              <div class="mine-bot-btn">
-                <span class="ezt-lone-btn" @click="submitDerict">提交</span>
-              </div>             
+                           
             </x-dialog>
           </div>      
       </div> 
@@ -211,6 +185,8 @@ export default class ReceiveGood extends Vue{
     private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
     private activeRound:any={};//深拷贝存储的值
     private restActiveRound:any={};//编辑时绑定的值
+    private moveX:number=0; //滑动删除的位置
+    private slideEffect:string="";//滑动删除改变 样式
     // private roundValue:any={//可直拨的数据
     //   num: 10,
     //   numed:3,
@@ -247,6 +223,7 @@ export default class ReceiveGood extends Vue{
        this.goodList = []; 
        this.addBillInfo.editPrice=false; 
       //  this.getGoodList();
+      (this.selectedGood||[]).forEach(item=>item.active = false);
     }
 
     mounted(){ 
@@ -255,17 +232,37 @@ export default class ReceiveGood extends Vue{
         this.addBillInfo.supplier="";
         this.addBillInfo.warehouse="";
       }
-    
     }
-    /**
-     * 限制输入的位数
-     */
-    private limitBit(item:any,msg:any){
-      if(msg=="price"){
-        item.price = Number(item.price).toFixed(2);
-      }
+
+    private handlerLeft(item:any){     
+      // this.selectedGood.forEach(info=>{
+      //   if(item.id == info.id){
+      //     item.active = true;
+      //   }else{
+      //     item.active=false;
+      //   }
+      // })
+      item.active=true;
      
     }
+    private handlerRight(item:any){
+      // this.selectedGood.forEach(info=>{
+      //   if(item.id == info.id){
+      //     item.active = false;
+      //   }else{
+      //     item.active=true;
+      //   }
+      // })
+      item.active=false;
+    }
+    // /**
+    //  * 限制输入的位数
+    //  */
+    // private limitBit(item:any,msg:any){
+    //   if(msg=="price"){
+    //     item.price = Number(item.price).toFixed(2);
+    //   }     
+    // }
 
   /**
    * computed demo
@@ -284,20 +281,20 @@ export default class ReceiveGood extends Vue{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
   }
-   /**
-   * 改变直拨的 数量
-   */
-  private changeDirect(item:any){  
-    if(!this.activeRound.roundValue.list){
-       this.DirectedNum = 0;
-    }
-    this.DirectedNum = this.activeRound.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
-    if(this.DirectedNum<=this.activeRound.roundValue.num){
-      item.oldNum = item.num;
-    }else{
-      item.num = item.oldNum;
-    }
-  }
+  //  /**
+  //  * 改变直拨的 数量
+  //  */
+  // private changeDirect(item:any){  
+  //   if(!this.activeRound.roundValue.list){
+  //      this.DirectedNum = 0;
+  //   }
+  //   this.DirectedNum = this.activeRound.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
+  //   if(this.DirectedNum<=this.activeRound.roundValue.num){
+  //     item.oldNum = item.num;
+  //   }else{
+  //     item.num = item.oldNum;
+  //   }
+  // }
     /**
    * 左滑删除某一项
    */
@@ -307,20 +304,20 @@ export default class ReceiveGood extends Vue{
       })
       this.selectedGood.splice(newIndex,1);
   }
-  /**
-  *可直拨
-    */
-  private handlerDirect(item:any){
-    this.restActiveRound = item;
-    this.activeRound=ObjectHelper.serialize(this.restActiveRound);//深拷贝
-    this.isDirect = true;
-    // this.DirectedNum=0;    
-  }
-  // 修改直拨提交
-  private submitDerict(){
-    ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
-    this.isDirect=false;
-  }
+  // /**
+  // *可直拨
+  //   */
+  // private handlerDirect(item:any){
+  //   this.restActiveRound = item;
+  //   this.activeRound=ObjectHelper.serialize(this.restActiveRound);//深拷贝
+  //   this.isDirect = true;
+  //   // this.DirectedNum=0;    
+  // }
+  // // 修改直拨提交
+  // private submitDerict(){
+  //   ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
+  //   this.isDirect=false;
+  // }
 
     /**
      * 收货 提交
@@ -526,6 +523,8 @@ input.ezt-smart{
 }
  //物料信息
 .good-detail-content{
+  position: relative;
+  overflow: hidden;
     text-align: left;
     margin: 8px 10px;
     padding: 12px 10px 12px 15px;
@@ -546,6 +545,7 @@ input.ezt-smart{
     .good-detail-l>div>span{
       // padding: 5px 0px;
       align-items: baseline;
+      flex: 1;
     }
     .good-detail-r{
         display: inline-block;
@@ -564,8 +564,7 @@ input.ezt-smart{
         color: #395778;
         letter-spacing: 0;
         display: flex;
-        align-items: center !important;
-        flex:1;
+        line-height: 16px;
     }
     .good-detail-sort{
       font-size: 13px;
@@ -573,40 +572,33 @@ input.ezt-smart{
       letter-spacing: 0;
       display: flex;
       flex-direction: row;
-      flex:1;
     }
     .good-detail-nobreak{
       display:flex;
       flex:1;
-      padding: 6px 0px 6px 0px;
-      .ezt-dense-box{
-        align-items: center;
-        flex: 1;
-        margin-left: 26px;
-      }
+      padding: 6px 0px 6px 0px;      
     }
-    .good-detail-billno,.good-num-t{
+    .ezt-dense-box{
+      align-items: center;
+      flex: 1 !important;
+    }
+    .good-detail-billno{
         font-size: 10px;
         color: #A3B3C2;
         letter-spacing: 0;
         padding: 0px 0px 5px;
     }
-    .good-num-t{
-        display: inline-block;
-        text-align: center;
-        width: 100%;
-    }
     .ezt-detail-good{
-        display: flex;
-        flex-direction: column;
-        padding-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 10px;
+      transition: transform .5s;
+      background: #fff;
+      z-index: 2;
     }
 }
    
     //物料明细结束 
-    .ezt-detail-good input{
-      // width: 50px;
-    }
     .icon-dail{
       flex: .1;
       background: pink;
@@ -664,4 +656,15 @@ input.ezt-smart{
         flex:1;
       }
     }    
+    .swipe-transform{
+      transform: translateX(-50px);
+    }
+    .ezt-detail-del{
+      position: absolute;
+      right: 10px;
+      top: 30px;
+      background: pink;
+      width: 50px;
+      height: 50px;
+    }
 </style>

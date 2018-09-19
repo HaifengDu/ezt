@@ -171,6 +171,7 @@ export default class ReceiveGood extends Vue{
        this.service = ReceiveGoodService.getInstance();
        this.goodList = [];
        this.searchParam = {};
+       console.log(this.tabList,'tabList0000')
       //  this.getGoodList();
     }
 
@@ -179,7 +180,16 @@ export default class ReceiveGood extends Vue{
       this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
         this.isSearch=false; 
         this.hideMask();
-      });  
+      }); 
+      if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
+       this.tabList.TabList.forEach((item,index)=>{
+         if(item.name == this.$route.params.purStatus){
+           item.active = true;
+         }else{
+           item.active = false;
+         }
+       })
+      } 
     }
     //详情页跳转
     private renderUrl(info:string){

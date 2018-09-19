@@ -41,7 +41,7 @@
             </mt-index-list>
           </div>
         </div>
-        <ul class="icon-menu"><!--主页内容菜单-->
+        <ul class="icon-menu"  v-if="!titleSelect"><!--主页内容菜单-->
             <li @click="renderUrl('/needGood')">
               <div class="yaohuo">
                   <span class="ezt-reddot-s"></span>

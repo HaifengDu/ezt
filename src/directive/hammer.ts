@@ -5,3 +5,7 @@ Vue.directive("swipeleft",function(el,binding,vnode,oldNode){
     const hammertime = new Hammer(el);
     hammertime.on('swipeleft',binding.value)
 });
+Vue.directive("swiperight",function(el,binding,vnode,oldNode){
+    const hammertime = new Hammer(el);
+    hammertime.on('swiperight',binding.value)
+});

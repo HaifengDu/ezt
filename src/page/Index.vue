@@ -79,4 +79,7 @@ export default class Index extends Vue{
   .mint-tabbar > .mint-tab-item.is-selected{
     background: none;
   }
+  .ezt-bottom{
+    z-index: 3;
+  }
 </style>

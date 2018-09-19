@@ -48,7 +48,7 @@
          <span v-if="allLoaded">已全部加载</span>          
       </div>
     </div>
-    <ezt-footer>
+    <ezt-footer v-if="tabList.getActive().status=='1'">
       <div class="mine-bot-btn" slot="confirm" @click="handlerInitStock">
         <span class="ezt-lone-btn">初始化完毕</span>
       </div>  

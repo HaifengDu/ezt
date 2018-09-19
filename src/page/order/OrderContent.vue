@@ -26,27 +26,31 @@
         infinite-scroll-distance="10">
         <!-- 收货单列表       -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="receive-icon-title">
-              <span class="receive-icon-dcName"></span>
-              <span class="return-list-title">{{item.dc_name}}</span> 
-              <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
-            </div>
-            <div class="receive-icon-content">
-              <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-              <div style="display:flex">
-                <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)" 
+                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+              <div class="receive-icon-title">
+                <span class="receive-icon-dcName"></span>
+                <span class="return-list-title">{{item.dc_name}}</span> 
+                <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
               </div>
-              <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-            </div>
-            <div class="receive-icon-bottom">
-              <div class="glow-1">
-                <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+              <div class="receive-icon-content">
+                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <div style="display:flex">
+                  <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+                  <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+                </div>
+                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
-              <div>
-                <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
+              <div class="receive-icon-bottom">
+                <div class="glow-1">
+                  <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+                </div>
+                <div>
+                  <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
+                </div>
               </div>
             </div>
+            <div class="ezt-list-del" @click="deleteSection(item)">删除</div>
         </div>
          <span v-if="allLoaded">已全部加载</span>          
       </div>
@@ -108,14 +112,23 @@ export default class OrderGoods extends Vue{
       });
        this.service = OrderGoodsService.getInstance();
        this.pager= new Pager();
-       this.getList();
-    }  
+       this.getList();      
+    }
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.allLoaded=false;
       (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
+    }
+   /**
+   * 左滑删除某一项
+   */
+    private deleteSection(item:any){
+        let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+        return item.id == info.id;
+        })
+        this.goodList.splice(newIndex,1);
     }
     //下拉加载更多
     private loadMore() {
@@ -130,6 +143,7 @@ export default class OrderGoods extends Vue{
           this.allLoaded=true;
         }else{
           this.goodList=this.goodList.concat(res.data.data);
+          (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         }
         setTimeout(()=>{
           this.$vux.loading.hide();
@@ -148,8 +162,9 @@ export default class OrderGoods extends Vue{
         this.showMask();
         this.$vux.loading.show({
           text: '加载中...'
-          });
+        });
         this.goodList=res.data.data;
+        (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide();
           this.hideMask();
@@ -157,7 +172,21 @@ export default class OrderGoods extends Vue{
         },err=>{
           this.$toasted.show(err.message);
       });
-    }  
+    } 
+    private handlerLeft(item:any){
+      const status = this.tabList.getActive().status;
+      if(status =="1"){
+         item.active = true;
+      }     
+     
+    }
+    private handlerRight(item:any){
+      const status = this.tabList.getActive().status;
+      if(status == '1'){
+        item.active = false;
+      }
+     
+    } 
    
 }
 </script>
@@ -169,9 +198,31 @@ export default class OrderGoods extends Vue{
         margin-right: 10px;
       }
     }
+    .receive-dc-list{
+      position: relative;
+    }
     .ezt-action-point{
       width: 20px;
       height: 26px;
       display: inline-block;
+    }
+    //左侧滑动删除
+    .ezt-list-show{
+      position: relative;
+      transition: transform .5s;
+      background: #fff;
+      z-index: 2;
+    }
+    .ezt-list-del{
+      position: absolute;
+      right: 0px;
+      top: 30px;
+      width: 50px;
+      height: 100px;
+      background: pink;
+      z-index: 1;
+    }
+    .swipe-transform{
+      transform: translateX(-50px);
     }
 </style>

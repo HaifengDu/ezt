@@ -25,8 +25,7 @@
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" 
-                  v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
@@ -198,7 +197,7 @@ export default class OrderGoods extends Vue{
     .main-menu{
       background-color: #F1F6FF;
     }
-  .add{
+    .add{
       font-size: 20px;
       i{
         margin-right: 10px;
@@ -234,4 +233,26 @@ export default class OrderGoods extends Vue{
     .swipe-transform{
       transform: translateX(-50px);
     }
+    .receive-icon-dcName, .receive-icon-orderName {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px 3px 0px 10px;
+        opacity: 0.7;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        line-height: 22px; 
+        text-align: center;
+        font-style: normal;
+      }
+
+      .receive-icon-dcName {
+        background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
+      }
+
+      .receive-icon-orderName {
+        background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
+      }
 </style>

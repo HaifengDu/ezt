@@ -255,21 +255,26 @@ input.ezt-middle{
   }
 
   .receive-icon-dcName, .receive-icon-orderName {
-    width: 18px;
-    height: 18px;
     display: inline-block;
     vertical-align: middle;
-    margin: 0px 3px 0px 14px;
+    margin: 0px 3px 0px 10px;
+    opacity: 0.7;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    line-height: 22px; 
+    text-align: center;
+    font-style: normal;
   }
 
   .receive-icon-dcName {
-    background: url('../images/icon-dcName.png') no-repeat;
-    background-size: 18px 18px;
+    background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
   }
 
   .receive-icon-orderName {
-    background: url('../images/icon-orderName.png') no-repeat;
-    background-size: 18px 18px;
+    background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
   }
 
   .receive-icon-title {

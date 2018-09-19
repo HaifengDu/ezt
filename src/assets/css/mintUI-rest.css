@@ -42,7 +42,7 @@
   border-top:none!important;
 }
 /*盘库模块待提交*/
-.stocktaking .vux-tab{
+.stocktaking .vux-tab,.orderList .vux-tab{
   position: fixed;
   width: 100%;
   z-index: 99;

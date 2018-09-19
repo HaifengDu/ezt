@@ -1,6 +1,8 @@
-  <!--首页的订单页面-->
+  <!--订单模块首页-->
 <template>
-  <div class="ezt-page-con">
+  <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="false" title="订单">
       <div slot="action">
          <div class="add">
@@ -10,7 +12,7 @@
           <span class='ezt-action-point'>
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
-         </div>
+         </div>     
        </div>
     </ezt-header>  
     <div class="ezt-main">      
@@ -20,24 +22,25 @@
         @on-item-click="tabClick(index)" :key="index">{{item.name}}
         </tab-item>
       </tab>
-      <div class="ezt-add-content main-menu" ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
-        <!-- 收货单列表       -->
+      <div class="ezt-add-content main-menu">
+        <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+            <div class="ezt-list-show" 
+                  v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
               <div class="receive-icon-title">
-                <span class="receive-icon-dcName"></span>
+                <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
               </div>
               <div class="receive-icon-content">
-                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <div style="display:flex">
-                  <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                  <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+                  <span class="receive-dc-title">要货日期：
+                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>
+                  </span>
+                  <span class="receive-dc-title">到货日期：
+                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                  </span>
                 </div>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
@@ -192,6 +195,9 @@ export default class OrderGoods extends Vue{
 </script>
 
 <style lang="less" scoped>
+    .main-menu{
+      background-color: #F1F6FF;
+    }
   .add{
       font-size: 20px;
       i{
@@ -214,13 +220,16 @@ export default class OrderGoods extends Vue{
       z-index: 2;
     }
     .ezt-list-del{
-      position: absolute;
-      right: 0px;
-      top: 30px;
-      width: 50px;
-      height: 100px;
-      background: pink;
-      z-index: 1;
+        position: absolute;
+        right: 0px;
+        top: 42px;
+        width: 50px;
+        height: 85px;
+        background: red;
+        z-index: 1;
+        line-height: 85px;
+        text-align: center;
+        color: #fff;
     }
     .swipe-transform{
       transform: translateX(-50px);

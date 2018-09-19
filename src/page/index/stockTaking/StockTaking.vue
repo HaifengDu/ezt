@@ -211,7 +211,7 @@ export default class stockTaking extends Vue{
       this.pager = new Pager()
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
-      // this.iswarehouseType(); //动态加载仓库
+      this.iswarehouseType(); //动态加载仓库
 
      
     }
@@ -421,6 +421,8 @@ export default class stockTaking extends Vue{
         this.queryResult = res.data.data;
         this.setQueryResult(this.queryResult); 
       },err=>{
+          this.hideMask();     
+          this.isSearch = false;
           this.$toasted.show(err.message)
       })
      
@@ -448,7 +450,6 @@ export default class stockTaking extends Vue{
 }
 .ezt-pk,.ezt-add-content{
   padding-bottom: 0;
-  
 }
 .stocktaking{
   background-color: #F1F6FF;
@@ -489,7 +490,6 @@ export default class stockTaking extends Vue{
               }
               i{
                 opacity: 0.7;
-                background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
                 border-radius: 4px;
                 font-size: 12px;
                 color: #fff;

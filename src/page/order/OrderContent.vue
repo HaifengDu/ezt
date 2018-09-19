@@ -67,7 +67,7 @@ import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
 import { TabList } from '../../common/ITab';
-import {OrderGoodsService} from '../../service/OrderGoodsService.ts';
+import {OrderGoodsService} from '../../service/OrderGoodsService';
 @Component({
    components:{
      TabItem

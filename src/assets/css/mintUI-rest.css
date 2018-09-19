@@ -51,7 +51,7 @@
    height: 100% !important;
    overflow: scroll !important;
 }
-// 新增盘库单
+/* // 新增盘库单 */
 .addinventorylist .group{
    width: 100%;
 }

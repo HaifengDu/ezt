@@ -227,13 +227,14 @@ export default class Index extends Vue{
             display:none;
         }
         label{
+            display: inline-block;
             background: url('../../assets/images/btn_ck_n_checked.png') no-repeat;
-            background-size: 20px;
+            background-size: 16px;
             padding-left: 30px;
         }
         input[type='radio'].radio:checked + .radio {
             background:url('../../assets/images/btn_ck_checked.png') no-repeat;
-            background-size: 20px;
+            background-size: 16px;
         }
         .ezt-smart{
             border: 1px solid #ccc;

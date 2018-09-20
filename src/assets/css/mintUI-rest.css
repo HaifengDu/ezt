@@ -179,7 +179,7 @@
   display:inherit;
 }
 .weui-dialog__bd:first-child{
-  padding: 0.7em 13px 1.7em !important;
+  padding: 1.7em 13px 1.7em !important;
 }
 /* loading 的层级 */
 .vux-loading{

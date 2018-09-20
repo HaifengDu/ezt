@@ -8,12 +8,12 @@
     </ezt-header>    
     <div class="ezt-main">     
        <div class="ezt-add-content"> 
-          <div class="done-none" v-if="!inlineDescListValue">
+          <div class="done-none" v-if="!inlineDescListValue||inlineDescListValue.length<=0">
             <div></div>
             <span>没有搜索结果</span>
             <em @click="goBack">返回</em>
           </div>  
-         <checklist style="width:100%;" :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
+         <checklist style="width:100%;" v-else :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
          <div class="nextstep" @click="nextstep('d')">下一步</div>   
        </div> 
      </div>    
@@ -59,7 +59,7 @@ export default class stockTaking extends Vue{
     private pktemplateimport:any; 
     private setPktemplateimport:INoopPromise;//store中给setPktemplateimport赋值
     private templateList:any= [];
-    private inlineDescListValue:any;
+    private inlineDescListValue:any=[];
     private busi_date:any;
     private bill_type_name:any;
     private warehouse_name:any;
@@ -90,7 +90,10 @@ export default class stockTaking extends Vue{
            obj.value=item.text;
            this.templateList.push(obj);         
         })
-        this.inlineDescListValue = [this.templateList[0]['key']]
+        if(this.templateList&&this.templateList.length>0){
+          this.inlineDescListValue = [this.templateList[0]['key']]
+        }
+        
      }
 
     

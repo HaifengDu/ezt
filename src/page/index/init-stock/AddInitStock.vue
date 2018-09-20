@@ -48,97 +48,36 @@
                 </ul>
                 <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
-                        <!-- <mt-cell-swipe
-                        :right="[
-                            {
-                            content: '删除',
-                            style: { background: '#ccc', color: '#000' },
-                            handler: () => {deleteSection(item)}
-                            }
-                        ]"
-                        > -->
-                            <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
-                                <div class="good-detail-l">
-                                    <div>
-                                        <span class="good-detail-name">{{item.name}}
-                                            <span class="good-detail-sort">（规格）</span>
-                                        </span>
-                                        <!-- <span @click="editStatus(item)">
-                                            <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
-                                        </span>                                    -->
-                                    </div>
-                                    <div>
-                                        <span class="good-detail-billno">编码：003222</span>
-                                        <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
-                                        </span>
-                                        <span class="good-detail-sort">数量：{{item.num}}</span>
-                                    </div>                     
-                                </div>
-                                <div class="good-detail-r">
-                                    <div class="park-input">
-                                        <span class="title-search-name">税率：</span>
-                                        <span class="receive-dc-content">{{item.rate||0}}%</span>
-                                    </div>
-                                    <div class="park-input"> 
-                                        <span class="title-search-name">供应商：</span>
-                                        <span class="receive-dc-content">{{item.supplier||'无'}}</span>
-                                    </div>                    
-                                </div>
-                            </div>
-                             <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>      
-                        <!-- </mt-cell-swipe> -->
-                         <!-- <div>
-                            <x-dialog v-model="isEdit" class="dialog-demo">
-                                <div class="ezt-dialog-header">                                
-                                    <span class="ezt-close" @click="isEdit=false" >
-                                    <i class="fa fa-times" aria-hidden="true"></i>
+                        <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
+            v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
+                            <div class="good-detail-l">
+                                <div>
+                                    <span class="good-detail-name">{{item.name}}
+                                        <span class="good-detail-sort">（规格）</span>
                                     </span>
-                                </div>                            
-                                <div class="warehouse-list">
-                                    <ul class="edit-good-list">
-                                        <li>
-                                            <span class="title-select-name">数量：</span>
-                                            <x-number v-model="activeRound.num" button-style="round" :min="0"></x-number>
-                                        </li>
-                                        <li v-if="addBillInfo.costType==0">
-                                            <span class="title-dialog-name">价格：</span>
-                                            <span class="icon-input price">
-                                                <input type="number" class="ezt-smart" v-model="activeRound.price">
-                                            </span>                                       
-                                        </li>
-                                        <li v-if="addBillInfo.costType==1">
-                                            <span class="title-dialog-name">含税额：</span>
-                                            <span class="icon-input price">
-                                                <input type="number" class="ezt-smart" v-model="activeRound.amt">
-                                            </span>                                       
-                                        </li>
-                                        <li>
-                                            <span class="title-dialog-name">税率：</span>
-                                            <span class="icon-input">
-                                                <input type="number" class="ezt-smart" v-model="activeRound.rate">
-                                            </span>
-                                        </li>
-                                        <li class="select-list">
-                                            <span class="title-dialog-name">供应商：</span>
-                                            <span class="title-select-name item-select">
-                                            <select name="" id="" placeholder="请选择" class="ezt-select" v-model="activeRound.supplier">
-                                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                                <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                                            </select>
-                                            </span>
-                                        </li>
-                                        <li>
-                                            <span class="title-dialog-name">备注：</span>
-                                            <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="activeRound.remark">
-                                        </li>
-                                    </ul>
+                                    <!-- <span @click="editStatus(item)">
+                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
+                                    </span>                                    -->
                                 </div>
-                                <div class="mine-bot-btn">
-                                    <span class="ezt-lone-btn" @click="submitDerict">确定</span>
-                                </div>             
-                            </x-dialog>
-                        </div>                        -->
+                                <div>
+                                    <span class="good-detail-billno">编码：003222</span>
+                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
+                                    </span>
+                                    <span class="good-detail-sort">数量：{{item.num}}</span>
+                                </div>                     
+                            </div>
+                            <div class="good-detail-r">
+                                <div class="park-input">
+                                    <span class="title-search-name">税率：</span>
+                                    <span class="receive-dc-content">{{item.rate||0}}%</span>
+                                </div>
+                                <div class="park-input"> 
+                                    <span class="title-search-name">供应商：</span>
+                                    <span class="receive-dc-content">{{item.supplier||'无'}}</span>
+                                </div>                    
+                            </div>
+                        </div>
+                        <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
                     </li>
                 </ul>   
             </div> 
@@ -222,7 +161,7 @@ export default class InitStock extends Vue {
     this.addBillInfo.warehouse = this.orderType[0].type;
     this.addBeforeBillInfo.warehouse = this.orderType[0].type;
     this.addBillInfo.editPrice=true;
-     (this.selectedGood||[]).forEach(item=>item.active = false);
+    (this.selectedGood||[]).forEach(item=>item.active = false);
   }
   //选择物料
   private renderUrl(info: string) {

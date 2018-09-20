@@ -72,9 +72,6 @@ import librarydetails from './LibraryDetails'
        "user":"user",
        'addinventory':'stockTaking/addinventory',//新增盘库单数据
        'addBeforeInventory':'stockTaking/addBeforeInventory',//新增盘库单数据变化
-       'pkinventory':'stockTaking/pkinventory',//盘点类型
-       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情  确认盘点单
-       'pktemplateimport':'stockTaking/pktemplateimport',//模板导入
        
      }) 
    },
@@ -106,11 +103,8 @@ export default class stockTaking extends Vue{
     private setAddinventory:INoopPromise//store中给setAddinventory赋值
     private addBeforeInventory:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private setAddBeforeInventory:INoopPromise;
-    private pkinventory:any;
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
-    private inventoryDetails:any[]; //列表详情  确认盘点单
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private pktemplateimport:any[]; //模板
     private setPktemplateimport:INoopPromise//store中给setPktemplateimport赋值
     private SelectingInventory:boolean = false;
     private name:any;

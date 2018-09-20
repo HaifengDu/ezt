@@ -37,7 +37,6 @@ import librarydetails from './LibraryDetails'
      ...mapGetters({
        "user":"user",
        'pktemplateimport':'stockTaking/pktemplateimport',//模板导入
-       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情  确认盘点单
      }) 
    },
    methods:{ 
@@ -54,7 +53,6 @@ export default class stockTaking extends Vue{
     private service:StockTakingService;
     private getTemplateDetails:INoopPromise;  //模板详情
     private labelPosition= 'left';
-    private inventoryDetails:any[]; //列表详情  确认盘点单
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private pktemplateimport:any; 
     private setPktemplateimport:INoopPromise;//store中给setPktemplateimport赋值

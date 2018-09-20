@@ -45,6 +45,9 @@
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
+                    <!-- <group>
+                      <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                    </group> -->
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
@@ -498,9 +501,9 @@ private changeDirect(item:any){
    * 选择完货品去提交
    * */ 
   private goToCommit(){
-    this.setSelectedGood(this.selectedGoodList);
-    this.$router.back();
-    console.log(this.selectedGood,'111')
+    // this.setSelectedGood(this.selectedGoodList);
+    // this.$router.back();
+    // console.log(this.selectedGood,'111')
   }
   //点击备注
   private handlerRemark(item:any){

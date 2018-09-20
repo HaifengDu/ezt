@@ -32,7 +32,7 @@
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" @click="orderdetails">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" @click="orderdetails('')">
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
@@ -85,7 +85,7 @@
   <!-- 查询订货 -->
   <div v-if="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
-        <li class="select-list">
+       <li class="select-list">
         <span class="title-search-name ">订货类型：</span>
         <span class="title-select-name item-select">
           <select name="" id="" placeholder="请选择" class="ezt-select">
@@ -94,7 +94,7 @@
           </select>
         </span>
       </li>
-        <li class="select-list">
+      <li class="select-list">
         <span class="title-search-name ">供货机构：</span>
         <span class="title-select-name item-select">
           <select name="" id="" placeholder="请选择" class="ezt-select">
@@ -103,8 +103,7 @@
           </select>
         </span>
       </li>
-       </li>
-        <li class="select-list">
+       <li class="select-list">
         <span class="title-search-name ">支付类型：</span>
         <span class="title-select-name item-select">
           <select name="" id="" placeholder="请选择" class="ezt-select">
@@ -121,7 +120,7 @@
           <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
-        <li>
+      <li>
         <span class="title-search-name">单据或物料：</span>
         <input type="text" class="ezt-middle">
       </li>
@@ -318,10 +317,15 @@ export default class OrderGoods extends Vue{
       this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
    }
   // 跳转详情页面
-   private orderdetails(){
-      this.$router.push({name:'OrderDetails'});
-   }
-
+    private orderdetails(info:string){
+      if(info){
+         this.$router.push(info);
+         return false;
+      }
+      if(this.tabList.getActive().status==1 || this.tabList.getActive().status==3){
+        this.$router.push('/OrderDetails');
+      }
+    }
 }
 </script>
 <style lang="less" scoped>

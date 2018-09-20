@@ -127,9 +127,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
   computed:{    
      ...mapGetters({
-       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情  确认盘点单
-       'queryResult':'stockTaking/queryResult',//查询结果
-       'pkinventory':'stockTaking/pkinventory',//盘点类型
+
      }) 
    },
    methods:{    
@@ -151,11 +149,8 @@ export default class stockTaking extends Vue{
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[]; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private queryResult:any[];  //查询详情
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
-    private pkinventory:any[];  //盘点类型
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;

@@ -78,12 +78,12 @@
             <ul>   
               <li>
                  <span>单据号</span>
-                 <p><input type="text" placeholder="请输入单据号" v-model="djnumber"></p>
+                 <p><input type="text" placeholder="请输入单据号" v-model="searchParam.djnumber"></p>
               </li>
               <li class="select-list">
                 <span class="title-search-name ">盘点库</span>
                 <span class="title-select-name item-select">
-                  <select name="" id="" placeholder="请选择" class="ezt-select" v-model="Selectedwarehouse" @click="iswarehouseType">
+                  <select name="" id="" placeholder="请选择" class="ezt-select" v-model="searchParam.selectedwarehouse" @click="iswarehouseType">
                         <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                       </select>   
                   </span>
@@ -163,13 +163,13 @@ export default class stockTaking extends Vue{
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
     private warehouseType:any[];  //动态加载仓库
-    private Selectedwarehouse:any;//选中仓库id
+    private selectedwarehouse:any;//选中仓库id
     private showbtn:boolean= true;
     private hidebtn:boolean= true;
     private sildename:string = 'slide-go';
     private hideMask:()=>void;
     private showMask:()=>void;
-    private djnumber:string; //单据号
+    private djnumber:any; //单据号
     private inventoryType:any[] = [];//盘点类型
     private type:string; //盘点类型数据
     private names:string;
@@ -407,16 +407,15 @@ export default class stockTaking extends Vue{
     }
     //查询结果
     private toSearch(){
-      const bill_no = this.djnumber || null;
+      const bill_no = this.searchParam.djnumber || null;
       const end_date =  this.searchParam.end_date || null;
       const begin_date = this.searchParam.begin_date || null;
-      const warehouse_id = this.Selectedwarehouse || null;
+      const warehouse_id = this.searchParam.selectedwarehouse || null;
       this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
         this.hideMask();     
         this.isSearch = false;
         this.$router.push({name:'QueryResult'});
-        this.queryResult = res.data.data;
-        this.setQueryResult(this.queryResult); 
+        this.setQueryResult(res.data.data); 
       },err=>{
           this.hideMask();     
           this.isSearch = false;

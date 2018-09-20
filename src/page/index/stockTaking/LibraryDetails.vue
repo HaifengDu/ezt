@@ -104,13 +104,7 @@
                <li>
                   <div><p>盘点日期：<span>{{busi_date}}</span></p></div>
                   <div><p>盘库方式：<span>{{template_name}}</span></p></div>
-                  <div>
-                      <p>盘点类型：
-                        <span v-if="bill_type_name === '日盘'">日盘</span>
-                        <span v-if="bill_type_name === '周盘'">周盘</span>
-                        <span v-if="bill_type_name === '周期盘点'">月盘</span>
-                      </p>
-                  </div>
+                  <div><p>盘点类型：{{bill_type_name}}</p></div>
                   <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                   <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
                </li>

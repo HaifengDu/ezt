@@ -69,15 +69,12 @@ declare var mobiscroll:any;
 })
 export default class OrderGoods extends Vue{
     private service: OrderGoodsService;
-    private searchParam:String = "";
 
     created() {     
        this.service = OrderGoodsService.getInstance();
     }
 
     mounted(){      
-      this.searchParam = this.$route.params.obj;
-      console.log(this.searchParam,'00000');
     }
    
     private goBack(){

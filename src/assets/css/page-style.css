@@ -477,11 +477,17 @@ input.ezt-middle{
   }
   /* 背景色按钮 */
   .ezt-two-btn{
-    background: #1081EF;
-    font-size: 14px;
+    text-align: center;
     color: #FFFFFF;
     letter-spacing: 0;
     padding: 14px 44px;
+    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+    background-image: linear-gradient(90deg, #5A12CC 0%, #3C82FB 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    border-radius: 100px;
+    cursor: pointer;
+    width: 100%;
   }
   /*列表页 tab下面内容高度*/
   .ezt-add-content{   
@@ -508,13 +514,6 @@ input.ezt-middle{
   } */
   .title-search-name{
     flex:1;
-  }
-  .ezt-two-btn{
-      width: 40px;
-      margin: 0 auto;
-      border-radius: 8px;
-      padding: 6px 11px;
-      text-align: center;
   }
   .icon-trun-on{
     margin-left: 10px;

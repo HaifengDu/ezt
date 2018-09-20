@@ -3,7 +3,7 @@
   <div class="ezt-page-con">
     <ezt-header :back="false" title="订单">
       <div slot="action">
-         <div class="add">
+         <div class="add" @click="renderUrl('/addOrderGood')">
            <span class='ezt-action-point'>
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
@@ -187,6 +187,12 @@ export default class OrderGoods extends Vue{
       }
      
     } 
+    //首页菜单跳转
+    private renderUrl(info:string){
+      if(info){
+        this.$router.push(info);
+      }      
+    }
    
 }
 </script>

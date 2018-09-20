@@ -189,8 +189,7 @@ export default class Index extends Vue{
         }else{
           this.$router.push('/initStock');
         }
-      }
-        
+      }        
     }
     //日结事件
     private checkDate(date:string){
@@ -335,7 +334,7 @@ export default class Index extends Vue{
     top: 30px;
     left: 0;
     background: #F1F6FF;
-    z-index: 3;
+    z-index: 10;
     color:#000;
     // display:flex;
     // flex-direction: row;

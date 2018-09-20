@@ -75,9 +75,9 @@
       <li>
         <span class="title-search-name">收货日期：</span>
         <span>
-          <ezt-canlendar placeholder="开始时间" type="text" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
             <span>至</span>
-          <ezt-canlendar placeholder="结束时间" type="text" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
       <li class="select-list">

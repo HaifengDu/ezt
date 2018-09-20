@@ -28,13 +28,20 @@
               </li>
             </ul>
            </div>
-            <div class="mine-modify" @click="renderUrl('/changePsd')">
-              <span class="title-search-name">修改密码</span>
-              <span class="title-search-right">
-                <i class="fa fa-angle-right" aria-hidden="true"></i>
-              </span>
-            
-            </div>
+           <ul class="mine-action-list">
+             <li class="mine-modify" @click="renderUrl('/changePsd')">
+                <span class="title-search-name">修改密码</span>
+                <span class="title-search-right">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </span>
+             </li>
+             <li class="mine-modify" @click="renderUrl('/systemSetting')">
+                <span class="title-search-name">系统设置</span>
+                <span class="title-search-right">
+                  <i class="fa fa-angle-right" aria-hidden="true"></i>
+                </span>
+             </li>
+           </ul>
            <div class="mine-bot-btn" @click="logout">
              <span class="ezt-lone-btn">退出</span>
            </div>
@@ -101,7 +108,7 @@ export default class Mine extends Vue{
   .mine-bot-btn{
     width: 100%;
     position: absolute;
-    bottom: 60px;
+    margin-top: 20px;
     .ezt-lone-btn{
       display: inline-block;
       font-size: 14px;
@@ -155,7 +162,7 @@ export default class Mine extends Vue{
     flex-direction: row;
   }
 
-  .mine-action,.mine-modify{
+  .mine-action{
     background: #FFFFFF;
     margin: 10px 0;
     display:flex;
@@ -207,5 +214,20 @@ export default class Mine extends Vue{
     height: 25px;
     background: url(../../assets/images/user2.png) 0 0 no-repeat;
     background-size: 25px 25px;
+  }
+  .mine-action-list{
+    background: #fff;
+    margin: 10px 0px;
+    .mine-modify{
+      padding: 10px;
+      display:flex;
+      text-align: left;
+    }  
+    li{
+      border-top: 1px solid #ccc;
+    }
+    li:nth-child(1){
+      border-top: none;
+    }
   }
 </style>

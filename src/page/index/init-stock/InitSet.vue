@@ -164,7 +164,7 @@ export default class InitStock extends Vue{
     }
     .ezt-foot-sub{
         line-height: 50px;
-    }
+    }    
 
 </style>
 

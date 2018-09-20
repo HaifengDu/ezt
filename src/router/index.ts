@@ -26,6 +26,8 @@ import AddInitStock from '@/page/index/init-stock/AddInitStock.vue';//添加库�
 import InitSet from '@/page/index/init-stock/InitSet.vue';//库存初始化设置
 import InitAudit from '@/page/index/init-stock/InitAudit.vue';//审核库存初始化单
 import InitDetail from '@/page/index/init-stock/InitDetail.vue';//初始化单详情
+import SystemSetting from '@/page/mine/SystemSetting.vue';//系统设置
+import AddOrderGood from '@/page/order/AddOrderGood.vue';//新增订货
 Vue.use(Router)
 
 const router = new Router({
@@ -143,6 +145,16 @@ const router = new Router({
       path: '/initDetail',
       name:"InitDetail",
       component: InitDetail
+    },
+    {
+      path:'/systemSetting',
+      name:'SystemSetting',
+      component: SystemSetting
+    },
+    {
+      path: '/addOrderGood',
+      name:"AddOrderGood",
+      component: AddOrderGood
     }
   ]
 });

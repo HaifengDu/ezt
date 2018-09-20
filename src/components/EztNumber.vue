@@ -17,7 +17,7 @@ import { parse } from 'querystring';
     data () {
       return {
         dValue:0,
-        minusDisabled:true,
+        // minusDisabled:true,
       }
     },
     model:{
@@ -30,6 +30,25 @@ import { parse } from 'querystring';
        type:String,
        disabled:Boolean,
        placeholder:String,
+    },
+    computed:{
+        minusDisabled:{
+            get(){
+                if(this.dValue>0){
+                    return false;
+                }else{
+                    return true;
+                }
+            },
+            set(){
+                if(this.dValue>0){
+                    return false;
+                }else{
+                    return true;
+                }
+            }
+           
+        }
     },
     watch: {
        'value':function(newValue,oldValue){

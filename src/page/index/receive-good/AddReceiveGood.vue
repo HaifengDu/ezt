@@ -139,6 +139,9 @@ import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -148,121 +151,107 @@ declare var mobiscroll:any;
    computed:{
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-       'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
-       'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
+      //  'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
+      //  'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
      })
    },
    methods:{
      ...mapActions({
-      'setAddBillInfo':"publicAddGood/setAddBillInfo",
+      // 'setAddBillInfo':"publicAddGood/setAddBillInfo",
       'setSelectedGood':'publicAddGood/setSelectedGood',
-      "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
+      // "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
      })
    }
 })
 export default class ReceiveGood extends Vue{
-    private isSave:boolean=false;//确认不保存？
-    private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
-    private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
-    private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
-    private service: ReceiveGoodService;
-    private pager:Pager;
-    // private getGoodList:INoopPromise //调用store中的请求接口
-    private hideMask:()=>void;
-    private showMask:()=>void;
-    // private updateUser:INoop;
-    private list:any[] = [];
-    private goodList:any[] = [];
-    private DirectedNum:number=0;//已直拨的数量
+  private cache = CachePocily.getInstance(ECache.LocCache);
+  private isSave:boolean=false;//确认不保存？
+  private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
+  private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
+  private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
+  private service: ReceiveGoodService;
+  private pager:Pager;
+  // private getGoodList:INoopPromise //调用store中的请求接口
+  private hideMask:()=>void;
+  private showMask:()=>void;
+  // private updateUser:INoop;
+  private list:any[] = [];
+  private goodList:any[] = [];
+  private DirectedNum:number=0;//已直拨的数量
 
-    private tabList:TabList = new TabList();
-    private isDirect:boolean = false; //是否可直拨弹框
-    private selectedGood:any[];//store中selectedGood的值
-    private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private addBeforeBillInfo:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    private setAddBeforeBillInfo:INoopPromise;
-    private addBillInfo:any;//store中
-    private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
-    private activeRound:any={};//深拷贝存储的值
-    private restActiveRound:any={};//编辑时绑定的值
-    private moveX:number=0; //滑动删除的位置
-    private slideEffect:string="";//滑动删除改变 样式
-    // private roundValue:any={//可直拨的数据
-    //   num: 10,
-    //   numed:3,
-    //   list:[{
-    //     name:'仓库一号',
-    //     num:2
-    //   },{
-    //     name:'仓库二号',
-    //     num:6
-    //   },{
-    //     name:'仓库三号',
-    //     num:6
-    //   },{
-    //     name:'仓库四号',
-    //     num:6
-    //   },{
-    //     name:'仓库五号',
-    //     num:6
-    //   },{
-    //     name:'仓库六号',
-    //     num:6
-    //   }]
-    // };
-    private orderType:any[] = [{//单据类型下拉数据    
-      name:"合同采购单",
-      type:"q"
-    },{
-      name:"采购单",
-      type:"m"
-    }];
-    created() {     
-       this.pager = new Pager()
-       this.service = ReceiveGoodService.getInstance();
-       this.goodList = []; 
-       this.addBillInfo.editPrice=false; 
-      //  this.getGoodList();
-      (this.selectedGood||[]).forEach(item=>item.active = false);
+  private tabList:TabList = new TabList();
+  private isDirect:boolean = false; //是否可直拨弹框
+  private selectedGood:any[];//store中selectedGood的值
+  private setSelectedGood:INoopPromise//store中给selectedGood赋值
+  private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+  // private setAddBeforeBillInfo:INoopPromise;
+  private addBillInfo:any={
+    editPrice:false
+  };//store中
+  // private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
+  private activeRound:any={};//深拷贝存储的值
+  private restActiveRound:any={};//编辑时绑定的值
+  private moveX:number=0; //滑动删除的位置
+  private slideEffect:string="";//滑动删除改变 样式
+  // private roundValue:any={//可直拨的数据
+  //   num: 10,
+  //   numed:3,
+  //   list:[{
+  //     name:'仓库一号',
+  //     num:2
+  //   },{
+  //     name:'仓库二号',
+  //     num:6
+  //   },{
+  //     name:'仓库三号',
+  //     num:6
+  //   },{
+  //     name:'仓库四号',
+  //     num:6
+  //   },{
+  //     name:'仓库五号',
+  //     num:6
+  //   },{
+  //     name:'仓库六号',
+  //     num:6
+  //   }]
+  // };
+  private orderType:any[] = [{//单据类型下拉数据    
+    name:"合同采购单",
+    type:"q"
+  },{
+    name:"采购单",
+    type:"m"
+  }];
+  created() {     
+      this.pager = new Pager()
+      this.service = ReceiveGoodService.getInstance();
+      this.goodList = []; 
+    if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
     }
+    if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
+        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
+    }
+    //  this.getGoodList();
+    (this.selectedGood||[]).forEach(item=>item.active = false);
+  }
 
-    mounted(){ 
-      if(!this.addBeforeBillInfo.billType){
-        this.addBillInfo.billType="";
-        this.addBillInfo.supplier="";
-        this.addBillInfo.warehouse="";
-      }
-    }
-
-    private handlerLeft(item:any){     
-      // this.selectedGood.forEach(info=>{
-      //   if(item.id == info.id){
-      //     item.active = true;
-      //   }else{
-      //     item.active=false;
-      //   }
-      // })
-      item.active=true;
-     
-    }
-    private handlerRight(item:any){
-      // this.selectedGood.forEach(info=>{
-      //   if(item.id == info.id){
-      //     item.active = false;
-      //   }else{
-      //     item.active=true;
-      //   }
-      // })
-      item.active=false;
-    }
-    // /**
-    //  * 限制输入的位数
-    //  */
-    // private limitBit(item:any,msg:any){
-    //   if(msg=="price"){
-    //     item.price = Number(item.price).toFixed(2);
-    //   }     
+  mounted(){ 
+    // if(!this.addBeforeBillInfo.billType){
+    //   this.addBillInfo.billType="";
+    //   this.addBillInfo.supplier="";
+    //   this.addBillInfo.warehouse="";
     // }
+  }
+
+  private handlerLeft(item:any){ 
+    item.active=true;
+    
+  }
+  private handlerRight(item:any){
+    item.active=false;
+  }
 
   /**
    * computed demo
@@ -281,20 +270,6 @@ export default class ReceiveGood extends Vue{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
   }
-  //  /**
-  //  * 改变直拨的 数量
-  //  */
-  // private changeDirect(item:any){  
-  //   if(!this.activeRound.roundValue.list){
-  //      this.DirectedNum = 0;
-  //   }
-  //   this.DirectedNum = this.activeRound.roundValue.list.filter((item:any)=>item.num).reduce((ori:number,item:any)=>ori+=item.num,0);
-  //   if(this.DirectedNum<=this.activeRound.roundValue.num){
-  //     item.oldNum = item.num;
-  //   }else{
-  //     item.num = item.oldNum;
-  //   }
-  // }
     /**
    * 左滑删除某一项
    */
@@ -304,21 +279,6 @@ export default class ReceiveGood extends Vue{
       })
       this.selectedGood.splice(newIndex,1);
   }
-  // /**
-  // *可直拨
-  //   */
-  // private handlerDirect(item:any){
-  //   this.restActiveRound = item;
-  //   this.activeRound=ObjectHelper.serialize(this.restActiveRound);//深拷贝
-  //   this.isDirect = true;
-  //   // this.DirectedNum=0;    
-  // }
-  // // 修改直拨提交
-  // private submitDerict(){
-  //   ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
-  //   this.isDirect=false;
-  // }
-
     /**
      * 收货 提交
      */
@@ -339,9 +299,9 @@ export default class ReceiveGood extends Vue{
         this.$toasted.show("请添加物料！");
         return false;
       } 
-      this.setAddBillInfo({}),
+      this.addBillInfo={},
       this.setSelectedGood([]);
-      this.setAddBeforeBillInfo({});
+      this.addBeforeBillInfo={};
       this.$toasted.success("提交成功！");
       this.$router.push("/receiveGood");
     }
@@ -365,9 +325,9 @@ export default class ReceiveGood extends Vue{
         this.$toasted.show("请添加物料！");
         return false;
       }
-      this.setAddBillInfo({}),
+      this.addBillInfo={},
       this.setSelectedGood([]);
-      this.setAddBeforeBillInfo({});
+      this.addBeforeBillInfo={};
       this.$toasted.success("审核成功！");
       this.$router.push("/receiveGood");
     }    
@@ -386,8 +346,8 @@ export default class ReceiveGood extends Vue{
           this.$toasted.show("请选择仓库！");
           return false;
         }
-        this.setAddBillInfo(this.addBillInfo);//将选择的单据信息保存在store中   
-        this.setAddBeforeBillInfo(this.addBeforeBillInfo);    
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.$router.push(info);
       }      
     }
@@ -452,9 +412,9 @@ export default class ReceiveGood extends Vue{
       }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-      this.setAddBillInfo({}),
+      this.addBillInfo={},
       this.setSelectedGood([]);
-      this.setAddBeforeBillInfo({});
+      this.addBeforeBillInfo={};
       this.$router.push('/receiveGood');
     }
     // private getGoodList(){

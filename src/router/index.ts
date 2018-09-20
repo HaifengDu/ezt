@@ -30,11 +30,11 @@ import SystemSetting from '@/page/mine/SystemSetting.vue';//系统设置
 import AddOrderGood from '@/page/order/AddOrderGood.vue';//新增订货
 import OrderGood from '@/page/order/OrderContent.vue';//订货列表页
 import ChartContent from '@/page/chart/ChartContent.vue';//报表
+import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 Vue.use(Router)
 
 const router = new Router({
-  routes: [
-    {
+  routes: [{
       path: '/login',
       name: 'Login',
       component: Login,
@@ -48,11 +48,11 @@ const router = new Router({
       name:"ReturnGood",
       component:ReturnGood
     },{
-      path:"/needgood",
+      path:"/needGood",
       name:"NeedGood",
       component:NeedGood
     },{
-      path:"/selecttemplate",
+      path:"/selectTemplate",
       name:"SelectTemplate",
       component:SelectTemplate
     },{
@@ -60,62 +60,54 @@ const router = new Router({
       name:"ReceiveGood",
       component:ReceiveGood,     
     },{
-        path: '/comfirmAccept',
-        name: 'ComfirmAccept',
-        component: ComfirmAccept,
-      },{
-        path: '/checkDetail',
-        name: 'CheckDetail',
-        component: CheckDetail
-      },{
-        path: '/addReceiveGood',
-        name: 'AddReceiveGood',
-        component: AddReceiveGood
-      },{
-        path: '/searchReceiveGood',
-        name: 'SearchReceiveGood',
-        component: SearchReceiveGood
-      },{
+      path: '/comfirmAccept',
+      name: 'ComfirmAccept',
+      component: ComfirmAccept,
+    },{
+      path: '/checkDetail',
+      name: 'CheckDetail',
+      component: CheckDetail
+    },{
+      path: '/addReceiveGood',
+      name: 'AddReceiveGood',
+      component: AddReceiveGood
+    },{
+      path: '/searchReceiveGood',
+      name: 'SearchReceiveGood',
+      component: SearchReceiveGood
+    },{
       path:"/mine",
       name:"MineContent",
       component:MineContent
-    },
-    {
-      path:"/stocktaking",
+    },{
+      path:"/stockTaking",
       name:"StockTaking",
       component:StockTaking,
-    },
-    {
-      path: '/addinventorylist',   //新增盘点单
+    },{
+      path: '/addInventoryList',   //新增盘点单
       name: 'AddinventoryList',
       component: AddinventoryList,
-    },
-    {      
-      path: '/librarydetails',   //盘库详情   审核盘点单
+    },{      
+      path: '/libraryDetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',
       component: LibraryDetails,
-    },
-    {
-      path: '/realdiscentry',   //实盘录入
+    },{
+      path: '/realdiscEntry',   //实盘录入
       name: 'RealdiscEntry',
       component: RealdiscEntry,
-    },
-    {
-      path: '/queryresult',   //查询结果
+    },{
+      path: '/queryResult',   //查询结果
       name: 'QueryResult',
       component: QueryResult,
-    },
-    {
-      path: '/selectthetemplate',   //选择模板
+    },{
+      path: '/selecttheTemplate',   //选择模板
       name: 'SelecttheTemplate',
       component: SelecttheTemplate,
-    },
-    {
-      path: '/selectinginventory',   //选择盘点货品
+    },{
+      path: '/selectingInventory',   //选择盘点货品
       name: 'SelectingInventory',
       component: SelectingInventory,
-    },
-    {
+    },{
       path:'/publicAddGood',
       name:'PublicAddGood',
       component: PublicAddGood,
@@ -127,33 +119,27 @@ const router = new Router({
       path: '/initStock',
       name:'InitStock',
       component: InitStock
-    },
-    {
+    },{
       path:'/addInitStock',
       name:'AddInitStock',
       component: AddInitStock
-    },
-    {
+    },{
       path: '/initSet',
       name:"InitSet",
       component: InitSet
-    },
-    {
+    },{
       path: '/initAudit',
       name:'InitAudit',
       component: InitAudit
-    },
-    {
+    },{
       path: '/initDetail',
       name:"InitDetail",
       component: InitDetail
-    },
-    {
+    },{
       path:'/systemSetting',
       name:'SystemSetting',
       component: SystemSetting
-    },
-    {
+    },{
       path: '/addOrderGood',
       name:"AddOrderGood",
       component: AddOrderGood
@@ -167,6 +153,10 @@ const router = new Router({
       path: '/chartContent',
       name: 'ChartContent',
       component: ChartContent
+    },{
+      path: '/searchOrderGood',
+      name:"SearchOrderGood",
+      component: SearchOrderGood
     }
   ]
 });

@@ -1,6 +1,7 @@
   <!--订单模块首页-->
 <template>
-  <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
+<div>
+   <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
     <ezt-header :back="false" title="订单">
@@ -9,7 +10,7 @@
            <span class='ezt-action-point' @click="add">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
-          <span class='ezt-action-point'>
+          <span class='ezt-action-point' @click="query">
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
          </div>
@@ -81,6 +82,55 @@
       </ul>
     </ezt-footer>
   </div>
+  <!-- 查询订货 -->
+  <div v-if="isSearch" class="search-dialog">
+      <ul class="ezt-title-search">
+        <li class="select-list">
+        <span class="title-search-name ">订货类型：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+        <li class="select-list">
+        <span class="title-search-name ">供货机构：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+       </li>
+        <li class="select-list">
+        <span class="title-search-name ">支付类型：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="title-search-name">业务日期：</span>
+        <span>
+          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+            <span>至</span>
+          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+        </span>
+      </li>
+        <li>
+        <span class="title-search-name">单据或物料：</span>
+        <input type="text" class="ezt-middle">
+      </li>
+      <li>
+        <div class="ezt-two-btn" @click="toSearch">查询</div>
+      </li>
+    </ul>
+  </div> 
+</div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -120,6 +170,26 @@ export default class OrderGoods extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     private addgoods:boolean = false;  //显示配送要货
+    private isSearch:boolean = false; //订货查询
+    private searchParam:any={};//搜索时的查询条件
+    private orderType:any=[{
+      name:'仓库1',
+      id:'01'
+    }]
+    private paymentType:any=[
+      {
+      name:'月结',
+      id:'01',
+      },
+      {
+      name:'下单即支付',
+      id:'02',
+      },
+      {
+      name:'货到付款',
+      id:'03',
+      },
+    ]
     created() {
       this.tabList.push({
         name:"待审核",
@@ -138,7 +208,16 @@ export default class OrderGoods extends Vue{
       });
        this.service = OrderGoodsService.getInstance();
        this.pager= new Pager();
-       this.getList();      
+       this.getList();  
+       this.searchParam = {};    
+    }
+
+    mounted(){      
+      this.getList();
+      this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
+        this.isSearch=false; 
+        this.hideMask();
+      }); 
     }
     private tabClick(index:number){
       this.tabList.setActive(index);
@@ -219,13 +298,22 @@ export default class OrderGoods extends Vue{
           this.addgoods = false
       }, 5000);
     }
-     //首页菜单跳转
+    //首页菜单跳转
     private renderUrl(info:string){
       if(info){
         this.$router.push(info);
       }      
     }
-   
+   // 查询订货
+   private query(){
+      this.isSearch = !this.isSearch;
+      this.isSearch?this.showMask():this.hideMask();
+   }
+   private toSearch(){
+    this.isSearch = false;
+    this.hideMask();
+    this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
+  }
 }
 </script>
 <style lang="less" scoped>
@@ -319,5 +407,13 @@ export default class OrderGoods extends Vue{
 
       .receive-icon-orderName {
         background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
+      }
+
+      // 订货查询
+      .search-dialog{
+        width: 100%; 
+        position:absolute;
+        top:45px; 
+        z-index:10001;
       }
 </style>

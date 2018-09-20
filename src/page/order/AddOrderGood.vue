@@ -98,6 +98,10 @@
                 </div>  
             </div>
         </ezt-footer>
+           <!-- 返回时提示保存信息 -->
+        <confirm v-model="isSave" @on-confirm="onConfirm">
+            <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
+        </confirm>
         <!-- 当有物料 仓库发生变化时校验 -->
         <confirm v-model="isStore" @on-cancel="onStoreCancel('store')" @on-confirm="onStoreConfirm('store')">
             <p style="text-align:center;">您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。</p>
@@ -140,6 +144,7 @@ export default class Order extends Vue{
     private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
     private isStore:boolean=false;
     private isOrderType:boolean=false;
+    private isSave:boolean=false;
     private orderType:any=[{
       name:'配送中心1',
       id:'01'
@@ -241,14 +246,33 @@ export default class Order extends Vue{
      * 提交
      */
     private saveReceive(){
-        this.$toasted.success("提交成功！");
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        this.setAddBillInfo({}),
+        this.setSelectedGood([]);
+        this.setAddBeforeBillInfo({});
+        this.$toasted.success("保存成功！");
+    }
+
+    //离开确认
+    private onConfirm(){//确认离开，清空store中的物料和单据信息
+        this.setAddBillInfo({}),
+        this.setSelectedGood([]);
+        this.setAddBeforeBillInfo({});
+        this.$router.push('/orderGood')
     }
 
     /**
      * 返回
      */
     private goBack(){
-        this.$router.push('/orderGood')
+         if((this.addBillInfo&&this.addBillInfo.storeId)||this.selectedGood.length>0){
+            this.isSave=true;
+        }else{
+            this.$router.push('/orderGood')
+        }       
     }
 }
 </script>

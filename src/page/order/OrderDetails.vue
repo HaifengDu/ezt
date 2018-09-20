@@ -14,15 +14,16 @@
                     <span class="receive-icon-dcName"></span>
                     <span class="return-list-title">item.dc_name</span> 
                     <span class="receive-status">已完成</span>
+                    <span class="receive-status" v-if="false">已付：213123</span>
                 </div>
                 <div class="receive-icon-content">
-                    <span class="receive-dc-title">单号：<span class="receive-dc-content">{item.bill_no}</span></span>
+                    <span class="receive-dc-title">单号：<span class="receive-dc-content">123123</span></span>
                     <div style="display:flex">
-                        <span class="receive-dc-title">要货日期：<span class="receive-dc-content">item.arrive_date</span></span>
-                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">item.ask_goods_date</span></span>
+                        <span class="receive-dc-title">要货日期：<span class="receive-dc-content">2018-09-12</span></span>
+                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">2018-09-12</span></span>
                     </div>
                     <div style="display:flex;padding-bottom:20px;">
-                        <span class="receive-dc-title">备注：<span class="receive-dc-content">item.arrive_date</span></span>
+                        <span class="receive-dc-title">备注：<span class="receive-dc-content">不要啦就是你的济南市快递那福克斯地方</span></span>
                     </div>
                     <div class="receive-ys">已收</div>
                 </div>
@@ -35,15 +36,22 @@
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>
-                                <span class="good-detail-name">猪肉
+                                <span class="good-detail-name">item.name
                                     <span class="good-detail-sort">（规格）</span>
                                 </span>
-                                <span class="good-detail-sort">￥12.0001/KG</span>
+                                <span class="good-detail-sort">￥item.guige</span>
                             </div>
                             <div>
-                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-billno">编号：item.code</span>
                             </div>
-                            <div class="good-detail-sort">备注：这是水果这是水果这是水果这是水果这是水果这是水果这是水果这是水果</div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
                         </div>
                         <div class="good-detail-r">
                             <span class="good-detail-num">3</span>
@@ -51,6 +59,7 @@
                     </div>
                 </li>
             </ul> 
+            <div class="total">合计：品项<span>12</span>，数量<span>100</span>，含税金额<span>242424.01</span></div>
         </div>  
     </div>
   </div>
@@ -72,6 +81,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
+
      })
    },
    methods:{
@@ -81,17 +91,21 @@ declare var mobiscroll:any;
 })
 export default class OrderGoods extends Vue{
     private service: OrderGoodsService;
-    created() {     
+    private showOther: boolean=false;
+    created() {      
        this.service = OrderGoodsService.getInstance();
+       
     }
 
     mounted(){ 
     }
-   
+
     private goBack(){
         this.$router.push('/orderGood');
     }
-    
+    private showOtherWare(){
+        this.showOther = !this.showOther;
+    }
    
 }
 </script>
@@ -167,6 +181,13 @@ export default class OrderGoods extends Vue{
         font-size: 13px;
         color: #5F7B9A;
         letter-spacing: 0;
+        .remarks{
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
     }
     .good-detail-billno,.good-num-t{
         font-size: 10px;
@@ -184,10 +205,27 @@ export default class OrderGoods extends Vue{
         padding-bottom: 10px;
     }
     .receive-status{
-        background-image: linear-gradient(-134deg, #4DBCFE 0%, #646EFF 100%);
-        box-shadow: 0 2px 6px 0 rgba(130,182,255,0.70);
-        border-radius: 4px;
-        color: #fff;
-        padding: 4px 10px;
+        color:#4A39F3;
     }
+    .total{
+        position: fixed;
+        bottom: 0px;
+        width: 100%;
+        height: 30px;
+        line-height: 30px;
+        background-color: #F1F6FF;
+        span{
+            color: red;
+        }
+    }
+     .turnOn{
+        display: inline-block;
+        height: 100%;
+        flex: .2;
+        margin: 10px 10px 0 0;
+        float: right;
+    }
+    .icon-trun-on.off{
+        transform: rotate(180deg);
+    }  
 </style>

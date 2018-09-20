@@ -45,7 +45,7 @@
 .stocktaking .vux-tab{
   position: fixed;
   width: 100%;
-  z-index: 99;
+  z-index: 9;
 }
 .ezt-pk .vux-swiper,.ezt-pk .vux-slider{
    height: 100% !important;

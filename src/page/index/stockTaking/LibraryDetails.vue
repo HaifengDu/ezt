@@ -271,7 +271,6 @@ export default class stockTaking extends Vue{
     private types:string;
     private template_name:string;
     private stock_count_mode:string;
-    private treatment:string;
     created() {
       this.service = StockTakingService.getInstance();
       this.warehouse_name = this.$route.query.warehouse_name
@@ -281,7 +280,6 @@ export default class stockTaking extends Vue{
       this.stock_count_mode_name = this.$route.query.stock_count_mode_name
       this.types = this.$route.query.types
       this.template_name = this.$route.query.template_name
-      this.treatment = this.$route.query.treatment
       this.total = JSON.stringify(this.inventoryDetails.length)
 
     }
@@ -378,7 +376,7 @@ export default class stockTaking extends Vue{
         const stock_count_mode_name = this.$route.query.stock_count_mode_name
         const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.query.treatment
+        const stock_count_mode = this.$route.query.stock_count_mode_name
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.setInventoryDetails(this.inventoryDetails); 
@@ -404,7 +402,7 @@ export default class stockTaking extends Vue{
         const stock_count_mode_name = this.$route.query.stock_count_mode_name
         const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.query.treatment
+        const stock_count_mode = this.$route.query.stock_count_mode_name
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.inventoryDetails = res.data.data;
             this.template_name =  this.$route.query.template_name

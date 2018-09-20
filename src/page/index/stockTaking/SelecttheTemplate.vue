@@ -155,12 +155,12 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       .done-none{
-        height: 499px;
+        height: 1000px;
         z-index: 9999;
         overflow: hidden;
         position: absolute;
         em{
-          border: 1px solid #ccc;
+          border: 1px solid #BACAD9;
           padding: 0 15px;
           width: 53px;
           height: 30px;
@@ -170,7 +170,7 @@ export default class stockTaking extends Vue{
           font-size: 12px;
           font-style: normal;
           cursor: pointer;
-          color: #ADBFD3;
+          color: #5F7B9A;
         }
       }
      .nextstep{

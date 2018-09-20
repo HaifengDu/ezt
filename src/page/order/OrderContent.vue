@@ -1,16 +1,24 @@
-  <!--首页的订单页面-->
+  <!--订单模块首页-->
 <template>
-  <div class="ezt-page-con">
+  <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="false" title="订单">
       <div slot="action">
-         <div class="add" @click="renderUrl('/addOrderGood')">
-           <span class='ezt-action-point'>
+         <div class="add">
+           <span class='ezt-action-point' @click="add">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
           <span class='ezt-action-point'>
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
          </div>
+         <div v-if="addgoods" class="addgoods">
+          <ul>
+            <li>配送要货</li>
+            <li>供应商订货</li>
+          </ul>
+        </div>  
        </div>
     </ezt-header>  
     <div class="ezt-main">      
@@ -20,24 +28,24 @@
         @on-item-click="tabClick(index)" :key="index">{{item.name}}
         </tab-item>
       </tab>
-      <div class="ezt-add-content main-menu" ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
-        <!-- 收货单列表       -->
+      <div class="ezt-add-content main-menu">
+        <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
               <div class="receive-icon-title">
-                <span class="receive-icon-dcName"></span>
+                <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
               </div>
               <div class="receive-icon-content">
-                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <div style="display:flex">
-                  <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                  <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+                  <span class="receive-dc-title">要货日期：
+                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>
+                  </span>
+                  <span class="receive-dc-title">到货日期：
+                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                  </span>
                 </div>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
@@ -45,9 +53,10 @@
                 <div class="glow-1">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
-                <div>
+                <!-- <div>
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
-                </div>
+                </div> -->
+                <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
               </div>
             </div>
             <div class="ezt-list-del" @click="deleteSection(item)">删除</div>
@@ -75,14 +84,14 @@ import {OrderGoodsService} from '../../service/OrderGoodsService';
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
+
      })
    },
-  //  methods:{
-  //    ...mapActions({
-  //      'getGoodList':"receiveGood/getGoodList"
-  //    })
-  //  }
+   methods:{
+     ...mapActions({
+
+     })
+   }
 })
 export default class OrderGoods extends Vue{
     private pager:Pager;
@@ -94,6 +103,7 @@ export default class OrderGoods extends Vue{
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
     private showMask:()=>void;
+    private addgoods:boolean = false;  //显示配送要货
     created() {
       this.tabList.push({
         name:"待审核",
@@ -187,19 +197,28 @@ export default class OrderGoods extends Vue{
       }
      
     } 
-    //首页菜单跳转
-    private renderUrl(info:string){
-      if(info){
-        this.$router.push(info);
-      }      
+    private add(){
+      this.addgoods = !this.addgoods
+      setTimeout(() => {
+          this.addgoods = false
+      }, 5000);
     }
    
 }
 </script>
-
 <style lang="less" scoped>
-  .add{
-      font-size: 20px;
+    .ezt-header{
+      padding: 0;
+      height: 45px;
+      align-items: center;
+    }
+    .ezt-action-point{
+      margin-top: 10px;
+    }
+    .main-menu{
+      background-color: #F1F6FF;
+    }
+    .add{
       i{
         margin-right: 10px;
       }
@@ -220,15 +239,63 @@ export default class OrderGoods extends Vue{
       z-index: 2;
     }
     .ezt-list-del{
-      position: absolute;
-      right: 0px;
-      top: 30px;
-      width: 50px;
-      height: 100px;
-      background: pink;
-      z-index: 1;
+        position: absolute;
+        right: 0px;
+        top: 42px;
+        width: 50px;
+        height: 85px;
+        background: red;
+        z-index: 1;
+        line-height: 85px;
+        text-align: center;
+        color: #fff;
     }
     .swipe-transform{
       transform: translateX(-50px);
     }
+    //
+    .addgoods{
+      position: absolute;
+      top: 44px;
+      right: 0;
+      width: 120px;
+      background: #fff;
+      border: 1px solid #ccc;
+      ul{
+
+        li{
+          border-bottom: 1px solid #ccc;
+          color: #000;
+          height: 35px;
+          line-height: 35px;
+          text-align: center;
+          cursor: pointer;
+        }
+        li:last-child{
+          border-bottom: none;
+        }
+      }
+    }
+    .receive-icon-dcName, .receive-icon-orderName {
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0px 3px 0px 10px;
+        opacity: 0.7;
+        border-radius: 4px;
+        font-size: 12px;
+        color: #fff;
+        width: 20px;
+        height: 20px;
+        line-height: 22px; 
+        text-align: center;
+        font-style: normal;
+      }
+
+      .receive-icon-dcName {
+        background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
+      }
+
+      .receive-icon-orderName {
+        background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
+      }
 </style>

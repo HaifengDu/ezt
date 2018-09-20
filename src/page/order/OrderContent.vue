@@ -104,7 +104,7 @@
         </span>
       </li>
        <li class="select-list">
-        <span class="title-search-name ">支付类型：</span>
+        <span class="title-search-name ">支付类型：</span> 
         <span class="title-select-name item-select">
           <select name="" id="" placeholder="请选择" class="ezt-select">
             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>

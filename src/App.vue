@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <div id="ezt-mask"></div>
-    <router-view/>    
+    <div class="ezt-container">
+      <router-view/> 
+    </div>   
   </div>
 </template>
 

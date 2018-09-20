@@ -1,7 +1,7 @@
 <!--新增订货-->
 <template>
     <div class="ezt-page-con">
-        <ezt-header title="新增">
+        <ezt-header title="新增" :back="true" @goBack="goBack">
 
         </ezt-header>
 
@@ -15,6 +15,9 @@ import {Component} from "vue-property-decorator"
 })
 export default class Order extends Vue{
 
+    private goBack(){
+        this.$router.push('/orderGood')
+    }
 }
 </script>
 <style lang="less" scoped>

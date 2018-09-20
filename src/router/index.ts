@@ -28,6 +28,8 @@ import InitAudit from '@/page/index/init-stock/InitAudit.vue';//审核库存初�
 import InitDetail from '@/page/index/init-stock/InitDetail.vue';//初始化单详情
 import SystemSetting from '@/page/mine/SystemSetting.vue';//系统设置
 import AddOrderGood from '@/page/order/AddOrderGood.vue';//新增订货
+import OrderGood from '@/page/order/OrderContent.vue';//订货列表页
+import ChartContent from '@/page/chart/ChartContent.vue';//报表
 Vue.use(Router)
 
 const router = new Router({
@@ -155,6 +157,16 @@ const router = new Router({
       path: '/addOrderGood',
       name:"AddOrderGood",
       component: AddOrderGood
+    },
+    {
+      path: '/orderGood',
+      name: 'OrderGood',
+      component: OrderGood
+    },
+    {
+      path: '/chartContent',
+      name: 'ChartContent',
+      component: ChartContent
     }
   ]
 });

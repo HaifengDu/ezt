@@ -129,7 +129,7 @@ input.ezt-middle{
   /* position: absolute; */
   position: fixed;
   top:0;
-  z-index: 4;
+  z-index: 10;
 }
 .ezt-header-goback{
   width: 20px;
@@ -435,11 +435,11 @@ input.ezt-middle{
     position: fixed;
     bottom: 0;
     text-align: center;
-    padding: 15px 0px;
+    padding: 6px 0px;
     background: #FFFFFF;
     box-shadow: 0 -1px 3px 0 rgba(204, 216, 228, 0.80);
     width: 100%;
-    z-index: 6;
+    z-index: 8;
   }
   /* 下拉左侧lable字体样式 */
   .title-search-name{
@@ -586,5 +586,49 @@ input.ezt-middle{
       color: #ADBFD3;
       letter-spacing: 0;
     }
+   /* 首页底部tab切换样式 开始 */
+  .ezt-footer-tab{
+    display: flex;
+    flex-direction: row;    
+  }
+  .ezt-footer-tab li{
+    display:flex;
+    flex-direction: column;
+    flex:1;
+    align-items: center;     
+  }  
+  .ezt-footer-tab li .footer-index,.footer-order,.footer-chart{
+    width: 24px;
+    height: 24px;
+    margin-bottom: 6px;
+  }
+  .ezt-footer-tab li .footer-index{
+    background: url('../images/index-icon.png') no-repeat;
+    background-size: 24px 24px;
+  }
+  .ezt-footer-tab li .footer-order{
+    background: url('../images/order-icon.png') no-repeat;
+    background-size: 24px 24px;
+  }
+  .ezt-footer-tab li .footer-chart{
+    background: url('../images/chart-icon.png') no-repeat;
+    background-size: 24px 24px;
+  }
+  .ezt-footer-tab li.active{
+    color: #1188FC;   
+  }
+  .ezt-footer-tab li.active .footer-index{
+    background: url('../images/index-icon-checked.png') no-repeat;
+    background-size: 24px 24px;
+  }
+  .ezt-footer-tab li.active .footer-order{
+    background: url('../images/order-icon-checked.png') no-repeat;
+    background-size: 24px 24px;
+  }
+  .ezt-footer-tab li.active .footer-chart{
+    background: url('../images/chart-icon-checked.png') no-repeat;
+    background-size: 24px 24px;
+  }
+   /* 底部tab样式结束  */
 
    

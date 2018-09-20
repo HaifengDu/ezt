@@ -15,7 +15,7 @@
          </div>
          <div v-if="addgoods" class="addgoods">
           <ul>
-            <li>配送要货</li>
+            <li @click="renderUrl('/addOrderGood')">配送要货</li>
             <li>供应商订货</li>
           </ul>
         </div>  
@@ -64,6 +64,22 @@
          <span v-if="allLoaded">已全部加载</span>          
       </div>
     </div>
+    <ezt-footer>
+      <ul slot="confirm" class="ezt-footer-tab">
+        <li @click="renderUrl('/')" >
+          <span class="footer-index"></span>
+          <div>首页</div>
+        </li>
+        <li @click="renderUrl('/orderGood')" class="active">
+          <span class="footer-order"></span>
+          <div>订货</div>
+        </li>
+        <li @click="renderUrl('/chartContent')">
+          <span class="footer-chart"></span>
+          <div>报表</div>
+        </li>
+      </ul>
+    </ezt-footer>
   </div>
 </template>
 <script lang="ts">
@@ -202,6 +218,12 @@ export default class OrderGoods extends Vue{
       setTimeout(() => {
           this.addgoods = false
       }, 5000);
+    }
+     //首页菜单跳转
+    private renderUrl(info:string){
+      if(info){
+        this.$router.push(info);
+      }      
     }
    
 }

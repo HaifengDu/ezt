@@ -151,18 +151,18 @@ export default class stockTaking extends Vue{
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
     private inventoryList:{list?:any[]} = {};//盘库列表
-    private inventoryDetails:any[] = []; //列表详情
+    private inventoryDetails:any[]; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private queryResult:any[] = [];  //查询详情
+    private queryResult:any[];  //查询详情
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
-    private pkinventory:any[] = [];  //盘点类型
+    private pkinventory:any[];  //盘点类型
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
-    private warehouseType:any[] = [];  //动态加载仓库
+    private warehouseType:any[];  //动态加载仓库
     private Selectedwarehouse:any;//选中仓库id
     private showbtn:boolean= true;
     private hidebtn:boolean= true;
@@ -305,8 +305,7 @@ export default class stockTaking extends Vue{
               types:types,
               stock_count_mode:item.stock_count_mode,
             }});  
-          this.inventoryDetails = res.data.data;
-          this.setInventoryDetails(this.inventoryDetails); 
+          this.setInventoryDetails(res.data.data); 
       },err=>{
           this.$toasted.show(err.message)
       })
@@ -321,8 +320,7 @@ export default class stockTaking extends Vue{
               stock_count_mode:item.stock_count_mode,
               types:types,
             }});
-          this.inventoryDetails = res.data.data;
-          this.setInventoryDetails(this.inventoryDetails); 
+          this.setInventoryDetails(res.data.data); 
       },err=>{
           this.$toasted.show(err.message)
       })
@@ -343,8 +341,7 @@ export default class stockTaking extends Vue{
               stock_count_mode:item.stock_count_mode,
               types:types,
             }});
-          this.inventoryDetails = res.data.data;
-          this.setInventoryDetails(this.inventoryDetails); 
+          this.setInventoryDetails(res.data.data); 
       },err=>{
           this.$toasted.show(err.message)
       })

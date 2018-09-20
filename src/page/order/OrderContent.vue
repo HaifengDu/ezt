@@ -32,7 +32,7 @@
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" @click="orderdetails">
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
@@ -218,7 +218,7 @@ export default class OrderGoods extends Vue{
         this.isSearch=false; 
         this.hideMask();
       }); 
-    }
+    }   
     private goBack(){
       this.$router.push('/');
     }
@@ -313,10 +313,15 @@ export default class OrderGoods extends Vue{
       this.isSearch?this.showMask():this.hideMask();
    }
    private toSearch(){
-    this.isSearch = false;
-    this.hideMask();
-    this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
-  }
+      this.isSearch = false;
+      this.hideMask();
+      this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
+   }
+  // 跳转详情页面
+   private orderdetails(){
+      this.$router.push({name:'OrderDetails'});
+   }
+
 }
 </script>
 <style lang="less" scoped>

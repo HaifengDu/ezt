@@ -108,9 +108,9 @@ export default class stockTaking extends Vue{
     private setAddBeforeInventory:INoopPromise;
     private pkinventory:any;
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
-    private inventoryDetails:any[] = []; //列表详情  确认盘点单
+    private inventoryDetails:any[]; //列表详情  确认盘点单
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private pktemplateimport:any[] = []; //模板
+    private pktemplateimport:any[]; //模板
     private setPktemplateimport:INoopPromise//store中给setPktemplateimport赋值
     private SelectingInventory:boolean = false;
     private name:any;
@@ -188,8 +188,7 @@ export default class stockTaking extends Vue{
                     template_name:"手工制单",
                 }
               });
-              this.inventoryDetails = res.data.data;
-              this.setInventoryDetails(this.inventoryDetails); 
+              this.setInventoryDetails(res.data.data); 
           },err=>{
               this.$toasted.show(err.message)
           })
@@ -217,8 +216,7 @@ export default class stockTaking extends Vue{
                     pdtype : this.addinventory.bill_type,
                 }
               });
-              this.pktemplateimport = res.data.data;
-              this.setPktemplateimport(this.pktemplateimport); 
+              this.setPktemplateimport(res.data.data); 
           },err=>{
               this.$toasted.show(err.message)
           })

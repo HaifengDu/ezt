@@ -96,14 +96,6 @@ export default class stockTaking extends Vue{
 
     }
 
-    /**
-     * computed demo
-     */
-      // private get Total(){
-      //   return this.list.reduce((ori,item)=>{
-      //     return ori.uprice+item;
-      //   },0);
-      // }
       // 暂存
       private storage(){
         const whole_num = this.inventoryDetails[0].whole_num
@@ -114,8 +106,7 @@ export default class stockTaking extends Vue{
         const is_stock_report = 0  //0是暂存   1是提交
         const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$router.push('/stocktaking')
         },err=>{
             this.$toasted.show(err.message)
@@ -131,8 +122,7 @@ export default class stockTaking extends Vue{
       const is_stock_report = 1  //0是暂存   1是提交
       const stock_count_mode = this.$route.query.stock_count_mode
       this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-          this.inventoryDetails = res.data.data;
-          this.setInventoryDetails(this.inventoryDetails); 
+          this.setInventoryDetails(res.data.data); 
           this.$router.push('/stocktaking')
       },err=>{
           this.$toasted.show(err.message)

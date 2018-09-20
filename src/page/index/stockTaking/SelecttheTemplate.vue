@@ -54,7 +54,7 @@ export default class stockTaking extends Vue{
     private service:StockTakingService;
     private getTemplateDetails:INoopPromise;  //模板详情
     private labelPosition= 'left';
-    private inventoryDetails:any[] = []; //列表详情  确认盘点单
+    private inventoryDetails:any[]; //列表详情  确认盘点单
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private pktemplateimport:any; 
     private setPktemplateimport:INoopPromise;//store中给setPktemplateimport赋值
@@ -65,7 +65,6 @@ export default class stockTaking extends Vue{
     private warehouse_name:any;
     private stock_count_mode_name:any;
     private pdtype:any;
-    
     created() {
       this.service = StockTakingService.getInstance();
       this.pktemplateimport.pdtype = this.$route.query.pdtype
@@ -115,8 +114,7 @@ export default class stockTaking extends Vue{
                     template_name:"模板导入"
                 }
               });
-              this.inventoryDetails = res.data.data;
-              this.setInventoryDetails(this.inventoryDetails); 
+              this.setInventoryDetails(res.data.data); 
           },err=>{
               this.$toasted.show(err.message)
           })

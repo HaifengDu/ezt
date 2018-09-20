@@ -281,7 +281,6 @@ export default class stockTaking extends Vue{
       this.types = this.$route.query.types
       this.template_name = this.$route.query.template_name
       this.total = JSON.stringify(this.inventoryDetails.length)
-
     }
 
     mounted(){
@@ -296,8 +295,7 @@ export default class stockTaking extends Vue{
         const ids = this.$route.query.ids
         const opinion = ""
         this.service.getAuditchecklistno(audit_name,ids,opinion).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
         },err=>{
@@ -317,8 +315,7 @@ export default class stockTaking extends Vue{
         const stock_count_mode = this.$route.query.stock_count_mode
         const organ_brief_code = this.user.auth.organ_brief_code
         this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
         },err=>{   
@@ -335,8 +332,7 @@ export default class stockTaking extends Vue{
         const is_stock_report = 0  //0是暂存   1是提交
         const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
         },err=>{
@@ -353,8 +349,7 @@ export default class stockTaking extends Vue{
         const is_stock_report = 1  // 1是提交
         const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$router.push('/stocktaking')
         },err=>{
             this.$toasted.show(err.message)
@@ -378,8 +373,7 @@ export default class stockTaking extends Vue{
         const organ_brief_code = this.user.auth.organ_brief_code
         const stock_count_mode = this.$route.query.stock_count_mode_name
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
-            this.inventoryDetails = res.data.data;
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.template_name =  this.$route.query.template_name
             this.$toasted.show("操作成功！")
             this.$router.push('/')   
@@ -404,9 +398,8 @@ export default class stockTaking extends Vue{
         const organ_brief_code = this.user.auth.organ_brief_code
         const stock_count_mode = this.$route.query.stock_count_mode_name
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
-            this.inventoryDetails = res.data.data;
             this.template_name =  this.$route.query.template_name
-            this.setInventoryDetails(this.inventoryDetails); 
+            this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
             this.$router.push('/')
             this.setAddinventory({})

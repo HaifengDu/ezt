@@ -31,6 +31,7 @@ import AddOrderGood from '@/page/order/AddOrderGood.vue';//新增订货
 import OrderGood from '@/page/order/OrderContent.vue';//订货列表页
 import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
+import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 Vue.use(Router)
 
 const router = new Router({
@@ -157,6 +158,11 @@ const router = new Router({
       path: '/searchOrderGood',
       name:"SearchOrderGood",
       component: SearchOrderGood
+    },{
+      
+      path: '/orderDetails',
+      name:"OrderDetails",
+      component: OrderDetails
     }
   ]
 });

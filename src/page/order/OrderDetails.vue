@@ -31,7 +31,7 @@
                物料明细
             </div>  
             <ul>
-                <li class="good-detail-content" v-for="(item,index) in goodDetails" :key="index" >
+                <li class="good-detail-content">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>

@@ -81,7 +81,7 @@ export default class OrderGoods extends Vue{
     }
    
     private goBack(){
-      this.$router.push('/');
+      this.$router.push('/orderGood');
     }
    
 }

@@ -149,8 +149,6 @@ export default class Login extends Vue{
     margin-top: 20px;
     font-size: 12px;
     color: #C1CFDE;
-    margin: 0 auto;
-    width: 100%;
  }
 }
 .login-from-item>div{

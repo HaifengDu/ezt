@@ -69,7 +69,7 @@ export default class Login extends Vue{
     height: 100%;
   .logo{
     display: flex;
-    margin-top:60px;
+    margin:24px 0px 40px 0px;
     align-items: center;
     flex-direction: column;
     i{
@@ -125,8 +125,11 @@ export default class Login extends Vue{
   }  
   .login-btn{
     width: 100%;
-    position: absolute;
-    bottom: 60px;
+    // position: absolute;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 6px;
   }
    .login-btn p{
         width: 90%;
@@ -142,8 +145,8 @@ export default class Login extends Vue{
         box-shadow: 0 3px 10px 0 rgba(60,130,251,0.43);
     }
   .footer{
-    position: absolute;
-    bottom: 20px;
+    // position: absolute;
+    margin-top: 20px;
     font-size: 12px;
     color: #C1CFDE;
     margin: 0 auto;

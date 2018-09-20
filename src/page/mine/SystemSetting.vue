@@ -159,8 +159,10 @@ export default class Index extends Vue{
 }
 .mine-bot-btn{
     width: 100%;
-    position: absolute;
+    // position: absolute;
     margin-top: 20px;
+    display:flex;
+    justify-content: center;
     .ezt-lone-btn{
       display: inline-block;
       font-size: 14px;

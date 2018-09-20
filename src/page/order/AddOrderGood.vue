@@ -30,29 +30,43 @@
                     <li>
                         <span class="title-search-name">要货方式：</span>
 
-                         <button-tab v-model="addBillInfo.orderType" @change.native="handlerChangeType(addBillInfo.orderType)">
-                            <button-tab-item>手工要货</button-tab-item>
-                            <button-tab-item>模板导入</button-tab-item>
-                            <button-tab-item>预估要货</button-tab-item>
+                         <button-tab v-model="addBillInfo.orderType" >
+                            <button-tab-item @on-item-click="handlerChangeType()">手工要货</button-tab-item>
+                            <button-tab-item @on-item-click="handlerChangeType()">模板导入</button-tab-item>
+                            <button-tab-item @on-item-click="handlerChangeType()">预估要货</button-tab-item>
                         </button-tab>
                     </li>
+                    <div v-if="addBillInfo.orderType==0">
+                        <li>
+                            <span class="title-search-name">备注：</span>
+                            <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+                        </li>
+                        <li>
+                            <!-- <span class="title-search-name">选择物料：</span> -->
+                            <span class="title-search-name">选择物料：</span>
+                            <span class="title-search-right" @click="renderUrl('/publicAddGood')">
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            </span>
+                            
+                        </li>
+                    </div>
+                    
+                </ul>
+                <ul v-if="addBillInfo.orderType==1">
                     <li>
-                        <span class="title-search-name">备注：</span>
-                        <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+                        <span>配送中心A</span>
+                        <span>订货</span>
                     </li>
                     <li>
-                        <!-- <span class="title-search-name">选择物料：</span> -->
-                        <span class="title-search-name">选择物料：</span>
-                        <span class="title-search-right" @click="renderUrl('/publicAddGood')">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
-                        </span>
-                        
+                        <span>配送中心B</span>
+                        <span>订货</span>
                     </li>
                 </ul>
+                <!-- 选择的物料明细 -->
                  <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
                         <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-            v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
+                        v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
                             <div class="good-detail-l">
                                 <div>
                                     <span class="good-detail-name">{{item.name}}
@@ -71,13 +85,8 @@
                             </div>
                             <div class="good-detail-r">
                                 <div class="park-input">
-                                    <span class="title-search-name">税率：</span>
-                                    <span class="receive-dc-content">{{item.rate||0}}%</span>
-                                </div>
-                                <div class="park-input"> 
-                                    <span class="title-search-name">供应商：</span>
-                                    <span class="receive-dc-content">{{item.supplier||'无'}}</span>
-                                </div>                    
+                                    <span class="title-search-name">备注：{{item.remark}}</span>
+                                </div>                 
                             </div>
                         </div>
                         <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
@@ -118,30 +127,40 @@ import {Component} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../helper/methods';
 import {OrderGoodsService} from '../../service/OrderGoodsService';
+import { CachePocily } from "../../common/Cache";
+import { ECache } from "../../enum/ECache";
+import CACHE_KEY from '../../constans/cacheKey'
 @Component({
     computed:{
         ...mapGetters({
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
-            'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
+            // 'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
+            // 'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
         })
     },
     methods:{
         ...mapActions({
-            'setAddBillInfo':"publicAddGood/setAddBillInfo",
+            // 'setAddBillInfo':"publicAddGood/setAddBillInfo",
             'setSelectedGood':'publicAddGood/setSelectedGood',
-            "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
+            // "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
         })
     }
 })
 export default class Order extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private service: OrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private addBeforeBillInfo:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    private setAddBeforeBillInfo:INoopPromise;
-    private addBillInfo:any;//store中
-    private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
+    private addBeforeBillInfo:any={
+        orderType:2
+    };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    // private setAddBeforeBillInfo:INoopPromise;
+    private addBillInfo:any={
+        orderType:2,
+        orderDate:new Date().format('yyyy-MM-dd'),
+        arriveDate:new Date().format('yyyy-MM-dd'),
+    };//store中
+    // private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
     private isStore:boolean=false;
     private isOrderType:boolean=false;
     private isSave:boolean=false;
@@ -149,16 +168,18 @@ export default class Order extends Vue{
       name:'配送中心1',
       id:'01'
     }]
-
-    created(){
+   
+    created() {
         this.service = OrderGoodsService.getInstance();
-        this.addBillInfo.orderDate = new Date().format("yyyy-MM-dd");
-        this.addBillInfo.arriveDate = new Date().format("yyyy-MM-dd");
         this.addBillInfo.storeId = this.orderType[0].type;
         this.addBeforeBillInfo.storeId = this.orderType[0].type;
-        this.addBillInfo.orderType=0;
-        this.addBeforeBillInfo.orderType=0;
         (this.selectedGood||[]).forEach(item=>item.active = false);
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
+        }
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
+            this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
+        }
     }
       /**
      * 左滑删除某一项
@@ -179,7 +200,9 @@ export default class Order extends Vue{
 
     //选择物料
     private renderUrl(info: string) {
-        this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
+        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        // this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
         this.$router.push(info);
     }
      /**
@@ -210,14 +233,13 @@ export default class Order extends Vue{
      * 切换要货方式
      */
     private handlerChangeType(item:any){
-        debugger
         if(this.selectedGood.length>0){
             this.isOrderType=true;
         }else{
-             this.addBeforeBillInfo.orderType=this.addBillInfo.orderType;   
+            this.addBeforeBillInfo.orderType=this.addBillInfo.orderType;  
         }
-
     }
+    
     /**
    * computed demo
    * 物料总数量
@@ -250,17 +272,17 @@ export default class Order extends Vue{
             this.$toasted.show("请添加物料！");
             return false;
         } 
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         this.$toasted.success("保存成功！");
     }
 
     //离开确认
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         this.$router.push('/orderGood')
     }
 
@@ -372,6 +394,9 @@ export default class Order extends Vue{
     background: pink;
     width: 50px;
     height: 50px;
+}
+.orderType-list span.active{
+    background: #1674fc;
 }
 
 </style>

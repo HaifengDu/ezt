@@ -112,29 +112,38 @@ import { Component, Watch } from "vue-property-decorator";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { InitStockService } from "../../../service/InitStockService";
 import ObjectHelper from '../../../common/objectHelper'
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
   computed: {
     ...mapGetters({
-      addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
+    //   addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
       selectedGood: "publicAddGood/selectedGood", //选择物料的物品
-      addBeforeBillInfo:'publicAddGood/addBeforeBillInfo',
+    //   addBeforeBillInfo:'publicAddGood/addBeforeBillInfo',
       isFirstStore:'initStock/isFirstStore'
     })
   },
   methods: {
     ...mapActions({
-      setAddBillInfo: "publicAddGood/setAddBillInfo",
-      setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
-      setSelectedGood: "publicAddGood/setSelectedGood"
+    //   setAddBillInfo: "publicAddGood/setAddBillInfo",
+    //   setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
+      setSelectedGood: "publicAddGood/setSelectedGood",
+
     })
   }
 })
 export default class InitStock extends Vue {
+  private cache = CachePocily.getInstance(ECache.LocCache);
   private service: InitStockService;
-  private addBillInfo: any; //store中
-  private addBeforeBillInfo: any;
-  private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
-  private setAddBeforeBillInfo: INoopPromise;
+  private addBillInfo: any={
+    date:new Date().format("yyyy-MM-dd"),
+  }; //store中
+  private addBeforeBillInfo: any={
+    date:new Date().format("yyyy-MM-dd"),
+  };
+//   private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
+//   private setAddBeforeBillInfo: INoopPromise;
   private setSelectedGood: INoopPromise;
   private selectedGood: any[]; //store中selectedGood的值
   private isEdit: boolean = false; //物料是否可编辑
@@ -157,15 +166,20 @@ export default class InitStock extends Vue {
 
   created() {
     this.service = InitStockService.getInstance();
-    this.addBillInfo.date = new Date().format("yyyy-MM-dd");
     this.addBillInfo.warehouse = this.orderType[0].type;
     this.addBeforeBillInfo.warehouse = this.orderType[0].type;
-    this.addBillInfo.editPrice=true;
     (this.selectedGood||[]).forEach(item=>item.active = false);
+    if(this.cache.getData(CACHE_KEY.INITSTOCK_ADDINFO)){
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_ADDINFO));
+    }
+    if(this.cache.getData(CACHE_KEY.INITSTOCK_ADDBEFOREINFO)){
+        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_ADDBEFOREINFO));
+    }
   }
   //选择物料
   private renderUrl(info: string) {
-    this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
+    this.cache.save(CACHE_KEY.INITSTOCK_ADDINFO,JSON.stringify(this.addBillInfo));
+    this.cache.save(CACHE_KEY.INITSTOCK_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
     this.$router.push(info);
   }
 
@@ -244,9 +258,9 @@ export default class InitStock extends Vue {
             this.$toasted.show("请添加物料！");
             return false;
         } 
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         this.$toasted.success("提交成功！");
         this.$router.push("/initStock");
     }
@@ -258,9 +272,9 @@ export default class InitStock extends Vue {
             this.$toasted.show("请添加物料！");
             return false;
         } 
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         this.$toasted.success("保存成功！");
         this.$router.push("/initStock");
     }
@@ -285,9 +299,9 @@ export default class InitStock extends Vue {
         }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         if(this.isFirstStore){
             this.$router.push("/initSet");
         }else{

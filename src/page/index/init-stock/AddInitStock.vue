@@ -180,7 +180,13 @@ export default class InitStock extends Vue {
   private renderUrl(info: string) {
     this.cache.save(CACHE_KEY.INITSTOCK_ADDINFO,JSON.stringify(this.addBillInfo));
     this.cache.save(CACHE_KEY.INITSTOCK_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-    this.$router.push(info);
+    // this.$router.push(info);
+    this.$router.push({
+        name:"PublicAddGood",
+        params:{
+            editPrice:"initStock",
+            costType:this.addBillInfo.costType}
+    })
   }
 
     private handlerLeft(item:any){     

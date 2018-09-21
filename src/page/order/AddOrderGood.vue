@@ -36,7 +36,7 @@
                             <button-tab-item @on-item-click="handlerChangeType()">预估要货</button-tab-item>
                         </button-tab>
                     </li>
-                    <div v-if="addBillInfo.orderType==0">
+                    <div v-if="addBillInfo.orderType==0||(addBillInfo.orderType==1&&templateList.length>0)||(addBillInfo.orderType==2&&estimateGoods.length>0)">
                         <li>
                             <span class="title-search-name">备注：</span>
                             <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
@@ -52,16 +52,20 @@
                     </div>
                     
                 </ul>
-                <ul v-if="addBillInfo.orderType==1">
-                    <li>
-                        <span>配送中心A</span>
-                        <span>订货</span>
-                    </li>
-                    <li>
-                        <span>配送中心B</span>
-                        <span>订货</span>
-                    </li>
-                </ul>
+                <div>
+                    <x-dialog v-model="isTemplate" class="dialog-demo">
+                        <ul v-if="templateList.length>0" class="template-list">
+                            <li v-for="(item,id) in templateList" :key="id">
+                                <span class="template-list-name">{{item.storeName}}</span>
+                                <span class="template-list-btn" @click="handlerTemplateOrder(item)">订货</span>
+                            </li>
+                        </ul>                       
+                    </x-dialog>
+                </div>
+                 <div v-if="(templateList.length<=0&&addBillInfo.orderType==1)||(estimateGoods.length<=0&&addBillInfo.orderType==2)" class="template-list-one">
+                    <span>{{doneInfo}}</span>
+                </div>  
+              
                 <!-- 选择的物料明细 -->
                  <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
@@ -152,11 +156,11 @@ export default class Order extends Vue{
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any={
-        orderType:2
+        orderType:0
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     // private setAddBeforeBillInfo:INoopPromise;
     private addBillInfo:any={
-        orderType:2,
+        orderType:0,
         orderDate:new Date().format('yyyy-MM-dd'),
         arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
@@ -164,10 +168,39 @@ export default class Order extends Vue{
     private isStore:boolean=false;
     private isOrderType:boolean=false;
     private isSave:boolean=false;
+    private isTemplate:boolean=false;
+    private doneInfo:string="";
     private orderType:any=[{
       name:'配送中心1',
       id:'01'
-    }]
+    }];
+    private estimateGoods:any=[];
+    private templateList:any=[//可用导入模板
+        {
+            id:1,
+            storeName:'配送中心A01',
+            goodList:[//可用导入模板中物品
+                {
+                    id:2,
+                    name:'海参',
+                    price:'9',
+                    num:0,
+                    utilname:'KG',
+                    unit:'箱',
+                    roundValue:{//可直拨的数据
+                        num: 10,
+                        numed:3,
+                        list:[]
+                    }
+                }
+            ]
+        },
+        {
+            id:2,
+            storeName:'配送中心B02',
+            goodList:[]
+        }
+    ];
    
     created() {
         this.service = OrderGoodsService.getInstance();
@@ -180,6 +213,14 @@ export default class Order extends Vue{
         if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
         }
+    }
+    /**
+     * 模板导入订货操作
+     */
+    private handlerTemplateOrder(item:any){ 
+        item.goodList.forEach((info:any)=>{info.active=false})
+        this.setSelectedGood(item.goodList);
+        this.isTemplate=false;
     }
       /**
      * 左滑删除某一项
@@ -236,7 +277,21 @@ export default class Order extends Vue{
         if(this.selectedGood.length>0){
             this.isOrderType=true;
         }else{
-            this.addBeforeBillInfo.orderType=this.addBillInfo.orderType;  
+            this.addBeforeBillInfo.orderType=this.addBillInfo.orderType;
+            if(this.addBillInfo.orderType=='1'){
+                if(this.templateList.length>0){
+                    this.isTemplate=true;
+                }else{
+                    this.doneInfo="未查到可用模板，请选择其它方式要货。"
+                }                
+            }
+            if(this.addBillInfo.orderType=='2'){
+                if(this.estimateGoods.length>0){
+
+                }else{
+                     this.doneInfo="未查到可用预估单，请选择其它方式要货。"
+                }
+            }  
         }
     }
     
@@ -397,6 +452,32 @@ export default class Order extends Vue{
 }
 .orderType-list span.active{
     background: #1674fc;
+}
+.template-list{
+    background: #fff;
+    text-align: left;
+    padding: 10px;
+    display:flex;
+    flex-direction: column;
+    li{
+        display: flex;
+        padding: 10px;
+        border-bottom: 1px solid #E0EBF9;
+    }
+    .template-list-name{
+        flex:1;
+    }
+    .template-list-btn{
+        border: 1px solid #1188FC;
+        padding: 2px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        color: #1188FC;
+    }
+}
+.template-list-one{
+    background: #fff;
+    padding: 10px;
 }
 
 </style>

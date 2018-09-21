@@ -29,10 +29,10 @@
              <div class="good-item" v-for="(item) in goodList" :key='item.id'>
                <div class="good-item-title">
                  <span class="good-item-name">{{item.name}}</span>
-                 <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-                 <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-                    <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-                    <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>                    
+                 <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <span v-if="useObj.editPrice" class="good-item-sort edit">
+                    <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
                <div class="good-item-bot">
@@ -41,7 +41,7 @@
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 收藏图标 -->
-                 <span v-if="!addBillInfo.editPrice">
+                 <span v-if="!useObj.editPrice">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
@@ -99,13 +99,13 @@
                                 <span class="title-select-name">数量：</span>
                                 <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
                             </li>
-                            <li v-if="addBillInfo.costType==0">
+                            <li v-if="useObj.costType==0">
                                 <span class="title-dialog-name">价格：</span>
                                 <span class="icon-input price">
                                     <input type="number" class="ezt-smart" v-model="bindRemark.price">
                                 </span>                                       
                             </li>
-                            <li v-if="addBillInfo.costType==1">
+                            <li v-if="useObj.costType==1">
                                 <span class="title-dialog-name">含税额：</span>
                                 <span class="icon-input price">
                                     <input type="number" class="ezt-smart" v-model="bindRemark.amt">
@@ -156,10 +156,10 @@
           <div>
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-              <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-              <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-                <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-                <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+              <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <span v-if="useObj.editPrice" class="good-item-sort edit">
+                <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+                <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
               </span>
             </div>
             <div class="good-item-bot">
@@ -168,7 +168,7 @@
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
               <!-- 收藏图标 -->
-              <span v-if="!addBillInfo.editPrice">
+              <span v-if="!useObj.editPrice">
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
               <span>
@@ -199,10 +199,10 @@
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
-            <span class="good-item-sort" v-if="!addBillInfo.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-            <span v-if="addBillInfo.editPrice" class="good-item-sort edit">
-              <span v-if="addBillInfo.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-              <span v-if="addBillInfo.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+            <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span v-if="useObj.editPrice" class="good-item-sort edit">
+              <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
+              <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
             </span>
           </div>
           <div class="good-item-bot">
@@ -211,7 +211,7 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="!addBillInfo.editPrice">
+            <span v-if="!editPrice">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span>
@@ -251,7 +251,7 @@ import _ from "lodash";
    computed:{
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',
-       'addBillInfo':'publicAddGood/addBillInfo',
+      //  'addBillInfo':'publicAddGood/addBillInfo',
      }),
    },
    methods:{
@@ -270,8 +270,12 @@ export default class AddGood extends Vue{
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
   private isRemark:boolean=false;//编辑备注
+  private useObj:any={
+    editPrice:"",
+    costType:0,
+  }
   private isPrice:boolean=false;//编辑价格
-  private addBillInfo:any;//价格与备注显示切换
+  // private addBillInfo:any;//价格与备注显示切换
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -308,7 +312,9 @@ export default class AddGood extends Vue{
   // private userpp:any[]=[];
   created(){ 
   }
-  mounted() {
+  mounted() {     
+    this.useObj.editPrice = this.$route.params.editPrice; 
+    this.useObj.costType = this.$route.params.costType;
     this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
@@ -507,10 +513,10 @@ private changeDirect(item:any){
   }
   //点击备注
   private handlerRemark(item:any){
-    if(!this.addBillInfo.editPrice){
-      this.isRemark=true;
-    }else{
-      this.isPrice=true;
+    if(!this.useObj.editPrice){
+      this.isRemark=true;//收货
+    }else if(this.useObj.editPrice=="initStock"){
+      this.isPrice=true;//库存初始化
     }
     this.restBindRemark = item;
     this.bindRemark = ObjectHelper.serialize(this.restBindRemark);//深拷贝

@@ -32,13 +32,13 @@
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" @click="orderdetails('')">
-              <div class="receive-icon-title">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
+              <div class="receive-icon-title" @click="toexamine('')">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
               </div>
-              <div class="receive-icon-content">
+              <div class="receive-icon-content" @click="orderdetails('')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <div style="display:flex">
                   <span class="receive-dc-title">要货日期：
@@ -324,6 +324,15 @@ export default class OrderGoods extends Vue{
       }
       if(this.tabList.getActive().status==1 || this.tabList.getActive().status==3){
         this.$router.push('/OrderDetails');
+      }
+    }
+    private toexamine(info:string){
+      if(info){
+         this.$router.push(info);
+         return false;
+      }
+      if(this.tabList.getActive().status==1){
+        this.$router.push('/AuditInvoice');
       }
     }
 }

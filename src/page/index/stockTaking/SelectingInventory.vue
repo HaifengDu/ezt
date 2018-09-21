@@ -1,7 +1,7 @@
 <!--选择盘点货品-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch" @goBack="goBack">
+    <ezt-header :back="true" title='选择盘点货品' v-if="!isSelected&&!isSearch" @goBack="goBack">
        <div slot="action">
          <div class="add">
           <span class='ezt-action-point' @click="handlerSearchPage">
@@ -226,7 +226,7 @@
         <div class="ezt-foot-button">
           <a href="javascript:(0)" class="ezt-foot-storage" @click="viewSelectedItem">
             <span class="ezt-badge">{{selectedGoodList.length}}</span>已选择货品</a>  
-          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit">去提交</a>   
+          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit('d')">去提交</a>   
         </div>  
       </div>       
     </ezt-footer>
@@ -500,10 +500,15 @@ private changeDirect(item:any){
   /**
    * 选择完货品去提交
    * */ 
-  private goToCommit(){
-    // this.setSelectedGood(this.selectedGoodList);
-    // this.$router.back();
-    // console.log(this.selectedGood,'111')
+  private goToCommit(types:any,){  
+    this.setSelectedGood(this.selectedGoodList);
+    this.$router.push({
+      name:'LibraryDetails',
+        query:{
+          types:types,
+      }
+    });
+    console.log(this.selectedGood,'111')
   }
   //点击备注
   private handlerRemark(item:any){

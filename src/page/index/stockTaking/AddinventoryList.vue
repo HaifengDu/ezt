@@ -23,7 +23,7 @@
                   <span class="title-select-name item-select">
                     <select placeholder="请选择仓库" class="ezt-select" @change="warehouseStock"  v-model="addinventory.stock">
                       <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
-                    </select>   
+                    </select>     
                   </span>   
                 </li>   
                  <li class="select-list">

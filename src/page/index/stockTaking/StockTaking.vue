@@ -72,35 +72,38 @@
     </x-dialog>
   </div>
   <!-- 查询盘点单 -->
-    <div class="enquirylist" v-if="isSearch">
-        <div class="content">
-          <div class="warehouse">
-            <ul>   
-              <li>
-                 <span>单据号</span>
-                 <p><input type="text" placeholder="请输入单据号" v-model="searchParam.djnumber"></p>
-              </li>
-              <li class="select-list">
-                <span class="title-search-name ">盘点库</span>
-                <span class="title-select-name item-select">
-                  <select name="" id="" placeholder="请选择" class="ezt-select" v-model="searchParam.selectedwarehouse" @click="iswarehouseType">
-                        <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
-                      </select>   
-                  </span>
-              </li>
-              <li>
-                  <span>开始日期</span>
-                  <ezt-canlendar type="text" placeholder="开始日期" class="input-canlendar" v-model="searchParam.begin_date"></ezt-canlendar>
-              </li>   
-              <li>
-                  <span>结束日期</span>
-                  <ezt-canlendar type="text" placeholder="结束日期" class="input-canlendar" v-model="searchParam.end_date"></ezt-canlendar>
-              </li>
-            </ul>
-             <p class="s_btn1" @click="toSearch">查询</p>
-          </div>
-       </div>
-   </div>    
+  <div v-if="isSearch" class="search-dialog">
+      <ul class="ezt-title-search">
+       <li>
+        <span class="title-search-name">单据号：</span>
+        <input type="text" placeholder="请输入单据号" class="ezt-middle" v-model="searchParam.djnumber">
+       </li>
+       <li class="select-list">
+        <span class="title-search-name ">盘点库：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select" v-model="searchParam.selectedwarehouse">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
+             <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
+          </select>
+        </span>
+      </li>
+      <li>
+        <span class="title-search-name">开始日期：</span>
+        <span>
+          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+        </span>
+      </li>
+       <li>
+        <span class="title-search-name">结束日期：</span>
+        <span>
+          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+        </span>
+      </li>
+      <li>
+        <div class="ezt-two-btn" @click="toSearch">查询</div>
+      </li>
+    </ul>
+  </div> 
 </div>
 </template>
 <script lang="ts">   
@@ -148,7 +151,7 @@ export default class stockTaking extends Vue{
     private getDataSorting:INoopPromise;  //获取数据整理
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
-    private inventoryList:{list?:any[]} = {};//盘库列表
+    private inventoryList:{list?:any[]} = {};//盘库列表   
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
@@ -544,76 +547,12 @@ export default class stockTaking extends Vue{
 }
 
 // 查询盘点单
-.enquirylist{
-    width: @width;
+  .search-dialog{
+    width: 100%; 
     position:absolute;
     top:45px; 
     z-index:10001;
-    .content{
-      width: @width;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-     .warehouse{
-          width: @width;
-          background-color: @background-color;
-          text-align: left;
-          display:  flex;
-          flex-direction:  column;
-          align-items:  center;
-          padding-bottom: 20px;
-          ul{
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            border-bottom: 1px solid #D2DFEE;
-            width: @width;
-            li{
-               height: 45px;
-               line-height: 45px;
-               width: 90%;
-               border-bottom: 1px solid #D2DFEE;
-               display: flex;
-               justify-content: space-between;
-               position: relative;
-               padding-right: 20px;
-               span{
-                 display: block;
-                 width: 100px
-               }
-               p{
-                 flex: 1;
-                 .ezt-select{
-                   padding-right: 0;
-                   margin-right: 15px;
-                   margin-top: 2px;
-                 }
-                 input{
-                   height: 40px;
-                   line-height: 40px;
-                   float: right;
-                   background: none;
-                 }
-               }
-            }
-            li:last-child{
-               border-bottom:none;
-            }
-          }
-       .s_btn1{
-         margin-top: 20px;
-         width: 95%;
-         height: 45px;
-         color: #fff;
-         line-height: 45px;
-         text-align: center;
-         display: flex;
-         align-items: center;
-         justify-content: center;
-       }
-     }
-   }
-}
+  }
 // 新增盘点单
 .dialog {
     height: 350px;

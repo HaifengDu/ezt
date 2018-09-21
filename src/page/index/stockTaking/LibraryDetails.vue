@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div  class="temporary" slot="confirm">
-              <div class="total">货品数量合计：<span v-html="total"></span></div>
+              <div class="total" v-if="this.inventoryDetails.length>0">货品数量合计：<span v-html="total"></span></div>
               <div class="button">
                 <div class="storage" @click="reviewpass">审核不通过</div><div class="sub" @click="auditfailed">审核通过</div>
               </div>
@@ -122,7 +122,7 @@
            </div>
           </div>
            <div class="temporary" slot="confirm">
-              <div class="total">货品数量合计：<span v-html="total"></span></div>
+              <div class="total" v-if="this.inventoryDetails.length>0">货品数量合计：<span v-html="total"></span></div>
               <div class="button">    
                 <!-- 盘点类型导入之后的暂存提交接口 -->
                 <div class="storage" @click="storage()">暂存1</div><div class="sub" @click="sub()">提交1</div>
@@ -169,7 +169,7 @@
            </div>
           </div>
            <div class="temporary" slot="confirm">
-              <div class="total">货品数量合计：<span v-html="total"></span></div>
+              <div class="total" v-if="this.inventoryDetails.length>0">货品数量合计：<span v-html="total"></span></div>
               <div class="button">    
                 <!-- 盘点类型导入之后的暂存提交接口 -->
                 <div class="storage" @click="temporarystorage()">暂存2</div><div class="sub" @click="Submission()">提交2</div>
@@ -206,7 +206,7 @@
                       </ul>
                   </div>
           <div class="temporary" slot="confirm">
-            <div class="total">货品数量合计：<span v-html="total"></span></div>
+            <div class="total" v-if="this.inventoryDetails.length>0">货品数量合计：<span v-html="total"></span></div>
             <div class="button">
               <div class="storage" @click="storage">暂存3</div><div class="sub" @click="sub">提交3</div>
             </div>
@@ -643,13 +643,15 @@ export default class stockTaking extends Vue{
           }
         }
         .button{
-          display: flex;
-          flex-direction: row;
-          height: 50px;
-          line-height: 50px;
-          justify-content: space-around;
-          font-size: 15px;
-          color: #FFFFFF; 
+              display: -webkit-box;
+              -ms-flex-direction: row;
+              line-height: 50px;
+              -ms-flex-pack: distribute;
+              font-size: 15px;
+              color: #FFFFFF;
+              width: 105%;
+              position: fixed;
+              bottom: 0;
           .storage{
              width: 50%;
              cursor: pointer;

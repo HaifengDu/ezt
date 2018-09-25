@@ -476,9 +476,6 @@ export default class InitStock extends Vue {
     box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
   }
 }
-.costType-info a {
-//   color: #000;
-}
 .costType-info a.active {
   color: #1674fc;
 }

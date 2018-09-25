@@ -58,10 +58,205 @@
                         </div>
                     </div>
                 </li>
-            </ul> 
-            <div class="total">合计：品项<span>12</span>，数量<span>100</span>，含税金额<span>242424.01</span></div>
+
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">item.name
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥item.guige</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：item.code</span>
+                            </div>
+                            <div class="good-detail-sort">备注：
+                                <span class="remarks">
+                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
+                                </span>
+                            </div>
+                             <!-- <span class="turnOn" @click="showOtherWare">
+                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                             </span>    -->
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                </li>
+                
+            </ul>             
         </div>  
     </div>
+    <ezt-footer>
+        <div class="ezt-foot-temporary" slot="confirm">
+        <div class="ezt-foot-total">合计：
+            <b>品项</b><span>2</span>，
+            <b>数量</b><span>2</span>，
+            <b>含税金额￥</b><span>3</span>
+        </div>
+        <div class="ezt-foot-button">
+            <a href="javascript:(0)" class="ezt-foot-sub">支付</a>  
+        </div>  
+        </div>
+    </ezt-footer> 
   </div>
 </template>
 <script lang="ts">
@@ -124,9 +319,15 @@ export default class OrderGoods extends Vue{
         position: absolute;
         top:0;
         width: 100%;
-        height: calc(100vh - 45px);
+        // height: calc(100vh - 45px);
+        // overflow-y: auto;
+        // overflow-x: hidden;
+        // bottom: 70px;
+    }
+    .ezt-main{
         overflow-y: auto;
         overflow-x: hidden;
+        margin-bottom: 68px;
     }
     .detail-acount-title{
         font-size: 12px;

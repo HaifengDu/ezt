@@ -80,6 +80,363 @@
                         </span>                        
                     </div>
                 </li>
+
+
+
+
+                  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>  <li class="good-detail-content">
+                    <div class="ezt-detail-good">
+                        <div class="good-detail-l">
+                            <div>
+                                <span class="good-detail-name">猪肉
+                                    <span class="good-detail-sort">（规格）</span>
+                                </span>
+                                <span class="good-detail-sort">￥12.0001/KG</span>
+                            </div>
+                            <div>
+                                <span class="good-detail-billno">编号：003222</span>
+                                <span class="good-detail-sort">￥360.001</span>
+                            </div>
+                            <div class="good-detail-sort">备注：这是水果</div>
+                        </div>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div class='good-warehouse'>
+                        <span>已直拨</span>
+                        <div class="warehouse-list">
+                            <ul class="warehouse-isDefault">
+                                <li>江阳1仓
+                                    <span class="good-warehouse-num">1</span>
+                                </li>
+                                <li>江阳2仓
+                                    <span class="good-warehouse-num">22</span>
+                                </li>
+                            </ul>
+                            <ul class="warehouse-other" v-if="showOther">
+                                <li>包合3仓
+                                    <span class="good-warehouse-num">8</span>
+                                </li>
+                                <li>包合4仓
+                                    <span class="good-warehouse-num">6</span>
+                                </li>
+                            </ul>
+                        </div>
+                       
+                        <span class="turnOn" @click="showOtherWare">
+                            <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
+                        </span>                        
+                    </div>
+                </li>
             </ul> 
         </div>  
     </div>
@@ -155,7 +512,11 @@ export default class ReceiveGood extends Vue{
         position: absolute;
         top:0;
         width: 100%;
-        height: calc(100vh - 45px);
+        // height: calc(100vh - 45px);
+        // overflow-y: auto;
+        // overflow-x: hidden;
+    }
+     .ezt-main{
         overflow-y: auto;
         overflow-x: hidden;
     }

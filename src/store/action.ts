@@ -6,3 +6,6 @@ import { IUser } from "../interface/IUserModel";
 export const updateUser:Action<IRootState,IRootState> = ({commit},user:IUser)=>{
     commit(RootType.UPDATE_USER, user);
 };
+export const setSystemParam:Action<IRootState,IRootState> = ({commit},systemParamSetting:object)=>{
+    commit(RootType.SET_SYSTEMPARAM, systemParamSetting);
+};

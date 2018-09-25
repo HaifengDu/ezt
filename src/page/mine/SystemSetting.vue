@@ -26,7 +26,7 @@
                    <span>
                        <input v-model="model.orderSelected" value="5" id="e" type="radio" name="order" class="radio">
                        <label name="order" for="e" class="radio">一次订
-                           <input type="number" class="ezt-smart">天的量
+                           <input type="number" class="ezt-smart" :min="0">天的量
                         </label>
                    </span> 
                    <span class="ezt-foot-total">
@@ -67,12 +67,12 @@
                        <input v-model="model.isContain" id="c1" value="3" type="radio" name="contaion" class="radio">
                         <label for="c1" class="radio" name="contaion">到货时间≤
                             <span class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newHour">
                                     <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
                                 </select>
                            </span>：
                            <span class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newMinut">
                                     <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
                                 </select>
                            </span>
@@ -94,45 +94,56 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
+import {mapActions,mapGetters} from 'vuex'
+import { INoop, INoopPromise } from '../../helper/methods';
+import ObjectHelper from '../../common/objectHelper'
 import {Component} from "vue-property-decorator"
 declare var mobiscroll:any;//全局定义日历
 @Component({
-
+    computed:{
+        ...mapGetters({
+            systemParamSetting:"systemParamSetting"
+        }),       
+    },
+    methods:{
+        ...mapActions({
+            setSystemParam:'setSystemParam'
+        })
+    }
 })
 export default class Index extends Vue{
     private activea:boolean = false;
     private activeb:boolean = false;
+    private systemParamSetting:any;//store中selectedGood的值
+    private setSystemParam:INoopPromise;
     private hour:number;
     private minute:number;
+    private containTime:any
+    ={
+        newHour:0,
+        newMinut:0,
+    };
     private hours:any[]=[
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
     ];
     private minutes:any[]=[
-        1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-        40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
+        40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
     ]
     private model:any={
-        orderSelected : '1',
-        bulkQuantity: 0,
-        isContain:'1'
-    
+        // orderSelected : '1',
+        // bulkQuantity: 0,
+        // isContain:'1'    
     };
 
 
     mounted(){     
-    //   //日历
-    //   mobiscroll.date(this.$refs.canlendar, {
-    //       theme: 'material', 
-    //       display: 'bottom',
-    //       lang: 'zh',
-    //       timeWheels: "|h:ii A|",
-    //       timeFormat:'hh:ii A',         
-    //       onSet: (val:{
-    //           valueText:string
-    //       })=>{
-          
-    //       },
-    //   });
+    
+    }
+    created(){
+        this.model=ObjectHelper.serialize(this.systemParamSetting);
+       this.checkTime();
+        console.log(this.systemParamSetting,'8888888888')
     }
 
     private handlerActivea(){
@@ -141,13 +152,33 @@ export default class Index extends Vue{
     private handlerActiveb(){
         this.activeb=!this.activeb;
     }
+    //预估订货单
+    private checkTime(){
+        if(this.model.isContain=='3'){
+            debugger
+            if(this.systemParamSetting&&this.systemParamSetting.containTime){
+                let str = this.systemParamSetting.containTime;
+                this.containTime.newHour=str.subString(0,str.indexOf(":"));
+                this.containTime.newMinut=str.subString(str.indexOf(":",str.length-1))
+            }else{
+                this.$set(this.systemParamSetting,'containTime',"0:0");
+            }
+           
+        }
+    }
     /**
      * 保存设置
      */
     private saveSetting(){
+        ObjectHelper.merge(this.systemParamSetting,this.model,true);
+        if(this.model.isContain==3){
+            this.$set(this.model,'containTime',this.containTime.newHour+":"+this.containTime.newMinut)
+        }
+        this.setSystemParam(this.model);
+
         this.$toasted.success("更新设置成功！");
     }
-    private goBack(){
+    private goBack(){        
         this.$router.push('/mine');
     }
     

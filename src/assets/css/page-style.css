@@ -112,6 +112,12 @@ input.ezt-middle{
   width: 70%;
   max-width: 66%;
 }
+.select-time .ezt-select{  
+  height: 19px;
+  padding: 0px 20px 0px 3px;
+  max-width: 100%;
+  width: inherit;
+}
 .input-list{
   padding-left: 10px;
 }

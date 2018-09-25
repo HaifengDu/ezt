@@ -723,9 +723,6 @@ private changeDirect(item:any){
     .good-item-name{
       flex:1;
     }
-    .good-item-sort{
-      // flex:1;
-    }
     .good-item-sort.edit{
       border: 1px solid #ccc;
     }

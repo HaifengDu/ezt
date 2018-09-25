@@ -13,10 +13,16 @@ import initStock from './initStock'
 Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
-        user:void 0
+        user:void 0,
+        systemParamSetting:{
+            orderSelected : '1',
+            bulkQuantity: 0,
+            isContain:'1'
+        },
     },
     getters:{
-        user:state=>state.user
+        user:state=>state.user,
+        systemParamSetting:state=>state.systemParamSetting
     },
     mutations:{
         [RootType.UPDATE_USER](state,user:IUser){
@@ -24,6 +30,9 @@ export default new Store<IRootState>({
         },
         [RootType.DELETE_USER](state){
             state.user = null;
+        },
+        [RootType.SET_SYSTEMPARAM](state){
+            state.systemParamSetting = state.systemParamSetting;
         }
     },
     actions:{

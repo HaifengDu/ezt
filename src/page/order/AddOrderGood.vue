@@ -251,11 +251,14 @@ export default class Order extends Vue{
         this.addBeforeBillInfo.storeId = this.orderType[0].type;
         (this.selectedGood||[]).forEach(item=>item.active = false);
         this.goodData = ObjectHelper.serialize(this.selectedGood)
-        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
         }
-        if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){//单据修改之前信息
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
+        }
+        if(this.cache.getData(CACHE_KEY.ORDER_CONTAINTIME)){//要货日期 的时间（）
+            this.containTime = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_CONTAINTIME));
         }
         if(this.systemParamSetting.isContain=='3'){
             if(this.systemParamSetting&&this.systemParamSetting.containTime){
@@ -306,6 +309,7 @@ export default class Order extends Vue{
 
     //选择物料
     private renderUrl(info: string) {
+        this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.setSelectedGood(this.goodData);
@@ -388,8 +392,9 @@ export default class Order extends Vue{
      * 提交并审核
      */
     private confirmReceive(){
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
         this.$toasted.success("审核成功！");
-        this.$router.push('/orderGood')
+        // this.$router.push('/orderGood')
     }
 
     /**
@@ -399,7 +404,8 @@ export default class Order extends Vue{
         if(!this.goodData||this.goodData.length<=0){
             this.$toasted.show("请添加物料！");
             return false;
-        } 
+        }
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut; 
         this.addBillInfo={},
         this.goodData=[];
         this.setSelectedGood([]);
@@ -409,7 +415,7 @@ export default class Order extends Vue{
     }
 
     //离开确认
-    private onConfirm(){//确认离开，清空store中的物料和单据信息
+    private onConfirm(){//确认离开，清空store中的物料和单据信息        
         this.addBillInfo={},
         this.goodData=[];
         this.setSelectedGood([]);

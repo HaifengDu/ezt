@@ -17,13 +17,16 @@
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
           </span>
-           <div class="good-type-list">
-             <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
-           </div>
+          <div class="good-type-list">
+            <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
+          </div>
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">{{item.name}}</li>
+             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
+               {{item.name}}
+               <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
+              </li>
            </ul>
            <div class="good-content-list">
              <div class="good-item" v-for="(item) in goodList" :key='item.id'>
@@ -45,18 +48,9 @@
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span>
-                    <!-- <group>
-                      <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
-                    </group> -->
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
-                <!-- 编辑备注时 -->
-                <!-- <confirm v-model="isRemark" class="dialog-demo" @on-confirm="remarkConfirm" :on-cancel="remarkCancel"> -->
-                  <!-- <span class="confirm-title">备注</span>
-                  <div class="confirm-content">
-                    <textarea style="height: 7em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
-                  </div> -->
                   <div>
                     <x-dialog v-model="isRemark" class="dialog-demo"> 
                       <div class="ezt-dialog-header">
@@ -356,6 +350,18 @@ export default class AddGood extends Vue{
               numed:3,
               list:[]
             }
+          },{
+            id:3,
+            name:'土豆',
+            price:'3',
+            num:0,
+            utilname:'KG',
+            unit:'斤',
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:3,
+              list:[]
+            }
           }]
         },{
           id:21,
@@ -410,22 +416,29 @@ export default class AddGood extends Vue{
   }
   private changeSmallType(item:any){
     this.typeName = item;   
-    this.goodSmallType = item.cdata; 
+    this.goodSmallType = item.cdata;   
     this.loadGood(item.cdata[0]);
     //TODO:加载货品this.goodSmallType[0]
   }
   private loadGood(item:any){
+    if(!item.addList){
+      this.$set(item,'addList',[]);
+    }else{
+      item.addList = [];
+    }
+   
     //TODO:item.id加载货品
-     _.forEach(item.goodList,item=>{
-        this.$set(item,'active',false);
-        const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+     _.forEach(item.goodList,good=>{
+        this.$set(good,'active',false);
+        const index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
         if(index>=0){
-          ObjectHelper.merge(item,this.selectedGoodList[index],true);
-          this.selectedGoodList[index] = item;
+          ObjectHelper.merge(good,this.selectedGoodList[index],true);
+          this.selectedGoodList[index] = good;
+          item.addList.push(good);
         }
     });
     this.goodList = item.goodList;
-    this.typeName=item;
+    this.typeName=item;    
   }
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
@@ -442,11 +455,21 @@ export default class AddGood extends Vue{
       if(!ret){
         this.selectedGoodList.push(item);
       }
+      var smallRet = this.typeName.addList.find((value:any)=>{
+        return item.id == value.id;
+      })
+      if(!smallRet){       
+        this.typeName.addList.push(item);
+      }
     }else{
       //删除
       const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
       if(index>=0){
         this.selectedGoodList.splice(index,1);
+      }
+      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+      if(smallIndex>=0){
+        this.typeName.addList.splice(smallIndex,1);
       }
     }
   }
@@ -640,7 +663,18 @@ private changeDirect(item:any){
     padding: 13px 10px;
     font-size: 14px;
     text-align: center;
-    max-width: 30px;    
+    max-width: 30px;  
+    position: relative;  
+  }
+  .category-item .ezt-reddot-s{
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    background: red;
+    color: #fff;
+    top: 0;
+    right: -4px;
+    border-radius: 10px;
   }
   .category-item.active{
     background: #fff;

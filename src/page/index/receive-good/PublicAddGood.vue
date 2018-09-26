@@ -532,7 +532,6 @@ private changeDirect(item:any){
   private goToCommit(){
     this.setSelectedGood(this.selectedGoodList);
     this.$router.back();
-    console.log(this.selectedGood,'111')
   }
   //点击备注
   private handlerRemark(item:any){

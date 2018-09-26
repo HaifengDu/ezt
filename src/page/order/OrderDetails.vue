@@ -14,10 +14,12 @@
                     <span class="receive-icon-dcName"></span>
                     <span class="return-list-title">item.dc_name</span> 
                     <span class="receive-status">{{isPayMent?"待支付":"已完成"}}</span>
-                    <span class="receive-status" v-if="false">已付：213123</span>
                 </div>
                 <div class="receive-icon-content">
-                    <span class="receive-dc-title">单号：<span class="receive-dc-content">123123</span></span>
+                     <div style="display:flex">
+                        <span class="receive-dc-title">单号：<span class="receive-dc-content">asd123123</span></span>
+                        <span class="receive-dc-title" v-if="Payment">已付：<span class="receive-dc-content">1212222</span></span>
+                    </div>
                     <div style="display:flex">
                         <span class="receive-dc-title">要货日期：<span class="receive-dc-content">2018-09-12</span></span>
                         <span class="receive-dc-title">到货日期：<span class="receive-dc-content">2018-09-12</span></span>
@@ -289,8 +291,8 @@ export default class OrderGoods extends Vue{
     private remarks:string;
     private isPayMent:boolean=false; //是否有支付按钮
     private paytitle:string="";
-   
-    created() {      
+    private Payment:boolean = false;  //订单支付页面显示已付
+    created() {          
        this.service = OrderGoodsService.getInstance();
        this.detailList();
     }
@@ -303,6 +305,7 @@ export default class OrderGoods extends Vue{
         }else if(this.$route.params.isPayMent=='true'){
             this.isPayMent = true;
             this.paytitle = "订单支付"
+            this.Payment = true
         }
         
     }

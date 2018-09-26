@@ -489,7 +489,7 @@ export default class stockTaking extends Vue{
                 color: #fff;
                 width: 20px;
                 height: 20px;
-                line-height: 22px; 
+                line-height: 20px; 
                 text-align: center;
                 font-style: normal;
                 display: block;

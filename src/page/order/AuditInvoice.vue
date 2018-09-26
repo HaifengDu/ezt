@@ -1,26 +1,33 @@
 <!--审核要货单-->
 <template>
     <div class="ezt-page-con">
-        <ezt-header title="审核要货单" :back="true" @goBack="goBack"></ezt-header>
+        <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack"></ezt-header>
+        <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
-                     <li>
+                    <li v-if="this.type == 'examine'">
                         <span class="title-search-name">单号：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billno">
                     </li>
-                    <li>
+                    <li>    
                         <span class="title-search-name">来货单位：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.unit">
                     </li>
-                    <li>
+                    <li v-if="this.type == 'examine'">
                         <span class="title-search-name">要货日期：</span>
-                        <input type="text" class="ezt-middle" disabled v-model="addBillInfo.startDate">
+                        <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate">
+                    </li>
+                    <li v-if="this.type == 'add'">
+                        <span class="title-search-name">要货日期：</span>
+                        <span>
+                            <ezt-canlendar placeholder="要货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>             
+                        </span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name">到货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="addBillInfo.arriveDate"></ezt-canlendar>                 
+                            <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="addBillInfo.arriveDate"></ezt-canlendar>          
                         </span>
                     </li>
                     <li>
@@ -44,9 +51,9 @@
                                     <span class="good-detail-name">{{item.name}}
                                         <span class="good-detail-sort">（规格）</span>
                                     </span>
-                                    <span @click="editStatus(item)">
+                                    <!-- <span @click="editStatus(item)">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
-                                    </span>                                   
+                                    </span>                                    -->
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
@@ -79,10 +86,21 @@
                 </div>  
             </div>
         </ezt-footer>
-           <!-- 返回时提示保存信息 -->
+        <!-- 返回时提示保存信息 -->
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
+         <!-- 判断供货物料是否发生变化 -->
+        <confirm v-model="isMaterielChange" @on-confirm="onConfirm">
+            <p style="text-align:center;"> ***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。</p>
+        </confirm>
+        <!-- 当源订单所有物品均以停供时 -->
+         <confirm v-model="isMaterielChange" @on-confirm="onConfirm">
+            <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
+        </confirm>
+        <!-- 当源单为临采单时，引用最近成交价格； -->
+        <!-- 当为合同采购单时，引用合同价，如有变价，引用变价； -->
+        <!-- 当为配送单时，引用配送价，如有变价，引用变价。 -->
     </div>
 </template>
 <script lang="ts">
@@ -109,7 +127,7 @@ import CACHE_KEY from '../../constans/cacheKey'
             // "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
         })
     }
-})
+})  
 export default class Order extends Vue{
     private cache = CachePocily.getInstance(ECache.LocCache);
     private service: OrderGoodsService;
@@ -119,18 +137,22 @@ export default class Order extends Vue{
         
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
+        orderDate:new Date().format('yyyy-MM-dd'),
         arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
     private isSave:boolean=false;
-    created() {
+    private isMaterielChange:boolean = false;  //业务单据发生变化
+    private type:string; 
+    created() {  
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
-        }
+        }    
         if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
         }
+        this.type = this.$route.query.type
     }
       /**
      * 左滑删除某一项
@@ -203,7 +225,7 @@ export default class Order extends Vue{
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$router.push('/orderGood')
-    }
+    }   
 
     /**
      * 返回
@@ -225,7 +247,9 @@ export default class Order extends Vue{
     height: inherit;
     padding: 2px 6px;
 }
-
+.ezt-middle{
+    text-align: right;
+}
 //物料信息
 .good-detail-content {
   position: relative;

@@ -18,13 +18,25 @@
                     <li class="select-list">
                         <span class="title-search-name">要货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="addBillInfo.orderDate"></ezt-canlendar>                            
+                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
                         </span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name">到货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="addBillInfo.arriveDate"></ezt-canlendar>                            
+                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>                                                       
+                        </span>
+                        <span>
+                            <span class="title-select-name item-select select-time">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newHour">
+                                    <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
+                                </select>
+                           </span>：
+                           <span class="title-select-name item-select select-time">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newMinut">
+                                    <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
+                                </select>
+                           </span>
                         </span>
                     </li>
                     <li>
@@ -62,13 +74,20 @@
                         </ul>                       
                     </x-dialog>
                 </div>
-                 <div v-if="(templateList.length<=0&&addBillInfo.orderType==1)||(estimateGoods.length<=0&&addBillInfo.orderType==2)" class="template-list-one">
+                <div v-if="(addBillInfo.orderType==2&&this.estimateGoods.length==0)" class="template-list-one title-search-name">
                     <span>{{doneInfo}}</span>
-                </div>  
+                </div>
+                <div v-if="(addBillInfo.orderType==2&&this.estimateGoods.length>0)" class="estimate-list-one title-search-name">
+                    <span>预估单：112222</span>
+                    <span>预估物料计算中...</span>
+                </div> 
+                <div v-if="(addBillInfo.orderType==1&&this.templateList.length==0)" class="template-list-one title-search-name">
+                    <span>{{doneInfo}}</span>
+                </div> 
               
                 <!-- 选择的物料明细 -->
                  <ul>
-                    <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
+                    <li class="good-detail-content" v-for="(item,index) in goodData" :key="index">
                         <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
                         v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
                             <div class="good-detail-l">
@@ -100,8 +119,8 @@
         </div>
         <ezt-footer>
             <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                    <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                <div class="ezt-foot-total" v-if="this.goodData.length>0">合计：
+                    <b>品项</b><span>{{this.goodData.length}}</span>，
                     <b>数量</b><span>{{TotalNum}}</span>，
                     <b>￥</b><span>{{TotalAmt}}</span>
                 </div>
@@ -133,20 +152,18 @@ import { INoop, INoopPromise } from '../../helper/methods';
 import {OrderGoodsService} from '../../service/OrderGoodsService';
 import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
+import ObjectHelper from '../../common/objectHelper'
 import CACHE_KEY from '../../constans/cacheKey'
 @Component({
     computed:{
         ...mapGetters({
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            // 'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
-            // 'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
+            'systemParamSetting':"systemParamSetting"
         })
     },
     methods:{
         ...mapActions({
-            // 'setAddBillInfo':"publicAddGood/setAddBillInfo",
             'setSelectedGood':'publicAddGood/setSelectedGood',
-            // "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
         })
     }
 })
@@ -155,16 +172,15 @@ export default class Order extends Vue{
     private service: OrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
+    private systemParamSetting:any;
     private addBeforeBillInfo:any={
         orderType:0
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    // private setAddBeforeBillInfo:INoopPromise;
     private addBillInfo:any={
         orderType:0,
         orderDate:new Date().format('yyyy-MM-dd'),
         arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
-    // private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
     private isStore:boolean=false;
     private isOrderType:boolean=false;
     private isSave:boolean=false;
@@ -174,17 +190,20 @@ export default class Order extends Vue{
       name:'配送中心1',
       id:'01'
     }];
-    private estimateGoods:any=[];
-    private templateList:any=[//可用导入模板
+    private containTime:any={
+        newHour:0,
+        newMinut:0,
+    };
+    private estimateGoods:any=[
         {
-            id:1,
+            billno:'0000ddff',
             storeName:'配送中心A01',
             goodList:[//可用导入模板中物品
                 {
                     id:2,
-                    name:'海参',
+                    name:'牛肉',
                     price:'9',
-                    num:0,
+                    num:1,
                     utilname:'KG',
                     unit:'箱',
                     roundValue:{//可直拨的数据
@@ -194,42 +213,91 @@ export default class Order extends Vue{
                     }
                 }
             ]
-        },
-        {
-            id:2,
-            storeName:'配送中心B02',
-            goodList:[]
         }
     ];
+    private goodData:any=[];
+    private templateList:any=[//可用导入模板
+        {
+            id:1,
+            storeName:'配送中心A01',
+            goodList:[//可用导入模板中物品
+                {
+                    id:2,
+                    name:'海参',
+                    price:'9',
+                    num:1,
+                    utilname:'KG',
+                    unit:'箱',
+                    roundValue:{//可直拨的数据
+                        num: 10,
+                        numed:3,
+                        list:[]
+                    }
+                }
+            ]
+        }
+    ];
+    private hours:any[]=[
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
+    ];
+    private minutes:any[]=[
+        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
+        40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
+    ]
    
     created() {
         this.service = OrderGoodsService.getInstance();
         this.addBillInfo.storeId = this.orderType[0].type;
         this.addBeforeBillInfo.storeId = this.orderType[0].type;
         (this.selectedGood||[]).forEach(item=>item.active = false);
-        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
+        this.goodData = ObjectHelper.serialize(this.selectedGood)
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
         }
-        if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){//单据修改之前信息
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
         }
+        if(this.cache.getData(CACHE_KEY.ORDER_CONTAINTIME)){//要货日期 的时间（）
+            this.containTime = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_CONTAINTIME));
+        }
+        if(this.systemParamSetting.isContain=='3'){
+            if(this.systemParamSetting&&this.systemParamSetting.containTime){
+                let str = this.systemParamSetting.containTime;
+                this.containTime.newHour=str.subString(0,str.indexOf(":"));
+                this.containTime.newMinut=str.subString(str.indexOf(":",str.length-1))
+            }else{
+                this.$set(this.systemParamSetting,'containTime',"0:0");
+            }
+           
+        }
+        console.log(this.systemParamSetting,'0099999')
     }
     /**
      * 模板导入订货操作
      */
     private handlerTemplateOrder(item:any){ 
-        item.goodList.forEach((info:any)=>{info.active=false})
-        this.setSelectedGood(item.goodList);
+        item.goodList.forEach((info:any)=>{
+                // info.active=false
+                this.$set(info,'active',false);
+        })
+         this.goodData = ObjectHelper.serialize(item.goodList);//深拷贝
         this.isTemplate=false;
     }
       /**
      * 左滑删除某一项
      */
     private deleteSection(item:any){
-        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
+        let newIndex = this.goodData.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
         })
-        this.selectedGood.splice(newIndex,1);
+        this.goodData.splice(newIndex,1);
+        // if(this.goodData.length==0){
+        //     if(this.addBillInfo.orderType==1){
+        //         this.doneInfo = "未查到可用模板，请选择其它方式要货。";
+        //     }else if(this.addBillInfo.orderType==2){
+        //         this.doneInfo = "未查到可用预估单，请选择其它方式要货。";
+        //     }
+        // }  
     }
     // 向左滑动
     private handlerLeft(item:any){     
@@ -241,16 +309,18 @@ export default class Order extends Vue{
 
     //选择物料
     private renderUrl(info: string) {
+        this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        // this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
+        this.setSelectedGood(this.goodData);
         this.$router.push(info);
     }
      /**
      * 有物料时 机构、要货方式变化 确认校验
      */
     private onStoreConfirm(val:any){
-      this.setSelectedGood([]);
+      this.goodData=[];
+      this.checkNone();
       this.addBeforeBillInfo[val]=this.addBillInfo[val];
     }
     /**
@@ -259,12 +329,31 @@ export default class Order extends Vue{
     private onStoreCancel(val:any){
       this.addBillInfo[val] = this.addBeforeBillInfo[val];
     }
+    /**
+     * 校验要货方式没有时；
+     */
+    private checkNone(){
+        if(this.addBillInfo.orderType=='1'){
+            if(this.templateList.length>0){
+                this.isTemplate=true;
+            }else{
+                this.doneInfo="未查到可用模板，请选择其它方式要货。"
+            }                
+        }
+        if(this.addBillInfo.orderType=='2'){
+            if(this.estimateGoods.length>0){
+
+            }else{
+                this.doneInfo="未查到可用预估单，请选择其它方式要货。"
+            }
+        }  
+    }
 
     /**
      * 选择配送机构
      */
     private handlerStoreId(item:any){      
-      if(this.selectedGood.length>0){
+      if(this.goodData.length>0){
         this.isStore=true;
       }else{
         this.addBeforeBillInfo.storeId=this.addBillInfo.storeId;            
@@ -274,24 +363,11 @@ export default class Order extends Vue{
      * 切换要货方式
      */
     private handlerChangeType(item:any){
-        if(this.selectedGood.length>0){
+        if(this.goodData.length>0){           
             this.isOrderType=true;
         }else{
             this.addBeforeBillInfo.orderType=this.addBillInfo.orderType;
-            if(this.addBillInfo.orderType=='1'){
-                if(this.templateList.length>0){
-                    this.isTemplate=true;
-                }else{
-                    this.doneInfo="未查到可用模板，请选择其它方式要货。"
-                }                
-            }
-            if(this.addBillInfo.orderType=='2'){
-                if(this.estimateGoods.length>0){
-
-                }else{
-                     this.doneInfo="未查到可用预估单，请选择其它方式要货。"
-                }
-            }  
+            this.checkNone();
         }
     }
     
@@ -300,7 +376,7 @@ export default class Order extends Vue{
    * 物料总数量
    */
     private get TotalNum(){
-      return this.selectedGood.reduce((ori,item)=>{
+      return this.goodData.reduce((ori:any,item:any)=>{
         return Number(ori)+Number(item.num);       
       },0);
     }
@@ -308,7 +384,7 @@ export default class Order extends Vue{
      * 物料总金额
      */
     private get TotalAmt(){
-        return this.selectedGood.reduce((ori,item)=>{
+        return this.goodData.reduce((ori:any,item:any)=>{
         return ori+(item.num*item.price);       
         },0).toFixed(2);
     }
@@ -316,26 +392,32 @@ export default class Order extends Vue{
      * 提交并审核
      */
     private confirmReceive(){
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
         this.$toasted.success("审核成功！");
+        // this.$router.push('/orderGood')
     }
 
     /**
      * 提交
      */
     private saveReceive(){
-        if(!this.selectedGood||this.selectedGood.length<=0){
+        if(!this.goodData||this.goodData.length<=0){
             this.$toasted.show("请添加物料！");
             return false;
-        } 
+        }
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut; 
         this.addBillInfo={},
+        this.goodData=[];
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("保存成功！");
+         this.$router.push('/orderGood')
     }
 
     //离开确认
-    private onConfirm(){//确认离开，清空store中的物料和单据信息
+    private onConfirm(){//确认离开，清空store中的物料和单据信息        
         this.addBillInfo={},
+        this.goodData=[];
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$router.push('/orderGood')
@@ -345,7 +427,7 @@ export default class Order extends Vue{
      * 返回
      */
     private goBack(){
-         if((this.addBillInfo&&this.addBillInfo.storeId)||this.selectedGood.length>0){
+         if((this.addBillInfo&&this.addBillInfo.storeId)||this.goodData.length>0){
             this.isSave=true;
         }else{
             this.$router.push('/orderGood')
@@ -475,10 +557,26 @@ export default class Order extends Vue{
         color: #1188FC;
     }
 }
-.template-list-one{
-    background: #fff;
-    padding: 10px;
-}
+    .template-list-one{
+        background: #fff;
+        padding: 10px;
+    }
+    .item-select.select-time{
+        width: 40px;
+        position: relative;
+        border:1px solid #ccc;
+        display:inline-block
+    }
+    .select-time.item-select::after{
+        right: 8px;
+    }
+    .estimate-list-one{
+        background: #fff;
+        // text-align: left;
+        padding: 10px;
+        display:flex;
+        flex-direction: column;
+    }
 
 </style>
 

@@ -27,20 +27,19 @@
        type:String,
        disabled:Boolean,
        placeholder:String,
-       defaultValue:String,
+       defaultValue:String,//默认值
+       max:String,//最大值 小于某个值
+       min:String,//最小值 大于某个值
     },
     computed: {
-    
     },
     methods: {
       selectChange(val){
-          this.$emit('change',val.target.value);
+        this.$emit('change',val.target.value);
       }
     },
     mounted(){
-      let _this=this;
-      //日历
-      const instance = mobiscroll.date(this.$refs.canlendar, {
+      const opt = {
         theme: 'material', 
         display: 'bottom',
         lang: 'zh',
@@ -49,7 +48,16 @@
         onSet: function(val){
           _this.$emit(val.valueText)
         }
-      });
+      }
+      if(this.max){
+        this.$set(opt,'max',new Date(this.max));
+      }
+      if(this.min){
+        this.$set(opt,'min',new Date(this.min));
+      }      
+      let _this=this;
+      //日历
+      const instance = mobiscroll.date(this.$refs.canlendar,opt);
       if(this.defaultValue){
         instance.setVal(new Date(this.defaultValue));
       }

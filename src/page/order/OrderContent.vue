@@ -51,7 +51,7 @@
                 </div>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
-              <div class="receive-icon-bottom">
+              <div class="receive-icon-bottom" @click="orderdetails()">
                 <div class="glow-1">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
@@ -320,7 +320,10 @@ export default class OrderGoods extends Vue{
    // 跳转详情页面
     private orderdetails(){
       if(this.tabList.getActive().status==3){
-        this.$router.push('/OrderDetails');
+        // this.$router.push('/OrderDetails');
+        this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+      }else if(this.tabList.getActive().status ==2){
+        this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
       }
     }
     // 审核要货单

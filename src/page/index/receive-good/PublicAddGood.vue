@@ -32,10 +32,13 @@
              <div class="good-item" v-for="(item) in goodList" :key='item.id'>
                <div class="good-item-title">
                  <span class="good-item-name">{{item.name}}</span>
-                 <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                 <!-- <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span> -->
+                 <span v-if="!useObj.editPrice" class="good-item-sort edit">
+                    价格：<input type="number" class="ezt-smart" v-model="item.price">
+                 </span>
                  <span v-if="useObj.editPrice" class="good-item-sort edit">
-                    <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-                    <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>                    
+                    <span v-if="useObj.costType==0">价格：<input type="number" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="useObj.costType==1">税额：<input type="number" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
                <div class="good-item-bot">
@@ -44,10 +47,10 @@
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 收藏图标 -->
-                 <span v-if="!useObj.editPrice">
+                 <span v-if="!useObj.editPrice" class="good-collect">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
-                 <span>
+                 <span class="good-number">
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
@@ -162,10 +165,10 @@
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
               <!-- 收藏图标 -->
-              <span v-if="!useObj.editPrice">
+              <span v-if="!useObj.editPrice" class="good-collect">
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
-              <span>
+              <span class="good-number">
                 <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
               </span>
             </div>
@@ -205,10 +208,10 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="!editPrice">
+            <span v-if="!editPrice" class="good-collect">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
-            <span>
+            <span class="good-number">
               <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
             </span>
           </div>
@@ -493,6 +496,10 @@ export default class AddGood extends Vue{
     const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
     this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
     this.selectedGoodList.splice(index,1);
+    
+    const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+    this.typeName.addList[smallIndex].num=0;
+    this.typeName.addList.splice(smallIndex,1);
   }
   /**
    * 搜索所有物品 显示/隐藏
@@ -643,6 +650,7 @@ private changeDirect(item:any){
     padding: 0;
     padding-left: 1px;
     margin-left: 3%;
+    width: 78%;
   }
   .good-item{
     background: #fff;
@@ -653,6 +661,13 @@ private changeDirect(item:any){
       padding: 1px;
       display:inline-block;
       margin-right: 20px;
+      flex:1;
+    }
+    .good-number{
+      flex:1;
+    }
+    .good-collect{
+      flex:1;
     }
   }
   .category-item{
@@ -684,6 +699,7 @@ private changeDirect(item:any){
     display: flex;
     flex-direction: row;
     align-items: center;
+    margin-top: 14px;
   }
   .ezt-foot-storage{
     position: relative;
@@ -755,6 +771,7 @@ private changeDirect(item:any){
     display: flex;
     .good-item-name{
       flex:1;
+      margin: 4px 24px 4px 0px;
     }
     .good-item-sort.edit{
       border: 1px solid #ccc;

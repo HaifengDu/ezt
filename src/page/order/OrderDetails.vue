@@ -1,11 +1,11 @@
 <!--订货单详情-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title="订货单详情" @goBack="goBack">
+    <ezt-header :back="true" :title="paytitle" @goBack="goBack">
        <div slot="action">
        </div>    
     </ezt-header>    
-    <div class="ezt-main"> 
+    <div class="ezt-main" :class="{'no-pament':!isPayMent}"> 
         <div class="ezt-backcolor"></div>
          <div class="ezt-detail-cot">
             <!-- 单据信息 -->
@@ -13,7 +13,7 @@
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
                     <span class="return-list-title">item.dc_name</span> 
-                    <span class="receive-status">已完成</span>
+                    <span class="receive-status">{{isPayMent?"待支付":"已完成"}}</span>
                     <span class="receive-status" v-if="false">已付：213123</span>
                 </div>
                 <div class="receive-icon-content">
@@ -25,7 +25,7 @@
                     <div style="display:flex;padding-bottom:20px;">
                         <span class="receive-dc-title">备注：<span class="receive-dc-content">不要啦就是你的济南市快递那福克斯地方</span></span>
                     </div>
-                    <div class="receive-ys">已收</div>
+                    <div class="receive-ys" v-if="!isPayMent">已收</div>
                 </div>
             </div>
             <div class="detail-acount-title">
@@ -248,7 +248,7 @@
             <b>数量</b><span>2</span>，
             <b>含税金额￥</b><span>3</span>
         </div>
-        <div class="ezt-foot-button">
+        <div class="ezt-foot-button" v-if="isPayMent">
             <a href="javascript:(0)" class="ezt-foot-sub">支付</a>  
         </div>  
         </div>
@@ -287,6 +287,8 @@ export default class OrderGoods extends Vue{
     private showOther: boolean=false;
     private details:any[] = [];  //物料明细
     private remarks:string;
+    private isPayMent:boolean=false; //是否有支付按钮
+    private paytitle:string="";
    
     created() {      
        this.service = OrderGoodsService.getInstance();
@@ -295,6 +297,13 @@ export default class OrderGoods extends Vue{
 
     mounted(){ 
         this.detailList();
+        if(this.$route.params.isPayMent=='false'){
+            this.isPayMent = false;
+            this.paytitle = "订货单详情";
+        }else if(this.$route.params.isPayMent=='true'){
+            this.isPayMent = true;
+            this.paytitle = "订单支付"
+        }
         
     }
 
@@ -443,5 +452,8 @@ export default class OrderGoods extends Vue{
     }
     .icon-trun-on.off{
         transform: rotate(180deg);
+    }
+    .no-pament{
+        margin-bottom: 24px;
     }  
 </style>

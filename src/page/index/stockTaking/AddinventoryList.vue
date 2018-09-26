@@ -34,12 +34,12 @@
                     </select>
                   </span>
                 </li>
-              </ul>
+              </ul>    
           </div>
           <div class="method">
-              <p>盘点方式</p>
+              <p>盘点方式</p>    
               <ul>
-                <li @click="manualproduction('/selectinginventory')">手工制单</li>
+                <li @click="manualproduction('/publicAddGood')">手工制单</li>
                 <li @click="templateimport()">模板导入</li>
                 <li @click="inventorytype('d')">盘点类型导入</li>
               </ul>
@@ -61,14 +61,13 @@ import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import IUser from "../../../interface/IUserModel"
 import StockTakingService from "../../../service/StockTakingService"
-import SelectingInventory from './SelectingInventory'
 import librarydetails from './LibraryDetails'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({  
-   components:{    
-      SelectingInventory
+   components:{  
+
    },   
    computed:{  
      ...mapGetters({
@@ -111,7 +110,6 @@ export default class stockTaking extends Vue{
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private setPktemplateimport:INoopPromise//store中给setPktemplateimport赋值
-    private SelectingInventory:boolean = false;
     private name:any;
     private warehouse_name:string;  
     private busi_date:string;  

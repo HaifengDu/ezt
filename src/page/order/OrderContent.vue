@@ -33,10 +33,11 @@
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
-              <div class="receive-icon-title" @click="toexamine('')">
+              <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status">{{tabList.getActive().status==1?'审核未通过':'再来一单>>'}}</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1"  @click="toexamine('examine')">审核未通过</span>
+                <span class="receive-status" @click="morelist('add')" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -82,7 +83,7 @@
       </ul>
     </ezt-footer>
   </div>
-  <!-- 查询订货 -->
+  <!-- 查询订货 -->  
   <div v-if="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
        <li class="select-list">
@@ -248,7 +249,7 @@ export default class OrderGoods extends Vue{
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
           this.allLoaded=true;
-        }else{
+        }else{   
           this.goodList=this.goodList.concat(res.data.data);
           (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         }
@@ -316,25 +317,32 @@ export default class OrderGoods extends Vue{
       this.hideMask();
       this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
    }
-  // 跳转详情页面
-    private orderdetails(info:string){
-      if(info){
-         this.$router.push(info);
-         return false;
-      }
-      if(this.tabList.getActive().status==1 || this.tabList.getActive().status==3){
+   // 跳转详情页面
+    private orderdetails(){
+      if(this.tabList.getActive().status==3){
         this.$router.push('/OrderDetails');
       }
     }
-    private toexamine(info:string){
-      if(info){
-         this.$router.push(info);
-         return false;
-      }
+    // 审核要货单
+    private toexamine(type:any){
       if(this.tabList.getActive().status==1){
-        this.$router.push('/AuditInvoice');
+        this.$router.push({
+          name:'AuditInvoice',
+          query:{
+              type:type,
+        }});  
       }
-    }
+     }
+    //  再来一单
+     private morelist(type:any){
+       if(this.tabList.getActive().status==2 || this.tabList.getActive().status==3){
+          this.$router.push({
+            name:'AuditInvoice',
+            query:{
+              type:type,
+        }});  
+       }
+     }
 }
 </script>
 <style lang="less" scoped>

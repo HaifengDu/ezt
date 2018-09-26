@@ -30,24 +30,20 @@
             </div>
             <div class="detail-acount-title">
                物料明细
-            </div>  
+            </div>      
             <ul>
-                <li class="good-detail-content">
+                <li class="good-detail-content" v-for="(item,index) in details" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>
-                                <span class="good-detail-name">item.name
-                                    <span class="good-detail-sort">（规格）</span>
-                                </span>
-                                <span class="good-detail-sort">￥item.guige</span>
+                                <span class="good-detail-name">{{item.dc_name}}</span>
+                                <span class="good-detail-sort">￥{{item.material_size}}</span>
                             </div>
                             <div>
-                                <span class="good-detail-billno">编号：item.code</span>
+                                <span class="good-detail-billno">编号：{{item.bill_no}}</span>
                             </div>
-                            <div class="good-detail-sort">备注：
-                                <span class="remarks">
-                                    不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方
-                                </span>
+                            <div class="good-detail-sort" ref="itemWrapper">备注：
+                                    水电费哪开始地方你水电费三方卡斯诺伐克辣酸奶饭卡上飞
                             </div>
                              <!-- <span class="turnOn" @click="showOtherWare">
                               <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
@@ -64,7 +60,7 @@
     </div>
   </div>
 </template>
-<script lang="ts">
+<script lang="ts">   
 import Vue from 'vue'
 import ErrorMsg from "./model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
@@ -73,6 +69,7 @@ import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
 import { OrderGoodsService} from '../../service/OrderGoodsService';
+import { strictEqual } from 'assert';
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -83,6 +80,7 @@ declare var mobiscroll:any;
      ...mapGetters({
 
      })
+    
    },
    methods:{
      ...mapActions({
@@ -92,17 +90,41 @@ declare var mobiscroll:any;
 export default class OrderGoods extends Vue{
     private service: OrderGoodsService;
     private showOther: boolean=false;
+    private details:any[] = [];  //物料明细
+    private remarks:string;
+   
     created() {      
        this.service = OrderGoodsService.getInstance();
-       
+       this.detailList();
     }
 
     mounted(){ 
+        this.detailList();
+        
     }
 
+    // 返回
     private goBack(){
         this.$router.push('/orderGood');
     }
+    // 物料明细
+    private detailList(){
+     this.service.getGoodDetail().then(res=>{
+          this.details=res.data.data;
+        },err=>{
+          this.$toasted.show(err.message);
+      });
+    
+    }
+
+    // 获取备注的length
+    private getItemLength(){
+        debugger
+        let children = this.$refs.itemWrapper;
+        console.log(children);
+        // return children.length;
+    }
+   
     private showOtherWare(){
         this.showOther = !this.showOther;
     }
@@ -181,13 +203,6 @@ export default class OrderGoods extends Vue{
         font-size: 13px;
         color: #5F7B9A;
         letter-spacing: 0;
-        .remarks{
-            overflow: hidden;
-            text-overflow: ellipsis;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
     }
     .good-detail-billno,.good-num-t{
         font-size: 10px;

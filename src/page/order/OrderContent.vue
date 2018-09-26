@@ -130,6 +130,14 @@
       </li>
     </ul>
   </div> 
+  <!-- 判断供货物料是否发生变化。当最新供货物料发生变化，源订单中部分物品当前已停止供应时 -->
+   <confirm v-model="isMaterielChange" confirm-text="继续下单" @on-confirm="onConfirm">
+        <p style="text-align:center;"> ***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。</p>
+   </confirm>
+  <!-- 当源订单所有物品均以停供时 -->
+   <confirm v-model="isCommodity" confirm-text="手工订货" @on-confirm="onConfirm">
+        <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
+   </confirm>
 </div>
 </template>
 <script lang="ts">
@@ -172,6 +180,8 @@ export default class OrderGoods extends Vue{
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
     private searchParam:any={};//搜索时的查询条件
+    private isMaterielChange:boolean = false;  //供货物料是否发生变化
+    private isCommodity:boolean = false;  //物料停止供货发生变化
     private orderType:any=[{
       name:'仓库1',
       id:'01'
@@ -335,17 +345,29 @@ export default class OrderGoods extends Vue{
               type:type,
         }});  
       }
-     }
-    //  再来一单
-     private morelist(type:any){
+     }     
+    //  再来一单 
+    private morelist(type:any){
        if(this.tabList.getActive().status==2 || this.tabList.getActive().status==3){
           this.$router.push({
             name:'AuditInvoice',
             query:{
               type:type,
         }});  
+        // setInterval(() => {
+        //     this.isMaterielChange = false
+        //     this.isCommodity = true
+        // }, 3000)
        }
      }
+    //再来一单的时候验证物料信息
+    private onConfirm(){
+      this.$router.push({
+          name:'AddOrderGood',
+          query:{   
+          }
+      });  
+    }
 }
 </script>
 <style lang="less" scoped>

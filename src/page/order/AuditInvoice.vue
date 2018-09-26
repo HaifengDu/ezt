@@ -90,17 +90,6 @@
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
-         <!-- 判断供货物料是否发生变化 -->
-        <confirm v-model="isMaterielChange" @on-confirm="onConfirm">
-            <p style="text-align:center;"> ***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。</p>
-        </confirm>
-        <!-- 当源订单所有物品均以停供时 -->
-         <confirm v-model="isMaterielChange" @on-confirm="onConfirm">
-            <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
-        </confirm>
-        <!-- 当源单为临采单时，引用最近成交价格； -->
-        <!-- 当为合同采购单时，引用合同价，如有变价，引用变价； -->
-        <!-- 当为配送单时，引用配送价，如有变价，引用变价。 -->
     </div>
 </template>
 <script lang="ts">
@@ -133,15 +122,14 @@ export default class Order extends Vue{
     private service: OrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private addBeforeBillInfo:any={
-        
+    private addBeforeBillInfo:any={    
+         
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
         orderDate:new Date().format('yyyy-MM-dd'),
         arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
     private isSave:boolean=false;
-    private isMaterielChange:boolean = false;  //业务单据发生变化
     private type:string; 
     created() {  
         this.service = OrderGoodsService.getInstance();

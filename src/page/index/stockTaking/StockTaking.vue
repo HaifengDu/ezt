@@ -299,7 +299,7 @@ export default class stockTaking extends Vue{
               busi_date:item.busi_date,
               bill_type_name:item.bill_type_name,
               stock_count_mode_name:item.stock_count_mode_name,
-              ids:item.id,
+              ids:item.id,  
               types:types,
               stock_count_mode:item.stock_count_mode,
             }});  
@@ -489,7 +489,7 @@ export default class stockTaking extends Vue{
                 color: #fff;
                 width: 20px;
                 height: 20px;
-                line-height: 20px; 
+                line-height: 22px; 
                 text-align: center;
                 font-style: normal;
                 display: block;

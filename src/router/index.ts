@@ -18,7 +18,6 @@ import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
-import SelectingInventory from '@/page/index/stockTaking/SelectingInventory.vue'
 import ChangePsd from '@/page/mine/ChangePassword.vue';//修改密码
 import InitStock from '@/page/index/init-stock/InitStock.vue';//库存初始化
 import AddInitStock from '@/page/index/init-stock/AddInitStock.vue';//添加库存初始化
@@ -100,10 +99,6 @@ const router = new Router({
       path: '/selecttheTemplate',   //选择模板
       name: 'SelecttheTemplate',
       component: SelecttheTemplate,
-    },{
-      path: '/selectingInventory',   //选择盘点货品
-      name: 'SelectingInventory',
-      component: SelectingInventory,
     },{
       path:'/publicAddGood',
       name:'PublicAddGood',

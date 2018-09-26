@@ -98,6 +98,7 @@ import { parse } from 'querystring';
  .ezt-count{
     display: flex;
     flex-direction: row;
+    min-width: 104px;
     .ezt-number{
         border: 1px solid #ccc;
         width: 50px;

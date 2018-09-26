@@ -34,11 +34,11 @@
                  <span class="good-item-name">{{item.name}}</span>
                  <!-- <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span> -->
                  <span v-if="!useObj.editPrice" class="good-item-sort edit">
-                    价格：<input type="number" class="ezt-smart" v-model="item.price">
+                    价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                  </span>
                  <span v-if="useObj.editPrice" class="good-item-sort edit">
-                    <span v-if="useObj.costType==0">价格：<input type="number" class="ezt-smart" v-model="item.price"></span>
-                    <span v-if="useObj.costType==1">税额：<input type="number" class="ezt-smart" v-model="item.amt"></span>                    
+                    <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
                <div class="good-item-bot">
@@ -47,7 +47,7 @@
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 收藏图标 -->
-                 <span v-if="!useObj.editPrice" class="good-collect">
+                 <span v-if="!useObj.editPrice" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <span class="good-number">
@@ -99,19 +99,19 @@
                             <li v-if="useObj.costType==0">
                                 <span class="title-dialog-name">价格：</span>
                                 <span class="icon-input price">
-                                    <input type="number" class="ezt-smart" v-model="bindRemark.price">
+                                    <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
                                 </span>                                       
                             </li>
                             <li v-if="useObj.costType==1">
                                 <span class="title-dialog-name">含税额：</span>
                                 <span class="icon-input price">
-                                    <input type="number" class="ezt-smart" v-model="bindRemark.amt">
+                                    <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
                                 </span>                                       
                             </li>
                             <li>
                                 <span class="title-dialog-name">税率：</span>
                                 <span class="icon-input">
-                                    <input type="number" class="ezt-smart" v-model="bindRemark.rate">
+                                    <input type="text" class="ezt-smart" @change="pubChange(bindRemark,'rate')" v-model="bindRemark.rate">
                                 </span>
                             </li>
                             <li class="select-list">
@@ -150,13 +150,13 @@
       </ezt-header>
       <div class="selected-good-content">       
         <div class="good-item delete" v-swipeleft="showDelete.bind(this,item)" v-for="(item,index) in selectedGoodList" :key='index'>
-          <div>
+          <div class="item-left-good">
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
               <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
               <span v-if="useObj.editPrice" class="good-item-sort edit">
-                <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-                <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+                <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
+                <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
               </span>
             </div>
             <div class="good-item-bot">
@@ -169,7 +169,8 @@
                 <i class="fa fa-star-o" aria-hidden="true"></i>
               </span>
               <span class="good-number">
-                <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+                <!-- <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number> -->
+                <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
               </span>
             </div>
           </div>          
@@ -198,8 +199,8 @@
             <span class="good-item-name">{{item.name}}</span>
             <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
             <span v-if="useObj.editPrice" class="good-item-sort edit">
-              <span v-if="useObj.costType==0">价格：<input type="text" class="ezt-smart" v-model="item.price"></span>
-              <span v-if="useObj.costType==1">税额：<input type="text" class="ezt-smart" v-model="item.amt"></span>
+              <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
+              <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
             </span>
           </div>
           <div class="good-item-bot">
@@ -208,11 +209,12 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="!editPrice" class="good-collect">
+            <span v-if="!useObj.editPrice" class="good-collect">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span class="good-number">
-              <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number>
+              <!-- <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number> -->
+              <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
             </span>
           </div>
         </div>
@@ -304,8 +306,9 @@ export default class AddGood extends Vue{
   private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
   private bindRemark:any={};//深拷贝存储的值 
   private restBindRemark:any={};//编辑备注时绑定的值
-   private DirectedNum:number=0;//已直拨的数量
+  private DirectedNum:number=0;//已直拨的数量
   private countFlag = 0;
+  private oldValue = 0;
   // private userpp:any[]=[];
   created(){ 
   }
@@ -446,6 +449,28 @@ export default class AddGood extends Vue{
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
   }
+
+  // 价格\税率\税额 修改的时候
+  private pubChange(item:any,info:any){
+    if(item[info]==""){
+        item[info]=0;
+    }
+    if(!isNaN(item[info])){
+      this.oldValue = item[info];//是一个数
+    }else{
+      item[info] = this.oldValue||0;
+    }
+    item[info] = parseFloat(item[info]);
+    if(info=="rate"){//税率 限制 1-100间
+      if(item[info]>100){
+        item[info]=100;
+      }
+      if(item[info]<0){
+        item[info]=0;
+      }
+    }
+    // this.dValue=this.dValue.replace(/[\.]/g,'');
+  }
   /**
    * 添加/删除物品数量
    */
@@ -532,6 +557,12 @@ private changeDirect(item:any){
    */
   private handlerSearchData(){
     debugger
+  }
+  /**
+   * 收藏物品
+   */
+  private handlerCollect(item:any){
+    item.active = !item.active;
   }
   /**
    * 选择完货品去提交
@@ -661,13 +692,18 @@ private changeDirect(item:any){
       padding: 1px;
       display:inline-block;
       margin-right: 20px;
-      flex:1;
+      flex:.4;
+      font-size: 20px;
     }
     .good-number{
       flex:1;
     }
     .good-collect{
-      flex:1;
+      flex:.6;
+      font-size: 20px;
+    }
+    .good-collect.active{
+      color:#1674fc;
     }
   }
   .category-item{
@@ -793,6 +829,7 @@ private changeDirect(item:any){
       // flex-direction: row;
       align-items: center;
       border-bottom: 1px solid #ccc;
+      position: relative;
       .title-dialog-name {
         flex: inherit;
         padding: 10px 0px;
@@ -809,7 +846,7 @@ private changeDirect(item:any){
         display: inline-block;
         content: "%";
         position: absolute;
-        right: 40px;
+        right: 16px;
       }
       .icon-input.price::before {
         content: "￥";
@@ -908,6 +945,8 @@ private changeDirect(item:any){
 .weui-cell:before{
   border:none;
 }
-  
+.item-left-good{
+  min-width: 200px;
+}
 
 </style>

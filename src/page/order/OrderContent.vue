@@ -39,7 +39,7 @@
                 <span class="receive-status" v-if="tabList.getActive().status==1"  @click="toexamine('examine')">审核未通过</span>
                 <span class="receive-status" @click="morelist('add')" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
               </div>
-              <div class="receive-icon-content" @click="orderdetails('')">
+              <div class="receive-icon-content" @click="orderdetails()">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <div style="display:flex">
                   <span class="receive-dc-title">要货日期：
@@ -51,7 +51,7 @@
                 </div>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
-              <div class="receive-icon-bottom" @click="orderdetails()">
+              <div class="receive-icon-bottom" @click="orderdetails('payMent')">
                 <div class="glow-1">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
@@ -328,11 +328,12 @@ export default class OrderGoods extends Vue{
       this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
    }
    // 跳转详情页面
-    private orderdetails(){
+    private orderdetails(info:any){
       if(this.tabList.getActive().status==3){
         // this.$router.push('/OrderDetails');
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
-      }else if(this.tabList.getActive().status ==2){
+      }
+      if(this.tabList.getActive().status ==2 && info == 'payMent'){
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
       }
     }

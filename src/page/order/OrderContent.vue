@@ -131,11 +131,11 @@
     </ul>
   </div> 
   <!-- 判断供货物料是否发生变化。当最新供货物料发生变化，源订单中部分物品当前已停止供应时 -->
-   <confirm v-model="isMaterielChange" confirm-text="继续下单" @on-cancel="onStoreCancel" @on-confirm="onConfirm('store')">
+   <confirm v-model="isMaterielChange" confirm-text="继续下单" @on-cancel="onStoreCancel" @on-confirm="onConfirm">
         <p style="text-align:center;"> ***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。</p>
    </confirm>
   <!-- 当源订单所有物品均以停供时 -->
-   <confirm v-model="isCommodity" confirm-text="手工订货" @on-cancel="onStoreCancel" @on-confirm="onConfirm('orderType')">
+   <confirm v-model="isCommodity" confirm-text="手工订货" @on-cancel="onStoreCancel" @on-confirm="onConfirm">
         <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
    </confirm>
 </div>

@@ -7,10 +7,10 @@
             <span></span>
         </div>        
       </ezt-header> 
-      <div class="ezt-main">
+      <div class="ezt-main ezt-details">
           <div class="content">
-            <div class="pkdetails">
-                <div class="librarytype">
+            <div class="pkdetails_new">
+                <div class="librarytype_new">
                   <ul>
                     <li>  
                         <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
@@ -50,8 +50,8 @@
       </ezt-header> 
       <div class="ezt-main">
           <div class="content">
-            <div class="pkdetails">
-                <div class="librarytype">
+            <div class="pkdetails_new">
+                <div class="librarytype_new">
                   <ul>
                     <li>  
                         <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
@@ -409,6 +409,9 @@ export default class stockTaking extends Vue{
 @border-radius:3px;
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
+.ezt-details{
+  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
+  }
 .librarydetails{
     position: absolute;
     top: 0;
@@ -425,22 +428,28 @@ export default class stockTaking extends Vue{
       align-items: center;
       flex-direction: column;
       margin-bottom: 70px;
-      .pkdetails{
+      .pkdetails_new{
+        .librarytype_new{
+          background:url(../../../assets/images/inventory_detail_header.png) no-repeat;
+          background-size: 101% 100%;
+        }
+      }
+      .pkdetails,.pkdetails_new{
         display: flex;   
         flex-direction: column;
         justify-content: flex-start;
         border-radius: 4px;
         width: 95%;
-        margin-top: 10px;
         .librarytype{
-        background-color:@background-color;
+            background-color: @background-color;
+        }
+        .librarytype,.librarytype_new{
           ul{
             text-align: left;
             padding: 10px 0 10px 15px;
             li{
               width:@width;
               div{
-                height: 25px;
                 line-height: 25px;
                 p{
                   width: @width;
@@ -457,6 +466,7 @@ export default class stockTaking extends Vue{
         }
         .inventory{
           background-color: @background-color;
+          margin-top: -1px;
            .pkmx{
               position: relative;
               .line{

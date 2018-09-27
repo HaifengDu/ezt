@@ -6,7 +6,7 @@
        <div slot="action">
           <span></span>
        </div>        
-    </ezt-header>    
+    </ezt-header>        
     <div class="ezt-main">   
        <div class="content">
           <div class="store">  
@@ -167,6 +167,10 @@ export default class stockTaking extends Vue{
             this.$toasted.show("请选择仓库！");
             return false;
          }
+         if(!this.addinventory.treatment){
+            this.$toasted.show("请选择未盘处理方式！");
+            return false;
+         }
          this.$router.push(info)
          this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
          this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
@@ -181,7 +185,11 @@ export default class stockTaking extends Vue{
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
             return false;
-         }   
+         }  
+         if(!this.addinventory.treatment){
+            this.$toasted.show("请选择未盘处理方式！");
+            return false;
+         } 
         const flag = this.addinventory.bill_type;
         const warehouse_id = this.addinventory.stock;
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
@@ -210,6 +218,10 @@ export default class stockTaking extends Vue{
        if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
+            return false;
+         }
+         if(!this.addinventory.treatment){
+            this.$toasted.show("请选择未盘处理方式！");
             return false;
          }
         const warehouse_id = this.addinventory.stock;

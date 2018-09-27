@@ -222,6 +222,7 @@ export default class OrderGoods extends Vue{
         font-size: 20px;
         color: #FF885E;
         letter-spacing: 0;
+        line-height: 3;
     }
     .good-detail-name{
         font-size: 14px;

@@ -487,6 +487,7 @@ export default class Order extends Vue{
     font-size: 20px;
     color: #ff885e;
     letter-spacing: 0;
+    line-height: 3;
   }
   .good-detail-name {
     font-size: 14px;

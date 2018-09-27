@@ -18,13 +18,15 @@
                     <li class="select-list">
                         <span class="title-search-name">要货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :max="addBillInfo.arriveDate" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
+                            <ezt-canlendar v-model="addBillInfo.orderDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" 
+                            :max="addBillInfo.arriveDate" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
                         </span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name">到货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :min="addBillInfo.orderDate" class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>                                                       
+                            <ezt-canlendar v-model="addBillInfo.arriveDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :min="addBillInfo.orderDate"
+                             class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>                                                       
                         </span>
                         <span>
                             <span class="title-select-name item-select select-time">

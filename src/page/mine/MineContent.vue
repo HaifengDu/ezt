@@ -49,7 +49,7 @@
     </div>
      <!-- 返回时提示保存信息 -->
       <confirm v-model="isExit" @on-confirm="onConfirm">
-        <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
+        <p style="text-align:center;"> 请确认是否退出当前用户？</p>
       </confirm>
   </div>
 </template>

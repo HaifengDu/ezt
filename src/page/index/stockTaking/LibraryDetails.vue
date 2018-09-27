@@ -149,8 +149,7 @@
                   <div><p>盘点类型：<span>{{bill_type_name}}</span></p></div>
                   <div>
                     <p>未盘处理：
-                       <span v-if= "stock_count_mode_name === 'is_quanlity'">按照当前库存量处理</span>
-                       <span v-if=" stock_count_mode_name === 'is_zero'">按照0库存量处理</span>
+                       <span>{{stock_count_mode_name}}</span>
                     </p>
                   </div>
                   <div><p>盘点仓库：<span>{{warehouse_name}}</span></p></div>
@@ -254,9 +253,11 @@ export default class stockTaking extends Vue{
     private getAdditionalcheckList:INoopPromise;  //盘点类型导入暂存提交接口 
     private getRealdiscEntry:INoopPromise;
     private warehouse_name:string;  
+    private warehouse_id:string;  
     private busi_date:string;  
     private bill_type:string;
     private bill_type_name:string;
+    private stock_count_mode:string;
     private stock_count_mode_name:string;
     private inventoryDetails:any; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
@@ -264,13 +265,14 @@ export default class stockTaking extends Vue{
     private total:any = []; //合计
     private types:string;
     private template_name:string;
-    private stock_count_mode:string;
     created() {
       this.service = StockTakingService.getInstance();
+      this.warehouse_id = this.$route.query.warehouse_id
       this.warehouse_name = this.$route.query.warehouse_name
       this.busi_date = this.$route.query.busi_date
       this.bill_type = this.$route.query.bill_type
       this.bill_type_name = this.$route.query.bill_type_name
+      this.stock_count_mode = this.$route.query.stock_count_mode
       this.stock_count_mode_name = this.$route.query.stock_count_mode_name
       this.types = this.$route.query.types
       this.template_name = this.$route.query.template_name
@@ -303,7 +305,7 @@ export default class stockTaking extends Vue{
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
         const store_name = this.user.auth.store_name
-        const warehouse_name = this.$route.query.warehouse_name
+        const warehouse_name = this.$route.query.warehouse_id
         const audit_name = this.user.auth.username
         const ids = this.$route.query.ids
         const stock_count_mode = this.$route.query.stock_count_mode
@@ -360,12 +362,12 @@ export default class stockTaking extends Vue{
         const entry_name = this.user.auth.username
         const bill_status = 0   //暂存
         const bill_type_name = this.$route.query.bill_type_name
-        const warehouse_id = this.$route.query.warehouse_name
+        const warehouse_id = this.$route.query.warehouse_id
         const bill_type = this.$route.query.bill_type
         const stock_count_mode_name = this.$route.query.stock_count_mode_name
         const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.query.stock_count_mode_name
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.setInventoryDetails(res.data.data); 
             this.template_name =  this.$route.query.template_name
@@ -385,12 +387,12 @@ export default class stockTaking extends Vue{
         const entry_name = this.user.auth.username
         const bill_status = 1   //提交
         const bill_type_name = this.$route.query.bill_type_name
-        const warehouse_id = this.$route.query.warehouse_name
+        const warehouse_id = this.$route.query.warehouse_id
         const bill_type = this.$route.query.bill_type
         const stock_count_mode_name = this.$route.query.stock_count_mode_name
         const busi_date = this.$route.query.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.$route.query.stock_count_mode_name
+        const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.template_name =  this.$route.query.template_name
             this.setInventoryDetails(res.data.data); 
@@ -440,7 +442,7 @@ export default class stockTaking extends Vue{
         justify-content: flex-start;
         border-radius: 4px;
         width: 95%;
-        .librarytype{
+        .librarytype{  
             background-color: @background-color;
         }
         .librarytype,.librarytype_new{

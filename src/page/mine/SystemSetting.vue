@@ -19,14 +19,11 @@
                         <label name="order" for="b" class="radio">按订货班表订</label></span>
                    <span>
                         <input v-model="model.orderSelected" value="3" id="c" type="radio" name="order" class="radio">
-                        <label name="order" for="c" class="radio">按日订货</label></span>
+                        <label name="order" for="c" class="radio">按日订货</label></span>                  
                    <span>
-                       <input v-model="model.orderSelected" value="4" id="d" type="radio" name="order" class="radio">
-                       <label name="order" for="d" class="radio">按订货班表订，无班表则按日订</label></span>
-                   <span>
-                       <input v-model="model.orderSelected" value="5" id="e" type="radio" name="order" class="radio">
+                       <input v-model="model.orderSelected" value="4" id="e" type="radio" name="order" class="radio">
                        <label name="order" for="e" class="radio">一次订
-                           <input type="number" class="ezt-smart" :min="0">天的量
+                           <input type="text" class="ezt-smart" :min="0" :disabled="model.orderSelected!='4'" v-model="model.orderDate" @change="pubChange(model,'orderDate')">天的量
                         </label>
                    </span> 
                    <span class="ezt-foot-total">
@@ -66,16 +63,16 @@
                    <span>
                        <input v-model="model.isContain" id="c1" value="3" type="radio" name="contaion" class="radio">
                         <label for="c1" class="radio" name="contaion">到货时间≤
-                            <span class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select" v-model="containTime.newHour">
+                            <i class="title-select-name item-select">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newHour" :disabled="model.isContain!='3'">
                                     <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
                                 </select>
-                           </span>：
-                           <span class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select" v-model="containTime.newMinut">
+                           </i>：
+                           <i class="title-select-name item-select">
+                                <select name="" id="" class="ezt-select" v-model="containTime.newMinut" :disabled="model.isContain!='3'">
                                     <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
                                 </select>
-                           </span>
+                           </i>
                            时，包含当天量
                         </label>      
                    </span>
@@ -118,6 +115,7 @@ export default class Index extends Vue{
     private setSystemParam:INoopPromise;
     private hour:number;
     private minute:number;
+    private oldValue = 0;
     private containTime:any
     ={
         newHour:0,
@@ -142,10 +140,14 @@ export default class Index extends Vue{
     }
     created(){
         this.model=ObjectHelper.serialize(this.systemParamSetting);
-       this.checkTime();
+        this.checkTime();
         console.log(this.systemParamSetting,'8888888888')
     }
 
+    private handlerFocus(item:any,name:any,val:any){
+        // @focus="handlerFocus(model,'orderSelected','5')"
+        item[name]=val;
+    }
     private handlerActivea(){
         this.activea=!this.activea;
     }
@@ -155,7 +157,6 @@ export default class Index extends Vue{
     //预估订货单
     private checkTime(){
         if(this.model.isContain=='3'){
-            debugger
             if(this.systemParamSetting&&this.systemParamSetting.containTime){
                 let str = this.systemParamSetting.containTime;
                 this.containTime.newHour=str.subString(0,str.indexOf(":"));
@@ -165,6 +166,18 @@ export default class Index extends Vue{
             }
            
         }
+    }
+    // 价格\税率\税额 修改的时候
+    private pubChange(item:any,info:any){
+        if(item[info]==""){
+            item[info]=0;
+        }
+        if(!isNaN(item[info])){
+        this.oldValue = item[info];//是一个数
+        }else{
+        item[info] = this.oldValue||0;
+        }
+        item[info] = parseInt(item[info]);
     }
     /**
      * 保存设置
@@ -228,6 +241,7 @@ export default class Index extends Vue{
             flex:1 ;  
             font-size: 14px;
             color: #395778;
+            font-weight: 600;
         }
         .setting-tab{
             margin-bottom: 8px;
@@ -256,7 +270,7 @@ export default class Index extends Vue{
         border-bottom: 1px solid #ccc;
         padding: 8px;
         font-size: 12px;
-        color: #5d7590;
+        color: #395778;
         span{
             margin: 6px 0px;
         }
@@ -287,6 +301,8 @@ export default class Index extends Vue{
     height: inherit;
     text-align: left;
     display: inline-block;
+    background:none;
+    color: #96958c;
 }
 .item-select{
     width: 40px;

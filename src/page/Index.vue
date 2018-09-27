@@ -60,7 +60,7 @@
               <div class="panku"></div>
               <span>盘库</span></li>
             <li @click="renderUrl()">
-              <div class="panku"></div>
+              <div class="kucun"></div>
               <span>库存初始化</span></li>
         </ul>
         <!--内容-->
@@ -257,7 +257,7 @@ export default class Index extends Vue{
     border-right: none;
   }
 
-  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan {
+  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan, .kucun {
     width: 64px;
     height: 64px;
     display: inline-block;
@@ -290,6 +290,11 @@ export default class Index extends Vue{
 
   .icon-menu .panku {
     background: url(../assets/images/icon-panku.png) no-repeat;
+    background-size: 64px 64px;
+  }
+
+  .icon-menu .kucun{
+    background: url(../assets/images/icon-kucun.png) no-repeat;
     background-size: 64px 64px;
   }
 

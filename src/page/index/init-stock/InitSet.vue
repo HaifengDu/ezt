@@ -83,7 +83,6 @@ export default class InitStock extends Vue{
 
 
     created() {  
-         debugger
         if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){//要货日期 的时间（）
             this.setObj = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SETTING));
         }      

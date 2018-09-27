@@ -186,6 +186,10 @@ export default class ReceiveGood extends Vue{
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   // private setAddBeforeBillInfo:INoopPromise;
   private addBillInfo:any={
+    billType:"",
+    supplier:"",
+    warehouse:"",
+    remark: "",
     editPrice:false
   };//store中
   // private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
@@ -224,7 +228,6 @@ export default class ReceiveGood extends Vue{
     type:"m"
   }];
   created() {  
-    debugger   
       this.pager = new Pager()
       this.service = ReceiveGoodService.getInstance();
       this.goodList = []; 

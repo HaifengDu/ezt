@@ -111,6 +111,7 @@ import { parse } from 'querystring';
         width: 26px;
         text-align: center;
         color: #fff;
+        line-height: 24px;
     }
     .ezt-minus.number-diabled{
         background: #ccc;

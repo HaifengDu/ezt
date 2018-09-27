@@ -137,10 +137,10 @@ export default class InitStock extends Vue {
   private cache = CachePocily.getInstance(ECache.LocCache);
   private service: InitStockService;
   private addBillInfo: any={
-    date:new Date().format("yyyy-MM-dd"),
+    // date:new Date().format("yyyy-MM-dd"),
   }; //store中
   private addBeforeBillInfo: any={
-    date:new Date().format("yyyy-MM-dd"),
+    // date:new Date().format("yyyy-MM-dd"),
   };
 //   private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
 //   private setAddBeforeBillInfo: INoopPromise;
@@ -164,6 +164,12 @@ export default class InitStock extends Vue {
     }
   ];
 
+    mounted(){
+        if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){
+            this.addBillInfo.date = JSON.parse(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)).initStockDate;
+            this.addBeforeBillInfo.date = JSON.parse(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)).initStockDate;
+        }
+    }
   created() {
     this.service = InitStockService.getInstance();
     this.addBillInfo.warehouse = this.orderType[0].type;

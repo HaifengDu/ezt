@@ -7,7 +7,7 @@
                     <li class="select-list">
                         <span class="title-search-name ">库存初始日期：</span>
                         <span >
-                            <ezt-canlendar :defaultValue="setObj.initStockDate" placeholder="开始时间" type="text" class="input-canlendar"></ezt-canlendar>
+                            <ezt-canlendar v-model="setObj.initStockDate" :defaultValue="setObj.initStockDate" placeholder="开始时间" type="text" class="input-canlendar"></ezt-canlendar>
                         </span>
                     </li>
                     <li class="select-list">
@@ -82,14 +82,15 @@ export default class InitStock extends Vue{
    
 
 
-    created() {       
+    created() {  
+         debugger
+        if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){//要货日期 的时间（）
+            this.setObj = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SETTING));
+        }      
         this.service = LoginService.getInstance(); 
     }
     mounted(){   
-        debugger
-        if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){//要货日期 的时间（）
-            this.setObj = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SETTING));
-        }     
+           
          //日历
         const instance = mobiscroll.date(this.$refs.canlendar, {
             theme: 'material', 

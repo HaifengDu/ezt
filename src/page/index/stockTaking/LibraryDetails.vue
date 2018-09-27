@@ -446,7 +446,7 @@ export default class stockTaking extends Vue{
         .librarytype,.librarytype_new{
           ul{
             text-align: left;
-            padding: 10px 0 10px 15px;
+            padding: 10px 0 25px 15px;
             li{
               width:@width;
               div{

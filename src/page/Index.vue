@@ -2,7 +2,7 @@
 <template>
  <div class="ezt-page-con">
     <ezt-header :back="false" custom>       
-       <div slot="action">
+       <div slot="action" class="title-date-position">
            <span ref="canlendar">日结</span>
        </div>
        <div slot="title" class="indexPop" @click="handleSelect">
@@ -397,6 +397,12 @@ export default class Index extends Vue{
       border-bottom: 2px solid #DDECFD;
       padding-bottom: 10px;
     }
+  }
+  .title-date-position{
+    position: fixed;
+    right: 10px;
+    top: 22px;
+    z-index: 11;
   }
   
 </style>

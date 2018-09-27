@@ -6,7 +6,7 @@
             <ul class="ezt-setting-content">
                 <li>
                     <div class="setting-title-name">订货量与订货周期
-                        <span><i class="fa fa-info-circle title-info" aria-hidden="true"></i></span>
+                        <!-- <span><i class="fa fa-info-circle title-info" aria-hidden="true"></i></span> -->
                     </div>
                     <span @click="handlerActivea"><b :class="{'active':activea}"></b></span>
                 </li>
@@ -36,7 +36,7 @@
                 <li class="line-mark">
                     <div>
                         <div class="setting-title-name">预估要货是否计算散装量</div>
-                        <span>
+                        <span class="setting-tab">
                             <button-tab v-model="model.bulkQuantity">
                                 <button-tab-item>否</button-tab-item>
                                 <button-tab-item>是</button-tab-item>
@@ -225,7 +225,12 @@ export default class Index extends Vue{
             transform: rotate(90deg);
         }
         .setting-title-name{
-            flex:1           
+            flex:1 ;  
+            font-size: 14px;
+            color: #395778;
+        }
+        .setting-tab{
+            margin-bottom: 8px;
         }
         .title-info{
             color: green;
@@ -250,6 +255,8 @@ export default class Index extends Vue{
         flex-direction: column;
         border-bottom: 1px solid #ccc;
         padding: 8px;
+        font-size: 12px;
+        color: #5d7590;
         span{
             margin: 6px 0px;
         }

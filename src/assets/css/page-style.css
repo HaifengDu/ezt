@@ -486,7 +486,7 @@ input.ezt-middle{
     text-align: center;
     color: #FFFFFF;
     letter-spacing: 0;
-    padding: 14px 44px;
+    padding: 6px 44px;
     background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
     background-image: linear-gradient(90deg, #5A12CC 0%, #3C82FB 100%);
     -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);

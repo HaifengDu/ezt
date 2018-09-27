@@ -47,6 +47,10 @@
            </div>
          </div>
     </div>
+     <!-- 返回时提示保存信息 -->
+      <confirm v-model="isExit" @on-confirm="onConfirm">
+        <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
+      </confirm>
   </div>
 </template>
 <script lang="ts">
@@ -70,6 +74,7 @@ export default class Mine extends Vue{
   private users:IUser;
   private service:LoginService;
   private balancAmt:number=0;
+  private isExit:boolean=false;
   
   created() {
     this.service = LoginService.getInstance();     
@@ -84,6 +89,9 @@ export default class Mine extends Vue{
   }
   //退出
   private logout(){
+    this.isExit= true;   
+  }
+  private onConfirm(){
     this.service.logout().then(res=>{
       this.$router.replace({path:'/login'});
     });

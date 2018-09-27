@@ -223,7 +223,8 @@ export default class ReceiveGood extends Vue{
     name:"采购单",
     type:"m"
   }];
-  created() {     
+  created() {  
+    debugger   
       this.pager = new Pager()
       this.service = ReceiveGoodService.getInstance();
       this.goodList = []; 
@@ -626,5 +627,7 @@ input.ezt-smart{
       background: pink;
       width: 50px;
       height: 50px;
+      text-align: center;
+      line-height: 50px;
     }
 </style>

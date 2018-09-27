@@ -7,7 +7,7 @@
         infinite-scroll-distance="10">
     <ezt-header :back="true" title="收货" @goBack="goBack">
        <div slot="action">
-         <div class="add">
+         <div>
            <span class='ezt-action-point' @click="renderUrl('/addReceiveGood')">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>

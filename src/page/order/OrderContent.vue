@@ -4,7 +4,7 @@
    <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="订单"  @goBack="goBack">
+    <ezt-header :back="false" title="订单">
       <div slot="action">
          <div class="add">
            <span class='ezt-action-point' @click="add">
@@ -228,10 +228,7 @@ export default class OrderGoods extends Vue{
         this.isSearch=false; 
         this.hideMask();
       }); 
-    }   
-    private goBack(){
-      this.$router.push('/');
-    }
+    } 
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.allLoaded=false;

@@ -60,33 +60,43 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
-import LoginService from "../../../service/LoginService"
+import LoginService from "../../../service/LoginService";
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import ObjectHelper from '../../../common/objectHelper'
+import CACHE_KEY from '../../../constans/cacheKey'
 import _ from "lodash";
 declare var mobiscroll:any;//全局定义日历
 @Component({
 
 })
 export default class InitStock extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private isCheckDay:boolean=false;
     private service:LoginService;
     private setObj:any={
-        accountCheckDate:"12-31",//财务结算日期
-        stockMonthDate:'A',//库存月结日
-        initStockDate:new Date().format('yyyy-MM-dd'),//库存初始日期
-    }
+            accountCheckDate:"12-31",//财务结算日期
+            stockMonthDate:'A',//库存月结日
+            initStockDate:new Date().format('yyyy-MM-dd'),//库存初始日期
+        };
+   
 
 
-    created() {
-      this.service = LoginService.getInstance(); 
+    created() {       
+        this.service = LoginService.getInstance(); 
     }
-    mounted(){
+    mounted(){   
+        debugger
+        if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){//要货日期 的时间（）
+            this.setObj = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SETTING));
+        }     
          //日历
-      const instance = mobiscroll.date(this.$refs.canlendar, {
-          theme: 'material', 
-          display: 'bottom',
-          lang: 'zh',
-          dateFormat:'mm-dd',
-        //   defaultValue: new Date(this.setObj.accountCheckDate),
+        const instance = mobiscroll.date(this.$refs.canlendar, {
+            theme: 'material', 
+            display: 'bottom',
+            lang: 'zh',
+            dateFormat:'mm-dd',
+            //   defaultValue: new Date(this.setObj.accountCheckDate),
           invalid:[
             { start: new Date(new Date().getFullYear() + '/3/1'), end: new Date(new Date().getFullYear()+ '/3/31') },
             { start: new Date(new Date().getFullYear() + '/4/1'), end: new Date(new Date().getFullYear() +'/4/30') },
@@ -118,6 +128,7 @@ export default class InitStock extends Vue{
      * 添加初始化库存
      */
     private renderUrl(info:any){
+        this.cache.save(CACHE_KEY.INITSTOCK_SETTING,JSON.stringify(this.setObj));
         this.$router.push(info);
     }
      //日结事件

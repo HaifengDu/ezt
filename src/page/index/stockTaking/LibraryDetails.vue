@@ -434,8 +434,8 @@ export default class stockTaking extends Vue{
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
 .ezt-details{
-  background-color: #4A39F3;
-  }
+  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 19%);
+}
 .librarydetails{
     position: absolute;
     top: 0;
@@ -470,7 +470,7 @@ export default class stockTaking extends Vue{
               a{
                 display: inline-block;
                 height:20px;
-                background: #4A39F3 ;
+                background-image: linear-gradient(139deg, #018BFF -1%, #4A39F3 -42%);
               }
              .LeftRound{/*左半圆*/
                  width: 10px;

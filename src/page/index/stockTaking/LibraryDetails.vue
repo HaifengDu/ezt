@@ -202,17 +202,21 @@
                               <div>
                                 <p>
                                   <span>
-                                    <input type="number" autofocus="true" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">{{item.pur_unit_name}}
+                                    <input maxlength="7" v-model="item.whole_num"  type="text" placeholder="采购单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                    {{item.pur_unit_name}}
                                   </span>
                                 </p>
                                 <p>
                                   <span>
-                                    <input type="number" autofocus="true" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">{{item.unit_name}}
+                                    <input maxlength="7" v-model="item.disperse_num"  type="text" placeholder="库存主单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                    {{item.unit_name}}
                                   </span>
                                 </p>
                               </div>
                               <div>
-                                <p><span><input type="number" autofocus="true" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">{{item.bom_name}}</span></p>
+                                <p><span>
+                                  <input maxlength="7" v-model="item.consume_num"  type="text" placeholder="消耗单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                  {{item.bom_name}}</span></p>
                               </div>
                           </div>
                         </li>

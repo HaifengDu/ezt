@@ -13,11 +13,11 @@
     <div class="ezt-main">
       <div class="ezt-add-content">
         <div class="good-type">
-          <span class="collect-good active">
+          <span class="collect-good active"  v-if="!useObj.editPrice">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
           </span>
-          <div class="good-type-list">
+          <div class="good-type-list" :class="{collect:!useObj.editPrice}">
             <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>
@@ -637,22 +637,28 @@ private changeDirect(item:any){
     flex-direction: row;
     align-items: baseline;
     text-align: left;
+    width: 100%;
   }
   .good-type-list{
-    width: calc(100vw - 70px);
+    // width: calc(100vw - 70px);
     height: 100%;
+    width: 100%;
     overflow-x:scroll;
     display:flex;
     white-space: nowrap;
     span{
       margin-right: 10px;
       max-width: 82px;
+      min-width: 50px;
       overflow: hidden;
       text-overflow: ellipsis;
     }
     span.active{
       color: #1674fc;
     }
+  }
+  .good-type-list.collect{
+     width: calc(100vw - 70px);
   }
   .collect-good{
     height: 44px;
@@ -727,9 +733,10 @@ private changeDirect(item:any){
     border-radius: 10px;
   }
   .category-item.active{
-    background: #fff;
+    background: #1188FC;
     border-color: #fff;
     border-right-width: 0;
+    color: #fff;
 }
   .good-item-bot{
     display: flex;

@@ -1,3 +1,36 @@
+/* 字体各种颜色 开始*/
+.ezt-titleColor1{/*标题*/
+  color: #395778;
+}
+.ezt-titleColor2{/*内容*/
+  color: #95A7BA;
+}
+.ezt-titleColor3{/*表头信息中的名字*/
+  color: #5F7B9A;
+}
+.ezt-btnColor4{/*按钮*/
+  color: #1188FC;
+}
+
+/* 字体各种颜色结束 */
+ 
+/* 字体各种大小  开始 */
+.ezt-fontSize1{/*标题*/
+  font-size: 15px;
+}
+.ezt-fontSize2{/*内容*/
+  font-size: 12px;
+}
+.ezt-fontSize3{/*表头信息中的名字*/
+  font-size: 13px;
+}
+.ezt-fontSize4{/*按钮*/
+  font-size: 10px;
+}
+
+
+/* 字体各种大小 结束 */
+
 /*弹框的title名称*/
 .confirm-title{
   font-size: 16px;

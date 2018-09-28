@@ -202,20 +202,24 @@
                               <div>
                                 <p>
                                   <span>
-                                    <input maxlength="7" v-model="item.whole_num"  type="text" placeholder="采购单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                   <input maxlength="7" @input="descInput" v-model="item.whole_num" placeholder="采购单位"  type='text' oninput='this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
+                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
                                     {{item.pur_unit_name}}
                                   </span>
                                 </p>
                                 <p>
                                   <span>
-                                    <input maxlength="7" v-model="item.disperse_num"  type="text" placeholder="库存主单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                   <input maxlength="7" @input="descInput" v-model="item.disperse_num" placeholder="库存主单位"  type='text' oninput='this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
+                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
                                     {{item.unit_name}}
                                   </span>
                                 </p>
                               </div>
                               <div>
                                 <p><span>
-                                  <input maxlength="7" v-model="item.consume_num"  type="text" placeholder="消耗单位" onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}">
+                                   <input maxlength="7" @input="descInput" v-model="item.consume_num" placeholder="消耗单位"  type='text' 
+                                   oninput=' this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
+                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
                                   {{item.bom_name}}</span></p>
                               </div>
                           </div>

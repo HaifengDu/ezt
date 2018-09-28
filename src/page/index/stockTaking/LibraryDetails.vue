@@ -104,8 +104,8 @@
       </ezt-header> 
       <div class="ezt-main">
           <div class="content">
-          <div class="pkdetails">
-            <div class="librarytype">
+          <div class="pkdetails_new">
+            <div class="librarytype_new">
              <ul>
                <li>
                   <div><p>盘点日期：<span>{{busi_date}}</span></p></div>

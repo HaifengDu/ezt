@@ -20,11 +20,17 @@
                         <div><p>未盘处理：<span>{{stock_count_mode_name}}</span></p></div>
                     </li>
                   </ul>
+                  <div class="round">
+                    <div class="right"><a class="RightRound"></a></div>
+                    <div class="left"><a class="LeftRound"></a></div>
+                  </div>
                 </div>   
                 <div class="inventory">
                   <div class="pkmx">
                         <div class="line">
+                            <p></p>
                             <div class="title">盘库明细</div>
+                            <p></p>
                         </div>
                     </div>    
                     <ul>
@@ -65,7 +71,7 @@
                 <div class="inventory">
                   <div class="pkmx">
                         <div class="line">
-                            <div class="title">盘库明细</div>
+                            <div class="title_new">盘库明细</div>
                         </div>
                     </div>    
                     <ul>
@@ -194,11 +200,19 @@
                           <div><p>理论库存：<span>{{item.thery_qty}}</span></p><p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p></div>
                           <div class="purchase">
                               <div>
-                                <p><span><input type="number" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">{{item.pur_unit_name}}</span></p>
-                                <p><span><input type="number" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">{{item.unit_name}}</span></p>
+                                <p>
+                                  <span>
+                                    <input type="number" autofocus="true" v-model="item.whole_num" oninput="if(value.length>7)value=value.slice(0,7)"  placeholder="采购单位">{{item.pur_unit_name}}
+                                  </span>
+                                </p>
+                                <p>
+                                  <span>
+                                    <input type="number" autofocus="true" v-model="item.disperse_num" oninput="if(value.length>7)value=value.slice(0,7)" placeholder="库存主单位">{{item.unit_name}}
+                                  </span>
+                                </p>
                               </div>
                               <div>
-                                <p><span><input type="number" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">{{item.bom_name}}</span></p>
+                                <p><span><input type="number" autofocus="true" v-model="item.consume_num"  oninput="if(value.length>7)value=value.slice(0,7)" placeholder="消耗单位">{{item.bom_name}}</span></p>
                               </div>
                           </div>
                         </li>
@@ -280,7 +294,7 @@ export default class stockTaking extends Vue{
     }
 
     mounted(){
-      
+        
     }
     private goBack(){
       this.$router.back();
@@ -412,7 +426,7 @@ export default class stockTaking extends Vue{
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
 .ezt-details{
-  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
+  background-color: #4A39F3;
   }
 .librarydetails{
     position: absolute;
@@ -432,18 +446,46 @@ export default class stockTaking extends Vue{
       margin-bottom: 70px;
       .pkdetails_new{
         .librarytype_new{
-          background:url(../../../assets/images/inventory_detail_header.png) no-repeat;
-          background-size: 101% 100%;
+          background: url(../../../assets/images/inventory_detail_header.png) #fff no-repeat;
+          background-size: 110px 100px;
+          background-position-x: right;
+          background-position-y: center;
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+          .round{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            .left,.right{
+              display: inline-block;
+              height:23px;
+              a{
+                display: inline-block;
+                height:20px;
+                background: #4A39F3 ;
+              }
+             .LeftRound{/*左半圆*/
+                 width: 10px;
+                 border-radius: 14px 0px 0px 14px;
+              }
+              .RightRound{/*右半圆*/
+                width:10px;
+                border-radius:0px 14px 14px 0px;
+             }
+           }
+          }
         }
       }
       .pkdetails,.pkdetails_new{
-        display: flex;   
-        flex-direction: column;
-        justify-content: flex-start;
-        border-radius: 4px;
-        width: 95%;
+          display: flex;   
+          flex-direction: column;
+          justify-content: flex-start;
+          border-radius: 4px;
+          width: 95%;
         .librarytype{  
             background-color: @background-color;
+            border-radius:@border-radius;
+            margin-top: 10px;
         }
         .librarytype,.librarytype_new{
           ul{
@@ -468,18 +510,25 @@ export default class stockTaking extends Vue{
         }
         .inventory{
           background-color: @background-color;
-          margin-top: -1px;
            .pkmx{
-              position: relative;
+               margin-top: -20px;
               .line{
-                position: absolute;
-                top: 1px;
                 width: 100%;
-                text-align: center;
-                margin: 0 auto;
+                display:flex;
+                align-items: center;
+                p{
+                  flex:2;
+                  border-bottom: 1px dashed #ccc;
+                  margin: 0 11px 0 11px;
+                }
                 .title{
-                  width: 100%;
+                  width:auto;
                   font-size: 12px;
+                  color: #95A7BA;
+                }
+                .title_new{
+                  width:100%;
+                  text-align:center;
                   color: #95A7BA;
                 }
               }
@@ -487,7 +536,6 @@ export default class stockTaking extends Vue{
             ul{
             text-align: left;
             padding: 10px 10px 10px 15px;
-            margin-top: 20px;
               li{
                 width:@width;
                 padding-bottom: 10px;

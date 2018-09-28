@@ -266,31 +266,14 @@ export default class stockTaking extends Vue{
 .title-select-name .ezt-select {
     max-width: 80%;
 }
-.ezt-main{
-    background-color: #F1F6FF;
-    position: absolute; 
-    top: 0; 
-    width: 100%;
-    height: auto;
-    margin-top: 45px;
-    margin-bottom: 0px;
-}
 .demo3-slot{
   text-align: center;
   padding: 8px 0;
   color: #888;
 }
 .addinventorylist{
-    position: absolute;
-    background-color: #F1F6FF;
-    top: 0;
-    left: 0;
-    z-index: 99;
-    width: @width;
-    height: @height;
+      background-color: #F1F6FF;
     .content{
-      width: @width;
-      height:@height;
       display: flex;
       align-items: center;
       flex-direction: column;

@@ -140,13 +140,6 @@ export default class stockTaking extends Vue{
   background-color:@background-color!important;
 }
 .selectthetemplate{
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 99;
-    width: @width;
-    height: @height;
-    overflow: hidden;
     background-color: @background-color;
     .ezt-add-content{
       width: @width;

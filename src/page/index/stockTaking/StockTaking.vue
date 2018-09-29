@@ -104,6 +104,10 @@
       </li>
     </ul>
   </div> 
+  <!-- 点击日周月盘如果有未审核单据会提示 -->
+   <confirm v-model="isAudited" @on-confirm="onConfirm">
+        <p style="text-align:center;">有单据未完成审核，是否进行盘点?</p>
+   </confirm>
 </div>
 </template>
 <script lang="ts">   
@@ -130,7 +134,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
   computed:{    
      ...mapGetters({
-
+         'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },
    methods:{    
@@ -158,9 +162,10 @@ export default class stockTaking extends Vue{
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
+    private inventoryDetails:any; //列表详情
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
-    private warehouseType:any[];  //动态加载仓库
+    private warehouseType:any[] = [];  //动态加载仓库
     private selectedwarehouse:any;//选中仓库id
     private showbtn:boolean= true;
     private hidebtn:boolean= true;
@@ -171,7 +176,7 @@ export default class stockTaking extends Vue{
     private inventoryType:any[] = [];//盘点类型
     private type:string; //盘点类型数据
     private names:string;
-    private isSave:boolean = false;  //有未审核盘点提示
+    private isAudited:boolean = false;  //有未审核盘点提示
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
     created() {
       this.tabList.push({
@@ -296,12 +301,14 @@ export default class stockTaking extends Vue{
           name:'LibraryDetails',
           query:{
               warehouse_name:item.warehouse_name,
+              warehouse_id:item.warehouse_id,
               busi_date:item.busi_date,
               bill_type_name:item.bill_type_name,
               stock_count_mode_name:item.stock_count_mode_name,
               ids:item.id,  
               types:types,
               stock_count_mode:item.stock_count_mode,
+              template_name:this.inventoryDetails.template_name,
             }});  
           this.setInventoryDetails(res.data.data); 
       },err=>{
@@ -371,6 +378,29 @@ export default class stockTaking extends Vue{
       },err=>{
           if(err instanceof ResponseError){
             if(err.data.errmsg  === 'unreview'){
+                this.newlyadded = false
+                this.isAudited = true
+            }
+          }
+      })
+    }   
+
+    // 单据未审核会提示
+     private onConfirm(type:any,name:any,bill_type:string,){
+       this.service.getInventoryType(type.bill_type).then(res=>{ 
+        this.setInventoryType(this.type);        
+        this.$router.push({
+            name:'AddinventoryList',
+            query:{
+             name:type.name,
+             bill_type:type.bill_type
+           }
+         });
+         this.newlyadded = false
+         this.type = res.data.data[0].bill_type;
+      },err=>{
+          if(err instanceof ResponseError){
+            if(err.data.errmsg  === 'unreview'){
                 this.setInventoryType(this.type);        
                 this.$router.push({
                     name:'AddinventoryList',
@@ -384,8 +414,7 @@ export default class stockTaking extends Vue{
             }
           }
       })
-    }   
-   
+     }   
      // 数据整理  
     private datasorting(){
       this.service.getDataSorting().then(res=>{  
@@ -419,7 +448,6 @@ export default class stockTaking extends Vue{
           this.isSearch = false;
           this.$toasted.show(err.message)
       })
-     
     }
     //动态加载仓库
     private iswarehouseType(){
@@ -449,7 +477,7 @@ export default class stockTaking extends Vue{
   background-color: #F1F6FF;
   .addbtn{
       i{
-        margin-right: 15px;
+        margin-right: 15px;    
       }
     }
     //待提交
@@ -617,5 +645,4 @@ export default class stockTaking extends Vue{
     }    
 }
 </style>
-
 

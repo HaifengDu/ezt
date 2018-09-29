@@ -395,7 +395,7 @@ export default class stockTaking extends Vue{
             this.template_name =  this.$route.query.template_name
             this.$toasted.show("操作成功！")
             this.$router.push('/')   
-            this.setAddinventory({})
+            this.setAddinventory({})   
         },err=>{
             this.$toasted.show(err.message)
         })

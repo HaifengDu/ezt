@@ -263,7 +263,7 @@ export default class InitStock extends Vue {
         }, 0);
     }
     /**
-     * 页面列表页初始化提交
+     * 页面列表审核
      */
     private confirmReceive() {
         if(!this.selectedGood||this.selectedGood.length<=0){
@@ -273,8 +273,8 @@ export default class InitStock extends Vue {
         this.addBillInfo={},
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
-        this.$toasted.success("提交成功！");
-        this.$router.push("/initStock");
+        this.$toasted.success("审核成功！");
+         this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
     }
     /**
      * 页面保存

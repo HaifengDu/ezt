@@ -175,6 +175,15 @@ export default class InitStock extends Vue {
       this.isSearch = false;
       this.hideMask();
     });
+    if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
+      this.tabList.TabList.forEach((item,index)=>{
+        if(item.name == this.$route.params.purStatus){
+          item.active = true;
+        }else{
+          item.active = false;
+        }
+      })
+    } 
   }
   /**
    * 初始化完毕

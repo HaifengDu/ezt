@@ -333,7 +333,7 @@ export default class ReceiveGood extends Vue{
       this.setSelectedGood([]);
       this.addBeforeBillInfo={};
       this.$toasted.success("审核成功！");
-      this.$router.push("/receiveGood");
+       this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
     }    
      //选择物料
     private renderUrl(info:string){

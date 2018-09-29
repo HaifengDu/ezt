@@ -227,7 +227,16 @@ export default class OrderGoods extends Vue{
       this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
         this.isSearch=false; 
         this.hideMask();
-      }); 
+      });
+      if(this.$route.params.purStatus=="待支付"){//tab 哪个是选中状态
+        this.tabList.TabList.forEach((item,index)=>{
+          if(item.name == this.$route.params.purStatus){
+            item.active = true;
+          }else{
+            item.active = false;
+          }
+        })
+      }  
     } 
     private tabClick(index:number){
       this.tabList.setActive(index);

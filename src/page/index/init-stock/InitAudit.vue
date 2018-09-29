@@ -144,7 +144,7 @@
                 <b>含税金额￥</b><span>{{TotalAmt}}</span>
             </div>
             <div class="ezt-foot-button">
-                <a href="javascript:(0)" class="ezt-foot-storage" @click="confirmReceive">提交</a>  
+                <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
                 <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">提交并审核</a>   
             </div>  
             </div>
@@ -164,25 +164,25 @@ import { InitStockService } from "../../../service/InitStockService";
 @Component({
  computed: {
     ...mapGetters({
-      addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
+    //   addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
       selectedGood: "publicAddGood/selectedGood", //选择物料的物品
-      addBeforeBillInfo:'publicAddGood/addBeforeBillInfo'
+    //   addBeforeBillInfo:'publicAddGood/addBeforeBillInfo'
     })
   },
   methods: {
     ...mapActions({
-      setAddBillInfo: "publicAddGood/setAddBillInfo",
-      setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
+    //   setAddBillInfo: "publicAddGood/setAddBillInfo",
+    //   setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
       setSelectedGood: "publicAddGood/setSelectedGood"
     })
   }
 })
 export default class InitStock extends Vue{
     private service: InitStockService;
-    private addBillInfo: any; //store中
-    private addBeforeBillInfo: any;
-    private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
-    private setAddBeforeBillInfo: INoopPromise;
+    private addBillInfo: any={}; //store中
+    private addBeforeBillInfo: any={};
+    // private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
+    // private setAddBeforeBillInfo: INoopPromise;
     private setSelectedGood: INoopPromise;
     private selectedGood: any[]; //store中selectedGood的值
     private isEdit: boolean = false; //物料是否可编辑
@@ -231,8 +231,12 @@ export default class InitStock extends Vue{
     }
     //选择物料
     private renderUrl(info: string) {
-        this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
-        this.$router.push(info);
+        this.$router.push({
+            name:"PublicAddGood",
+            params:{
+                editPrice:"initStock",
+                costType:this.addBillInfo.costType}
+        })
     }
     // //点击物料进行编辑数据
     // private editStatus() {
@@ -255,10 +259,32 @@ export default class InitStock extends Vue{
         this.selectedGood.splice(newIndex,1);
     }
     /**
-     * 提交
+     * 页面列表审核
      */
-    private confirmReceive(){
-        console.log("提交")
+    private confirmReceive() {
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        this.addBillInfo={},
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("审核成功！");
+        this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
+    }
+    /**
+     * 页面保存
+     */
+    private saveReceive(){
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        this.addBillInfo={},
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("保存成功！");
+        this.$router.push("/initStock");
     }
    /**
      * 返回
@@ -271,9 +297,9 @@ export default class InitStock extends Vue{
         }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-        this.setAddBillInfo({}),
+        this.addBillInfo={},
         this.setSelectedGood([]);
-        this.setAddBeforeBillInfo({});
+        this.addBeforeBillInfo={};
         this.$router.push('/initStock');
     }
 }

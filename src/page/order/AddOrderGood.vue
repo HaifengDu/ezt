@@ -397,9 +397,19 @@ export default class Order extends Vue{
      * 提交并审核
      */
     private confirmReceive(){
+        if(!this.goodData||this.goodData.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        }
         this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
+        this.addBillInfo={},
+        this.goodData=[];
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
         this.$toasted.success("审核成功！");
+        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
         // this.$router.push('/orderGood')
+        
     }
 
     /**

@@ -481,7 +481,7 @@ input.ezt-middle{
     z-index: 8;
   }
   /* 下拉左侧lable字体样式 */
-  .title-search-name{
+  .title-search-name,.AuditInvoice .weui-label{
     font-size: 13px;
     color: #5F7B9A;
   }

@@ -1,6 +1,6 @@
 <!--审核要货单-->
 <template>
-    <div class="ezt-page-con">
+    <div class="ezt-page-con AuditInvoice">
         <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack"></ezt-header>
         <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack"></ezt-header>
         <div class="ezt-main">
@@ -31,8 +31,7 @@
                         </span>
                     </li>
                     <li>
-                        <span class="title-search-name">备注：</span>
-                        <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+                        <x-input title="备注："></x-input>
                     </li>
                     <li>
                         <span class="title-search-name">物料明细</span>

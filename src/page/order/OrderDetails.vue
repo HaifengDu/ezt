@@ -44,15 +44,18 @@
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>
                             </div>
-                            <div class="good-detail-sort" ref="itemWrapper">备注：
-                                    水电费哪开始地方你水电费三方卡斯诺伐克辣酸奶饭卡上飞
-                            </div>
-                             <!-- <span class="turnOn" @click="showOtherWare">
-                              <span class="icon-trun-on" :class="[{'off':showOther}]"></span>
-                             </span>    -->
                         </div>
                         <div class="good-detail-r">
                             <span class="good-detail-num">3</span>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="good-detail-sort"  :class="fold ? 'fold' : 'unfold'">备注：
+                                {{content}}
+                        </div>
+                        <div>
+                            <span @click='handleFold' v-show="fold">展开→</span>
+                            <span @click='handleFold' v-show="!fold">←收起</span>
                         </div>
                     </div>
                 </li>
@@ -108,13 +111,16 @@ export default class OrderGoods extends Vue{
     private isPayMent:boolean=false; //是否有支付按钮
     private paytitle:string="";
     private Payment:boolean = false;  //订单支付页面显示已付
+    private fold :boolean = true;  //备注超出显示查看更多
+    private content:string='';
     created() {          
        this.service = OrderGoodsService.getInstance();
        this.detailList();
     }
-
+    
     mounted(){ 
         this.detailList();
+        this.getData();
         if(this.$route.params.isPayMent=='false'){
             this.isPayMent = false;
             this.paytitle = "订货单详情";
@@ -124,6 +130,16 @@ export default class OrderGoods extends Vue{
             this.Payment = true
         }
         
+    }
+    // 备注出现查看更多
+    private handleFold() {
+      this.fold = !this.fold;
+    }
+    private getData() {
+      setTimeout(() => {
+        this.content =
+          "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
+      }, 1000)
     }
 
     // 返回
@@ -141,12 +157,12 @@ export default class OrderGoods extends Vue{
     }
 
     // 获取备注的length
-    private getItemLength(){
-        debugger
-        let children = this.$refs.itemWrapper;
-        console.log(children);
-        // return children.length;
-    }
+    // private getItemLength(){
+    //     debugger
+    //     let children = this.$refs.itemWrapper;
+    //     console.log(children);
+    //     // return children.length;
+    // }
    
     private showOtherWare(){
         this.showOther = !this.showOther;
@@ -218,11 +234,12 @@ export default class OrderGoods extends Vue{
     .good-detail-num{
         display: inline-block;
         width: 100%;
+        height:40px;
         text-align: center;
         font-size: 20px;
         color: #FF885E;
         letter-spacing: 0;
-        line-height: 3;
+        line-height: 40px;
     }
     .good-detail-name{
         font-size: 14px;
@@ -231,9 +248,18 @@ export default class OrderGoods extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
-        color: #5F7B9A;
         letter-spacing: 0;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-top: 5px;
     }
+    .good-detail-sort.fold {
+        -webkit-line-clamp: 2;
+    }     
+    .good-detail-sort.unfold {
+        -webkit-line-clamp: 100;
+    }    
     .good-detail-billno,.good-num-t{
         font-size: 10px;
         color: #A3B3C2;
@@ -248,6 +274,7 @@ export default class OrderGoods extends Vue{
         display: flex;
         border-bottom: 1px solid #E0EBF9;
         padding-bottom: 10px;
+        height:40px;
     }
     .receive-status{
         color:#4A39F3;

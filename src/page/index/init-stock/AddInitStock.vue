@@ -103,6 +103,10 @@
         <confirm v-model="isWarehouse" @on-cancel="onBillTypeCancel('warehouse')" @on-confirm="onBillTypeConfirm('warehouse')">
             <p style="text-align:center;"> 您已选择物料，如调整仓库，须重新选择物料。</p>
         </confirm>
+        <!-- 当该 门店仅有一个主仓库时 校验 -->
+        <confirm v-model="isCheckDay" @on-cancel="onRefCancel" @on-confirm="onRefConfirm">
+            <p style="text-align:center;"> 初始化单已审核，是否进行日结？</p>
+        </confirm>
     </div>
 </template>
 <script lang="ts">
@@ -152,6 +156,7 @@ export default class InitStock extends Vue {
   private isFirstStore:boolean;
   private activeRound:any={};//深拷贝的值
   private restActiveRound:any={};//编辑绑定的值
+  private isCheckDay:boolean = false;//门店仅有一个主仓库时校验
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -274,7 +279,23 @@ export default class InitStock extends Vue {
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("审核成功！");
-         this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
+        if(this.orderType.length==1){
+            this.isCheckDay = true;
+        }else{
+            this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
+        }
+         
+    }
+    /**
+     * 取消日结
+     */
+    private onRefCancel(){
+        this.isCheckDay = false;
+        this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
+    }
+    private onRefConfirm(){
+        this.isCheckDay = false;
+        this.$router.push("/initStock");
     }
     /**
      * 页面保存

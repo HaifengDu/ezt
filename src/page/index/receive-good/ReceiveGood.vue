@@ -116,6 +116,9 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
    components:{
      TabItem
@@ -133,6 +136,7 @@ import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
   //  }
 })
 export default class ReceiveGood extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private selected:String = 'deliver';
     private service: ReceiveGoodService;
     private pager:Pager;
@@ -198,6 +202,7 @@ export default class ReceiveGood extends Vue{
          return false;
       }
       if(this.tabList.getActive().status==1){
+        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
         this.$router.push('/comfirmAccept');
       }else if(this.tabList.getActive().status==3){
         this.$router.push('/checkDetail');

@@ -9,8 +9,14 @@
       <div class="ezt-add-content">
          <ul class="ezt-title-search">
           <li>
-            <span class="title-search-name">源单号：</span>
+            <span class="title-search-name">单号：</span>
             <input type="text" class="ezt-middle">
+          </li>
+          <li class="select-list" v-if="receive_billtype.cai">
+            <span class="title-search-name">单据类型：</span>
+            <span>
+             {{addInfo.billType}}
+            </span>
           </li>
           <li>
             <span class="title-search-name">来货单位：</span>
@@ -18,34 +24,36 @@
           </li>
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
-            <span class="title-select-name item-select">
+            <span class="title-select-name item-select" v-if="!receive_billtype.cai">
               <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse" v-model="addInfo.warehouse">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
+            <span v-if="receive_billtype.cai">
+              {{addInfo.warehouse}}
+            </span>
           </li>
           <li class="input-list">
             <span class="title-search-name">备注：</span>
             <input type="text" class="ezt-middle">
-          </li>         
+          </li>  
+          <li v-if="receive_billtype.cai">
+            <!-- <span class="title-search-name">选择物料：</span> -->
+            <span class="title-search-name">选择物料：</span>
+            <span class="title-search-right" @click="renderUrl('/publicAddGood')">
+              <i class="fa fa-angle-right" aria-hidden="true"></i>
+            </span>
+            
+          </li>       
         </ul>
         <div class="detail-acount-title">
           物料明细
         </div> 
-        <ul>               
-          <li class="good-detail-content" v-for="(item,index) in goodList" :key="index"> 
-            <!-- <mt-cell-swipe
-              :right="[
-                {
-                  content: '删除',
-                  style: { background: '#ccc', color: '#000' },
-                  handler: () => {deleteSection(item)}
-                }
-              ]"
-             > -->
-              <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+        <!-- 可编辑  配送收货、直配收货-->
+        <ul v-if="receive_billtype.shou">               
+          <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
+              <div class="ezt-detail-good">
                   <div class="good-detail-l">
                       <div>
                           <span class="good-detail-name">{{item.name}}
@@ -61,17 +69,20 @@
                           </span>
                       </div>                     
                   </div>
-                  <div class="good-detail-r">
+                  <div class="good-detail-r" v-if="receive_billtype.shou">
                     <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input">
+                      备注：<input v-model="item.remark" class="ezt-middle" placeholder="请输入备注" type="text"/>
+                    </div>                    
+                  </div>  
+                  <div class="good-detail-r" v-if="receive_billtype.cai">
+                    <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
+                    <div class="park-input">
                       <span class="title-search-name">备注：{{item.remark}}</span>
-                      <!-- <input type="text" class="ezt-middle"> -->
-                    </div>
-                    
-                  </div>                 
+                    </div>                    
+                  </div>               
               </div> 
-              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>                              
-            <!-- </mt-cell-swipe> -->
+              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
              <div>
               <x-dialog v-model="isDirect" class="dialog-demo">
                 <div class="ezt-dialog-header">
@@ -101,17 +112,82 @@
             </div> 
           </li>                   
         </ul>
+        <!-- 不可编辑    采购入库  允许删除物料-->
+        <ul v-if="!receive_billtype.shou&&!receive_billtype.diao">               
+          <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
+              <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
+                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+                  <div class="good-detail-l">
+                      <div>
+                          <span class="good-detail-name">{{item.name}}
+                              <span class="good-detail-sort">（规格）</span>
+                          </span>                         
+                      </div>
+                      <div>
+                          <span class="good-detail-billno">编码：003222</span>
+                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="title-search-name ezt-dense-box">
+                            <!-- 收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart"> -->
+                            收：{{item.num}}
+                          </span>
+                      </div>                     
+                  </div>
+                  <div class="good-detail-r">
+                    <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
+                    <div class="park-input">
+                      <span class="title-search-name">备注：{{item.remark}}</span>
+                    </div>
+                    
+                  </div>                 
+              </div> 
+              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+          </li>                   
+        </ul>
+
+         <!-- 不可编辑    平调入库  不允许删除物料-->
+        <ul v-if="receive_billtype.diao">               
+          <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
+              <div class="ezt-detail-good" :class="{'swipe-transform':item.active}">
+                  <div class="good-detail-l">
+                      <div>
+                          <span class="good-detail-name">{{item.name}}
+                              <span class="good-detail-sort">（规格）</span>
+                          </span>                         
+                      </div>
+                      <div>
+                          <span class="good-detail-billno">编码：003222</span>
+                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="title-search-name ezt-dense-box">
+                            <!-- 收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart"> -->
+                            收：{{item.num}}
+                          </span>
+                      </div>                     
+                  </div>
+                  <div class="good-detail-r">
+                    <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
+                    <div class="park-input">
+                      <span class="title-search-name">备注：{{item.remark}}</span>
+                    </div>
+                    
+                  </div>                 
+              </div> 
+              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+          </li>                   
+        </ul>
       </div> 
       <ezt-footer>
          <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total">合计：
-            <b>品项</b><span>{{this.goodList.length}}</span>，
+            <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{TotalNum}}</span>，
             <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou">暂存</a>  
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="refulseReceive" v-if="receive_billtype.diao">驳回</a>  
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive" v-if="receive_billtype.shou || receive_billtype.diao">收货</a>
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="submitReceive" v-if="receive_billtype.cai">提交</a>
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="saveAndAuditReceive" v-if="receive_billtype.cai">提交并审核</a>   
           </div>  
         </div>     
       </ezt-footer>
@@ -134,6 +210,9 @@ import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -143,20 +222,25 @@ declare var mobiscroll:any;
    computed:{
      ...mapGetters({
       //  'goodList':'receiveGood/goodList'
+      selectedGood:"publicAddGood/selectedGood",
      })
    },
-  //  methods:{
-  //    ...mapActions({
-  //      'getGoodList':"receiveGood/getGoodList"
-  //    })
-  //  }
+   methods:{
+     ...mapActions({
+      //  'getGoodList':"receiveGood/getGoodList"
+      setSelectedGood:"publicAddGood/setSelectedGood",
+     })
+   }
 })
 export default class ReceiveGood extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private beforeWarehouse:string="";//切换仓库校验物品失败的时候，还原之前的仓库值
     private addInfo:any={
       warehouse:"01"
     };
     private service: ReceiveGoodService;
+    private selectedGood: any[];
+    private setSelectedGood: INoopPromise;
     private pager:Pager;
     private getGoodList:INoopPromise
     private hideMask:()=>void;
@@ -205,6 +289,11 @@ export default class ReceiveGood extends Vue{
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
     private isWarehouse:boolean = false;//切换仓库校验物料
+    private receive_billtype: any = {
+      shou:false,
+      cai:false,
+      diao:false
+    };
     private orderType:any=[{
       name:'仓库1',
       type:'01',     
@@ -212,14 +301,48 @@ export default class ReceiveGood extends Vue{
       name:'仓库2',
       type:'02',      
     }]
-    created() {     
+    private addBillInfo:any={};
+    private addBeforeBillInfo:any={};
+    created() { 
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
        this.beforeWarehouse = this.addInfo.warehouse;
-       this.goodList.forEach(item=> this.$set(item,'active',false));
+       this.selectedGood.forEach(item=> this.$set(item,'active',false));
     }
-
-    mounted(){  
+    mounted(){
+      if(this.selectedGood.length==0){
+        this.setSelectedGood(this.goodList); 
+      }
+      this.selectedGood.forEach(item=> this.$set(item,'active',false));
+      if(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE)){
+        switch (JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE))){
+          case "配":
+            this.receive_billtype.shou = true;
+            this.receive_billtype.cai=false;
+            this.receive_billtype.diao=false;
+          break;
+          case "直":
+            this.receive_billtype.shou = true;
+            this.receive_billtype.cai = false;
+            this.receive_billtype.diao = false;
+          break;
+          case "采":
+            this.receive_billtype.cai = true;
+            this.receive_billtype.shou = false;
+            this.receive_billtype.diao = false;
+          break;
+          case "调":
+            this.receive_billtype.diao = true;
+          break;
+        };
+      }
+      console.log(this.receive_billtype,'000999')
+      if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+      }
+      if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
+        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
+      }
     }
 
  /**
@@ -227,7 +350,7 @@ export default class ReceiveGood extends Vue{
    * 物料总数量
    */
     private get TotalNum(){
-      return this.goodList.reduce((ori,item)=>{
+      return this.selectedGood.reduce((ori,item)=>{
         return Number(ori)+Number(item.num);       
       },0);
     }
@@ -235,7 +358,7 @@ export default class ReceiveGood extends Vue{
    * 物料总金额
    */
   private get TotalAmt(){
-    return this.goodList.reduce((ori,item)=>{
+    return this.selectedGood.reduce((ori,item)=>{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
   }
@@ -264,15 +387,77 @@ export default class ReceiveGood extends Vue{
      * 确认收货
      */
     private confirmReceive(){
-      this.$toasted.success("审核成功！")
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("收货成功！")
       this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
     }
     /**
      * 提交收货
      */
     private saveReceive(){
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
       this.$toasted.success("提交成功！");
       this.$router.push("/receiveGood");
+    }
+    /**
+     * 平调收货 驳回
+     */
+    private refulseReceive(){
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("驳回成功！")
+      this.$router.push("/receiveGood");
+    }
+    /**
+     * 采购入库 提交
+     */
+    private submitReceive(){
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("提交成功！");
+      this.$router.push("/receiveGood");
+    }
+       //选择物料
+    private renderUrl(info:string){     
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.$router.push(info);
+    } 
+    /**
+     * 保存并审核
+     */
+    private saveAndAuditReceive(){
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("审核成功！");
+      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});  
     }
     /**
     *可直拨
@@ -291,10 +476,10 @@ export default class ReceiveGood extends Vue{
      * 左滑删除某一项
      */
     private deleteSection(item:any){
-      let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+      let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
         return item.id == info.id;
       })
-      this.goodList.splice(newIndex,1);
+      this.selectedGood.splice(newIndex,1);
     }
     /**
      * 切换仓库校验
@@ -314,6 +499,9 @@ export default class ReceiveGood extends Vue{
     }
     // 返回
     private goBack(){
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
       this.$router.push('/receiveGood');
     }
    

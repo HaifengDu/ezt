@@ -37,7 +37,8 @@
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                  </span>
                  <span v-if="useObj.editPrice" class="good-item-sort edit">
-                    <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>
+                    <span v-if="useObj.costType==0||useObj.editPrice=='m'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>
+                    <span class="good-item-sort" v-if="useObj.editPrice == 'q'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
                     <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
@@ -315,7 +316,11 @@ export default class AddGood extends Vue{
   mounted() {     
     this.useObj.editPrice = this.$route.params.editPrice; 
     this.useObj.costType = this.$route.params.costType;
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    
+    console.log(this.$route.params,'params000')
+    if(this.$route.params.receiveOrderType){
+      this.useObj.editPrice = this.$route.params.receiveOrderType;
+    }
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -417,12 +422,14 @@ export default class AddGood extends Vue{
     //TODO:把收藏从货品类别里抽出来
     this.goodBigType = this.allType;
     this.changeSmallType(this.allType[0]);
-    //TODO:默认加载货品   
-   
+    //TODO:默认加载货品
   }
   private changeSmallType(item:any){
     this.typeName = item;   
-    this.goodSmallType = item.cdata;   
+    this.goodSmallType = item.cdata; 
+    (item.cdata).forEach((info:any,index:any)=>{
+      this.loadGood(info)
+    })
     this.loadGood(item.cdata[0]);
     //TODO:加载货品this.goodSmallType[0]
   }
@@ -434,14 +441,14 @@ export default class AddGood extends Vue{
     }
    
     //TODO:item.id加载货品
-     _.forEach(item.goodList,good=>{
-        this.$set(good,'active',false);
-        const index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
-        if(index>=0){
-          ObjectHelper.merge(good,this.selectedGoodList[index],true);
-          this.selectedGoodList[index] = good;
-          item.addList.push(good);
-        }
+    _.forEach(item.goodList,good=>{
+      this.$set(good,'active',false);
+      const index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
+      if(index>=0){
+        ObjectHelper.merge(good,this.selectedGoodList[index],true);
+        this.selectedGoodList[index] = good;
+        item.addList.push(good);
+      }
     });
     this.goodList = item.goodList;
     this.typeName=item;    

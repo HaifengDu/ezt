@@ -103,7 +103,7 @@
             <b>￥</b><span>{{TotalAmt}}</span>
           </div>
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
             <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
         </div>
@@ -352,7 +352,8 @@ export default class ReceiveGood extends Vue{
         }
         this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.$router.push(info);
+        // this.$router.push(info);
+        this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
       }      
     }
     private checkEmpty(errorMsg:any){

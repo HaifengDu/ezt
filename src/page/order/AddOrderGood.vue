@@ -11,7 +11,7 @@
                         <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.storeId" 
                             @change="handlerStoreId">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                         </select>
                         </span>
                     </li>
@@ -137,7 +137,7 @@
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
         <!-- 当有物料 仓库发生变化时校验 -->
-        <confirm v-model="isStore" @on-cancel="onStoreCancel('store')" @on-confirm="onStoreConfirm('store')">
+        <confirm v-model="isStore" @on-cancel="onStoreCancel('storeId')" @on-confirm="onStoreConfirm('storeId')">
             <p style="text-align:center;">您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。</p>
         </confirm>
         <!-- 当有物料 要货方式发生变化时校验 -->
@@ -176,7 +176,7 @@ export default class Order extends Vue{
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private systemParamSetting:any;
     private addBeforeBillInfo:any={
-        orderType:0
+        orderType:0,
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
         orderType:0,
@@ -189,8 +189,11 @@ export default class Order extends Vue{
     private isTemplate:boolean=false;
     private doneInfo:string="";
     private orderType:any=[{
-      name:'配送中心1',
-      id:'01'
+        name:'配送中心1',
+        id:'01'
+    },{
+        name:'配送中心2',
+        id:'02'
     }];
     private containTime:any={
         newHour:0,
@@ -252,8 +255,8 @@ export default class Order extends Vue{
     }   
     created() {
         this.service = OrderGoodsService.getInstance();
-        this.addBillInfo.storeId = this.orderType[0].type;
-        this.addBeforeBillInfo.storeId = this.orderType[0].type;
+        this.addBillInfo.storeId = this.orderType[0].id;
+        this.addBeforeBillInfo.storeId = this.orderType[0].id;
         (this.selectedGood||[]).forEach(item=>item.active = false);
         this.goodData = ObjectHelper.serialize(this.selectedGood)
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息

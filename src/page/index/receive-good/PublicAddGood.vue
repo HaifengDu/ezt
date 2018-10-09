@@ -166,9 +166,9 @@
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
               <!-- 收藏图标 -->
-              <span v-if="!useObj.editPrice" class="good-collect">
+              <!-- <span v-if="!useObj.editPrice" class="good-collect">
                 <i class="fa fa-star-o" aria-hidden="true"></i>
-              </span>
+              </span> -->
               <span class="good-number">
                 <!-- <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number> -->
                 <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
@@ -314,10 +314,9 @@ export default class AddGood extends Vue{
   created(){ 
   }
   mounted() {     
-    this.useObj.editPrice = this.$route.params.editPrice; 
-    this.useObj.costType = this.$route.params.costType;
-    console.log(this.$route.params,'params000')
-    if(this.$route.params.receiveOrderType){
+    this.useObj.editPrice = this.$route.params.editPrice; //是否价格可编辑
+    this.useObj.costType = this.$route.params.costType; //价格与税额区分
+    if(this.$route.params.receiveOrderType){//单据类型（收货价格是否可编辑）
       this.useObj.editPrice = this.$route.params.receiveOrderType;
     }
     this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   

@@ -73,6 +73,15 @@
             </ul> 
         </div>  
     </div>
+    <ezt-footer>
+        <div class="ezt-foot-temporary" slot="confirm">
+        <div class="ezt-foot-total">合计：
+            <b>品项</b><span>{{goodList.length}}</span>，
+            <b>数量</b><span>2</span>
+            <b>含税金额￥</b><span>3</span>
+        </div> 
+        </div>
+    </ezt-footer>  
   </div>
 </template>
 <script lang="ts">
@@ -130,29 +139,29 @@ export default class ReceiveGood extends Vue{
             name:"仓库4",
             num:66
         }]
-    },{
-        name:"大猪蹄子",
-        sort:"规格",
-        price:22,
-        unitName:"KG",
-        billNo:"003222",
-        amt: 660,
-        remark:"这是肉",
-        num: 6,
-        directWarehouse:[{
-            name:"上海仓库1",
-            num:1,
         },{
-            name:"北京仓库2",
-            num:2,
-        },{
-            name:"軣咕咕3",
-            num:3,
-        },{
-            name:"仓库4",
-            num:66
+            name:"大猪蹄子",
+            sort:"规格",
+            price:22,
+            unitName:"KG",
+            billNo:"003222",
+            amt: 660,
+            remark:"这是肉",
+            num: 6,
+            directWarehouse:[{
+                name:"上海仓库1",
+                num:1,
+            },{
+                name:"北京仓库2",
+                num:2,
+            },{
+                name:"軣咕咕3",
+                num:3,
+            },{
+                name:"仓库4",
+                num:66
+            }]
         }]
-    }]
     created() {     
        this.service = ReceiveGoodService.getInstance();
     }
@@ -204,6 +213,7 @@ export default class ReceiveGood extends Vue{
     .ezt-main{
     overflow-y: auto;
     overflow-x: hidden;
+    margin-bottom: 28px;
 }
 .detail-acount-title{
     font-size: 12px;

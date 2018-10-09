@@ -156,6 +156,7 @@ import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
 import ObjectHelper from '../../common/objectHelper'
 import CACHE_KEY from '../../constans/cacheKey'
+import commonService from '../../service/commonService.js';
 @Component({
     computed:{
         ...mapGetters({
@@ -242,16 +243,11 @@ export default class Order extends Vue{
             ]
         }
     ];
-    private hours:any[]=[
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
-    ];
-    private minutes:any[]=[
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-        40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
-    ]
-
+    private hours:any[]=[];
+    private minutes:any[]=[];
     mounted(){
-
+        this.hours = commonService.getHours();
+        this.minutes = commonService.getMinutes();
     }   
     created() {
         this.service = OrderGoodsService.getInstance();
@@ -271,12 +267,11 @@ export default class Order extends Vue{
         if(this.systemParamSetting.isContain=='3'){
             if(this.systemParamSetting&&this.systemParamSetting.containTime){
                 let str = this.systemParamSetting.containTime;
-                this.containTime.newHour=str.subString(0,str.indexOf(":"));
-                this.containTime.newMinut=str.subString(str.indexOf(":",str.length-1))
+                this.containTime.newHour=Number(str.substring(0,str.indexOf(":")));
+                this.containTime.newMinut=Number(str.substring(str.indexOf(":")+1,str.length));
             }else{
                 this.$set(this.systemParamSetting,'containTime',"0:0");
-            }
-           
+            }           
         }
         console.log(this.systemParamSetting,'0099999')
     }

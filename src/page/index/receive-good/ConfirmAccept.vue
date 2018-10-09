@@ -10,12 +10,13 @@
          <ul class="ezt-title-search">
           <li>
             <span class="title-search-name">单号：</span>
-            <input type="text" class="ezt-middle">
+            <!-- <input type="text" class="ezt-middle"> -->
+            {{addBillInfo.bill_no}}
           </li>
           <li class="select-list" v-if="receive_billtype.cai">
             <span class="title-search-name">单据类型：</span>
             <span>
-             {{addInfo.billType}}
+             {{addBillInfo.billType}}
             </span>
           </li>
           <li>
@@ -25,18 +26,18 @@
           <li class="select-list">
             <span class="title-search-name ">仓库：</span>
             <span class="title-select-name item-select" v-if="!receive_billtype.cai">
-              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse" v-model="addInfo.warehouse">
+              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse" v-model="addBillInfo.warehouse">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
             <span v-if="receive_billtype.cai">
-              {{addInfo.warehouse}}
+              {{addBillInfo.warehouse}}
             </span>
           </li>
           <li class="input-list">
             <span class="title-search-name">备注：</span>
-            <input type="text" class="ezt-middle">
+            <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
           </li>  
           <li v-if="receive_billtype.cai">
             <!-- <span class="title-search-name">选择物料：</span> -->
@@ -234,10 +235,10 @@ declare var mobiscroll:any;
 })
 export default class ReceiveGood extends Vue{
     private cache = CachePocily.getInstance(ECache.LocCache);
-    private beforeWarehouse:string="";//切换仓库校验物品失败的时候，还原之前的仓库值
-    private addInfo:any={
-      warehouse:"01"
-    };
+    // private beforeWarehouse:string="";//切换仓库校验物品失败的时候，还原之前的仓库值
+    // private addInfo:any={
+    //   warehouse:"01"
+    // };
     private service: ReceiveGoodService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
@@ -250,41 +251,41 @@ export default class ReceiveGood extends Vue{
     private DirectedNum:number=0;//已直拨的数量
     private restActiveRound:any={};
     private activeRound:any={};
-    private goodList:any[] = [{
-            id:21,
-            name:'牛肉',
-            price:'15',
-            utilname:'KG',
-            num:2,
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:0,
-              list:[{
-                name:'仓库一号',
-                num:0
-              },{
-                name:'仓库二号',
-                num:0
-              }]
-            }
-        },{
-            id:2,
-            name:'白菜',
-            price:'1.5',
-            utilname:'KG',
-            num:3,
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:0,
-              list:[{
-                name:'仓库一号',
-                num:0
-              },{
-                name:'仓库二号',
-                num:0
-              }]
-            }
-        }];
+    // private goodList:any[] = [{
+    //         id:21,
+    //         name:'牛肉',
+    //         price:'15',
+    //         utilname:'KG',
+    //         num:2,
+    //         roundValue:{//可直拨的数据
+    //           num: 10,
+    //           numed:0,
+    //           list:[{
+    //             name:'仓库一号',
+    //             num:0
+    //           },{
+    //             name:'仓库二号',
+    //             num:0
+    //           }]
+    //         }
+    //     },{
+    //         id:2,
+    //         name:'白菜',
+    //         price:'1.5',
+    //         utilname:'KG',
+    //         num:3,
+    //         roundValue:{//可直拨的数据
+    //           num: 10,
+    //           numed:0,
+    //           list:[{
+    //             name:'仓库一号',
+    //             num:0
+    //           },{
+    //             name:'仓库二号',
+    //             num:0
+    //           }]
+    //         }
+    //     }];
 
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
@@ -306,13 +307,10 @@ export default class ReceiveGood extends Vue{
     created() { 
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
-       this.beforeWarehouse = this.addInfo.warehouse;
+      //  this.beforeWarehouse = this.addInfo.warehouse;
        this.selectedGood.forEach(item=> this.$set(item,'active',false));
     }
-    mounted(){
-      if(this.selectedGood.length==0){
-        this.setSelectedGood(this.goodList); 
-      }
+    mounted(){     
       this.selectedGood.forEach(item=> this.$set(item,'active',false));
       if(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE)){
         switch (JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE))){
@@ -342,6 +340,9 @@ export default class ReceiveGood extends Vue{
       }
       if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
         this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
+      }
+      if(this.selectedGood.length==0){
+        this.setSelectedGood(this.addBillInfo.goodList); 
       }
     }
 
@@ -495,7 +496,7 @@ export default class ReceiveGood extends Vue{
      * 仓库切换校验 失败 返回
      */
     private onWarehouseCancel(){
-      this.addInfo.warehouse = this.beforeWarehouse;
+      this.addBillInfo.warehouse = this.addBeforeBillInfo;
     }
     // 返回
     private goBack(){
@@ -643,9 +644,6 @@ export default class ReceiveGood extends Vue{
       z-index: 2;
     }
     //物料明细结束 
-    .ezt-detail-good input{
-      // width: 50px;
-    }
     .icon-dail{
       flex: .1;
       background: pink;

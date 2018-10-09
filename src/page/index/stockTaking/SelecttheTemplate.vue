@@ -130,28 +130,11 @@ export default class stockTaking extends Vue{
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
-.demo3-slot{
-  text-align: center;
-  padding: 8px 0;
-  color: #888;
-}
-.ezt-main{
-  height: auto;
-  background-color:@background-color!important;
-}
 .selectthetemplate{
     background-color: @background-color;
-    .ezt-add-content{
-      width: @width;
-      height:@height;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
       .done-none{
-        height: 1000px;
-        z-index: 9999;
-        overflow: hidden;
         position: absolute;
+        z-index: 999;
         em{
           border: 1px solid #BACAD9;
           padding: 0 15px;
@@ -180,7 +163,6 @@ export default class stockTaking extends Vue{
         background-color: @background-color;
         box-shadow: 0 -1px 3px 0 rgba(204,216,228,0.80);
      }
-   }
 }
 </style>
 

@@ -149,6 +149,7 @@ export default class ReceiveGood extends Vue{
     private allLoaded:boolean= false;//数据是否已经全部加载完
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
+    private comfirmGoodInfo:any={};//修改页面信息
 
     private tabList:TabList = new TabList();
     private orderType:any=[{
@@ -202,7 +203,50 @@ export default class ReceiveGood extends Vue{
          return false;
       }
       if(this.tabList.getActive().status==1){
+        this.comfirmGoodInfo={
+          bill_no:'00111111',
+          billType:'合同采购',
+          warehouse:"仓库中心1",
+          remark:'在途中',
+          goodList:[{
+            id:21,
+            name:'牛肉',
+            price:'15',
+            utilname:'KG',
+            num:2,
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:0,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              }]
+            }
+          },{
+              id:2,
+              name:'白菜',
+              price:'1.5',
+              utilname:'KG',
+              num:3,
+              roundValue:{//可直拨的数据
+                num: 10,
+                numed:0,
+                list:[{
+                  name:'仓库一号',
+                  num:0
+                },{
+                  name:'仓库二号',
+                  num:0
+                }]
+              }
+          }]
+        }
         this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.comfirmGoodInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.comfirmGoodInfo));
         this.$router.push('/comfirmAccept');
       }else if(this.tabList.getActive().status==3){
         this.$router.push('/checkDetail');

@@ -94,7 +94,8 @@ import Vue from 'vue'
 import {mapActions,mapGetters} from 'vuex'
 import { INoop, INoopPromise } from '../../helper/methods';
 import ObjectHelper from '../../common/objectHelper'
-import {Component} from "vue-property-decorator"
+import {Component} from "vue-property-decorator";
+import commonService from '../../service/commonService.js';
 declare var mobiscroll:any;//全局定义日历
 @Component({
     computed:{
@@ -116,18 +117,9 @@ export default class Index extends Vue{
     private hour:number;
     private minute:number;
     private oldValue = 0;
-    private containTime:any
-    ={
-        newHour:0,
-        newMinut:0,
-    };
-    private hours:any[]=[
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23
-    ];
-    private minutes:any[]=[
-        0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,
-        40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
-    ]
+    private containTime:any={};
+    private hours:any[]=[];
+    private minutes:any[]=[]
     private model:any={
         // orderSelected : '1',
         // bulkQuantity: 0,
@@ -136,12 +128,19 @@ export default class Index extends Vue{
 
 
     mounted(){     
-    
+        this.hours = commonService.getHours();
+        this.minutes = commonService.getMinutes();        
+        this.checkTime();
     }
     created(){
+        if(JSON.stringify(this.systemParamSetting)=='{}'){
+            this.setSystemParam({
+                orderSelected : '1',
+                bulkQuantity: 0,
+                isContain:'1'
+            })
+        }       
         this.model=ObjectHelper.serialize(this.systemParamSetting);
-        this.checkTime();
-        console.log(this.systemParamSetting,'8888888888')
     }
 
     private handlerFocus(item:any,name:any,val:any){
@@ -159,12 +158,17 @@ export default class Index extends Vue{
         if(this.model.isContain=='3'){
             if(this.systemParamSetting&&this.systemParamSetting.containTime){
                 let str = this.systemParamSetting.containTime;
-                this.containTime.newHour=str.subString(0,str.indexOf(":"));
-                this.containTime.newMinut=str.subString(str.indexOf(":",str.length-1))
+                this.containTime.newHour=Number(str.substring(0,str.indexOf(":")));
+                this.containTime.newMinut=Number(str.substring(str.indexOf(":")+1,str.length));
             }else{
                 this.$set(this.systemParamSetting,'containTime',"0:0");
+                this.containTime.newHour = 0;
+                this.containTime.newMinut = 0;
             }
            
+        }else{
+            this.containTime.newHour = 0;
+            this.containTime.newMinut = 0;
         }
     }
     // 价格\税率\税额 修改的时候
@@ -183,7 +187,7 @@ export default class Index extends Vue{
      * 保存设置
      */
     private saveSetting(){
-        ObjectHelper.merge(this.systemParamSetting,this.model,true);
+        // ObjectHelper.merge(this.systemParamSetting,this.model,true);
         if(this.model.isContain==3){
             this.$set(this.model,'containTime',this.containTime.newHour+":"+this.containTime.newMinut)
         }

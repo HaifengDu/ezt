@@ -1,5 +1,8 @@
 import Vue from "vue";
 import "hammerjs";
+/**
+ * 左侧滑动指令
+ */
 declare var Hammer:any;
 Vue.directive("swipeleft",function(el,binding,vnode,oldNode){
     const hammertime = new Hammer(el);

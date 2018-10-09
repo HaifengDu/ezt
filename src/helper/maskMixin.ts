@@ -1,3 +1,4 @@
+// 遮罩
 import Vue,{VueConstructor,ComponentOptions} from "vue";
 export const maskMixin:VueConstructor | ComponentOptions<Vue> = {
     created(){

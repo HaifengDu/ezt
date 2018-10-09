@@ -105,9 +105,7 @@ declare var mobiscroll:any;
 })
 export default class OrderGoods extends Vue{
     private service: OrderGoodsService;
-    private showOther: boolean=false;
     private details:any[] = [];  //物料明细
-    private remarks:string;
     private isPayMent:boolean=false; //是否有支付按钮
     private paytitle:string="";
     private Payment:boolean = false;  //订单支付页面显示已付
@@ -156,17 +154,6 @@ export default class OrderGoods extends Vue{
     
     }
 
-    // 获取备注的length
-    // private getItemLength(){
-    //     debugger
-    //     let children = this.$refs.itemWrapper;
-    //     console.log(children);
-    //     // return children.length;
-    // }
-   
-    private showOtherWare(){
-        this.showOther = !this.showOther;
-    }
    
 }
 </script>
@@ -185,10 +172,6 @@ export default class OrderGoods extends Vue{
         position: absolute;
         top:0;
         width: 100%;
-        // height: calc(100vh - 45px);
-        // overflow-y: auto;
-        // overflow-x: hidden;
-        // bottom: 70px;
     }
     .ezt-main{
         overflow-y: auto;
@@ -289,16 +272,6 @@ export default class OrderGoods extends Vue{
         span{
             color: red;
         }
-    }
-     .turnOn{
-        display: inline-block;
-        height: 100%;
-        flex: .2;
-        margin: 10px 10px 0 0;
-        float: right;
-    }
-    .icon-trun-on.off{
-        transform: rotate(180deg);
     }
     .no-pament{
         margin-bottom: 24px;

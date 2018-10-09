@@ -539,12 +539,12 @@ export default class stockTaking extends Vue{
               color: #395778;
           }
           .content{
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
-            justify-content: start;
-            border-bottom: 1px solid #D2DFEE;
-            padding-left: 10px;
+               display: flex;
+               align-items: flex-start;
+               flex-direction: column;
+               justify-content: start;
+               padding-left: 10px;
+               box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
             p{
               line-height: 30px;
             }
@@ -559,14 +559,14 @@ export default class stockTaking extends Vue{
                 line-height: 40px;
               }
               .submit{
+                width: 70px;
                 height: 25px;
                 line-height: 25px;
                 font-size: 12px;
                 color: #1188FC;
                 border: 1px solid #1188FC;
-                border-radius: 6px;
+                border-radius: @border-radius;
                 margin-top: 7px;
-                padding: 0 10px;
                 cursor: pointer;
               }
           }

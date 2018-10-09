@@ -134,10 +134,8 @@ export default class OrderGoods extends Vue{
       this.fold = !this.fold;
     }
     private getData() {
-      setTimeout(() => {
         this.content =
           "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
-      }, 1000)
     }
 
     // 返回

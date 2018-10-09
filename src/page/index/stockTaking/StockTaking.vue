@@ -120,11 +120,8 @@ import StockTakingService from '../../../service/StockTakingService'
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import librarydetails from './LibraryDetails'
-import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
-import queryresult from './QueryResult.vue';
 declare var mobiscroll:any;
 @Component({
    components:{  
@@ -156,13 +153,13 @@ export default class stockTaking extends Vue{
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
     private inventoryList:{list?:any[]} = {};//盘库列表   
+    private inventoryDetails:any; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
-    private inventoryDetails:any; //列表详情
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
     private warehouseType:any[] = [];  //动态加载仓库
@@ -176,6 +173,7 @@ export default class stockTaking extends Vue{
     private inventoryType:any[] = [];//盘点类型
     private type:string; //盘点类型数据
     private names:string;
+    private billType:string;
     private isAudited:boolean = false;  //有未审核盘点提示
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
     created() {
@@ -380,40 +378,24 @@ export default class stockTaking extends Vue{
             if(err.data.errmsg  === 'unreview'){
                 this.newlyadded = false
                 this.isAudited = true
+                this.names = type.name;
+                this.billType = type.bill_type;
             }
           }
       })
     }   
 
     // 单据未审核会提示
-     private onConfirm(type:any,name:any,bill_type:string,){
-       this.service.getInventoryType(type.bill_type).then(res=>{ 
-        this.setInventoryType(this.type);        
+     private onConfirm(type:any,name:any,bill_type:string){    //type:any,name:any,bill_type:string,
         this.$router.push({
             name:'AddinventoryList',
             query:{
-             name:type.name,
-             bill_type:type.bill_type
-           }
-         });
-         this.newlyadded = false
-         this.type = res.data.data[0].bill_type;
-      },err=>{
-          if(err instanceof ResponseError){
-            if(err.data.errmsg  === 'unreview'){
-                this.setInventoryType(this.type);        
-                this.$router.push({
-                    name:'AddinventoryList',
-                    query:{
-                    name:type.name,
-                    bill_type:type.bill_type
-                  }
-                });
-                this.newlyadded = false
-                this.type = err.data.data[0].bill_type;
+              name:this.names,
+              bill_type:this.billType
             }
-          }
-      })
+          });
+        this.newlyadded = false
+        this.type = this.billType;
      }   
      // 数据整理  
     private datasorting(){
@@ -446,6 +428,7 @@ export default class stockTaking extends Vue{
       },err=>{
           this.hideMask();     
           this.isSearch = false;
+          this.$router.push({name:'QueryResult'});
           this.$toasted.show(err.message)
       })
     }
@@ -539,12 +522,12 @@ export default class stockTaking extends Vue{
               color: #395778;
           }
           .content{
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
-            justify-content: start;
-            border-bottom: 1px solid #D2DFEE;
-            padding-left: 10px;
+               display: flex;
+               align-items: flex-start;
+               flex-direction: column;
+               justify-content: start;
+               padding-left: 10px;
+               box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
             p{
               line-height: 30px;
             }
@@ -559,14 +542,14 @@ export default class stockTaking extends Vue{
                 line-height: 40px;
               }
               .submit{
+                width: 70px;
                 height: 25px;
                 line-height: 25px;
                 font-size: 12px;
                 color: #1188FC;
                 border: 1px solid #1188FC;
-                border-radius: 6px;
+                border-radius: @border-radius;
                 margin-top: 7px;
-                padding: 0 10px;
                 cursor: pointer;
               }
           }

@@ -12,11 +12,11 @@
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">item.dc_name</span> 
+                    <span class="return-list-title">{{detailList.dc_name}}</span> 
                     <span class="receive-status">已完成</span>
                 </div>
                 <div class="receive-icon-content">
-                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{item.bill_no}</span></span>
+                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{detailList.bill_no}}</span></span>
                     <div style="display:flex">
                         <span class="receive-dc-title">含税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">税率：<span class="receive-dc-content">item.ask_goods_date</span></span>
@@ -34,7 +34,7 @@
             <div class="detail-acount-title">
             物品清单
             </div>  
-            <ul>
+            <ul v-if="goodList.length>0">
                 <li class="good-detail-content" v-for="(item,index) in goodList" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
@@ -77,8 +77,8 @@
         <div class="ezt-foot-temporary" slot="confirm">
         <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{goodList.length}}</span>，
-            <b>数量</b><span>2</span>
-            <b>含税金额￥</b><span>3</span>
+            <b>数量</b><span>{{TotalNum}}</span>，
+            <b>含税金额￥</b><span>{{TotalAmt}}</span>
         </div> 
         </div>
     </ezt-footer>  
@@ -95,6 +95,9 @@ import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -113,60 +116,39 @@ declare var mobiscroll:any;
   //  }
 })
 export default class ReceiveGood extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private service: ReceiveGoodService;
     private pager:Pager;
     private tabList:TabList = new TabList();
     private showOther: boolean=false;
-    private goodList:any[]=[{
-        name:"猪肉",
-        sort:"规格",
-        price:12,
-        unitName:"KG",
-        billNo:"003222",
-        amt: 360,
-        remark:"这是水果",
-        num:3,
-        directWarehouse:[{
-            name:"仓库1",
-            num:1,
-        },{
-            name:"仓库2",
-            num:2,
-        },{
-            name:"仓库3",
-            num:3,
-        },{
-            name:"仓库4",
-            num:66
-        }]
-        },{
-            name:"大猪蹄子",
-            sort:"规格",
-            price:22,
-            unitName:"KG",
-            billNo:"003222",
-            amt: 660,
-            remark:"这是肉",
-            num: 6,
-            directWarehouse:[{
-                name:"上海仓库1",
-                num:1,
-            },{
-                name:"北京仓库2",
-                num:2,
-            },{
-                name:"軣咕咕3",
-                num:3,
-            },{
-                name:"仓库4",
-                num:66
-            }]
-        }]
+    private goodList:any[]=[];//详情页物品信息
+    private detailList:any={};//详情页信息
     created() {     
-       this.service = ReceiveGoodService.getInstance();
+        this.service = ReceiveGoodService.getInstance();       
     }
 
     mounted(){ 
+        if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
+            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
+            this.goodList = this.detailList.goodList;
+        }
+    }
+    /**
+     * computed demo
+     * 物料总数量
+     */
+        private get TotalNum(){
+        return this.goodList.reduce((ori,item)=>{
+            return Number(ori)+Number(item.num);       
+        },0);
+        }
+    /**
+     * 物料总金额
+     */
+    private get TotalAmt(){
+        return this.goodList.reduce((ori,item)=>{
+        return ori+(item.num*item.price);       
+        },0).toFixed(2);
     }
     private showOtherWare(item:any){
         if(item.active){

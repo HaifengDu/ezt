@@ -114,7 +114,7 @@
                                 </div>                 
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
                     </li>
                 </ul>   
             </div>
@@ -143,6 +143,10 @@
         <!-- 当有物料 要货方式发生变化时校验 -->
         <confirm v-model="isOrderType" @on-cancel="onStoreCancel('orderType')" @on-confirm="onStoreConfirm('orderType')">
             <p style="text-align:center;">您已维护物料信息，如调整要货方式，须重新选择物料。</p>
+        </confirm>
+         <!-- 删除物料时 校验 -->
+        <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+            <p style="text-align:center;"> 请确认是否删除该物料。</p>
         </confirm>
     </div>
 </template>
@@ -188,6 +192,8 @@ export default class Order extends Vue{
     private isOrderType:boolean=false;
     private isSave:boolean=false;
     private isTemplate:boolean=false;
+    private isDelGood:boolean = false; //删除物料判断
+    private deleteData:any={};//删除时存储所删除数据
     private doneInfo:string="";
     private orderType:any=[{
         name:'配送中心1',
@@ -252,8 +258,7 @@ export default class Order extends Vue{
     created() {
         this.service = OrderGoodsService.getInstance();
         this.addBillInfo.storeId = this.orderType[0].id;
-        this.addBeforeBillInfo.storeId = this.orderType[0].id;
-        (this.selectedGood||[]).forEach(item=>item.active = false);
+        this.addBeforeBillInfo.storeId = this.orderType[0].id;       
         this.goodData = ObjectHelper.serialize(this.selectedGood)
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
@@ -273,7 +278,7 @@ export default class Order extends Vue{
                 this.$set(this.systemParamSetting,'containTime',"0:0");
             }           
         }
-        console.log(this.systemParamSetting,'0099999')
+        (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
     }
     /**
      * 模板导入订货操作
@@ -286,6 +291,29 @@ export default class Order extends Vue{
          this.goodData = ObjectHelper.serialize(item.goodList);//深拷贝
         this.isTemplate=false;
     }
+    /**
+         * 删除物料操作
+         */
+        private delAction(item:any){
+            this.deleteData = item;
+            this.isDelGood = true;
+        }
+        /**
+         * 确认删除物料
+         */
+        private onDelConfirm(){
+            this.deleteSection(this.deleteData);
+        }
+        /**
+         * 取消删除物料
+         */
+        private onDelCancel(){
+            this.isDelGood = false;
+            let newIndex = this.goodData.findIndex((info:any,index:any)=>{
+            return this.deleteData.id == info.id;
+            })
+            this.goodData[newIndex].active = false;
+        }
       /**
      * 左滑删除某一项
      */

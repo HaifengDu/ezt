@@ -104,6 +104,9 @@ import { maskMixin } from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
 import { InitStockService } from "../../../service/InitStockService";
+import { CachePocily } from "../../../common/Cache";
+import {ECache} from '../../../enum/ECache';
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
   components: {
     TabItem
@@ -122,6 +125,7 @@ import { InitStockService } from "../../../service/InitStockService";
   //  }
 })
 export default class InitStock extends Vue {
+  private cache = CachePocily.getInstance(ECache.LocCache);
   private confirmTitle:string="";//确认框里的确认信息通过后台动态数据
   private user:IUser;
   private isInit:boolean=false;//列表页初始化按钮弹出框
@@ -137,6 +141,9 @@ export default class InitStock extends Vue {
   private allLoaded: boolean = false; //数据是否已经全部加载完
   private isSearch: boolean = false; //搜索的条件
   private searchParam: any = {}; //搜索时的查询条件
+  private confirmGoodInfo:any={};//修改页面信息
+  private detailList : any={};//详情
+
 
   private tabList: TabList = new TabList();
   private orderType: any = [
@@ -168,8 +175,7 @@ export default class InitStock extends Vue {
     //  this.getGoodList();
   }
 
-  mounted() {
-    this.getList();
+  mounted() {    
     this.addMaskClickListener(() => {
       //点击遮罩隐藏下拉
       this.isSearch = false;
@@ -184,6 +190,7 @@ export default class InitStock extends Vue {
         }
       })
     } 
+    this.getList();
   }
   /**
    * 初始化完毕
@@ -198,8 +205,79 @@ export default class InitStock extends Vue {
       return false;
     }
     if (this.tabList.getActive().status == 1) {
+      this.confirmGoodInfo={
+        bill_no:'00111111',
+        costType:'0',
+        warehouse:"仓库中心1",
+        remark:'在途中',
+        goodList:[{
+          id:21,
+          name:'牛肉',
+          price:'15',
+          utilname:'KG',
+          num:2,
+          roundValue:{//可直拨的数据
+            num: 10,
+            numed:0,
+            list:[{
+              name:'仓库一号',
+              num:0
+            },{
+              name:'仓库二号',
+              num:0
+            }]
+          }
+        },{
+            id:2,
+            name:'白菜',
+            price:'1.5',
+            utilname:'KG',
+            num:3,
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:0,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              }]
+            }
+        }]
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.confirmGoodInfo));
+      this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.confirmGoodInfo));
       this.$router.push("/initAudit");
     } else if (this.tabList.getActive().status == 3) {
+         this.detailList = {
+          dc_name:"配送中心-8店",
+          bill_no:"000111aab",
+          goodList:[{
+            name:"猪肉",
+            sort:"规格",
+            price:12,
+            unitName:"KG",
+            billNo:"003222",
+            amt: 360,
+            remark:"这是水果",
+            num:3,
+            supplier:"上海供应商2",
+            rate:30
+            },{
+                name:"大猪蹄子",
+                sort:"规格",
+                price:22,
+                unitName:"KG",
+                billNo:"003222",
+                amt: 660,
+                remark:"这是肉",
+                num: 6,
+                supplier:"河南供应商",
+                rate:20
+            }]
+        }
+      this.cache.save(CACHE_KEY.INITSTOCK_DETAILLIST,JSON.stringify(this.detailList));
       this.$router.push("/initDetail");
     }
   }

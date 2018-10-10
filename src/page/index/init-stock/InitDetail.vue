@@ -22,169 +22,28 @@
                 <div class="detail-acount-title">
                 物品清单
                 </div>  
-                <ul>
-                    <li class="good-detail-content">
+                <ul v-if="goodList.length>0">
+                    <li class="good-detail-content" v-for="(item,index) in goodList" :key="index">
                         <div class="ezt-detail-good">
                             <div class="good-detail-l">
                                 <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
+                                    <span class="good-detail-name">{{item.name}}
+                                        <span class="good-detail-sort">（{{item.sort}}）</span>
                                     </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
+                                    <span class="good-detail-sort">￥{{item.price}}/{{item.unitName}}</span>
                                 </div>
                                 <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
+                                    <span class="good-detail-billno">编号：{{item.billNo}}</span>
+                                    <span class="good-detail-sort">￥{{item.amt}}</span>
                                 </div>
                                  <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
+                                    <span class="good-detail-sort">供应商：{{item.supplier}}</span>
+                                    <span class="good-detail-sort">税率：{{item.rate}}</span>
                                 </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
+                                <div class="good-detail-sort">备注：{{item.remark}}</div>
                             </div>
                             <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li>
-
-
-                     <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li> <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li> <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li> <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li> <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
-                            </div>
-                        </div>
-                    </li> <li class="good-detail-content">
-                        <div class="ezt-detail-good">
-                            <div class="good-detail-l">
-                                <div>
-                                    <span class="good-detail-name">猪肉
-                                        <span class="good-detail-sort">（规格）</span>
-                                    </span>
-                                    <span class="good-detail-sort">￥12.0001/KG</span>
-                                </div>
-                                <div>
-                                    <span class="good-detail-billno">编号：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
-                                </div>
-                                 <div>
-                                    <span class="good-detail-sort">供应商：003222</span>
-                                    <span class="good-detail-sort">税率：￥360.001</span>
-                                </div>
-                                <div class="good-detail-sort">备注：这是水果</div>
-                            </div>
-                            <div class="good-detail-r">
-                                <span class="good-detail-num">3</span>
+                                <span class="good-detail-num">{{item.num}}</span>
                             </div>
                         </div>
                     </li>
@@ -194,9 +53,9 @@
         <ezt-footer>
             <div class="ezt-foot-temporary" slot="confirm">
             <div class="ezt-foot-total">合计：
-                <b>品项</b><span>2</span>，
-                <b>数量</b><span>2</span>，
-                <b>含税金额￥</b><span>3</span>
+                <b>品项</b><span>{{goodList.length}}</span>，
+                <b>数量</b><span>{{TotalNum}}</span>，
+                <b>含税金额￥</b><span>{{TotalAmt}}</span>
             </div> 
             </div>
         </ezt-footer>  
@@ -205,10 +64,39 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
 
 })
 export default class InitStock extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
+    private goodList:any[]=[];//详情页物品信息
+    private detailList:any={};//详情页信息
+    created(){
+        if(this.cache.getData(CACHE_KEY.INITSTOCK_DETAILLIST)){
+            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_DETAILLIST));
+            this.goodList = this.detailList.goodList;
+        }
+    }
+     /**
+     * computed demo
+     * 物料总数量
+     */
+        private get TotalNum(){
+        return this.goodList.reduce((ori,item)=>{
+            return Number(ori)+Number(item.num);       
+        },0);
+        }
+    /**
+     * 物料总金额
+     */
+    private get TotalAmt(){
+        return this.goodList.reduce((ori,item)=>{
+        return ori+(item.num*item.price);       
+        },0).toFixed(2);
+    }
     /**
      * 返回
      */

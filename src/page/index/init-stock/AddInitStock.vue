@@ -77,21 +77,21 @@
                                 </div>                    
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
                     </li>
                 </ul>   
             </div> 
             <ezt-footer>
                 <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                    <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                    <b>数量</b><span>{{TotalNum}}</span>，
-                    <b>含税金额￥</b><span>{{TotalAmt}}</span>
-                </div>
-                <div class="ezt-foot-button">
-                    <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-                    <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">审核</a>   
-                </div>  
+                    <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
+                        <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                        <b>数量</b><span>{{TotalNum}}</span>，
+                        <b>含税金额￥</b><span>{{TotalAmt}}</span>
+                    </div>
+                    <div class="ezt-foot-button">
+                        <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
+                        <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">审核</a>   
+                    </div>  
                 </div>
             </ezt-footer>           
         </div>
@@ -106,6 +106,10 @@
         <!-- 当该 门店仅有一个主仓库时 校验 -->
         <confirm v-model="isCheckDay" @on-cancel="onRefCancel" @on-confirm="onRefConfirm">
             <p style="text-align:center;"> 初始化单已审核，是否进行日结？</p>
+        </confirm>
+        <!-- 删除物料时 校验 -->
+        <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+            <p style="text-align:center;"> 请确认是否删除该物料。</p>
         </confirm>
     </div>
 </template>
@@ -153,10 +157,12 @@ export default class InitStock extends Vue {
   private isEdit: boolean = false; //物料是否可编辑
   private isSave:boolean = false;//返回的时候是否保存单据信息
   private isWarehouse:boolean = false;//仓库
+  private isDelGood:boolean = false; //删除物料判断
   private isFirstStore:boolean;
   private activeRound:any={};//深拷贝的值
   private restActiveRound:any={};//编辑绑定的值
   private isCheckDay:boolean = false;//门店仅有一个主仓库时校验
+  private deleteData:any={};//删除时存储所删除数据
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -218,6 +224,29 @@ export default class InitStock extends Vue {
     this.isEdit=false;
   }
 
+/**
+ * 删除物料操作
+ */
+private delAction(item:any){
+    this.deleteData = item;
+    this.isDelGood = true;
+}
+/**
+ * 确认删除物料
+ */
+private onDelConfirm(){
+    this.deleteSection(this.deleteData);
+}
+/**
+ * 取消删除物料
+ */
+private onDelCancel(){
+    this.isDelGood = false;
+    let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+    return this.deleteData.id == info.id;
+    })
+    this.selectedGood[newIndex].active = false;
+}
     /**
      * 左滑删除某一项
      */

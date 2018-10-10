@@ -149,7 +149,8 @@ export default class ReceiveGood extends Vue{
     private allLoaded:boolean= false;//数据是否已经全部加载完
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
-    private comfirmGoodInfo:any={};//修改页面信息
+    private confirmGoodInfo:any={};//修改页面信息
+    private detailList : any={};//详情
 
     private tabList:TabList = new TabList();
     private orderType:any=[{
@@ -203,7 +204,7 @@ export default class ReceiveGood extends Vue{
          return false;
       }
       if(this.tabList.getActive().status==1){
-        this.comfirmGoodInfo={
+        this.confirmGoodInfo={
           bill_no:'00111111',
           billType:'合同采购',
           warehouse:"仓库中心1",
@@ -245,10 +246,60 @@ export default class ReceiveGood extends Vue{
           }]
         }
         this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.comfirmGoodInfo));
-        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.comfirmGoodInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.confirmGoodInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.confirmGoodInfo));
         this.$router.push('/comfirmAccept');
       }else if(this.tabList.getActive().status==3){
+        this.detailList = {
+          dc_name:"配送中心-8店",
+          bill_no:"000111aab",
+          goodList:[{
+            name:"猪肉",
+            sort:"规格",
+            price:12,
+            unitName:"KG",
+            billNo:"003222",
+            amt: 360,
+            remark:"这是水果",
+            num:3,
+            directWarehouse:[{
+                name:"仓库1",
+                num:1,
+            },{
+                name:"仓库2",
+                num:2,
+            },{
+                name:"仓库3",
+                num:3,
+            },{
+                name:"仓库4",
+                num:66
+            }]
+            },{
+                name:"大猪蹄子",
+                sort:"规格",
+                price:22,
+                unitName:"KG",
+                billNo:"003222",
+                amt: 660,
+                remark:"这是肉",
+                num: 6,
+                directWarehouse:[{
+                    name:"上海仓库1",
+                    num:1,
+                },{
+                    name:"北京仓库2",
+                    num:2,
+                },{
+                    name:"軣咕咕3",
+                    num:3,
+                },{
+                    name:"仓库4",
+                    num:66
+                }]
+            }]
+        }
+        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(this.detailList));
         this.$router.push('/checkDetail');
       }
       

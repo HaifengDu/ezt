@@ -85,7 +85,7 @@
                       </div>                    
                     </div>
                 </div> 
-                <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>
+                <div class="ezt-detail-del" @click="delAction(item)">删除</div>
               <!-- </mt-cell-swipe>              -->
            </li>
         </ul> 
@@ -125,6 +125,10 @@
     <confirm v-model="isWarehouse" @on-cancel="onBillTypeCancel('warehouse')" @on-confirm="onBillTypeConfirm('warehouse')">
       <p style="text-align:center;"> 您已维护物料信息，如调整仓库，须重新选择物料。</p>
     </confirm>
+    <!-- 删除物料时 校验 -->
+      <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+          <p style="text-align:center;"> 请确认是否删除该物料。</p>
+      </confirm>
   </div>
 </template>
 <script lang="ts">
@@ -169,6 +173,8 @@ export default class ReceiveGood extends Vue{
   private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
   private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
   private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
+  private isDelGood:boolean = false; //删除物料判断
+  private deleteData:any={};//删除时存储所删除数据
   private service: ReceiveGoodService;
   private pager:Pager;
   // private getGoodList:INoopPromise //调用store中的请求接口
@@ -274,7 +280,30 @@ export default class ReceiveGood extends Vue{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
   }
-    /**
+  /**
+ * 删除物料操作
+ */
+private delAction(item:any){
+    this.deleteData = item;
+    this.isDelGood = true;
+}
+/**
+ * 确认删除物料
+ */
+private onDelConfirm(){
+    this.deleteSection(this.deleteData);
+}
+/**
+ * 取消删除物料
+ */
+private onDelCancel(){
+    this.isDelGood = false;
+    let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+    return this.deleteData.id == info.id;
+    })
+    this.selectedGood[newIndex].active = false;
+}
+  /**
    * 左滑删除某一项
    */
   private deleteSection(item:any){

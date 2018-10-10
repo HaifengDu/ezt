@@ -83,7 +83,7 @@
                     </div>                    
                   </div>               
               </div> 
-              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+              <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
              <div>
               <x-dialog v-model="isDirect" class="dialog-demo">
                 <div class="ezt-dialog-header">
@@ -141,7 +141,7 @@
                     
                   </div>                 
               </div> 
-              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+              <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
           </li>                   
         </ul>
 
@@ -196,6 +196,10 @@
       <confirm v-model="isWarehouse" @on-cancel="onWarehouseCancel" :show-confirm-button="false">
         <p style="text-align:center;"> 物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。</p>
       </confirm>
+      <!-- 删除物料时 校验 -->
+      <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+          <p style="text-align:center;"> 请确认是否删除该物料。</p>
+      </confirm>
     </div>
   </div>
 </template>
@@ -239,6 +243,8 @@ export default class ReceiveGood extends Vue{
     // private addInfo:any={
     //   warehouse:"01"
     // };
+    private isDelGood:boolean = false; //删除物料判断
+    private deleteData:any={};//删除时存储所删除数据
     private service: ReceiveGoodService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
@@ -311,7 +317,7 @@ export default class ReceiveGood extends Vue{
        this.selectedGood.forEach(item=> this.$set(item,'active',false));
     }
     mounted(){     
-      this.selectedGood.forEach(item=> this.$set(item,'active',false));
+      
       if(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE)){
         switch (JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE))){
           case "配":
@@ -341,9 +347,10 @@ export default class ReceiveGood extends Vue{
       if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
         this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
       }
-      if(this.selectedGood.length==0){
+      if(this.selectedGood.length==0&&this.addBillInfo.goodList){
         this.setSelectedGood(this.addBillInfo.goodList); 
       }
+      (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
 
  /**
@@ -472,6 +479,29 @@ export default class ReceiveGood extends Vue{
     private submitDerict(){
       ObjectHelper.merge(this.restActiveRound,this.activeRound,true);
       this.isDirect=false;
+    }
+    /**
+     * 删除物料操作
+     */
+    private delAction(item:any){
+        this.deleteData = item;
+        this.isDelGood = true;
+    }
+    /**
+     * 确认删除物料
+     */
+    private onDelConfirm(){
+        this.deleteSection(this.deleteData);
+    }
+    /**
+     * 取消删除物料
+     */
+    private onDelCancel(){
+        this.isDelGood = false;
+        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+        return this.deleteData.id == info.id;
+        })
+        this.selectedGood[newIndex].active = false;
     }
     /**
      * 左滑删除某一项

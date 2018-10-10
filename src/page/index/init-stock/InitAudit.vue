@@ -6,11 +6,11 @@
                 <ul class="ezt-title-search">
                     <li>
                         <span class="title-search-name">单号：</span>
-                        <span></span>
+                        <span>{{addBillInfo.bill_no}}</span>
                     </li>
                     <li>
                         <span class="title-search-name">仓库：</span>
-                        <span></span>
+                        <span>{{addBillInfo.warehouse}}</span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name ">库存初始日：</span>
@@ -78,7 +78,7 @@
                                 </div>                    
                             </div>
                         </div>
-                         <div class="ezt-detail-del" @click="deleteSection(item)">删除</div>   
+                         <div class="ezt-detail-del" @click="delAction(item)">删除</div>   
                         <!-- </mt-cell-swipe> -->
                          <div>
                             <x-dialog v-model="isEdit" class="dialog-demo">
@@ -153,6 +153,10 @@
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm> 
+         <!-- 删除物料时 校验 -->
+        <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+            <p style="text-align:center;"> 请确认是否删除该物料。</p>
+        </confirm>
     </div>
 </template>
 <script lang="ts">
@@ -161,6 +165,9 @@ import {Component,Watch} from 'vue-property-decorator';
 import {mapActions,mapGetters} from 'vuex';
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { InitStockService } from "../../../service/InitStockService";
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
  computed: {
     ...mapGetters({
@@ -178,6 +185,7 @@ import { InitStockService } from "../../../service/InitStockService";
   }
 })
 export default class InitStock extends Vue{
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private service: InitStockService;
     private addBillInfo: any={}; //store中
     private addBeforeBillInfo: any={};
@@ -188,6 +196,8 @@ export default class InitStock extends Vue{
     private isEdit: boolean = false; //物料是否可编辑
     private isSave:boolean = false;//返回的时候是否保存单据信息
     private isWarehouse:boolean = false;//仓库
+    private isDelGood:boolean = false; //删除物料判断
+    private deleteData:any={};//删除时存储所删除数据
     private orderType: any[] = [
         {
             //单据类型下拉数据
@@ -202,9 +212,21 @@ export default class InitStock extends Vue{
 
    created() {
         this.service = InitStockService.getInstance();
-        this.addBillInfo.costType = 1;
         this.addBillInfo.editPrice = true;
-        (this.selectedGood||[]).forEach(item=>item.active = false);
+        // (this.selectedGood||[]).forEach(item=>item.active = false);
+        (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
+    }
+    mounted(){        
+        if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+        }
+        if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
+            this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
+        }
+        if(this.selectedGood.length==0&&this.addBillInfo.goodList){
+            this.setSelectedGood(this.addBillInfo.goodList); 
+        }
+        (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
     /**
      * 切换成本录入方式
@@ -231,6 +253,8 @@ export default class InitStock extends Vue{
     }
     //选择物料
     private renderUrl(info: string) {
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.$router.push({
             name:"PublicAddGood",
             params:{
@@ -248,7 +272,29 @@ export default class InitStock extends Vue{
     private handlerRight(item:any){
       item.active = false;
     }
-
+/**
+ * 删除物料操作
+ */
+private delAction(item:any){
+    this.deleteData = item;
+    this.isDelGood = true;
+}
+/**
+ * 确认删除物料
+ */
+private onDelConfirm(){
+    this.deleteSection(this.deleteData);
+}
+/**
+ * 取消删除物料
+ */
+private onDelCancel(){
+    this.isDelGood = false;
+    let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+    return this.deleteData.id == info.id;
+    })
+    this.selectedGood[newIndex].active = false;
+}
     /**
      * 左滑删除某一项
      */
@@ -293,6 +339,9 @@ export default class InitStock extends Vue{
         if((this.addBillInfo&&this.addBillInfo.warehouse)||this.selectedGood.length>0){
             this.isSave=true;
         }else{
+            this.addBillInfo={},
+            this.setSelectedGood([]);
+            this.addBeforeBillInfo={};
             this.$router.push('/initStock');
         }
     }
@@ -464,9 +513,6 @@ export default class InitStock extends Vue{
     background: #fff;
     z-index: 2;
   }
-}
-.costType-info a {
-//   color: #000;
 }
 .costType-info a.active {
   color: #1674fc;

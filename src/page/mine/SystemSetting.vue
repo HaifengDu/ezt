@@ -194,6 +194,7 @@ export default class Index extends Vue{
         this.setSystemParam(this.model);
 
         this.$toasted.success("更新设置成功！");
+        this.$router.push('/mine');
     }
     private goBack(){        
         this.$router.push('/mine');

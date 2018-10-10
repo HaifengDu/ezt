@@ -88,6 +88,16 @@ export default class stockTaking extends Vue{
     private see(item:any,types:any,audit_status:number){
       this.$router.push({
           name:'LibraryDetails',
+           query:{
+              warehouse_name:item.warehouse_name,
+              warehouse_id:item.warehouse_id,
+              busi_date:item.busi_date,
+              bill_type_name:item.bill_type_name,
+              stock_count_mode_name:item.stock_count_mode_name,
+              ids:item.id,  
+              types:types,
+              stock_count_mode:item.stock_count_mode,
+            }  
           });  
       // this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
       //   this.$router.push({

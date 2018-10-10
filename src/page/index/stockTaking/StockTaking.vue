@@ -105,7 +105,7 @@
     </ul>
   </div> 
   <!-- 点击日周月盘如果有未审核单据会提示 -->
-   <confirm v-model="isAudited" @on-confirm="onConfirm(type,'name')">
+   <confirm v-model="isAudited" @on-confirm="onConfirm('name')">
         <p style="text-align:center;">有单据未完成审核，是否进行盘点?</p>
    </confirm>
 </div>

@@ -52,7 +52,7 @@
       <ezt-header :back="true" title="审核盘点单" @goBack="goBack">
         <div slot="action">
             <span></span>
-        </div>        
+        </div>          
       </ezt-header> 
       <div class="ezt-main">
           <div class="content">
@@ -202,24 +202,20 @@
                               <div>
                                 <p>
                                   <span>
-                                   <input maxlength="7" v-model="item.whole_num" placeholder="采购单位"  type='text' oninput='this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
-                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+                                   <input maxlength="7"  v-model="item.whole_num" placeholder="采购单位"  type='number' oninput="if(value.length>7)value=value.slice(0,7)" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
                                     {{item.pur_unit_name}}
                                   </span>
                                 </p>
                                 <p>
                                   <span>
-                                   <input maxlength="7" v-model="item.disperse_num" placeholder="库存主单位"  type='text' oninput='this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
-                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+                                   <input maxlength="7" v-model="item.disperse_num" placeholder="库存主单位"  type='number' oninput="if(value.length>7)value=value.slice(0,7)" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
                                     {{item.unit_name}}
                                   </span>
                                 </p>
                               </div>
                               <div>
                                 <p><span>
-                                   <input maxlength="7"  v-model="item.consume_num" placeholder="消耗单位"  type='text' 
-                                   oninput=' this.value=this.value.replace(/^[0]+[0-9]*$/gi,"")' 
-                                   onkeyup="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}" onafterpaste="if(this.value.length==1){this.value=this.value.replace(/[^1-9]/g,'')}else{this.value=this.value.replace(/\D/g,'')}"/>
+                                   <input maxlength="7" v-model="item.consume_num" placeholder="消耗单位"  type='number' oninput="if(value.length>7)value=value.slice(0,7)" onkeyup="this.value=this.value.replace(/\D/g,'')"/>
                                   {{item.bom_name}}</span></p>
                               </div>
                           </div>
@@ -308,14 +304,14 @@ export default class stockTaking extends Vue{
       this.$router.back();
     }
     //审核不通过
-    private reviewpass(){
+    private reviewpass(){   
         const audit_name = this.user.auth.username
         const ids = this.$route.query.ids
         const opinion = ""
         this.service.getAuditchecklistno(audit_name,ids,opinion).then(res=>{  
             this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
-            this.$router.push('/stocktaking')
+            this.$router.push({name:'StockTaking',params:{'purStatus':'审核失败'}});
         },err=>{
             this.$toasted.show(err.message)
         })
@@ -335,7 +331,7 @@ export default class stockTaking extends Vue{
         this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
             this.setInventoryDetails(res.data.data); 
             this.$toasted.show("操作成功！")
-            this.$router.push('/stocktaking')
+            this.$router.push({name:'StockTaking',params:{'purStatus':'待/已生效'}});
         },err=>{   
             this.$toasted.show(err.message)
         })
@@ -364,13 +360,13 @@ export default class stockTaking extends Vue{
         const consume_num = this.inventoryDetails[0]['consume_num']
         const disperse_num = this.inventoryDetails[0]['disperse_num']
         const ids = this.$route.query.ids
-        const is_stock_report = 1  // 1是提交
+        const is_stock_report = 1  // 1是提交    
         const stock_count_mode = this.$route.query.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.setInventoryDetails(res.data.data); 
             this.$router.push('/stocktaking')
         },err=>{
-            this.$toasted.show(err.message)
+            this.$toasted.show(err.message)   
         })
     }
 
@@ -510,6 +506,7 @@ export default class stockTaking extends Vue{
         }
         .inventory{
           background-color: @background-color;
+          margin-top: -1px;
            .pkmx{
                margin-top: -20px;
               .line{

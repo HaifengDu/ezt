@@ -430,6 +430,8 @@ export default class stockTaking extends Vue{
 @background-color:#fff;
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
 .ezt-details{
+  overflow: hidden;
+  overflow-y: scroll;
   background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 19%);
 }
 .librarydetails{

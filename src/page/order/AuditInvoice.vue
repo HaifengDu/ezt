@@ -142,7 +142,6 @@ export default class Order extends Vue{
         if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
         }
-        debugger
         this.type = this.$route.query.type
         this.addBillInfo.billno = this.$route.query.billno
         this.addBillInfo.unit = this.$route.query.unit

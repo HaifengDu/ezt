@@ -39,7 +39,7 @@
           <div class="method">
               <p>盘点方式</p>    
               <ul>
-                <li @click="manualproduction('/publicAddGood')">手工制单</li>
+                <li @click="manualproduction('manual')">手工制单</li>
                 <li @click="templateimport()">模板导入</li>
                 <li @click="inventorytype('d')">盘点类型导入</li>
               </ul>
@@ -159,9 +159,9 @@ export default class stockTaking extends Vue{
       this.setAddinventory({}),
       this.$router.push('/stocktaking');
     }
-    
+        
     //手工制单
-    manualproduction(info:string){
+    manualproduction(newType:any){
         if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
@@ -171,7 +171,12 @@ export default class stockTaking extends Vue{
             this.$toasted.show("请选择未盘处理方式！");
             return false;
          }
-         this.$router.push(info)
+         this.$router.push({
+            name:'PublicAddGood',
+            query:{
+              newType:newType
+            }
+         })
          this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
          this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
          this.setAddinventory(this.addinventory);

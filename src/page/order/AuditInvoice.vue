@@ -14,7 +14,7 @@
                         <span class="title-search-name">来货单位：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.unit">
                     </li>
-                    <li v-if="this.type == 'examine'">
+                    <li v-if="this.type == 'examine'">     
                         <span class="title-search-name">要货日期：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate">
                     </li>
@@ -27,11 +27,11 @@
                     <li class="select-list">
                         <span class="title-search-name">到货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="addBillInfo.arriveDate"></ezt-canlendar>          
+                            <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>     
                         </span>
                     </li>
                     <li>
-                        <x-input title="备注："></x-input>
+                        <x-input title="备注：" v-model="addBillInfo.remark"></x-input>
                     </li>
                     <li>
                         <span class="title-search-name">物料明细</span>
@@ -125,11 +125,14 @@ export default class Order extends Vue{
          
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
-        orderDate:new Date().format('yyyy-MM-dd'),
-        arriveDate:new Date().format('yyyy-MM-dd'),
+        // orderDate:new Date().format('yyyy-MM-dd'),
+        // arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
     private isSave:boolean=false;
-    private type:string; 
+    private type:string;    
+    private billno:string;    
+    private unit:string;    
+    private remark:string;       
     created() {  
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -139,7 +142,14 @@ export default class Order extends Vue{
         if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
             this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
         }
+        debugger
         this.type = this.$route.query.type
+        this.addBillInfo.billno = this.$route.query.billno
+        this.addBillInfo.unit = this.$route.query.unit
+        this.addBillInfo.orderDate = this.$route.query.orderDate
+        this.addBillInfo.arriveDate = this.$route.query.arriveDate
+        this.addBillInfo.remark = this.$route.query.remark
+        
     }
       /**
      * 左滑删除某一项
@@ -188,7 +198,7 @@ export default class Order extends Vue{
      */
     private confirmReceive(){
         this.$toasted.success("审核成功！");
-        // this.$router.push('/orderGood');
+        this.$router.push('/orderGood');
     }
 
     /**
@@ -203,7 +213,7 @@ export default class Order extends Vue{
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("保存成功！");
-        // this.$router.push('/orderGood');
+        this.$router.push('/orderGood');
     }
 
     //离开确认

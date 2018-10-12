@@ -1,10 +1,9 @@
 <!--整体页面的头部布局-->
 <template>
-<div class="ezt-sanjiao">
-    <input class="ezt-canlendar" :placeholder="placeholder" ref="canlendar" 
-    :disabled="disabled" :type="type" @change="selectChange" :value="defaultValue"/>
-</div>
-
+  <div class="ezt-sanjiao">
+      <input class="ezt-canlendar" :placeholder="placeholder" ref="canlendar" 
+      :disabled="disabled" :type="type" @change="selectChange" :value="defaultValue"/>
+  </div>
 </template>
 
 <script>
@@ -18,18 +17,18 @@
       }
     },
     model:{
-        prop:'value',
-        event:'change',
-        placeholder:'placeholder'
+      prop:'value',
+      event:'change',
+      placeholder:'placeholder'
     },
     props: {
-       value:String,
-       type:String,
-       disabled:Boolean,
-       placeholder:String,
-       defaultValue:String,//默认值
-       max:String,//最大值 小于某个值
-       min:String,//最小值 大于某个值
+      value:String,
+      type:String,
+      disabled:Boolean,
+      placeholder:String,
+      defaultValue:String,//默认值
+      max:String,//最大值 小于某个值
+      min:String,//最小值 大于某个值
     },
     computed: {
     },
@@ -61,8 +60,6 @@
       if(this.defaultValue){
         instance.setVal(new Date(this.defaultValue));
       }
-     
-     
     },
     watch: {
     

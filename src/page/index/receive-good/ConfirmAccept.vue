@@ -24,9 +24,10 @@
             <input type="text" class="ezt-middle">
           </li>
           <li class="select-list">
-            <span class="title-search-name ">仓库：</span>
+            <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select" v-if="!receive_billtype.cai">
-              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse" v-model="addBillInfo.warehouse">
+              <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse"
+               v-model="addBillInfo.warehouse" :class="[{'selectError':errWarehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -257,6 +258,7 @@ export default class ReceiveGood extends Vue{
     private DirectedNum:number=0;//已直拨的数量
     private restActiveRound:any={};
     private activeRound:any={};
+    private errWarehouse:boolean = false;
     // private goodList:any[] = [{
     //         id:21,
     //         name:'牛肉',
@@ -395,6 +397,11 @@ export default class ReceiveGood extends Vue{
      * 确认收货
      */
     private confirmReceive(){
+      if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
+        this.errWarehouse = true;
+        this.$toasted.show("请选择仓库！");
+        return false;
+      }  
       if(!this.selectedGood||this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;
@@ -406,9 +413,14 @@ export default class ReceiveGood extends Vue{
       this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
     }
     /**
-     * 提交收货
+     * 暂存收货
      */
     private saveReceive(){
+      if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
+        this.errWarehouse = true;
+        this.$toasted.show("请选择仓库！");
+        return false;
+      } 
       if(!this.selectedGood||this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;

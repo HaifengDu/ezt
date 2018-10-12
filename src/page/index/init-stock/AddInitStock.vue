@@ -8,13 +8,13 @@
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
                     <li class="select-list">
-                        <span class="title-search-name ">库存初始日：</span>
+                        <span class="title-search-name is-required">库存初始日：</span>
                         <span >
                            {{addBillInfo.date}}
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name ">仓库：</span>
+                        <span class="title-search-name is-required">仓库：</span>
                         <span class="title-select-name item-select">
                         <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
                         @change="handleWarehouse"
@@ -40,7 +40,7 @@
                     </li>
                     <li>
                         <!-- <span class="title-search-name">选择物料：</span> -->
-                        <span class="title-search-name">选择物料：</span>
+                        <span class="title-search-name is-required">选择物料：</span>
                         <span class="title-search-right" @click="renderUrl('/publicAddGood')">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </span>                        

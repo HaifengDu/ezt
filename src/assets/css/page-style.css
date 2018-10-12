@@ -103,8 +103,8 @@ input.ezt-middle{
 .ezt-select{
   appearance: none;
   position: absolute;
-  top:0;
-  bottom:0;
+  top:1px;
+  bottom:4px;
   right:0;
   padding: 0 48px 0 16px;
   max-width: 65%;
@@ -540,7 +540,7 @@ input.ezt-middle{
     background: #fff;
   }
   .ezt-title-search li{
-      padding: 10px;
+      padding: 10px 10px 10px 16px;
       border-bottom: 1px solid #E0EBF9;
       text-align: left;
       display: flex;
@@ -668,5 +668,20 @@ input.ezt-middle{
     background-size: 24px 24px;
   }
    /* 底部tab样式结束  */
+   /* 必填项样式 */
+   .is-required:before{
+    content: '*';
+    color: #fa5555;
+    margin-right: 4px;
+    position: absolute;
+    /* line-height: 35px; */
+    /* height: 32px; */
+    margin-left: -10px;
+    display: inline-block;
+   }
+   .selectError{
+    border: 1px solid #ff1300;
+    border-radius: 3px;
+   }
 
    

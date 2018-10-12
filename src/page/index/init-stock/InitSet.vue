@@ -11,7 +11,7 @@
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name ">库存月结日：</span>
+                        <span class="title-search-name is-required">库存月结日：</span>
                         <span class="title-select-name item-select">
                         <select placeholder="请选择" class="ezt-select" v-model="setObj.stockMonthDate">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
@@ -20,7 +20,7 @@
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name ">财务年截止日：</span>
+                        <span class="title-search-name is-required">财务年截止日：</span>
                         <span >
                             <!-- <ezt-canlendar placeholder="开始时间" type="text" class="input-canlendar"></ezt-canlendar> -->
                             <span ref="canlendar" class="input-canlendar">

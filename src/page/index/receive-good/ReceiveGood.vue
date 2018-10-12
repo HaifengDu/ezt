@@ -207,7 +207,7 @@ export default class ReceiveGood extends Vue{
         this.confirmGoodInfo={
           bill_no:'00111111',
           billType:'合同采购',
-          warehouse:"仓库中心1",
+          warehouse:'01',
           remark:'在途中',
           goodList:[{
             id:21,
@@ -245,7 +245,7 @@ export default class ReceiveGood extends Vue{
               }
           }]
         }
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
+        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))//配、直、调、采
         this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.confirmGoodInfo));
         this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.confirmGoodInfo));
         this.$router.push('/comfirmAccept');

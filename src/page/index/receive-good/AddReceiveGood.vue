@@ -9,30 +9,30 @@
       <div class="ezt-add-content">
          <ul class="ezt-title-search">
           <li class="select-list">
-            <span class="title-search-name ">单据类型：</span>
+            <span class="title-search-name is-required">单据类型：</span>
             <span class="title-select-name item-select">
               <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType">
+                @change="handlerBillType" :class="[{'selectError':errBillType}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
           </li>
           <li class="select-list">
-            <span class="title-search-name ">供应商：</span>
+            <span class="title-search-name is-required">供应商：</span>
             <span class="title-select-name item-select">
               <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplier"
-              @change="handlerSupplier">
+              @change="handlerSupplier" :class="[{'selectError':errSupplier}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
           </li>
           <li class="select-list">
-            <span class="title-search-name ">仓库：</span>
+            <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select">
               <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerWarehouse">
+              @change="handlerWarehouse" :class="[{'selectError':errWarehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -44,7 +44,7 @@
           </li>
           <li>
             <!-- <span class="title-search-name">选择物料：</span> -->
-            <span class="title-search-name">选择物料：</span>
+            <span class="title-search-name is-required">选择物料：</span>
             <span class="title-search-right" @click="renderUrl('/publicAddGood')">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
@@ -88,12 +88,7 @@
                 <div class="ezt-detail-del" @click="delAction(item)">删除</div>
               <!-- </mt-cell-swipe>              -->
            </li>
-        </ul> 
-         <div>
-            <x-dialog v-model="isDirect" class="dialog-demo">
-                           
-            </x-dialog>
-          </div>      
+        </ul>   
       </div> 
       <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
@@ -183,10 +178,11 @@ export default class ReceiveGood extends Vue{
   // private updateUser:INoop;
   private list:any[] = [];
   private goodList:any[] = [];
-  private DirectedNum:number=0;//已直拨的数量
+  private errSupplier:boolean = false;//未选择供应商
+  private errBillType:boolean = false;//未选择单据类型
+  private errWarehouse:boolean = false;//未选择仓库
 
   private tabList:TabList = new TabList();
-  private isDirect:boolean = false; //是否可直拨弹框
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -196,36 +192,8 @@ export default class ReceiveGood extends Vue{
     supplier:"",
     warehouse:"",
     remark: "",
-    editPrice:false
+    editPrice:false//添加物料时 区分价格是否可以编辑
   };//store中
-  // private setAddBillInfo:INoopPromise//store中给addBillInfo赋值
-  private activeRound:any={};//深拷贝存储的值
-  private restActiveRound:any={};//编辑时绑定的值
-  private moveX:number=0; //滑动删除的位置
-  private slideEffect:string="";//滑动删除改变 样式
-  // private roundValue:any={//可直拨的数据
-  //   num: 10,
-  //   numed:3,
-  //   list:[{
-  //     name:'仓库一号',
-  //     num:2
-  //   },{
-  //     name:'仓库二号',
-  //     num:6
-  //   },{
-  //     name:'仓库三号',
-  //     num:6
-  //   },{
-  //     name:'仓库四号',
-  //     num:6
-  //   },{
-  //     name:'仓库五号',
-  //     num:6
-  //   },{
-  //     name:'仓库六号',
-  //     num:6
-  //   }]
-  // };
   private orderType:any[] = [{//单据类型下拉数据    
     name:"合同采购单",
     type:"q"
@@ -281,28 +249,28 @@ export default class ReceiveGood extends Vue{
     },0).toFixed(2);
   }
   /**
- * 删除物料操作
- */
-private delAction(item:any){
-    this.deleteData = item;
-    this.isDelGood = true;
-}
-/**
- * 确认删除物料
- */
-private onDelConfirm(){
-    this.deleteSection(this.deleteData);
-}
-/**
- * 取消删除物料
- */
-private onDelCancel(){
+   * 删除物料操作
+   */
+  private delAction(item:any){
+      this.deleteData = item;
+      this.isDelGood = true;
+  }
+  /**
+   * 确认删除物料
+   */
+  private onDelConfirm(){
+      this.deleteSection(this.deleteData);
+  }
+  /**
+   * 取消删除物料
+   */
+  private onDelCancel(){
     this.isDelGood = false;
     let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
     return this.deleteData.id == info.id;
     })
     this.selectedGood[newIndex].active = false;
-}
+  }
   /**
    * 左滑删除某一项
    */
@@ -312,10 +280,67 @@ private onDelCancel(){
       })
       this.selectedGood.splice(newIndex,1);
   }
-    /**
-     * 收货 提交
-     */
-    private saveReceive(){
+  /**
+   * 收货 提交
+   */
+  private saveReceive(){
+    if(!this.addBillInfo.billType||this.addBillInfo.billType==""){
+      this.errBillType = true;
+      this.$toasted.show("请选择单据类型！");
+      return false;
+    }
+    if(!this.addBillInfo.supplier||this.addBillInfo.supplier==""){
+      this.errSupplier = true;
+      this.$toasted.show("请选择供应商！");
+      return false;
+    }
+    if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
+      this.errWarehouse = true;
+      this.$toasted.show("请选择仓库！");
+      return false;
+    }   
+    if(!this.selectedGood||this.selectedGood.length<=0){
+      this.$toasted.show("请添加物料！");
+      return false;
+    } 
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$toasted.success("提交成功！");
+    this.$router.push("/receiveGood");
+  }
+  /**
+   * 收货 提交并审核
+   */
+  private confirmReceive(){
+    if(!this.addBillInfo.billType||this.addBillInfo.billType==""){
+      this.errBillType = true;
+      this.$toasted.show("请选择单据类型！");
+      return false;
+    }
+    if(!this.addBillInfo.supplier||this.addBillInfo.supplier==""){
+      this.errSupplier = true;
+      this.$toasted.show("请选择供应商！");
+      return false;
+    }
+    if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
+      this.errWarehouse = true;
+      this.$toasted.show("请选择仓库！");
+      return false;
+    }
+    if(!this.selectedGood||this.selectedGood.length<=0){
+      this.$toasted.show("请添加物料！");
+      return false;
+    }
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$toasted.success("审核成功！");
+      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
+  }    
+    //选择物料
+  private renderUrl(info:string){
+    if(this.addBillInfo){
       if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
         this.$toasted.show("请选择单据类型！");
         return false;
@@ -327,140 +352,92 @@ private onDelCancel(){
       if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
         this.$toasted.show("请选择仓库！");
         return false;
-      }   
-      if(!this.selectedGood||this.selectedGood.length<=0){
-        this.$toasted.show("请添加物料！");
-        return false;
-      } 
-      this.addBillInfo={},
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo={};
-      this.$toasted.success("提交成功！");
-      this.$router.push("/receiveGood");
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
+      this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      // this.$router.push(info);
+      this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+    }      
+  }
+  private checkEmpty(errorMsg:any){
+    
+    
+  }
+  /**
+   * 选择单据类型
+   */
+  private handlerBillType(item:any){
+    if(this.selectedGood.length>0){
+      this.isBillType=true;
+    }else{
+      this.addBeforeBillInfo.billType=this.addBillInfo.billType;  
+      this.errBillType = false;//必填项校验          
     }
+  }
     /**
-     * 收货 提交并审核
-     */
-    private confirmReceive(){
-      if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
-        this.$toasted.show("请选择单据类型！");
-        return false;
-      }
-      if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
-        this.$toasted.show("请选择供应商！");
-        return false;
-      }
-      if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
-        this.$toasted.show("请选择仓库！");
-        return false;
-      }
-      if(!this.selectedGood||this.selectedGood.length<=0){
-        this.$toasted.show("请添加物料！");
-        return false;
-      }
-      this.addBillInfo={},
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo={};
-      this.$toasted.success("审核成功！");
-       this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
-    }    
-     //选择物料
-    private renderUrl(info:string){
-      if(this.addBillInfo){
-        if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
-          this.$toasted.show("请选择单据类型！");
-          return false;
-        }
-        if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
-          this.$toasted.show("请选择供应商！");
-          return false;
-        }
-        if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
-          this.$toasted.show("请选择仓库！");
-          return false;
-        }
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
-        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        // this.$router.push(info);
-        this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
-      }      
+   * 选择供应商
+   */
+  private handlerSupplier(item:any){
+    if(this.selectedGood.length>0){
+      this.isSupplier=true;
+    }else{
+      this.addBeforeBillInfo.supplier=this.addBillInfo.supplier;   
+      this.errSupplier = false;//必填项校验         
     }
-    private checkEmpty(errorMsg:any){
-      
-     
-    }
+  }
     /**
-     * 选择单据类型
-     */
-    private handlerBillType(item:any){
-      if(this.selectedGood.length>0){
-        this.isBillType=true;
-      }else{
-        this.addBeforeBillInfo.billType=this.addBillInfo.billType;            
-      }
+   * 选择仓库
+   */
+  private handlerWarehouse(item:any){
+    if(this.selectedGood.length>0){
+      this.isWarehouse=true;
+    }else{
+      this.addBeforeBillInfo.warehouse=this.addBillInfo.warehouse;  
+      this.errWarehouse = false;//必填项校验          
     }
-     /**
-     * 选择供应商
-     */
-    private handlerSupplier(item:any){
-      if(this.selectedGood.length>0){
-        this.isSupplier=true;
-      }else{
-        this.addBeforeBillInfo.supplier=this.addBillInfo.supplier;            
-      }
-    }
-     /**
-     * 选择仓库
-     */
-    private handlerWarehouse(item:any){
-      if(this.selectedGood.length>0){
-        this.isWarehouse=true;
-      }else{
-        this.addBeforeBillInfo.warehouse=this.addBillInfo.warehouse;            
-      }
-    }
-    /**
-     * 有物料时 单据类型、供应商、仓库 变化 确认校验
-     */
-    private onBillTypeConfirm(val:any){
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo[val]=this.addBillInfo[val];
-    }
-    /**
-     * 有物料时 单据类型变化、供应商、仓库变化  取消校验
-     */
-    private onBillTypeCancel(val:any){
-      this.addBillInfo[val] = this.addBeforeBillInfo[val];
-    }
+  }
+  /**
+   * 有物料时 单据类型、供应商、仓库 变化 确认校验
+   */
+  private onBillTypeConfirm(val:any){
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo[val]=this.addBillInfo[val];
+  }
+  /**
+   * 有物料时 单据类型变化、供应商、仓库变化  取消校验
+   */
+  private onBillTypeCancel(val:any){
+    this.addBillInfo[val] = this.addBeforeBillInfo[val];
+  }
 
 
 
-    /**
-     * 返回
-     */
-    private goBack(){
-      if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
-        this.isSave=true;
-      }else{
-        this.$router.push('/receiveGood');
-      }
-    }
-    private onConfirm(){//确认离开，清空store中的物料和单据信息
-      this.addBillInfo={},
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo={};
+  /**
+   * 返回
+   */
+  private goBack(){
+    if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
+      this.isSave=true;
+    }else{
       this.$router.push('/receiveGood');
     }
-    // private getGoodList(){
-    //     this.service.getGoodList(this.pager.getPage()).then(res=>{
-    //        this.list = res.data.data;
-    //        this.pager.setNext();
-    //     },err=>{
-    //         this.$toasted.show(err.message);
-    //     });
+  }
+  private onConfirm(){//确认离开，清空store中的物料和单据信息
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$router.push('/receiveGood');
+  }
+  // private getGoodList(){
+  //     this.service.getGoodList(this.pager.getPage()).then(res=>{
+  //        this.list = res.data.data;
+  //        this.pager.setNext();
+  //     },err=>{
+  //         this.$toasted.show(err.message);
+  //     });
 
-    //     this.pager.setLimit(20);
-    // }
+  //     this.pager.setLimit(20);
+  // }
    
 }
 </script>

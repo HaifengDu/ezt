@@ -11,7 +11,7 @@
        <div class="content">
           <div class="store">  
             <group>   
-              <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name||'-'">{{user.auth.store_name||'-'}}</x-input>  
+              <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name">{{user.auth.store_name||'-'}}</x-input>  
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
               <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input>   
             </group>       
@@ -19,17 +19,19 @@
           <div class="warehouse">
               <ul>   
                  <li class="select-list">
-                  <span class="title-search-name">仓库：</span>
+                  <span class="title-search-name is-required">仓库：</span>
                   <span class="title-select-name item-select">
-                    <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock">
+                    <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
+                    @change="handlerStock" :class="[{'selectError':errStock}]">
                       <option :value="type" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
                     </select> 
                   </span>   
                 </li>   
                  <li class="select-list">
-                  <span class="title-search-name ">未盘处理：</span>
+                  <span class="title-search-name is-required">未盘处理：</span>
                   <span class="title-select-name item-select">
-                    <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment">
+                    <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment"
+                    @change="handlerTreatment" :class="[{'selectError':errTreatment}]">
                       <option :value="item" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                     </select>
                   </span>
@@ -93,6 +95,8 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class stockTaking extends Vue{
     private user:IUser;
     private cache = CachePocily.getInstance(ECache.LocCache);
+    private errTreatment:boolean = false;//必填项仓库 error样式
+    private errStock: boolean = false;//必填项仓库 error样式
     private service:StockTakingService;
     private getTemplateImport:INoopPromise;  //模板导入
     private getWarehouse:INoopPromise;  //动态加载仓库
@@ -164,10 +168,12 @@ export default class stockTaking extends Vue{
     manualproduction(newType:any){
         if(this.addinventory){
          if(!this.addinventory.stock){
+            this.errStock = true;
             this.$toasted.show("请选择仓库！");
             return false;
          }
          if(!this.addinventory.treatment){
+            this.errTreatment = true;
             this.$toasted.show("请选择未盘处理方式！");
             return false;
          }
@@ -260,6 +266,14 @@ export default class stockTaking extends Vue{
       },err=>{
           this.$toasted.show(err.message)
       })
+    }
+    //选择完仓库
+    private handlerStock(){
+      this.errStock = false;
+    }
+    //选择完未盘处理
+    private handlerTreatment(){
+      this.errTreatment = false;
     }
 }
 </script>

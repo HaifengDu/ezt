@@ -226,7 +226,7 @@
         <div class="ezt-foot-button">
           <a href="javascript:(0)" class="ezt-foot-storage" @click="viewSelectedItem">
             <span class="ezt-badge">{{selectedGoodList.length}}</span>已选择货品</a>  
-          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit">去提交</a>   
+          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit('d')">去提交</a>   
         </div>  
       </div>       
     </ezt-footer>
@@ -312,6 +312,7 @@ export default class AddGood extends Vue{
   private oldValue = 0;
   // private userpp:any[]=[];
   created(){ 
+   
   }
   mounted() {     
     this.useObj.editPrice = this.$route.params.editPrice; //是否价格可编辑
@@ -562,7 +563,7 @@ private changeDirect(item:any){
    * 搜索
    */
   private handlerSearchData(){
-    debugger
+    
   }
   /**
    * 收藏物品
@@ -573,9 +574,18 @@ private changeDirect(item:any){
   /**
    * 选择完货品去提交
    * */ 
-  private goToCommit(){
+  private goToCommit(types:any){
     this.setSelectedGood(this.selectedGoodList);
-    this.$router.back();
+    if(this.$route.query.newType === 'manual'){
+        this.$router.push({
+          name:'LibraryDetails',
+          query:{
+            types:types,
+        }
+      });
+    }else{
+      this.$router.back();
+    }    
   }
   //点击备注
   private handlerRemark(item:any){

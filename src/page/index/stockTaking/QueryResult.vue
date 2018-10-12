@@ -19,7 +19,7 @@
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
                       <div><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
-                      <div><p>生成损溢：<span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span></p></div>
+                      <div><p>生成损溢：</p></div>   <!----<span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span>---->
                       <div><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
                           <p>业务日期：<span>2018-12-13</span></p>
@@ -47,7 +47,7 @@ import StockTakingService from '../../../service/StockTakingService'
    },   
    computed:{
      ...mapGetters({
-       'queryResult':'stockTaking/queryResult',//查询结果
+      //  'queryResult':'stockTaking/queryResult',//查询结果
        'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
      }) 
    },

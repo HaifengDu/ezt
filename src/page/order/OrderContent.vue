@@ -36,14 +36,14 @@
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==1"  @click="toexamine('examine')">审核未通过</span>
-                <span class="receive-status" @click="morelist('add')" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1"  @click="toexamine('examine',item)">审核未通过</span>
+                <span class="receive-status" @click="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails()">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <div style="display:flex">
                   <span class="receive-dc-title">要货日期：
-                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>
+                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>  
                   </span>
                   <span class="receive-dc-title">到货日期：
                     <span class="receive-dc-content">{{item.arrive_date}}</span>
@@ -61,7 +61,7 @@
                 <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
               </div>
             </div>
-            <div class="ezt-list-del" @click="deleteSection(item)">删除</div>
+            <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
         </div>
          <span v-if="allLoaded">已全部加载</span>          
       </div>
@@ -138,6 +138,10 @@
    <confirm v-model="isCommodity" confirm-text="手工订货" @on-confirm="onConfirm">
         <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
    </confirm>
+   <!--待审核状态下的列表数据删除提示 -->
+   <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
+        <p style="text-align:center;">请确认是否删除该单据？</p>
+   </confirm>
 </div>
 </template>
 <script lang="ts">
@@ -182,6 +186,8 @@ export default class OrderGoods extends Vue{
     private searchParam:any={};//搜索时的查询条件
     private isMaterielChange:boolean = false;  //供货物料是否发生变化
     private isCommodity:boolean = false;  //物料停止供货发生变化
+    private deleteItem:any={};//删除时存储所删除数据
+    private isDelete:boolean = false;  //删除单据提示
     private orderType:any=[{
       name:'仓库1',
       id:'01'
@@ -245,14 +251,28 @@ export default class OrderGoods extends Vue{
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
-   /**
-   * 左滑删除某一项
-   */
-    private deleteSection(item:any){
+    // 点击删除按钮
+    private deleteBill(item:any){
+        this.deleteItem = item;
+        this.isDelete = true;
+    }
+    // 删除提示框
+     private Confirm(){
+         this.deleteSection(this.deleteItem);
+     }
+     private Cancel(){
+        this.isDelete = false;
         let newIndex = this.goodList.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
+          return this.deleteItem.id == info.id;
         })
-        this.goodList.splice(newIndex,1);
+        this.goodList[newIndex].active = false;
+     }
+    // 左滑删除某一项
+    private deleteSection(item:any){
+      let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+        return item.id == info.id;
+      })
+      this.goodList.splice(newIndex,1);
     }
     //下拉加载更多
     private loadMore() {
@@ -344,22 +364,32 @@ export default class OrderGoods extends Vue{
       }
     }
     // 审核要货单
-    private toexamine(type:any){
+    private toexamine(type:any,item:any){
       if(this.tabList.getActive().status==1){
         this.$router.push({
           name:'AuditInvoice',
           query:{
-              type:type,
+              type:type,    
+              billno:item.bill_no,
+              unit:'供应商1号',
+              orderDate:item.ask_goods_date,   
+              arriveDate:item.arrive_date,
+              remark:'提前一天联系供应商',
         }});  
       }
      }     
     //  再来一单 
-    private morelist(type:any){
+    private morelist(type:any,item:any){
        if(this.tabList.getActive().status==2 || this.tabList.getActive().status==3){
           this.$router.push({
             name:'AuditInvoice',
             query:{
               type:type,
+              billno:item.bill_no,
+              unit:'供应商1号',
+              orderDate:item.ask_goods_date,   
+              arriveDate:item.arrive_date,
+              remark:'提前一天联系供应商',
         }});  
         // setInterval(() => {
         //     this.isMaterielChange = false

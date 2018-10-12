@@ -16,7 +16,7 @@
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
       </tab>       
-      <div class="ezt-add-content">
+      <div class="ezt-add-content" >
                 <div v-if="!inventoryList" class="done-none">
                   <div></div>
                   <span>目前还没有任何订单</span>
@@ -105,7 +105,7 @@
     </ul>
   </div> 
   <!-- 点击日周月盘如果有未审核单据会提示 -->
-   <confirm v-model="isAudited" @on-confirm="onConfirm">
+   <confirm v-model="isAudited" @on-confirm="onConfirm('name')">
         <p style="text-align:center;">有单据未完成审核，是否进行盘点?</p>
    </confirm>
 </div>
@@ -120,8 +120,12 @@ import StockTakingService from '../../../service/StockTakingService'
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
+import librarydetails from './LibraryDetails'
+import addinventorylist from './AddinventoryList'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
+import queryresult from './QueryResult.vue'
+
 declare var mobiscroll:any;
 @Component({
    components:{  
@@ -153,13 +157,13 @@ export default class stockTaking extends Vue{
     private getEnquiryList:INoopPromise;  //查询盘库单 查询结果
     private getWarehouse:INoopPromise;  //查询盘库单 仓库接口
     private inventoryList:{list?:any[]} = {};//盘库列表   
-    private inventoryDetails:any; //列表详情
     private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
     private setQueryResult:INoopPromise//store中给setQueryResult赋值
     private setInventoryType:INoopPromise//store中给setInventoryType赋值
     private tabList:TabList = new TabList();
     private allLoaded:boolean= false;
     private newlyadded:boolean= false;
+    private inventoryDetails:any; //列表详情
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
     private warehouseType:any[] = [];  //动态加载仓库
@@ -176,6 +180,7 @@ export default class stockTaking extends Vue{
     private billType:string;
     private isAudited:boolean = false;  //有未审核盘点提示
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
+    
     created() {
       this.tabList.push({
         name:"待提交",
@@ -185,7 +190,7 @@ export default class stockTaking extends Vue{
       this.tabList.push({
         name:"待/已生效",
         status:2,
-        active:false
+        active:false  
       });
       this.tabList.push({
         name:"待审核",
@@ -218,26 +223,49 @@ export default class stockTaking extends Vue{
     }
    
     mounted(){
-        this.getpkList();
         this.addMaskClickListener(()=>{  //点击遮罩层消失
-        this.isSearch=false; 
-        this.hideMask();
-      });  
+          this.isSearch=false; 
+          this.hideMask();
+        });  
+        if(this.$route.params.purStatus=="待提交"){  
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+        } 
+        if(this.$route.params.purStatus=="待/已生效"){   
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+        } 
+        if(this.$route.params.purStatus=="待审核"){   
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+       } 
+        if(this.$route.params.purStatus=="审核失败"){  
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+       } 
+       this.getpkList();
     }
-
-  /**
-   * watch demo
-   */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
-
-    }  
-
-/**  
- * computed demo
- */ 
+    // 返回上一页
     private goBack(){
       this.$router.push('/');
     }
@@ -361,7 +389,7 @@ export default class stockTaking extends Vue{
     private add(){
       this.newlyadded = true
     }  
-    private addinventorylist(type:any,name:any,bill_type:string,){
+    private addinventorylist(type:any,name:any,bill_type:string){
       this.service.getInventoryType(type.bill_type).then(res=>{ 
         this.setInventoryType(this.type);        
         this.$router.push({
@@ -386,7 +414,7 @@ export default class stockTaking extends Vue{
     }   
 
     // 单据未审核会提示
-     private onConfirm(type:any,name:any,bill_type:string){    //type:any,name:any,bill_type:string,
+      private onConfirm(type:any,name:any,bill_type:string){    //type:any,name:any,bill_type:string,
         this.$router.push({
             name:'AddinventoryList',
             query:{
@@ -522,14 +550,15 @@ export default class stockTaking extends Vue{
               color: #395778;
           }
           .content{
-               display: flex;
-               align-items: flex-start;
-               flex-direction: column;
-               justify-content: start;
-               padding-left: 10px;
-               box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
+            display: flex;
+            align-items: flex-start;
+            flex-direction: column;
+            justify-content: start;
+            padding-left: 10px;
+            box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
             p{
               line-height: 30px;
+              
             }
           }
           .footer{

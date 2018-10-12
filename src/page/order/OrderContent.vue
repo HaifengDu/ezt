@@ -140,7 +140,7 @@
    </confirm>
    <!--待审核状态下的列表数据删除提示 -->
    <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
-        <p style="text-align:center;">请确认是否删除该单据？</p>
+        <p style="text-align:center;">是否要删除该单据？</p>
    </confirm>
 </div>
 </template>

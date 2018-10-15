@@ -203,8 +203,7 @@ input.ezt-middle{
   overflow: hidden;
   flex-direction: column;
 }
-.ezt-main{
-  background-color: #F1F6FF;
+.ezt-main{  
   position: relative;
   /* top:0; */
   width:100%;
@@ -222,7 +221,7 @@ input.ezt-middle{
   flex-wrap: nowrap;
   margin-top: -1px;
   position: absolute;
-
+  background-color: #F1F6FF;
 }
 /* 页面内容布局 结束 */
 

@@ -8,7 +8,7 @@
         </div>        
       </ezt-header> 
       <div class="ezt-main ezt-details">
-          <div class="content_new">
+          <div class="content">
             <div class="pkdetails_new">
                 <div class="librarytype_new">
                   <ul>
@@ -431,13 +431,6 @@ export default class stockTaking extends Vue{
 @background:linear-gradient(139deg, #018BFF -2%, #4A39F3 28%);
 .librarydetails{
     .content{
-       background-color: #F1F6FF;
-    }
-    .content_new{
-      margin-bottom: 0!important;
-      background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 19%);
-    }
-    .content,.content_new{
       width: @width;
       display: flex;
       align-items: center;
@@ -461,7 +454,7 @@ export default class stockTaking extends Vue{
               a{
                 display: inline-block;
                 height:20px;
-                background-image: linear-gradient(139deg, #018BFF -1%, #4A39F3 -42%);
+                background-color: #F1F6FF;
               }
              .LeftRound{/*左半圆*/
                  width: 10px;

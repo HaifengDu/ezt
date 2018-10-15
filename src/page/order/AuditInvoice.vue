@@ -11,7 +11,7 @@
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billno">
                     </li>
                     <li>    
-                        <span class="title-search-name">来货单位：</span>
+                        <span class="title-search-name is-required">来货单位：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.unit">
                     </li>
                     <li v-if="this.type == 'examine'">     
@@ -19,13 +19,13 @@
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate">
                     </li>
                     <li v-if="this.type == 'add'">
-                        <span class="title-search-name">要货日期：</span>
+                        <span class="title-search-name is-required">要货日期：</span>
                         <span>
                             <ezt-canlendar placeholder="要货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>             
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name">到货日期：</span>
+                        <span class="title-search-name is-required">到货日期：</span>
                         <span>
                             <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>     
                         </span>
@@ -34,7 +34,7 @@
                         <x-input title="备注：" v-model="addBillInfo.remark"></x-input>
                     </li>
                     <li>
-                        <span class="title-search-name">物料明细</span>
+                        <span class="title-search-name is-required">物料明细</span>
                         <span class="title-search-right" @click="renderUrl('/publicAddGood')">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </span>
@@ -67,7 +67,7 @@
                                 </div>                 
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="deleteBill(item)">删除</div> 
                     </li>
                 </ul>   
             </div>
@@ -89,6 +89,10 @@
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
+        <!-- 物料明细删除提示信息 -->
+       <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
+        <p style="text-align:center;">是否要删除该单据？</p>
+       </confirm>
     </div>
 </template>
 <script lang="ts">
@@ -128,12 +132,14 @@ export default class Order extends Vue{
         // orderDate:new Date().format('yyyy-MM-dd'),
         // arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
-    private isSave:boolean=false;
+    private isSave:boolean = false;
+    private isDelete:boolean = false;
+    private deleteItem:any = {}; //保存删除的物料信息
     private type:string;    
     private billno:string;    
     private unit:string;    
     private remark:string;       
-    created() {  
+    created() {     
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
@@ -150,6 +156,11 @@ export default class Order extends Vue{
         this.addBillInfo.remark = this.$route.query.remark
         
     }
+    // 点击删除按钮
+    private deleteBill(item:any){
+        this.deleteItem = item;
+        this.isDelete = true;
+    }
       /**
      * 左滑删除某一项
      */
@@ -159,6 +170,17 @@ export default class Order extends Vue{
         })
         this.selectedGood.splice(newIndex,1);
     }
+    // 删除提示框
+     private Confirm(){
+         this.deleteSection(this.deleteItem);
+     }
+     private Cancel(){
+        this.isDelete = false;
+        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+          return this.deleteItem.id == info.id;
+        })
+        this.selectedGood[newIndex].active = false;
+     }
     // 向左滑动
     private handlerLeft(item:any){     
         item.active = true;

@@ -1,23 +1,23 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import {interceptRouter} from "./intercept"
-import Index from "@/page/Index.vue"
-import Login from "@/page/Login.vue"
-import ReturnGood from '@/page/index/return-good/ReturnGood.vue'
-import NeedGood from '@/page/index/needGood/NeedGood.vue'
-import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue'
+import Vue from 'vue';
+import Router from 'vue-router';
+import {interceptRouter} from "./intercept";
+import Index from "@/page/Index.vue";
+import Login from "@/page/Login.vue";
+import ReturnGood from '@/page/index/return-good/ReturnGood.vue';
+import NeedGood from '@/page/index/needGood/NeedGood.vue';
+import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue';
 import ReceiveGood from '@/page/index/receive-good/ReceiveGood.vue';//收货页
 import ComfirmAccept from '@/page/index/receive-good/ConfirmAccept.vue';//收货修改页
 import AddReceiveGood from '@/page/index/receive-good/AddReceiveGood.vue';//新增收货
 import CheckDetail from '@/page/index/receive-good/CheckDetail.vue';//收货单详情页
 import SearchReceiveGood from '@/page/index/receive-good/SearchReceiveGood.vue';//收货单查询
 import PublicAddGood from '@/page/index/receive-good/PublicAddGood.vue';//选择物料
-import MineContent from '@/page/mine/MineContent.vue'
-import StockTaking from '@/page/index/stockTaking/StockTaking.vue'
-import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue'
-import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue'
-import QueryResult from '@/page/index/stockTaking/QueryResult.vue'
-import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue'
+import MineContent from '@/page/mine/MineContent.vue';
+import StockTaking from '@/page/index/stockTaking/StockTaking.vue';
+import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue';
+import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue';
+import QueryResult from '@/page/index/stockTaking/QueryResult.vue';
+import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue';
 import ChangePsd from '@/page/mine/ChangePassword.vue';//修改密码
 import InitStock from '@/page/index/init-stock/InitStock.vue';//库存初始化
 import AddInitStock from '@/page/index/init-stock/AddInitStock.vue';//添加库存初始化
@@ -31,6 +31,7 @@ import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 import AuditInvoice from '@/page/order/AuditInvoice.vue';  //审核要货单
+import ReportLoss from '@/page/index/reportLoss/ReportLoss.vue'; //损溢首页
 Vue.use(Router)
 
 const router = new Router({
@@ -141,7 +142,7 @@ const router = new Router({
       name: 'OrderGood',
       component: OrderGood
     },
-    {
+    {   
       path: '/chartContent',
       name: 'ChartContent',
       component: ChartContent
@@ -157,6 +158,10 @@ const router = new Router({
       path: '/auditInvoice',
       name:"AuditInvoice",
       component: AuditInvoice
+    },{
+      path: '/reportLoss',
+      name:"ReportLoss",
+      component:ReportLoss
     }
   ]
 });

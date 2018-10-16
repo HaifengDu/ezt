@@ -22,28 +22,31 @@
       </tab>        
       <div class="ezt-add-content">
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('')">
-            <div class="receive-icon-title">
-              <span class="receive-icon-dcName"></span>
-              <span class="return-list-title">初始化单号：{{item.bill_no}}</span> 
-              <span class="receive-status">{{tabList.getActive().status==1?'待审核':'已完成'}}</span>
-            </div>
-            <div class="receive-icon-content">
-              <span class="receive-dc-title">仓库：<span class="receive-dc-content">北京稻香村仓库</span></span>
-              <div style="display:flex">
-                <span class="receive-dc-title">初始化日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                <span class="receive-dc-title">金额：<span class="receive-dc-content">{{item.price}}</span></span>
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click.stop="renderUrl('')">
+            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
+              <div class="receive-icon-title">
+                <span class="receive-icon-dcName"></span>
+                <span class="return-list-title">初始化单号：{{item.bill_no}}</span> 
+                <span class="receive-status">{{tabList.getActive().status==1?'待审核':'已完成'}}</span>
               </div>
-              <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-            </div>
-            <div class="receive-icon-bottom">
-              <div class="glow-1">
-                <!-- <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span> -->
+              <div class="receive-icon-content">
+                <span class="receive-dc-title">仓库：<span class="receive-dc-content">北京稻香村仓库</span></span>
+                <div style="display:flex">
+                  <span class="receive-dc-title">初始化日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+                  <span class="receive-dc-title">金额：<span class="receive-dc-content">{{item.price}}</span></span>
+                </div>
+                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
-              <div>
-                <span class="receive-ys-btn" v-if="tabList.getActive().status==1">审核</span>
+              <div class="receive-icon-bottom">
+                <div class="glow-1">
+                  <!-- <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span> -->
+                </div>
+                <div>
+                  <span class="receive-ys-btn" v-if="tabList.getActive().status==1">审核</span>
+                </div>
               </div>
             </div>
+            <div class="ezt-list-del" @click.stop="deleteBill(item)">删除</div>
         </div>
          <span v-if="allLoaded">已全部加载</span>          
       </div>
@@ -89,6 +92,10 @@
           <p style="text-align:center;">{{confirmTitle}}</p>
         </div>        
     </confirm> 
+    <!--待审核状态下的列表数据删除提示 -->
+   <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
+        <p style="text-align:center;">是否要删除该单据？</p>
+   </confirm>
 </div> 
 </template>
 
@@ -140,6 +147,8 @@ export default class InitStock extends Vue {
   private goodList: any[] = []; //列表页list数据
   private allLoaded: boolean = false; //数据是否已经全部加载完
   private isSearch: boolean = false; //搜索的条件
+  private deleteItem:any={};//删除时存储所删除数据
+  private isDelete:boolean = false;  //删除单据提示
   private searchParam: any = {}; //搜索时的查询条件
   private confirmGoodInfo:any={};//修改页面信息
   private detailList : any={};//详情
@@ -192,6 +201,43 @@ export default class InitStock extends Vue {
     } 
     this.getList();
   }
+     // 点击删除按钮
+    private deleteBill(item:any){
+        this.deleteItem = item;
+        this.isDelete = true;
+    }
+    // 删除提示框
+     private Confirm(){
+         this.deleteSection(this.deleteItem);
+     }
+     private Cancel(){
+        this.isDelete = false;
+        let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+          return this.deleteItem.id == info.id;
+        })
+        this.goodList[newIndex].active = false;
+     }
+    // 左滑删除某一项
+    private deleteSection(item:any){
+      let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+        return item.id == info.id;
+      })
+      this.goodList.splice(newIndex,1);
+    }
+  private handlerLeft(item:any){
+      const status = this.tabList.getActive().status;
+      if(status =="1"){
+         this.$set(item,'active',true);
+      }     
+     
+    }
+    private handlerRight(item:any){
+      const status = this.tabList.getActive().status;
+      if(status == '1'){
+        this.$set(item,'active',false);
+      }
+     
+  } 
   /**
    * 初始化完毕
    */
@@ -422,5 +468,29 @@ export default class InitStock extends Vue {
     .ezt-dialog-footer{
       margin-bottom: 20px;
     }
+  }
+  // 左侧滑动删除
+.swipe-transform{
+    transform: translateX(-50px);
+}
+.receive-dc-list{
+  position: relative;
+}
+.ezt-list-del{
+    position: absolute;
+    right: 12px;
+    top: 42px;
+    background: pink;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+}
+//左侧滑动删除
+  .ezt-list-show{
+    position: relative;
+    transition: transform .5s;
+    background: #fff;
+    z-index: 2;
   }
 </style>

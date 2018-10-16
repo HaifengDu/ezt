@@ -31,7 +31,6 @@ import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 import AuditInvoice from '@/page/order/AuditInvoice.vue';  //审核要货单
-import ReportLoss from '@/page/index/reportLoss/ReportLoss.vue'; //损溢首页
 Vue.use(Router)
 
 const router = new Router({
@@ -158,10 +157,6 @@ const router = new Router({
       path: '/auditInvoice',
       name:"AuditInvoice",
       component: AuditInvoice
-    },{
-      path: '/reportLoss',
-      name:"ReportLoss",
-      component:ReportLoss
     }
   ]
 });

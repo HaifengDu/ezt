@@ -56,12 +56,16 @@
             <li @click="renderUrl('/returnGood')">
               <div class="tuihuo"></div>
               <span>退货</span></li>
-            <li @click="renderUrl('/stocktaking')">
+            <li @click="renderUrl('/stockTaking')">
               <div class="panku"></div>
               <span>盘库</span></li>
             <li @click="renderUrl()">
               <div class="kucun"></div>
               <span>库存初始化</span></li>
+            <li @click="renderUrl('/reportLoss')">
+              <div class="overflowing"></div>
+              <span>损溢</span>
+            </li>
         </ul>
         <!--内容-->
         
@@ -258,7 +262,7 @@ export default class Index extends Vue{
     border-right: none;
   }
 
-  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan, .kucun {
+  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan, .kucun ,.overflowing{
     width: 64px;
     height: 64px;
     display: inline-block;
@@ -294,7 +298,12 @@ export default class Index extends Vue{
     background-size: 64px 64px;
   }
 
-  .icon-menu .kucun{
+  .icon-menu .kucun{   
+    background: url(../assets/images/icon-kucun.png) no-repeat;
+    background-size: 64px 64px;
+  }
+
+  .icon-menu .overflowing{   
     background: url(../assets/images/icon-kucun.png) no-repeat;
     background-size: 64px 64px;
   }

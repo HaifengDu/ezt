@@ -66,7 +66,7 @@
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">
-                            收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart">
+                            收：<input type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
                             <!-- 收：{{item.num}} -->
                           </span>
                       </div>                     
@@ -153,7 +153,7 @@
                   <div class="good-detail-l">
                       <div>
                           <span class="good-detail-name">{{item.name}}
-                              <span class="good-detail-sort">（规格）</span>
+                              <span class="good-detail-sort">(/{{item.utilname}})</span>
                           </span>                         
                       </div>
                       <div>
@@ -199,6 +199,10 @@
       </confirm>
       <!-- 删除物料时 校验 -->
       <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+          <p style="text-align:center;"> 请确认是否删除该物料。</p>
+      </confirm>
+      <!-- 审核时 校验 -->
+      <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
           <p style="text-align:center;"> 请确认是否删除该物料。</p>
       </confirm>
     </div>
@@ -298,6 +302,7 @@ export default class ReceiveGood extends Vue{
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
     private isWarehouse:boolean = false;//切换仓库校验物料
+    private isAudit:boolean = false;//审核时校验
     private receive_billtype: any = {
       shou:false,
       cai:false,
@@ -312,6 +317,7 @@ export default class ReceiveGood extends Vue{
     }]
     private addBillInfo:any={};
     private addBeforeBillInfo:any={};
+    private oldValue = 1;
     created() { 
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
@@ -379,6 +385,38 @@ export default class ReceiveGood extends Vue{
   private handlerRight(item:any){
     item.active = false;
   }
+  private numChange(item:any,info:any){
+    if(item[info]==""||item[info]==0){
+      item[info]=1;
+    }
+    if(!isNaN(item[info])){
+      this.oldValue = item[info];//是一个数
+    }else{
+      item[info] = this.oldValue||1;
+    }
+    item[info] = parseFloat(item[info]);
+    (this.addBeforeBillInfo.goodList).forEach((beforeInfo:any,beforeIndex:any)=>{
+      if(item.id == beforeInfo.id && item[info]>beforeInfo[info] ){
+        this.$toasted.show("收货数量不能超过采购数量！");
+        item[info] = beforeInfo[info];
+      }
+    })
+  }
+  //审核通过操作
+  private onPassAudit(){
+    this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("审核成功！");
+      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});    
+  }
+  //审核不通过操作
+  private onUnpassAudit(){
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});  
+  }
    /**
    * 改变直拨的 数量
    */
@@ -401,8 +439,8 @@ export default class ReceiveGood extends Vue{
         this.errWarehouse = true;
         this.$toasted.show("请选择仓库！");
         return false;
-      }  
-      if(!this.selectedGood||this.selectedGood.length<=0){
+      }        
+      if(!this.selectedGood || this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;
       }
@@ -449,6 +487,7 @@ export default class ReceiveGood extends Vue{
      * 采购入库 提交
      */
     private submitReceive(){
+      this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
       if(!this.selectedGood||this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;
@@ -469,15 +508,12 @@ export default class ReceiveGood extends Vue{
      * 保存并审核
      */
     private saveAndAuditReceive(){
+      this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
       if(!this.selectedGood||this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;
       }
-      this.addBillInfo={},
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo={};
-      this.$toasted.success("审核成功！");
-      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});  
+      this.isAudit = true;
     }
     /**
     *可直拨

@@ -529,9 +529,11 @@ export default class AddGood extends Vue{
     this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
     this.selectedGoodList.splice(index,1);
     
-    const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
-    this.typeName.addList[smallIndex].num=0;
-    this.typeName.addList.splice(smallIndex,1);
+    if(this.typeName.addList.length>0){
+      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+      this.typeName.addList[smallIndex].num=0;
+      this.typeName.addList.splice(smallIndex,1);
+    }
   }
   /**
    * 搜索所有物品 显示/隐藏

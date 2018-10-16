@@ -245,7 +245,7 @@ export default class ReceiveGood extends Vue{
               }
           }]
         }
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))//配、直、调、采
+        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
         this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.confirmGoodInfo));
         this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.confirmGoodInfo));
         this.$router.push('/comfirmAccept');

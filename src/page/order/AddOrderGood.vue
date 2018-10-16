@@ -148,8 +148,13 @@
         <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
             <p style="text-align:center;"> 请确认是否删除该物料。</p>
         </confirm>
+        <!-- 到货日期修改 校验 -->
         <confirm v-model="isArriveDate" @on-confirm="arriveConfirm" @on-cancel="arriveCancel">
             <p style="text-align:center;"> 您已选择物料，调整到货日期，须重新加载预估单及物料。</p>
+        </confirm>
+         <!-- 审核时 校验 -->
+        <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
+            <p style="text-align:center;"> 请确认是否删除该物料。</p>
         </confirm>
     </div>
 </template>
@@ -198,6 +203,7 @@ export default class Order extends Vue{
     private isTemplate:boolean=false;
     private isDelGood:boolean = false; //删除物料判断
     private isArriveDate:boolean = false; //有物料，调整到货日期提示
+    private isAudit:boolean = false;
     private errStoreId:boolean = false;
     private deleteData:any={};//删除时存储所删除数据
     private doneInfo:string="";
@@ -305,6 +311,24 @@ export default class Order extends Vue{
             }
         // }
         (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
+    }
+     //审核通过操作
+    private onPassAudit(){
+        this.addBillInfo={},
+        this.goodData=[];
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("审核成功！");
+        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+    }
+    //审核不通过操作
+    private onUnpassAudit(){
+        this.addBillInfo={},
+        this.goodData=[];
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("审核成功！");
+        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
     }
     /**
      * 到货日期 小时\分钟
@@ -505,12 +529,7 @@ export default class Order extends Vue{
             return false;
         }
         this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
-        this.addBillInfo={},
-        this.goodData=[];
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.$toasted.success("审核成功！");
-        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+        this.isAudit = true;
         // this.$router.push('/orderGood')
         
     }

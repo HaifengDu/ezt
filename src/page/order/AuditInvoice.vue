@@ -89,6 +89,10 @@
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
+         <!-- 审核时 校验 -->
+        <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
+            <p style="text-align:center;"> 请确认是否删除该物料。</p>
+        </confirm>
     </div>
 </template>
 <script lang="ts">
@@ -129,6 +133,7 @@ export default class Order extends Vue{
         // arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
     private isSave:boolean=false;
+    private isAudit:boolean = false;
     private type:string;    
     private billno:string;    
     private unit:string;    
@@ -149,6 +154,22 @@ export default class Order extends Vue{
         this.addBillInfo.arriveDate = this.$route.query.arriveDate
         this.addBillInfo.remark = this.$route.query.remark
         
+    }
+     //审核通过操作
+    private onPassAudit(){
+        this.addBillInfo={},
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("审核成功！");
+        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+    }
+    //审核不通过操作
+    private onUnpassAudit(){
+        this.addBillInfo={},
+        this.setSelectedGood([]);
+        this.addBeforeBillInfo={};
+        this.$toasted.success("审核成功！");
+        this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
     }
       /**
      * 左滑删除某一项
@@ -196,8 +217,11 @@ export default class Order extends Vue{
      * 提交并审核
      */
     private confirmReceive(){
-        this.$toasted.success("审核成功！");
-        this.$router.push('/orderGood');
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        }
+        this.isAudit = true;
     }
 
     /**

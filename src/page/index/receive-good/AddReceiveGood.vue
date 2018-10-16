@@ -121,9 +121,14 @@
       <p style="text-align:center;"> 您已维护物料信息，如调整仓库，须重新选择物料。</p>
     </confirm>
     <!-- 删除物料时 校验 -->
-      <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
-          <p style="text-align:center;"> 请确认是否删除该物料。</p>
-      </confirm>
+    <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
+        <p style="text-align:center;"> 请确认是否删除该物料。</p>
+    </confirm>
+    <!-- 审核时 校验 -->
+    <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
+        <p style="text-align:center;"> 请确认是否删除该物料。</p>
+    </confirm>
+      
   </div>
 </template>
 <script lang="ts">
@@ -169,6 +174,7 @@ export default class ReceiveGood extends Vue{
   private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
   private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
   private isDelGood:boolean = false; //删除物料判断
+  private isAudit: boolean = false;
   private deleteData:any={};//删除时存储所删除数据
   private service: ReceiveGoodService;
   private pager:Pager;
@@ -247,6 +253,21 @@ export default class ReceiveGood extends Vue{
     return this.selectedGood.reduce((ori,item)=>{
       return ori+(item.num*item.price);       
     },0).toFixed(2);
+  }
+  //审核通过操作
+  private onPassAudit(){
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$toasted.success("审核成功！");
+    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});   
+  }
+  //审核不通过操作
+  private onUnpassAudit(){
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
   }
   /**
    * 删除物料操作
@@ -332,11 +353,7 @@ export default class ReceiveGood extends Vue{
       this.$toasted.show("请添加物料！");
       return false;
     }
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$toasted.success("审核成功！");
-      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
+    this.isAudit = true;
   }    
     //选择物料
   private renderUrl(info:string){

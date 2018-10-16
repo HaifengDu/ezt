@@ -89,17 +89,14 @@
         <confirm v-model="isSave" @on-confirm="onConfirm">
             <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
         </confirm>
-<<<<<<< HEAD
          <!-- 审核时 校验 -->
         <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
             <p style="text-align:center;"> 请确认是否删除该物料。</p>
         </confirm>
-=======
         <!-- 物料明细删除提示信息 -->
        <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
         <p style="text-align:center;">是否要删除该单据？</p>
        </confirm>
->>>>>>> 8bcb6e0789d3f505c22f584b8936d7289a8acc37
     </div>
 </template>
 <script lang="ts">
@@ -139,14 +136,10 @@ export default class Order extends Vue{
         // orderDate:new Date().format('yyyy-MM-dd'),
         // arriveDate:new Date().format('yyyy-MM-dd'),
     };//store中
-<<<<<<< HEAD
-    private isSave:boolean=false;
     private isAudit:boolean = false;
-=======
     private isSave:boolean = false;
     private isDelete:boolean = false;
     private deleteItem:any = {}; //保存删除的物料信息
->>>>>>> 8bcb6e0789d3f505c22f584b8936d7289a8acc37
     private type:string;    
     private billno:string;    
     private unit:string;    
@@ -168,7 +161,6 @@ export default class Order extends Vue{
         this.addBillInfo.remark = this.$route.query.remark
         
     }
-<<<<<<< HEAD
      //审核通过操作
     private onPassAudit(){
         this.addBillInfo={},
@@ -184,12 +176,11 @@ export default class Order extends Vue{
         this.addBeforeBillInfo={};
         this.$toasted.success("审核成功！");
         this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
-=======
+    }
     // 点击删除按钮
     private deleteBill(item:any){
         this.deleteItem = item;
         this.isDelete = true;
->>>>>>> 8bcb6e0789d3f505c22f584b8936d7289a8acc37
     }
       /**
      * 左滑删除某一项

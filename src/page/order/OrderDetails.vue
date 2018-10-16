@@ -50,8 +50,8 @@
                         </div>
                     </div>
                     <div>
-                        <div class="good-detail-sort"  :class="fold ? 'fold' : 'unfold'">备注：
-                                {{content}}
+                        <div class="good-detail-sort" v-model="content"  :class="fold ? 'fold' : 'unfold'">备注：
+                                {{item.remark}}
                         </div>
                         <div>
                             <span @click='handleFold' v-show="fold">展开→</span>
@@ -134,8 +134,9 @@ export default class OrderGoods extends Vue{
       this.fold = !this.fold;
     }
     private getData() {
-        this.content =
-          "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
+        this.content = this.content
+
+        //   "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
     }
 
     // 返回

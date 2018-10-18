@@ -352,6 +352,9 @@ export default class OrderGoods extends Vue{
     //首页菜单跳转
     private toPage(info:string){
       if(info){
+        // if(info == '/addOrderGood'){
+          // this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify({orderType:0}))
+        // }
         this.$router.push(info);
       }      
     }

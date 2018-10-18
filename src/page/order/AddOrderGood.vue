@@ -192,17 +192,15 @@ export default class Order extends Vue{
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private systemParamSetting:any;
     private addBeforeBillInfo:any={
-        orderType:0,
     };
     /**
     保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
      */
     private addBillInfo:any={
-        orderType:0
     };//store中
     private isShowObj={
-        isTemplate:false,
-        isorderType:false,
+        isTemplate:false,//模板导入列表提示框
+        isorderType:false,//再来一单 跳转的手工制作显示/隐藏
     }
     // private isStore:boolean=false;
     // private isTemplate:boolean=false;
@@ -273,28 +271,25 @@ export default class Order extends Vue{
     mounted(){
         this.hours = commonService.getHours();
         this.minutes = commonService.getMinutes();
-         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
-            if(this.addBillInfo.billTypes=="handlers"){
-                this.isShowObj.isorderType = true;
-            }
-        }
     }   
     created() {
         this.service = OrderGoodsService.getInstance();
+       
         //默认值
-        this.addBillInfo.storeId = this.orderType[0].id;
-        this.addBeforeBillInfo.storeId = this.orderType[0].id;
-        this.addBillInfo.orderDate = this.user.auth.busi_date;
-        this.addBeforeBillInfo.orderDate = this.user.auth.busi_date;
-        let dateNew = new Date(this.user.auth.busi_date);
-        this.addBillInfo.arriveDate = new Date(dateNew.setDate(dateNew.getDate()+1)).format("yyyy-MM-dd");
-        this.addBeforeBillInfo.arriveDate = new Date(dateNew.setDate(dateNew.getDate()+1)).format("yyyy-MM-dd");
-        this.goodData = ObjectHelper.serialize(this.selectedGood);
+            this.addBillInfo.storeId = this.orderType[0].id;
+            this.addBillInfo.orderDate = this.user.auth.busi_date;
+            this.addBillInfo.orderType = 0;
+            let dateNew = new Date(this.user.auth.busi_date);
+            this.addBillInfo.arriveDate = new Date(dateNew.setDate(dateNew.getDate()+1)).format("yyyy-MM-dd");
 
-        // if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
-        //     this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
-        // }
+        if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
+            if(this.addBillInfo.billTypes=="handlers"){//假如从再来一单跳过来的单据
+                this.isShowObj.isorderType = true;
+            }
+        }
+        this.goodData = ObjectHelper.serialize(this.selectedGood);
+       
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         if(this.cache.getData(CACHE_KEY.ORDER_CONTAINTIME)){//要货日期 的时间（）
             this.containTime = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_CONTAINTIME));
@@ -396,6 +391,7 @@ export default class Order extends Vue{
     private arriveCancel(){
         this.addBillInfo.arriveDate = this.addBeforeBillInfo.arriveDate;
         this.addBillInfo.containTime = this.addBeforeBillInfo.containTime;
+        (<any>this.$refs.arriveDate).setDefaultVal(new Date(this.addBeforeBillInfo.arriveDate));//设置默认显示值 
         let str = this.addBillInfo.containTime;
         this.containTime.newHour=Number(str.substring(0,str.indexOf(":")));
         this.containTime.newMinut=Number(str.substring(str.indexOf(":")+1,str.length));
@@ -440,16 +436,16 @@ export default class Order extends Vue{
     private renderUrl(info: string) {
         let _this = this;
         for(let i=0;i<this.billFiles.length;i++){
-        let item = this.billFiles[i];
-        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-            this.$toasted.show(item.msg);
-            item[item.id]=true;
-            return false;
-        }
+            let item = this.billFiles[i];
+            if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+                this.$toasted.show(item.msg);
+                item[item.id]=true;
+                return false;
+            }
         }
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-        // this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.setSelectedGood(this.goodData);
         this.$router.push(info);
     }

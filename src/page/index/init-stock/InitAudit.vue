@@ -110,7 +110,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
   }
 })
 export default class InitStock extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private service: InitStockService;
     private addBillInfo: any={}; //store中
     private addBeforeBillInfo: any={};

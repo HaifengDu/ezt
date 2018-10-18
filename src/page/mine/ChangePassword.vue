@@ -43,7 +43,7 @@ import { setTimeout } from 'timers';
 export default class Index extends Vue{
     private password:any={};
     private service:LoginService;
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
   
     created() {
       this.service = LoginService.getInstance();

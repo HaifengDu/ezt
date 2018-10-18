@@ -71,7 +71,7 @@ declare var mobiscroll:any;//全局定义日历
 
 })
 export default class InitStock extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private isCheckDay:boolean=false;
     private service:LoginService;
     private setObj:any={

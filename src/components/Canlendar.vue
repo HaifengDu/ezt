@@ -45,6 +45,9 @@
         this.instance.option({
           min:date
         })
+      },
+      setDefaultVal(date){
+        this.instance.setVal(date);
       }
     },
     mounted(){

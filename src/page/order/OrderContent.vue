@@ -4,19 +4,19 @@
    <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="false" title="订单">
+    <ezt-header :back="false" title="订单" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
-           <span class='ezt-action-point' @click="add">
+           <span class='ezt-action-point' @click="addPage">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
-          <span class='ezt-action-point' @click="query">
+          <span class='ezt-action-point' @click="queryPage">
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
          </div>
          <div v-if="addgoods" class="addgoods">
           <ul>
-            <li @click="renderUrl('/addOrderGood')">配送要货</li>
+            <li @click="toPage('/addOrderGood')">配送要货</li>
             <li>供应商订货</li>
           </ul>
         </div>  
@@ -32,12 +32,12 @@
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerLeft.bind(this,item)"  v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}" >
+            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==1"  @click="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine('examine',item)">审核未通过</span>
+                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails()">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -63,20 +63,20 @@
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
         </div>
-         <span v-if="allLoaded">已全部加载</span>          
+         <span v-show="allLoaded">已全部加载</span>          
       </div>
     </div>
     <ezt-footer>
       <ul slot="confirm" class="ezt-footer-tab">
-        <li @click="renderUrl('/')" >
+        <li @click="toPage('/')" >
           <span class="footer-index"></span>
           <div>首页</div>
         </li>
-        <li @click="renderUrl('/orderGood')" class="active">
+        <li @click="toPage('/orderGood')" class="active">
           <span class="footer-order"></span>
           <div>订货</div>
         </li>
-        <li @click="renderUrl('/chartContent')">
+        <li @click="toPage('/chartContent')">
           <span class="footer-chart"></span>
           <div>报表</div>
         </li>
@@ -131,17 +131,17 @@
     </ul>
   </div> 
   <!-- 判断供货物料是否发生变化。当最新供货物料发生变化，源订单中部分物品当前已停止供应时 -->
-   <confirm v-model="isMaterielChange" confirm-text="继续下单" @on-confirm="onConfirm">
+   <!-- <confirm v-model="isMaterielChange" confirm-text="继续下单" @on-confirm="onConfirm">
         <p style="text-align:center;"> ***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。</p>
-   </confirm>
+   </confirm> -->
   <!-- 当源订单所有物品均以停供时 -->
-   <confirm v-model="isCommodity" confirm-text="手工订货" @on-confirm="onConfirm">
+   <!-- <confirm v-model="isCommodity" confirm-text="手工订货" @on-confirm="onConfirm">
         <p style="text-align:center;">您选择的订单物料已停止供货，请选择其它方式订货。</p>
-   </confirm>
+   </confirm> -->
    <!--待审核状态下的列表数据删除提示 -->
-   <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
+   <!-- <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
         <p style="text-align:center;">是否要删除该单据？</p>
-   </confirm>
+   </confirm> -->
 </div>
 </template>
 <script lang="ts">
@@ -155,6 +155,9 @@ import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
 import { TabList } from '../../common/ITab';
 import {OrderGoodsService} from '../../service/OrderGoodsService';
+import { CachePocily } from "../../common/Cache";
+import {ECache} from '../../enum/ECache';
+import CACHE_KEY from '../../constans/cacheKey'
 @Component({
    components:{
      TabItem
@@ -172,6 +175,7 @@ import {OrderGoodsService} from '../../service/OrderGoodsService';
    }
 })
 export default class OrderGoods extends Vue{
+    private cache = CachePocily.getInstance();
     private pager:Pager;
     private getGoodList:INoopPromise
     private service: OrderGoodsService;
@@ -184,10 +188,10 @@ export default class OrderGoods extends Vue{
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
     private searchParam:any={};//搜索时的查询条件
-    private isMaterielChange:boolean = false;  //供货物料是否发生变化
-    private isCommodity:boolean = false;  //物料停止供货发生变化
-    private deleteItem:any={};//删除时存储所删除数据
-    private isDelete:boolean = false;  //删除单据提示
+    // private isMaterielChange:boolean = false;  //供货物料是否发生变化
+    // private isCommodity:boolean = false;  //物料停止供货发生变化
+    // private deleteItem:any={};//删除时存储所删除数据
+    // private isDelete:boolean = false;  //删除单据提示
     private orderType:any=[{
       name:'仓库1',
       id:'01'
@@ -211,19 +215,18 @@ export default class OrderGoods extends Vue{
         name:"待审核",
         status:1,
         active:true,
-      });
-      this.tabList.push({
+      },{
         name:"待支付",
         status:2,
         active:false
-      });
-      this.tabList.push({
+      },{
         name:"已完成",
         status:3,
         active:false
       });
        this.service = OrderGoodsService.getInstance();
        this.pager= new Pager();
+       this.pager.setLimit(20);
        this.getList();  
        this.searchParam = {};    
     }
@@ -253,27 +256,42 @@ export default class OrderGoods extends Vue{
     }
     // 点击删除按钮
     private deleteBill(item:any){
-        this.deleteItem = item;
-        this.isDelete = true;
+      let _this = this;
+      this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+          let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.goodList[newIndex].active = false;
+        },
+        onConfirm () {
+          let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.goodList.splice(newIndex,1);
+        },
+        content:'是否要删除该单据？。'
+      })
     }
     // 删除提示框
-     private Confirm(){
-         this.deleteSection(this.deleteItem);
-     }
-     private Cancel(){
-        this.isDelete = false;
-        let newIndex = this.goodList.findIndex((info:any,index:any)=>{
-          return this.deleteItem.id == info.id;
-        })
-        this.goodList[newIndex].active = false;
-     }
+    //  private Confirm(){
+    //      this.deleteSection(this.deleteItem);
+    //  }
+    //  private Cancel(){
+    //     this.isDelete = false;
+    //     let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+    //       return this.deleteItem.id == info.id;
+    //     })
+    //     this.goodList[newIndex].active = false;
+    //  }
     // 左滑删除某一项
-    private deleteSection(item:any){
-      let newIndex = this.goodList.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
-      })
-      this.goodList.splice(newIndex,1);
-    }
+    // private deleteSection(item:any){
+    //   let newIndex = this.goodList.findIndex((info:any,index:any)=>{
+    //     return item.id == info.id;
+    //   })
+    //   this.goodList.splice(newIndex,1);
+    // }
     //下拉加载更多
     private loadMore() {
       if(!this.allLoaded){
@@ -285,18 +303,16 @@ export default class OrderGoods extends Vue{
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
           this.allLoaded=true;
-        }else{   
-          this.goodList=this.goodList.concat(res.data.data);
-          (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
-        }
+        }  
+        this.goodList=this.goodList.concat(res.data.data);
+        (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide();
           this.hideMask();
         },500); 
       },err=>{
           this.$toasted.show(err.message);
-      })
-      this.pager.setLimit(20);
+      })      
       }     
     }
     //获取列表
@@ -317,46 +333,47 @@ export default class OrderGoods extends Vue{
           this.$toasted.show(err.message);
       });
     } 
-    private handlerLeft(item:any){
+    /**
+     * 左侧滑动删除
+     */
+    private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
       if(status =="1"){
-         item.active = true;
+         item.active = active;
       }     
      
     }
-    private handlerRight(item:any){
-      const status = this.tabList.getActive().status;
-      if(status == '1'){
-        item.active = false;
-      }
-     
-    } 
-    private add(){
+    private addPage(){
       this.addgoods = !this.addgoods
       setTimeout(() => {
           this.addgoods = false
       }, 5000);
     }
     //首页菜单跳转
-    private renderUrl(info:string){
+    private toPage(info:string){
       if(info){
+        // if(info == '/addOrderGood'){
+          // this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify({orderType:0}))
+        // }
         this.$router.push(info);
       }      
     }
    // 查询订货
-   private query(){
+   private queryPage(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
    }
    private toSearch(){
       this.isSearch = false;
       this.hideMask();
-      this.$router.push({name:'SearchOrderGood',params:{obj:this.searchParam}});
+      this.cache.save(CACHE_KEY.INITSTOCK_SEARCH,JSON.stringify(this.searchParam));
+      this.$router.push('/searchOrderGood');
    }
    // 跳转详情页面
     private orderdetails(info:any){
       if(this.tabList.getActive().status==3){
-        // this.$router.push('/OrderDetails');
+        // this.$router.push('/OrderDetails'); 
+        //isPayMent true (去支付)
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
       }
       if(this.tabList.getActive().status ==2 && info == 'payMent'){
@@ -380,30 +397,69 @@ export default class OrderGoods extends Vue{
      }     
     //  再来一单 
     private morelist(type:any,item:any){
+      let addInfo = {};
+      let _this = this;
        if(this.tabList.getActive().status==2 || this.tabList.getActive().status==3){
-          this.$router.push({
-            name:'AuditInvoice',
-            query:{
-              type:type,
-              billno:item.bill_no,
-              unit:'供应商1号',
-              orderDate:item.ask_goods_date,   
-              arriveDate:item.arrive_date,
-              remark:'提前一天联系供应商',
-        }});  
-        // setInterval(() => {
-        //     this.isMaterielChange = false
-        //     this.isCommodity = true
-        // }, 3000)
+        addInfo={
+          type:type,
+          billno:item.bill_no,
+          unit:'供应商1号',
+          orderDate:item.ask_goods_date,   
+          arriveDate:item.arrive_date,
+          remark:'提前一天联系供应商',
+        }
+        if(true){
+          /**
+           * 部分物品停货
+           */
+          this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {
+              
+            },
+            onConfirm () {
+              _this.$set(addInfo,'billTypes','handlers');
+              // addInfo.billTypes = 'handlers';
+              _this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(addInfo));
+              _this.$router.push('/addOrderGood'); 
+            },
+            content:'***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。',
+            confirmText:"继续下单"
+          })
+        }else{
+           /**
+           * 所有物品停货
+           */
+          this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {
+            
+            },
+            onConfirm () {
+              // addInfo.billTypes = 'handlers'
+              _this.$set(addInfo,'billTypes','handlers');
+              _this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(addInfo));
+              _this.$router.push('/addOrderGood'); 
+            },
+            content:'您选择的订单物料已停止供货，请选择其它方式订货。',
+            confirmText:"手工订货"
+          })
+        }
+       
+       
+       
        }
      }
     //再来一单的时候验证物料信息
-    private onConfirm(){
-      this.$router.push({
-          name:'AddOrderGood',
-          query:{   
-          }
-      });  
+    // private onConfirm(){
+    //   this.$router.push({
+    //       name:'AddOrderGood',
+    //       query:{   
+    //       }
+    //   });  
+    // }
+    private goBack(){
+      this.$router.push('/');
     }
 }
 </script>

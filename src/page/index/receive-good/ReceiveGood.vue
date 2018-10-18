@@ -139,7 +139,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
   //  }
 })
 export default class ReceiveGood extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private selected:String = 'deliver';
     private service: ReceiveGoodService;
     private pager:Pager;

@@ -1,7 +1,7 @@
 <!--订货单查询-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='订货单查询' @goBack="goBack">
+    <ezt-header :back="true" title='订货单查询'>
        <div slot="action">
        </div>
     </ezt-header>    
@@ -50,6 +50,9 @@ import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { OrderGoodsService} from '../../service/OrderGoodsService';
+import CACHE_KEY from '../../constans/cacheKey'
+import { CachePocily } from "../../common/Cache";
+import { ECache } from "../../enum/ECache";
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -68,13 +71,18 @@ declare var mobiscroll:any;
    }
 })
 export default class OrderGoods extends Vue{
+    private cache = CachePocily.getInstance();
     private service: OrderGoodsService;
-
+    private searchParam:{}={};
     created() {     
        this.service = OrderGoodsService.getInstance();
     }
 
-    mounted(){      
+    mounted(){   
+      if(this.cache.getData(CACHE_KEY.INITSTOCK_SEARCH)){
+        this.searchParam = this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SEARCH);
+      }
+      console.log(this.searchParam,'00000');   
     }
    
     private goBack(){

@@ -3,11 +3,11 @@
    <!--确认盘点单  审核盘点单  盘库详情  实盘录入-->
    <div class="ezt-page-con librarydetails" 
         v-if="types== pageType.ConfirmList || types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.RealdiscEntry || types== pageType.InventoryType">
-      <ezt-header :back="true" title="title" @goBack="goBack">
+      <ezt-header :back="true" title="title" @goBack="goBack" :isInfoGoback="true">
         <div slot="action">
             <span></span>
         </div>        
-      </ezt-header> 
+      </ezt-header>    
       <div class="ezt-main">
           <div class="content">
           <div class="pkdetails_new">
@@ -74,7 +74,7 @@
           </div>
            <div class="temporary" slot="confirm" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry || types== pageType.InventoryType">
               <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.LibraryDetails">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
-                <!-- 盘点类型导入之后的暂存提交接口 -->
+                <!-- 盘点类型导入之后的暂存提交接口 --> 
                 <div class="button" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry">
                     <div class="storage" @click="storage">暂存1</div>
                     <div class="sub" @click="sub">提交1</div>
@@ -133,6 +133,7 @@ export default class stockTaking extends Vue{
     created() {
       this.service = StockTakingService.getInstance();
       this.types = this.$route.query.types
+      
     }
     mounted(){       
       /**
@@ -182,7 +183,7 @@ export default class stockTaking extends Vue{
         const store_name = this.user.auth.store_name
         const warehouse_name = this.details.warehouse_id
         const audit_name = this.user.auth.username
-        const ids = this.details.id 
+        const ids = this.details.id  
         const stock_count_mode = this.details.stock_count_mode
         const organ_brief_code = this.user.auth.organ_brief_code
         this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  

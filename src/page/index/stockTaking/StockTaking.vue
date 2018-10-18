@@ -7,7 +7,7 @@
         :infinite-scroll-disabled="allLoaded" 
         infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="盘库" @goBack="goBack">
+    <ezt-header :back="true" title="盘库" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
@@ -109,10 +109,6 @@
       </li>
     </ul>
   </div> 
-  <!-- 点击日周月盘如果有未审核单据会提示 -->
-   <!-- <confirm v-model="isAudited" @on-confirm="onConfirm('name')">
-        <p style="text-align:center;">有单据未完成审核，是否进行盘点?</p>
-   </confirm> -->
 </div>
 </template>
 <script lang="ts">   
@@ -322,7 +318,7 @@ export default class stockTaking extends Vue{
       this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
         this.$router.push({
           name:'LibraryDetails',
-          query:{
+          query:{ 
               types:types.toString(),
           }});  
           this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
@@ -349,34 +345,24 @@ export default class stockTaking extends Vue{
     private addinventorylist(type:any,name:any,bill_type:string){
       this.service.getInventoryType(type.bill_type).then(res=>{ 
         this.$router.push({
-            name:'AddinventoryList',
-            query:{
-             name:type.name,
-             bill_type:type.bill_type
-           }
+            name:'AddinventoryList', 
+            query:{name:type.name,bill_type:type.bill_type}
          });
          this.newlyadded = false
-        //  this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
-         this.type = res.data.data[0].bill_type;
+         this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
       },err=>{
           if(err instanceof ResponseError){
+            const that = this;
             if(err.data.errmsg  === 'unreview'){
-                debugger
                 this.newlyadded = false
-                this.names = type.name;
-                this.billType = type.bill_type;
                 this.$vux.confirm.show({   
                   // 组件除show外的属性
-                  onConfirm (type:any,name:any,bill_type:string) {
-                      this.$router.push({
+                  onConfirm () {
+                      that.$router.push({
                           name:'AddinventoryList',
-                          query:{
-                            name:this.names,
-                            bill_type:this.billType
-                          }
-                        });
-                      this.newlyadded = false
-                      this.type = this.billType;
+                          query:{name:type.name,bill_type:type.bill_type}
+                      });
+                      that.newlyadded = false
                   },
                   content:'有单据未完成审核，是否进行盘点?'
                 })

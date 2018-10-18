@@ -1,7 +1,7 @@
 <!--选择模板-->
 <template>
    <div class="ezt-page-con selectthetemplate">   
-    <ezt-header :back="true" title="选择模板" @goBack="goBack">
+    <ezt-header :back="true" title="选择模板" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
           <span></span>
        </div>        

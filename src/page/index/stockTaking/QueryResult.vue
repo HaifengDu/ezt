@@ -1,7 +1,7 @@
 <!--查询结果-->
 <template>
 <div class="ezt-page-con queryresult">
-    <ezt-header :back="true" title="查询结果" @goBack="goBack">
+    <ezt-header :back="true" title="查询结果" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
           <span></span>
        </div>        

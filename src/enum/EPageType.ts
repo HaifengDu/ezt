@@ -4,5 +4,5 @@ export enum PageType {
     ConfirmList,  //确认盘点单,
     AuditList, //审核盘点单,
     InventoryType,  //盘点类型导入,
-}
+}    
 export default PageType;

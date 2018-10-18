@@ -164,6 +164,11 @@ declare module 'vue/types/vue' {
         show:(...args:any[])=>void,
         hide:(...args:any[])=>void,
         isVisible:(...args:any[])=>void
+      },
+      confirm:{
+        show:(...args:any[])=>void,
+        onCancel:(...args:any[])=>void,
+        onConfirm:(...args:any[])=>void
       }
     }
   }

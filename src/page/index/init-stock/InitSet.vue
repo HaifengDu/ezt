@@ -1,6 +1,6 @@
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back="true" title="库存初始设置" @goBack="goBack"></ezt-header>
+        <ezt-header :back="true" title="库存初始设置" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
@@ -52,9 +52,9 @@
             </ezt-footer>
         </div>
         <!-- 返回时提示保存信息 -->
-        <confirm v-model="isCheckDay" @on-confirm="checkDayonConfirm">
+        <!-- <confirm v-model="isCheckDay" @on-confirm="checkDayonConfirm">
             <p style="text-align:center;"> 当前机构初始化库存为0，日结后初始化数据不可维护，请确认是否日结。</p>
-        </confirm>
+        </confirm> -->
     </div>
 </template>
 <script lang="ts">
@@ -142,18 +142,23 @@ export default class InitStock extends Vue{
     /**
      * 日结确认
      */
-    private checkDayonConfirm(){
-        this.checkDate('00');
-    }
+    // private checkDayonConfirm(){
+    //     this.checkDate('00');
+    // }
     /**
      * 日结
      */
     private handlerCheckDay(){
-        this.isCheckDay = true;
-    }    
-    /**
-     * 返回
-     */
+        // this.isCheckDay = true;
+        let _this = this;
+        this.$vux.confirm.show({
+            onConfirm () {
+            _this.checkDate('00');
+            },
+            content:"当前机构初始化库存为0，日结后初始化数据不可维护，请确认是否日结。",
+            showCancelButton: false
+        })
+    } 
     private goBack(){
         this.$router.push("/");
     }

@@ -64,12 +64,12 @@
                        <input v-model="model.isContain" id="c1" value="3" type="radio" name="contaion" class="radio">
                         <label for="c1" class="radio" name="contaion">到货时间≤
                             <i class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select" v-model="containTime.newHour" :disabled="model.isContain!='3'">
+                                <select class="ezt-select" v-model="containTime.newHour" :disabled="model.isContain!='3'">
                                     <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
                                 </select>
                            </i>：
                            <i class="title-select-name item-select">
-                                <select name="" id="" class="ezt-select" v-model="containTime.newMinut" :disabled="model.isContain!='3'">
+                                <select class="ezt-select" v-model="containTime.newMinut" :disabled="model.isContain!='3'">
                                     <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
                                 </select>
                            </i>

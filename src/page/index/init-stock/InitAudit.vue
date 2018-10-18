@@ -1,6 +1,6 @@
 <template>
     <div class="ezt-page-con">
-        <ezt-header title="审核初始化单" :back="true" @goBack="goBack"></ezt-header>
+        <ezt-header title="审核初始化单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
@@ -40,25 +40,13 @@
                 </ul>
                 <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
-                        <!-- <mt-cell-swipe
-                        :right="[
-                            {
-                            content: '删除',
-                            style: { background: '#ccc', color: '#000' },
-                            handler: () => {deleteSection(item)}
-                            }
-                        ]"
-                        > -->
-                        <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+                        <div class="ezt-detail-good" v-swipeleft="handlerSwipe.bind(this,item,true)" 
+                v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                             <div class="good-detail-l">
                                 <div>
                                     <span class="good-detail-name">{{item.name}}
                                         <span class="good-detail-sort">（规格）</span>
                                     </span>
-                                    <!-- <span @click="editStatus">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
-                                    </span>                                    -->
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
@@ -78,59 +66,7 @@
                                 </div>                    
                             </div>
                         </div>
-                         <div class="ezt-detail-del" @click="delAction(item)">删除</div>   
-                        <!-- </mt-cell-swipe> -->
-                         <div>
-                            <x-dialog v-model="isEdit" class="dialog-demo">
-                            <div class="ezt-dialog-header">                                
-                                <span class="ezt-close" @click="isEdit=false" >
-                                <i class="fa fa-times" aria-hidden="true"></i>
-                                </span>
-                            </div>                            
-                            <div class="warehouse-list">
-                                <ul class="edit-good-list">
-                                    <li>
-                                        <span class="title-select-name">数量：</span>
-                                        <x-number v-model="item.num" button-style="round" :min="0"></x-number>
-                                    </li>
-                                    <li v-if="addBillInfo.costType==0">
-                                        <span class="title-dialog-name">价格：</span>
-                                        <span class="icon-input price">
-                                            <input type="number" class="ezt-smart" v-model="item.price">
-                                        </span>                                       
-                                    </li>
-                                    <li v-if="addBillInfo.costType==1">
-                                        <span class="title-dialog-name">含税额：</span>
-                                        <span class="icon-input price">
-                                            <input type="number" class="ezt-smart" v-model="item.amt">
-                                        </span>                                       
-                                    </li>
-                                    <li>
-                                        <span class="title-dialog-name">税率：</span>
-                                        <span class="icon-input">
-                                            <input type="number" class="ezt-smart" v-model="item.rate">
-                                        </span>
-                                    </li>
-                                    <li class="select-list">
-                                        <span class="title-dialog-name">供应商：</span>
-                                        <span class="title-select-name item-select">
-                                        <select name="" id="" placeholder="请选择" class="ezt-select" v-model="item.supplier">
-                                            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                            <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                                        </select>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span class="title-dialog-name">备注：</span>
-                                        <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="item.remark">
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="mine-bot-btn">
-                                <span class="ezt-lone-btn">确定</span>
-                            </div>             
-                            </x-dialog>
-                        </div>                       
+                         <div class="ezt-detail-del" @click="delAction(item)">删除</div>                                               
                     </li>
                 </ul> 
                  
@@ -140,23 +76,15 @@
             <div class="ezt-foot-temporary" slot="confirm">
             <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                 <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                <b>数量</b><span>{{TotalNum}}</span>，
-                <b>含税金额￥</b><span>{{TotalAmt}}</span>
+                <b>数量</b><span>{{Total.num}}</span>，
+                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
             </div>
             <div class="ezt-foot-button">
                 <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
                 <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive">提交并审核</a>   
             </div>  
             </div>
-        </ezt-footer>  
-         <!-- 返回时提示保存信息 -->
-        <confirm v-model="isSave" @on-confirm="onConfirm">
-            <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-        </confirm> 
-         <!-- 删除物料时 校验 -->
-        <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
-            <p style="text-align:center;"> 请确认是否删除该物料。</p>
-        </confirm>
+        </ezt-footer> 
     </div>
 </template>
 <script lang="ts">
@@ -166,20 +94,17 @@ import {mapActions,mapGetters} from 'vuex';
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { InitStockService } from "../../../service/InitStockService";
 import { CachePocily } from "../../../common/Cache";
+import ObjectHelper from '../../../common/objectHelper'
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
  computed: {
     ...mapGetters({
-    //   addBillInfo: "publicAddGood/addBillInfo", //添加采购入库单的单据信息
       selectedGood: "publicAddGood/selectedGood", //选择物料的物品
-    //   addBeforeBillInfo:'publicAddGood/addBeforeBillInfo'
     })
   },
   methods: {
     ...mapActions({
-    //   setAddBillInfo: "publicAddGood/setAddBillInfo",
-    //   setAddBeforeBillInfo:"publicAddGood/setAddBeforeBillInfo",
       setSelectedGood: "publicAddGood/setSelectedGood"
     })
   }
@@ -189,15 +114,8 @@ export default class InitStock extends Vue{
     private service: InitStockService;
     private addBillInfo: any={}; //store中
     private addBeforeBillInfo: any={};
-    // private setAddBillInfo: INoopPromise; //store中给addBillInfo赋值
-    // private setAddBeforeBillInfo: INoopPromise;
     private setSelectedGood: INoopPromise;
     private selectedGood: any[]; //store中selectedGood的值
-    private isEdit: boolean = false; //物料是否可编辑
-    private isSave:boolean = false;//返回的时候是否保存单据信息
-    private isWarehouse:boolean = false;//仓库
-    private isDelGood:boolean = false; //删除物料判断
-    private deleteData:any={};//删除时存储所删除数据
     private orderType: any[] = [
         {
             //单据类型下拉数据
@@ -213,16 +131,48 @@ export default class InitStock extends Vue{
    created() {
         this.service = InitStockService.getInstance();
         this.addBillInfo.editPrice = true;
-        // (this.selectedGood||[]).forEach(item=>item.active = false);
         (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
     mounted(){        
         if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+            this.addBillInfo.goodList = [{
+                id:21,
+                name:'牛肉',
+                price:'15',
+                utilname:'KG',
+                num:2,
+                roundValue:{//可直拨的数据
+                    num: 10,
+                    numed:0,
+                    list:[{
+                    name:'仓库一号',
+                    num:0
+                    },{
+                    name:'仓库二号',
+                    num:0
+                    }]
+                }
+                },{
+                    id:2,
+                    name:'白菜',
+                    price:'1.5',
+                    utilname:'KG',
+                    num:3,
+                    roundValue:{//可直拨的数据
+                    num: 10,
+                    numed:0,
+                    list:[{
+                        name:'仓库一号',
+                        num:0
+                    },{
+                        name:'仓库二号',
+                        num:0
+                    }]
+                    }
+                }]
         }
-        if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
-            this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
-        }
+        this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         if(this.selectedGood.length==0&&this.addBillInfo.goodList){
             this.setSelectedGood(this.addBillInfo.goodList); 
         }
@@ -235,21 +185,20 @@ export default class InitStock extends Vue{
 
     }
     /**
-     * computed demo
-     * 物料总数量
-     */
-    private get TotalNum() {
-        return this.selectedGood.reduce((ori, item) => {
-        return Number(ori) + Number(item.num);
-        }, 0);
-    }
-    /**
-     * 物料总金额
-     */
-    private get TotalAmt() {
-        return this.selectedGood.reduce((ori, item) => {
-        return ori + item.num * item.price;
-        }, 0);
+   * 
+   * 物料总数量\总金额
+   */
+    private get Total(){
+      return this.selectedGood.reduce((ori,item)=>{
+       ori.num = ori.num+Number(item.num); 
+        if(item.price){
+            ori.Amt = ori.Amt + (item.num * item.price);
+        }else{
+            ori.Amt = ori.Amt + (item.amt);
+        }      
+     
+      return ori;
+      },{num:0,Amt:0});
     }
     //选择物料
     private renderUrl(info: string) {
@@ -262,48 +211,34 @@ export default class InitStock extends Vue{
                 costType:this.addBillInfo.costType}
         })
     }
-    // //点击物料进行编辑数据
-    // private editStatus() {
-    //     this.isEdit = true;
-    // }
-    private handlerLeft(item:any){     
-      item.active = true;
-    }
-    private handlerRight(item:any){
-      item.active = false;
+    /**
+     * 左侧滑动
+     *  */
+    private handlerSwipe(item:any,active:boolean){     
+      item.active = active;
     }
 /**
  * 删除物料操作
  */
 private delAction(item:any){
-    this.deleteData = item;
-    this.isDelGood = true;
-}
-/**
- * 确认删除物料
- */
-private onDelConfirm(){
-    this.deleteSection(this.deleteData);
-}
-/**
- * 取消删除物料
- */
-private onDelCancel(){
-    this.isDelGood = false;
-    let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-    return this.deleteData.id == info.id;
-    })
-    this.selectedGood[newIndex].active = false;
-}
-    /**
-     * 左滑删除某一项
-     */
-    private deleteSection(item:any){
-        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
+    let _this = this;
+    this.$vux.confirm.show({
+      // 组件除show外的属性
+      onCancel () {
+        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
         })
-        this.selectedGood.splice(newIndex,1);
-    }
+        _this.selectedGood[newIndex].active = false;
+      },
+      onConfirm () {
+        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
+        })
+        _this.selectedGood.splice(newIndex,1);
+      },
+      content:'请确认是否删除该物料。'
+    })
+}
     /**
      * 页面列表审核
      */
@@ -312,11 +247,22 @@ private onDelCancel(){
             this.$toasted.show("请添加物料！");
             return false;
         } 
-        this.addBillInfo={},
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.$toasted.success("审核成功！");
-        this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     
+        let _this = this;
+        this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {
+                _this.setSelectedGood([]);
+                _this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});   
+            },
+            onConfirm () {
+                _this.setSelectedGood([]);
+                _this.$toasted.success("审核成功！");
+                _this.$router.push("/initStock");
+            },
+            content:'确认审核该单据？',
+            confirmText:"审核通过",
+            cancelText:"审核不通过"
+        }) 
     }
     /**
      * 页面保存
@@ -336,20 +282,26 @@ private onDelCancel(){
      * 返回
      */
     private goBack() {
+        let _this = this;
         if((this.addBillInfo&&this.addBillInfo.warehouse)||this.selectedGood.length>0){
-            this.isSave=true;
+            this.$vux.confirm.show({
+                // 组件除show外的属性
+                onCancel () {
+                },
+                onConfirm () {
+                    _this.addBillInfo={},
+                    _this.setSelectedGood([]);
+                    _this.addBeforeBillInfo={};
+                    _this.$router.push('/initStock');
+                },
+                content:"返回后，本次操作记录将丢失，请确认是否离开？"
+            })
         }else{
             this.addBillInfo={},
             this.setSelectedGood([]);
             this.addBeforeBillInfo={};
             this.$router.push('/initStock');
         }
-    }
-    private onConfirm(){//确认离开，清空store中的物料和单据信息
-        this.addBillInfo={},
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.$router.push('/initStock');
     }
 }
 </script>

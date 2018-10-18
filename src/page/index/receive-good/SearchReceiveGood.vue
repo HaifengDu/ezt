@@ -1,7 +1,7 @@
 <!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='收货单查询' @goBack="goBack">
+    <ezt-header :back="true" title='收货单查询'>
        <div slot="action">
        </div>
     </ezt-header>    
@@ -38,15 +38,16 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
-import {TabItem,LoadingPlugin} from 'vux'
+import {TabItem} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import CACHE_KEY from '../../../constans/cacheKey'
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -65,47 +66,22 @@ declare var mobiscroll:any;
   //  }
 })
 export default class ReceiveGood extends Vue{
-    private title:String = '';
+    private cache = CachePocily.getInstance(ECache.LocCache);
     private service: ReceiveGoodService;
     private pager:Pager;
-    private getGoodList:INoopPromise
     private hideMask:()=>void;
     private showMask:()=>void;
-    private searchParam:String = "";
-    // private updateUser:INoop;
-    private list:any[] = [];
-    private goodList:any[] = [];
-
-    private tabList:TabList = new TabList();
+    private searchParam:{}={};
     created() {     
        this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
-       this.goodList = [];
-      //  this.getGoodList();
     }
 
-    mounted(){      
-      this.title = this.$route.params.type 
-      this.searchParam = this.$route.params.obj;
+    mounted(){  
+      if(this.cache.getData(CACHE_KEY.RECEIVE_SEARCH)){
+        this.searchParam = this.cache.getDataOnce(CACHE_KEY.RECEIVE_SEARCH);
+      }
       console.log(this.searchParam,'00000');
-    }
-
-  /**
-   * computed demo
-   */
-    private get Total(){
-      return this.list.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
-    }
-    /**
-     * 确认收货
-     */
-    private confirmReceive(){
-      console.log('确认收货！')
-    }
-    private goBack(){
-      this.$router.push('/ReceiveGood');
     }
    
 }

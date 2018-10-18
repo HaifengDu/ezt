@@ -1,6 +1,6 @@
 <template>
     <div class="ezt-page-con">
-        <ezt-header title="初始化单详情" :back="true" @goBack="goBack"></ezt-header>
+        <ezt-header title="初始化单详情" :back="true"></ezt-header>
         <div class="ezt-main"> 
             <div class="ezt-backcolor"></div>
             <div class="ezt-detail-cot">
@@ -54,8 +54,8 @@
             <div class="ezt-foot-temporary" slot="confirm">
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{goodList.length}}</span>，
-                <b>数量</b><span>{{TotalNum}}</span>，
-                <b>含税金额￥</b><span>{{TotalAmt}}</span>
+                <b>数量</b><span>{{Total.num}}</span>，
+                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
             </div> 
             </div>
         </ezt-footer>  
@@ -77,31 +77,46 @@ export default class InitStock extends Vue{
     created(){
         if(this.cache.getData(CACHE_KEY.INITSTOCK_DETAILLIST)){
             this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_DETAILLIST));
-            this.goodList = this.detailList.goodList;
+            this.goodList = [{
+            name:"猪肉",
+            sort:"规格",
+            price:12,
+            unitName:"KG",
+            billNo:"003222",
+            amt: 360,
+            remark:"这是水果",
+            num:3,
+            supplier:"上海供应商2",
+            rate:30
+            },{
+                name:"大猪蹄子",
+                sort:"规格",
+                price:22,
+                unitName:"KG",
+                billNo:"003222",
+                amt: 660,
+                remark:"这是肉",
+                num: 6,
+                supplier:"河南供应商",
+                rate:20
+            }];
         }
     }
      /**
      * computed demo
-     * 物料总数量
+     * 物料总数量\总金额
      */
-        private get TotalNum(){
+    private get Total(){
         return this.goodList.reduce((ori,item)=>{
-            return Number(ori)+Number(item.num);       
-        },0);
-        }
-    /**
-     * 物料总金额
-     */
-    private get TotalAmt(){
-        return this.goodList.reduce((ori,item)=>{
-        return ori+(item.num*item.price);       
-        },0).toFixed(2);
-    }
-    /**
-     * 返回
-     */
-    private goBack(){
-        this.$router.push("/initStock");
+        ori.num = ori.num+Number(item.num); 
+            if(item.price){
+                ori.Amt = ori.Amt + (item.num * item.price);
+            }else{
+                ori.Amt = ori.Amt + (item.amt);
+            }      
+        
+        return ori;
+        },{num:0,Amt:0});
     }
 }
 </script>

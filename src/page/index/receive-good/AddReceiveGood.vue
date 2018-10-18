@@ -1,7 +1,7 @@
 <!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='添加采购入库单' @goBack="goBack">
+    <ezt-header :back="true" title='添加采购入库单' @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
        </div>
     </ezt-header>    
@@ -12,7 +12,7 @@
             <span class="title-search-name is-required">单据类型：</span>
             <span class="title-select-name item-select">
               <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType" :class="[{'selectError':errBillType}]">
+                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -22,7 +22,7 @@
             <span class="title-search-name is-required">供应商：</span>
             <span class="title-select-name item-select">
               <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplier"
-              @change="handlerSupplier" :class="[{'selectError':errSupplier}]">
+              @change="handlerBillType('supplier','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[1].supplier}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -32,7 +32,7 @@
             <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select">
               <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerWarehouse" :class="[{'selectError':errWarehouse}]">
+              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[2].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -52,18 +52,9 @@
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">
-              <!-- <mt-cell-swipe
-              :right="[
-                  {
-                  content: '删除',
-                  style: { background: '#ccc', color: '#000' },
-                  handler: () => {deleteSection(item)}
-                  }
-              ]"
-              > -->
-                <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">              
+                <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
+                v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                     <div class="good-detail-l">
                         <div>
                             <span class="good-detail-name">
@@ -78,15 +69,12 @@
                         </div>                     
                     </div>
                     <div class="good-detail-r">
-                      <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
                       <div class="park-input"> 
                         <span class="title-search-name">备注：{{item.remark}}</span>
-                        <!-- <input type="text" class="ezt-middle" v-model="item.remark"> -->
                       </div>                    
                     </div>
                 </div> 
                 <div class="ezt-detail-del" @click="delAction(item)">删除</div>
-              <!-- </mt-cell-swipe>              -->
            </li>
         </ul>   
       </div> 
@@ -94,8 +82,8 @@
         <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
-            <b>数量</b><span>{{TotalNum}}</span>，
-            <b>￥</b><span>{{TotalAmt}}</span>
+            <b>数量</b><span>{{Total.num}}</span>，
+            <b>￥</b><span>{{Total.Amt}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
@@ -103,44 +91,16 @@
           </div>  
         </div>
       </ezt-footer>
-    </div>
-    <!-- 返回时提示保存信息 -->
-    <confirm v-model="isSave" @on-confirm="onConfirm">
-      <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-    </confirm>
-    <!-- 当有物料 单据类型发生变化时校验 -->
-    <confirm v-model="isBillType" @on-cancel="onBillTypeCancel('billType')" @on-confirm="onBillTypeConfirm('billType')">
-      <p style="text-align:center;"> 您已维护物料信息，如调整单据类型，须重新选择物料。</p>
-    </confirm>
-    <!-- 当有物料 供应商发生变化时校验 -->
-    <confirm v-model="isSupplier" @on-cancel="onBillTypeCancel('supplier')" @on-confirm="onBillTypeConfirm('supplier')">
-      <p style="text-align:center;"> 您已维护物料信息，如调整供应商，须重新选择物料。</p>
-    </confirm>
-    <!-- 当有物料 仓库发生变化时校验 -->
-    <confirm v-model="isWarehouse" @on-cancel="onBillTypeCancel('warehouse')" @on-confirm="onBillTypeConfirm('warehouse')">
-      <p style="text-align:center;"> 您已维护物料信息，如调整仓库，须重新选择物料。</p>
-    </confirm>
-    <!-- 删除物料时 校验 -->
-    <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
-        <p style="text-align:center;"> 请确认是否删除该物料。</p>
-    </confirm>
-    <!-- 审核时 校验 -->
-    <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
-        <p style="text-align:center;"> 请确认是否删除该物料。</p>
-    </confirm>
-      
+    </div>      
   </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager';
-import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -149,50 +109,29 @@ import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
    components:{
-     TabItem
    },
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-      //  'addBillInfo':'publicAddGood/addBillInfo',//添加采购入库单的单据信息
-      //  'addBeforeBillInfo':'publicAddGood/addBeforeBillInfo',//当改变单据信息的时候，取消时还原之前的值
      })
    },
    methods:{
-     ...mapActions({
-      // 'setAddBillInfo':"publicAddGood/setAddBillInfo",
-      'setSelectedGood':'publicAddGood/setSelectedGood',
-      // "setAddBeforeBillInfo":"publicAddGood/setAddBeforeBillInfo",
-     })
+    ...mapActions({
+    'setSelectedGood':'publicAddGood/setSelectedGood',
+    })    
    }
 })
 export default class ReceiveGood extends Vue{
   private cache = CachePocily.getInstance(ECache.LocCache);
-  private isSave:boolean=false;//确认不保存？
-  private isBillType:boolean=false;//有物料，单据类型发生变化之后校验
-  private isSupplier:boolean=false;//有物料，供应商发生变化 之后校验
-  private isWarehouse:boolean=false;//有物料，仓库发生变化 之后校验
-  private isDelGood:boolean = false; //删除物料判断
-  private isAudit: boolean = false;
-  private deleteData:any={};//删除时存储所删除数据
   private service: ReceiveGoodService;
-  private pager:Pager;
   // private getGoodList:INoopPromise //调用store中的请求接口
   private hideMask:()=>void;
   private showMask:()=>void;
   // private updateUser:INoop;
-  private list:any[] = [];
-  private goodList:any[] = [];
-  private errSupplier:boolean = false;//未选择供应商
-  private errBillType:boolean = false;//未选择单据类型
-  private errWarehouse:boolean = false;//未选择仓库
-
-  private tabList:TabList = new TabList();
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-  // private setAddBeforeBillInfo:INoopPromise;
   private addBillInfo:any={
     billType:"",
     supplier:"",
@@ -207,16 +146,19 @@ export default class ReceiveGood extends Vue{
     name:"采购单",
     type:"m"
   }];
+  /**
+   * 枚举 表单字段
+   */
+  private billFiles=[
+    {id:"billType",msg:"请选择单据类型！",billType:false},
+    {id:"supplier",msg:"请选择供应商！",supplier:false},
+    {id:"warehouse",msg:"请选择仓库！",warehouse:false}];
   created() {  
-      this.pager = new Pager()
       this.service = ReceiveGoodService.getInstance();
-      this.goodList = []; 
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
     }
-    if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
-        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
-    }
+    this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     //  this.getGoodList();
     (this.selectedGood||[]).forEach(item=>item.active = false);
   }
@@ -228,98 +170,59 @@ export default class ReceiveGood extends Vue{
     //   this.addBillInfo.warehouse="";
     // }
   }
-
-  private handlerLeft(item:any){ 
-    item.active=true;
+  /**
+   * 左侧滑动
+   */
+  private handleSwipe(item:any,active:boolean){ 
+    item.active=active;
     
   }
-  private handlerRight(item:any){
-    item.active=false;
-  }
-
   /**
-   * computed demo
-   * 物料总数量
+   * 
+   * 物料总数量\总金额
    */
-    private get TotalNum(){
+    private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
-        return Number(ori)+Number(item.num);       
-      },0);
+       ori.num = ori.num+Number(item.num);       
+       ori.Amt = ori.Amt + (item.num * item.price);
+       ori.Amt = (ori.Amt).toFixed(2);
+      return ori;
+      },{num:0,Amt:0});
     }
-  /**
-   * 物料总金额
-   */
-  private get TotalAmt(){
-    return this.selectedGood.reduce((ori,item)=>{
-      return ori+(item.num*item.price);       
-    },0).toFixed(2);
-  }
-  //审核通过操作
-  private onPassAudit(){
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$toasted.success("审核成功！");
-    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});   
-  }
-  //审核不通过操作
-  private onUnpassAudit(){
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
-  }
   /**
    * 删除物料操作
    */
   private delAction(item:any){
-      this.deleteData = item;
-      this.isDelGood = true;
-  }
-  /**
-   * 确认删除物料
-   */
-  private onDelConfirm(){
-      this.deleteSection(this.deleteData);
-  }
-  /**
-   * 取消删除物料
-   */
-  private onDelCancel(){
-    this.isDelGood = false;
-    let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-    return this.deleteData.id == info.id;
+    let _this = this;
+    this.$vux.confirm.show({
+      // 组件除show外的属性
+      onCancel () {
+        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
+        })
+        _this.selectedGood[newIndex].active = false;
+      },
+      onConfirm () {
+        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
+        })
+        _this.selectedGood.splice(newIndex,1);
+      },
+      content:'请确认是否删除该物料。'
     })
-    this.selectedGood[newIndex].active = false;
-  }
-  /**
-   * 左滑删除某一项
-   */
-  private deleteSection(item:any){
-      let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-      return item.id == info.id;
-      })
-      this.selectedGood.splice(newIndex,1);
   }
   /**
    * 收货 提交
    */
   private saveReceive(){
-    if(!this.addBillInfo.billType||this.addBillInfo.billType==""){
-      this.errBillType = true;
-      this.$toasted.show("请选择单据类型！");
-      return false;
+    for(let i=0;i<this.billFiles.length;i++){
+      let item = this.billFiles[i];
+      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+        this.$toasted.show(item.msg);
+        item[item.id]=true;
+        return false;
+      }
     }
-    if(!this.addBillInfo.supplier||this.addBillInfo.supplier==""){
-      this.errSupplier = true;
-      this.$toasted.show("请选择供应商！");
-      return false;
-    }
-    if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
-      this.errWarehouse = true;
-      this.$toasted.show("请选择仓库！");
-      return false;
-    }   
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
@@ -334,41 +237,50 @@ export default class ReceiveGood extends Vue{
    * 收货 提交并审核
    */
   private confirmReceive(){
-    if(!this.addBillInfo.billType||this.addBillInfo.billType==""){
-      this.errBillType = true;
-      this.$toasted.show("请选择单据类型！");
-      return false;
-    }
-    if(!this.addBillInfo.supplier||this.addBillInfo.supplier==""){
-      this.errSupplier = true;
-      this.$toasted.show("请选择供应商！");
-      return false;
-    }
-    if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
-      this.errWarehouse = true;
-      this.$toasted.show("请选择仓库！");
-      return false;
+    let _this = this;
+     for(let i=0;i<this.billFiles.length;i++){
+      let item = this.billFiles[i];
+      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+        this.$toasted.show(item.msg);
+        item[item.id]=true;
+        return false;
+      }
     }
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
     }
-    this.isAudit = true;
+    this.$vux.confirm.show({
+      // 组件除show外的属性
+      onCancel () {//审核不通过
+        _this.addBillInfo={},
+        _this.setSelectedGood([]);
+        _this.addBeforeBillInfo={};
+        _this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
+      },
+      onConfirm () {//审核通过
+        _this.addBillInfo={},
+        _this.setSelectedGood([]);
+        _this.addBeforeBillInfo={};
+        _this.$toasted.success("审核成功！");
+        _this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
+      },
+      content:'确认审核该单据？',
+      confirmText:"审核通过",
+      cancelText:"审核不通过"
+    })
   }    
     //选择物料
   private renderUrl(info:string){
     if(this.addBillInfo){
-      if(!this.addBillInfo.billType&&this.addBillInfo.billType==""){
-        this.$toasted.show("请选择单据类型！");
-        return false;
-      }
-      if(!this.addBillInfo.supplier&&this.addBillInfo.supplier==""){
-        this.$toasted.show("请选择供应商！");
-        return false;
-      }
-      if(!this.addBillInfo.warehouse&&this.addBillInfo.warehouse==""){
-        this.$toasted.show("请选择仓库！");
-        return false;
+      let _this = this;
+      for(let i=0;i<this.billFiles.length;i++){
+        let item = this.billFiles[i];
+        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+          this.$toasted.show(item.msg);
+          item[item.id]=true;
+          return false;
+        }
       }
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
@@ -381,81 +293,54 @@ export default class ReceiveGood extends Vue{
     
   }
   /**
-   * 选择单据类型
+   * 选择单据类型，供应商，仓库
    */
-  private handlerBillType(item:any){
+  private handlerBillType(val:any,title:any){
+    let _this = this;
     if(this.selectedGood.length>0){
-      this.isBillType=true;
+       this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+          _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
+        },
+        onConfirm () {
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+        },
+        content:title
+      })
     }else{
-      this.addBeforeBillInfo.billType=this.addBillInfo.billType;  
-      this.errBillType = false;//必填项校验          
+      _this.addBeforeBillInfo[val]=_this.addBillInfo[val];  
+      this.billFiles.forEach(item=>{
+        if(item.id == val){
+          item[val]= false;
+        }
+      })         
     }
   }
-    /**
-   * 选择供应商
-   */
-  private handlerSupplier(item:any){
-    if(this.selectedGood.length>0){
-      this.isSupplier=true;
-    }else{
-      this.addBeforeBillInfo.supplier=this.addBillInfo.supplier;   
-      this.errSupplier = false;//必填项校验         
-    }
-  }
-    /**
-   * 选择仓库
-   */
-  private handlerWarehouse(item:any){
-    if(this.selectedGood.length>0){
-      this.isWarehouse=true;
-    }else{
-      this.addBeforeBillInfo.warehouse=this.addBillInfo.warehouse;  
-      this.errWarehouse = false;//必填项校验          
-    }
-  }
-  /**
-   * 有物料时 单据类型、供应商、仓库 变化 确认校验
-   */
-  private onBillTypeConfirm(val:any){
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo[val]=this.addBillInfo[val];
-  }
-  /**
-   * 有物料时 单据类型变化、供应商、仓库变化  取消校验
-   */
-  private onBillTypeCancel(val:any){
-    this.addBillInfo[val] = this.addBeforeBillInfo[val];
-  }
-
-
-
   /**
    * 返回
    */
   private goBack(){
+    let _this = this;
     if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
-      this.isSave=true;
+      this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+          console.log(this) // 非当前 vm
+        },
+        onConfirm () {
+          _this.addBillInfo={},
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo={};
+          _this.$router.push('/receiveGood');
+        },
+        content:"返回后，本次操作记录将丢失，请确认是否离开？"
+      })
     }else{
       this.$router.push('/receiveGood');
     }
-  }
-  private onConfirm(){//确认离开，清空store中的物料和单据信息
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$router.push('/receiveGood');
-  }
-  // private getGoodList(){
-  //     this.service.getGoodList(this.pager.getPage()).then(res=>{
-  //        this.list = res.data.data;
-  //        this.pager.setNext();
-  //     },err=>{
-  //         this.$toasted.show(err.message);
-  //     });
-
-  //     this.pager.setLimit(20);
-  // }
-   
+  } 
 }
 </script>
 

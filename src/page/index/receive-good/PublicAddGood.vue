@@ -1,7 +1,7 @@
 <!--选择物品-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch" @goBack="goBack">
+    <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch">
        <div slot="action">
          <div class="add">
           <span class='ezt-action-point' @click="handlerSearchPage">
@@ -39,7 +39,7 @@
                  <span v-if="useObj.editPrice" class="good-item-sort edit">
                     <span v-if="useObj.costType==0||useObj.editPrice=='m'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>
                     <span class="good-item-sort" v-if="useObj.editPrice == 'q'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-                    <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+                    <span v-if="useObj.costType==1">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                  </span>
                </div>
                <div class="good-item-bot">
@@ -334,6 +334,7 @@ export default class AddGood extends Vue{
             id:1,
             name:'草鱼半成品',
             price:'12',
+            amt:'10',
             utilname:'KG',
             unit:'箱',
             roundValue:{//可直拨的数据
@@ -353,6 +354,7 @@ export default class AddGood extends Vue{
             id:2,
             name:'海参',
             price:'9',
+            amt:'8',
             num:0,
             utilname:'KG',
             unit:'箱',
@@ -365,6 +367,7 @@ export default class AddGood extends Vue{
             id:3,
             name:'土豆',
             price:'3',
+            amt:'4',
             num:0,
             utilname:'KG',
             unit:'斤',
@@ -381,6 +384,7 @@ export default class AddGood extends Vue{
             id:21,
             name:'牛肉',
             price:'15',
+            amt:'22',
             utilname:'KG',
             unit:'斤',
             roundValue:{//可直拨的数据
@@ -614,9 +618,6 @@ private changeDirect(item:any){
     alert('价格修改成功');
     ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
     this.isPrice=false;
-  }
-  private goBack(){
-    this.$router.back();
   }
 }
 </script>

@@ -42,16 +42,16 @@
           </div>
         </div>
         <ul class="icon-menu"  v-if="!titleSelect"><!--主页内容菜单-->
-            <li @click="renderUrl('/needGood')">
+            <!-- <li @click="renderUrl('/needGood')">
               <div class="yaohuo">
                   <span class="ezt-reddot-s"></span>
               </div>
               <span>要货</span></li>
             <li @click="noAction()">
               <div class="jiadan"></div>
-              <span>加单</span></li>
+              <span>加单</span></li> -->
             <li @click="renderUrl('/receiveGood')">
-              <div class="shouhuo"></div>
+              <div class="shouhuo"><span class="ezt-reddot-s"></span></div>
               <span>收货</span></li>
             <li @click="renderUrl('/returnGood')">
               <div class="tuihuo"></div>
@@ -60,11 +60,15 @@
               <div class="panku"></div>
               <span>盘库</span></li>
             <li @click="renderUrl()">
-              <div class="kucun"></div>
+              <div class="kucun"><span class="ezt-reddot-s"></span></div>
               <span>库存初始化</span></li>
             <li @click="renderUrl('/reportLoss')">
               <div class="overflowing"></div>
               <span>损溢</span>
+            </li>
+            <li @click="renderUrl('/allotment')">
+              <div class="diaobo"></div>
+              <span>调拨</span>
             </li>
         </ul>
         <!--内容-->
@@ -248,7 +252,7 @@ export default class Index extends Vue{
 
   }
   .icon-menu li {
-    width: 33%;
+    width: 25%;
     float: left;
     display: flex;
     align-items: center;
@@ -262,7 +266,7 @@ export default class Index extends Vue{
     border-right: none;
   }
 
-  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan, .kucun ,.overflowing{
+  .icon-menu .yaohuo, .shouhuo, .tuihuo, .panku, .jiadan, .kucun ,.overflowing,.diaobo{
     width: 64px;
     height: 64px;
     display: inline-block;
@@ -305,6 +309,10 @@ export default class Index extends Vue{
 
   .icon-menu .overflowing{   
     background: url(../assets/images/icon-kucun.png) no-repeat;
+    background-size: 64px 64px;
+  }
+  .icon-menu .diaobo{
+    background: url(../assets/images/icon-jiadan.png) no-repeat;
     background-size: 64px 64px;
   }
 

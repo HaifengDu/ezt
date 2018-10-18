@@ -35,6 +35,16 @@
     methods: {
       selectChange(val){
         this.$emit('change',val.target.value);
+      },
+      setMax(date){
+        this.instance.option({
+          max:date
+        });
+      },
+      setMin(date){
+        this.instance.option({
+          min:date
+        })
       }
     },
     mounted(){
@@ -56,9 +66,9 @@
       }      
       let _this=this;
       //日历
-      const instance = mobiscroll.date(this.$refs.canlendar,opt);
+      this.instance = mobiscroll.date(this.$refs.canlendar,opt);
       if(this.defaultValue){
-        instance.setVal(new Date(this.defaultValue));
+        this.instance.setVal(new Date(this.defaultValue));
       }
     },
     watch: {

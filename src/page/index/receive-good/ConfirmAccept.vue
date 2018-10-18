@@ -1,7 +1,7 @@
 <!--收货修改页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='收货' @goBack="goBack">
+    <ezt-header :back="true" title='收货' @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
        </div>
     </ezt-header>    
@@ -21,7 +21,7 @@
           </li>
           <li>
             <span class="title-search-name">来货单位：</span>
-            <input type="text" class="ezt-middle">
+            <span>{{111}}</span>
           </li>
           <li class="select-list">
             <span class="title-search-name is-required">仓库：</span>
@@ -117,8 +117,8 @@
         <!-- 不可编辑    采购入库  允许删除物料-->
         <ul v-if="!receive_billtype.shou&&!receive_billtype.diao">               
           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
-              <div class="ezt-detail-good" v-swipeleft="handlerLeft.bind(this,item)" 
-                v-swiperight="handlerRight.bind(this,item)" :class="{'swipe-transform':item.active}">
+              <div class="ezt-detail-good" v-swipeleft="handlerSwipe.bind(this,item,true)" 
+                v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                   <div class="good-detail-l">
                       <div>
                           <span class="good-detail-name">{{item.name}}
@@ -160,13 +160,11 @@
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">
-                            <!-- 收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart"> -->
                             收：{{item.num}}
                           </span>
                       </div>                     
                   </div>
                   <div class="good-detail-r">
-                    <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
                     <div class="park-input">
                       <span class="title-search-name">备注：{{item.remark}}</span>
                     </div>
@@ -181,8 +179,8 @@
          <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
-            <b>数量</b><span>{{TotalNum}}</span>，
-            <b>￥</b><span>{{TotalAmt}}</span>
+            <b>数量</b><span>{{Total.num}}</span>，
+            <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou">暂存</a>  
@@ -192,19 +190,7 @@
             <a href="javascript:(0)" class="ezt-foot-sub" @click="saveAndAuditReceive" v-if="receive_billtype.cai">提交并审核</a>   
           </div>  
         </div>     
-      </ezt-footer>
-      <!-- 切换仓库时校验 是否有以下物料 -->
-      <confirm v-model="isWarehouse" @on-cancel="onWarehouseCancel" :show-confirm-button="false">
-        <p style="text-align:center;"> 物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。</p>
-      </confirm>
-      <!-- 删除物料时 校验 -->
-      <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
-          <p style="text-align:center;"> 请确认是否删除该物料。</p>
-      </confirm>
-      <!-- 审核时 校验 -->
-      <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
-          <p style="text-align:center;"> 请确认是否删除该物料。</p>
-      </confirm>
+      </ezt-footer>    
     </div>
   </div>
 </template>
@@ -212,8 +198,6 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager';
-import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
@@ -226,7 +210,6 @@ import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
    components:{
-     TabItem
    },
    mixins:[maskMixin],
    computed:{
@@ -237,72 +220,25 @@ declare var mobiscroll:any;
    },
    methods:{
      ...mapActions({
-      //  'getGoodList':"receiveGood/getGoodList"
       setSelectedGood:"publicAddGood/setSelectedGood",
      })
    }
 })
 export default class ReceiveGood extends Vue{
     private cache = CachePocily.getInstance(ECache.LocCache);
-    // private beforeWarehouse:string="";//切换仓库校验物品失败的时候，还原之前的仓库值
-    // private addInfo:any={
-    //   warehouse:"01"
-    // };
-    private isDelGood:boolean = false; //删除物料判断
-    private deleteData:any={};//删除时存储所删除数据
     private service: ReceiveGoodService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
-    private pager:Pager;
-    private getGoodList:INoopPromise
     private hideMask:()=>void;
     private showMask:()=>void;
     // private updateUser:INoop;
-    private list:any[] = [];
+    // private list:any[] = [];
     private DirectedNum:number=0;//已直拨的数量
     private restActiveRound:any={};
     private activeRound:any={};
     private errWarehouse:boolean = false;
-    // private goodList:any[] = [{
-    //         id:21,
-    //         name:'牛肉',
-    //         price:'15',
-    //         utilname:'KG',
-    //         num:2,
-    //         roundValue:{//可直拨的数据
-    //           num: 10,
-    //           numed:0,
-    //           list:[{
-    //             name:'仓库一号',
-    //             num:0
-    //           },{
-    //             name:'仓库二号',
-    //             num:0
-    //           }]
-    //         }
-    //     },{
-    //         id:2,
-    //         name:'白菜',
-    //         price:'1.5',
-    //         utilname:'KG',
-    //         num:3,
-    //         roundValue:{//可直拨的数据
-    //           num: 10,
-    //           numed:0,
-    //           list:[{
-    //             name:'仓库一号',
-    //             num:0
-    //           },{
-    //             name:'仓库二号',
-    //             num:0
-    //           }]
-    //         }
-    //     }];
-
     private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
-    private isWarehouse:boolean = false;//切换仓库校验物料
-    private isAudit:boolean = false;//审核时校验
     private receive_billtype: any = {
       shou:false,
       cai:false,
@@ -319,9 +255,7 @@ export default class ReceiveGood extends Vue{
     private addBeforeBillInfo:any={};
     private oldValue = 1;
     created() { 
-       this.pager = new Pager()
        this.service = ReceiveGoodService.getInstance();
-      //  this.beforeWarehouse = this.addInfo.warehouse;
        this.selectedGood.forEach(item=> this.$set(item,'active',false));
     }
     mounted(){     
@@ -351,40 +285,69 @@ export default class ReceiveGood extends Vue{
       console.log(this.receive_billtype,'000999')
       if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+        this.addBillInfo.goodList = [{
+            id:21,
+            name:'牛肉',
+            price:'15',
+            utilname:'KG',
+            num:2,
+            roundValue:{//可直拨的数据
+              num: 10,
+              numed:0,
+              list:[{
+                name:'仓库一号',
+                num:0
+              },{
+                name:'仓库二号',
+                num:0
+              }]
+            }
+          },{
+              id:2,
+              name:'白菜',
+              price:'1.5',
+              utilname:'KG',
+              num:3,
+              roundValue:{//可直拨的数据
+                num: 10,
+                numed:0,
+                list:[{
+                  name:'仓库一号',
+                  num:0
+                },{
+                  name:'仓库二号',
+                  num:0
+                }]
+              }
+          }]
       }
-      if(this.cache.getData(CACHE_KEY.RECEIVE_ADDBEFOREINFO)){
-        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDBEFOREINFO));
-      }
+      this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
       if(this.selectedGood.length==0&&this.addBillInfo.goodList){
         this.setSelectedGood(this.addBillInfo.goodList); 
       }
       (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
 
- /**
-   * computed demo
-   * 物料总数量
+/**
+   * 
+   * 物料总数量\总金额
    */
-    private get TotalNum(){
+    private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
-        return Number(ori)+Number(item.num);       
-      },0);
+       ori.num = ori.num+Number(item.num);       
+       ori.Amt = ori.Amt + (item.num * item.price);
+      return ori;
+      },{num:0,Amt:0});
     }
   /**
-   * 物料总金额
+   * 左侧滑动物料删除
    */
-  private get TotalAmt(){
-    return this.selectedGood.reduce((ori,item)=>{
-      return ori+(item.num*item.price);       
-    },0).toFixed(2);
+  private handlerSwipe(item:any,active:boolean){     
+    item.active = active;
   }
-
-  private handlerLeft(item:any){     
-    item.active = true;
-  }
-  private handlerRight(item:any){
-    item.active = false;
-  }
+  /**
+   * 修改物料的数量 
+   */
   private numChange(item:any,info:any){
     if(item[info]==""||item[info]==0){
       item[info]=1;
@@ -401,21 +364,6 @@ export default class ReceiveGood extends Vue{
         item[info] = beforeInfo[info];
       }
     })
-  }
-  //审核通过操作
-  private onPassAudit(){
-    this.addBillInfo={},
-      this.setSelectedGood([]);
-      this.addBeforeBillInfo={};
-      this.$toasted.success("审核成功！");
-      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});    
-  }
-  //审核不通过操作
-  private onUnpassAudit(){
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});  
   }
    /**
    * 改变直拨的 数量
@@ -508,12 +456,31 @@ export default class ReceiveGood extends Vue{
      * 保存并审核
      */
     private saveAndAuditReceive(){
+      let _this = this;
       this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
       if(!this.selectedGood||this.selectedGood.length<=0){
         this.$toasted.show("请添加物料！");
         return false;
       }
-      this.isAudit = true;
+       this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {//审核不通过
+          _this.addBillInfo={},
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo={};
+          _this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
+        },
+        onConfirm () {//审核通过
+          _this.addBillInfo={},
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo={};
+          _this.$toasted.success("审核成功！");
+          _this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}}); 
+        },
+        content:'确认审核该单据？',
+        confirmText:"审核通过",
+        cancelText:"审核不通过"
+      })
     }
     /**
     *可直拨
@@ -532,51 +499,44 @@ export default class ReceiveGood extends Vue{
      * 删除物料操作
      */
     private delAction(item:any){
-        this.deleteData = item;
-        this.isDelGood = true;
-    }
-    /**
-     * 确认删除物料
-     */
-    private onDelConfirm(){
-        this.deleteSection(this.deleteData);
-    }
-    /**
-     * 取消删除物料
-     */
-    private onDelCancel(){
-        this.isDelGood = false;
-        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-        return this.deleteData.id == info.id;
-        })
-        this.selectedGood[newIndex].active = false;
-    }
-    /**
-     * 左滑删除某一项
-     */
-    private deleteSection(item:any){
-      let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-        return item.id == info.id;
+      let _this = this;
+      this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+          let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.selectedGood[newIndex].active = false;
+        },
+        onConfirm () {
+          let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.selectedGood.splice(newIndex,1);
+        },
+        content:'请确认是否删除该物料。'
       })
-      this.selectedGood.splice(newIndex,1);
     }
     /**
      * 切换仓库校验
      */
     private handlerWarehouse(){
+      
       this.service.checkWarehouse().then(res=>{
         if(res.data.errcode==0){
-          this.isWarehouse= true;
+          let _this = this;
+           this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {//审核不通过
+              _this.addBillInfo.warehouse = _this.addBeforeBillInfo.warehouse;
+            },
+            content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。',
+            cancelText:"返回",
+            showConfirmButton: false
+          })
         }
       })
     }
-    /**
-     * 仓库切换校验 失败 返回
-     */
-    private onWarehouseCancel(){
-      this.addBillInfo.warehouse = this.addBeforeBillInfo;
-    }
-    // 返回
     private goBack(){
       this.addBillInfo={},
       this.setSelectedGood([]);

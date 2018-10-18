@@ -5,10 +5,10 @@
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="收货" @goBack="goBack">
+    <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
        <div slot="action">
          <div>
-           <span class='ezt-action-point' @click="renderUrl('/addReceiveGood')">
+           <span class='ezt-action-point' @click="toPage('/addReceiveGood')">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
           <span class='ezt-action-point' @click="searchTitle">
@@ -19,17 +19,22 @@
     </ezt-header>    
     <div class="ezt-main">       
       <tab :line-width=2 active-color='#fc378c'>
-        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
-        @on-item-click="tabClick(index)" :key="index">{{item.name}}
+        <tab-item 
+        class="vux-center" 
+        :selected="item.active" 
+        v-for="(item, index) in tabList.TabList"
+        @on-item-click="tabClick(index)" 
+        :key="index">
+          {{item.name}}
         </tab-item>
       </tab>        
       <div class="ezt-add-content">
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="renderUrl('')">
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage('')">
             <div class="receive-icon-title">
             <span class="receive-icon-dcName"></span>
             <span class="return-list-title">{{item.dc_name}}</span> 
-            <span class="receive-status">{{tabList.getActive().status==1?'待审核':'已完成'}}</span>
+            <span class="receive-status">{{billStatus}}</span>
             </div>
             <div class="receive-icon-content">
               <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -48,16 +53,16 @@
               </div>
             </div>
         </div>
-         <span v-if="allLoaded">已全部加载</span>          
+         <span v-show="allLoaded">已全部加载</span>          
       </div>
     </div>         
   </div>
-   <div v-if="isSearch" class="search-dialog">
+   <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
         <li class="select-list">
         <span class="title-search-name ">收货类型：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
+          <select placeholder="请选择" class="ezt-select">
             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
@@ -66,7 +71,7 @@
         <li class="select-list">
         <span class="title-search-name ">来货单位：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
+          <select placeholder="请选择" class="ezt-select">
             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
@@ -83,7 +88,7 @@
       <li class="select-list">
         <span class="title-search-name ">仓库：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
+          <select placeholder="请选择" class="ezt-select">
             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
@@ -107,7 +112,6 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
 import {TabItem,LoadingPlugin} from 'vux'
@@ -126,7 +130,6 @@ import CACHE_KEY from '../../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
      })
    },
   //  methods:{
@@ -145,13 +148,22 @@ export default class ReceiveGood extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     // private updateUser:INoop;
-    private goodList:any[] = [];//列表页list数据
-    private allLoaded:boolean= false;//数据是否已经全部加载完
-    private isSearch:boolean= false; //搜索的条件
-    private searchParam:any={};//搜索时的查询条件
-    private confirmGoodInfo:any={};//修改页面信息
-    private detailList : any={};//详情
-
+    /**
+     * 列表页list数据
+     */
+    private goodList:any[] = [];
+    /**
+     * 数据是否已经全部加载完
+     */
+    private allLoaded:boolean= false;
+    /**
+     * 搜索显示
+     */
+    private isSearch:boolean= false; 
+    /**
+     * 搜索时的查询条件
+     */
+    private searchParam:any={};
     private tabList:TabList = new TabList();
     private orderType:any=[{
       name:'仓库1',
@@ -162,23 +174,13 @@ export default class ReceiveGood extends Vue{
         name:"待收货",
         status:1,
         active:true,
-      });
-      // this.tabList.push({
-      //   name:"待入库",
-      //   status:2,
-      //   active:false
-      // });
-      this.tabList.push({
+      },{
         name:"已完成",
         status:3,
         active:false
       });
-       this.pager = new Pager()
+       this.pager = new Pager().setLimit(20)
        this.service = ReceiveGoodService.getInstance();
-       this.goodList = [];
-       this.searchParam = {};
-       console.log(this.tabList,'tabList0000')
-      //  this.getGoodList();
     }
 
     mounted(){      
@@ -189,117 +191,34 @@ export default class ReceiveGood extends Vue{
       }); 
       if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
        this.tabList.TabList.forEach((item,index)=>{
-         if(item.name == this.$route.params.purStatus){
-           item.active = true;
-         }else{
-           item.active = false;
-         }
+         item.active = item.name == this.$route.params.purStatus;
        })
       } 
     }
     //详情页跳转
-    private renderUrl(info:string){
+    private toPage(info:string){
+      let confirmGoodInfo = {};
+      let detailList = {};
       if(info){
          this.$router.push(info);
          return false;
       }
       if(this.tabList.getActive().status==1){
-        this.confirmGoodInfo={
+        confirmGoodInfo={
           bill_no:'00111111',
           billType:'合同采购',
           warehouse:'01',
-          remark:'在途中',
-          goodList:[{
-            id:21,
-            name:'牛肉',
-            price:'15',
-            utilname:'KG',
-            num:2,
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:0,
-              list:[{
-                name:'仓库一号',
-                num:0
-              },{
-                name:'仓库二号',
-                num:0
-              }]
-            }
-          },{
-              id:2,
-              name:'白菜',
-              price:'1.5',
-              utilname:'KG',
-              num:3,
-              roundValue:{//可直拨的数据
-                num: 10,
-                numed:0,
-                list:[{
-                  name:'仓库一号',
-                  num:0
-                },{
-                  name:'仓库二号',
-                  num:0
-                }]
-              }
-          }]
+          remark:'在途中',         
         }
         this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.confirmGoodInfo));
-        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.confirmGoodInfo));
+        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
         this.$router.push('/comfirmAccept');
       }else if(this.tabList.getActive().status==3){
-        this.detailList = {
+        detailList = {
           dc_name:"配送中心-8店",
-          bill_no:"000111aab",
-          goodList:[{
-            name:"猪肉",
-            sort:"规格",
-            price:12,
-            unitName:"KG",
-            billNo:"003222",
-            amt: 360,
-            remark:"这是水果",
-            num:3,
-            directWarehouse:[{
-                name:"仓库1",
-                num:1,
-            },{
-                name:"仓库2",
-                num:2,
-            },{
-                name:"仓库3",
-                num:3,
-            },{
-                name:"仓库4",
-                num:66
-            }]
-            },{
-                name:"大猪蹄子",
-                sort:"规格",
-                price:22,
-                unitName:"KG",
-                billNo:"003222",
-                amt: 660,
-                remark:"这是肉",
-                num: 6,
-                directWarehouse:[{
-                    name:"上海仓库1",
-                    num:1,
-                },{
-                    name:"北京仓库2",
-                    num:2,
-                },{
-                    name:"軣咕咕3",
-                    num:3,
-                },{
-                    name:"仓库4",
-                    num:66
-                }]
-            }]
+          bill_no:"000111aab",         
         }
-        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(this.detailList));
+        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
         this.$router.push('/checkDetail');
       }
       
@@ -312,6 +231,9 @@ export default class ReceiveGood extends Vue{
         return ori.uprice+item;
       },0);
     }
+    private get billStatus(){
+      return this.tabList.getActive().status==1?'待审核':'已完成';
+    }
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.allLoaded=false;
@@ -322,7 +244,7 @@ export default class ReceiveGood extends Vue{
     //下拉加载更多
     private loadMore() {
       if(!this.allLoaded){
-         this.showMask();
+        this.showMask();
       this.$vux.loading.show({
         text:'加载中..'
       });
@@ -330,9 +252,8 @@ export default class ReceiveGood extends Vue{
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
           this.allLoaded=true;
-        }else{
-          this.goodList=this.goodList.concat(res.data.data);
         }
+        this.goodList=this.goodList.concat(res.data.data);
         setTimeout(()=>{
           this.$vux.loading.hide();
           this.hideMask();
@@ -340,7 +261,6 @@ export default class ReceiveGood extends Vue{
       },err=>{
           this.$toasted.show(err.message);
       })
-      this.pager.setLimit(20);
       }     
     }
     //获取列表
@@ -368,12 +288,12 @@ export default class ReceiveGood extends Vue{
     private toSearch(){
       this.isSearch = false;
       this.hideMask();
-      this.$router.push({name:'SearchReceiveGood',params:{obj:this.searchParam}});
-    }
+      this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
+      this.$router.push('/searchReceiveGood');
+    }  
     private goBack(){
-      this.$router.push('/');
-    }
-   
+      this.$router.push("/");
+    } 
 }
 </script>
 

@@ -1,5 +1,5 @@
 import Vue from "vue";
-import { Tab, XInput, Group, LoadingPlugin, XDialog, PopupRadio, Cell, CellBox, Checklist, XNumber, Search, InlineXNumber, Rater, Confirm, ButtonTab, ButtonTabItem } from 'vux'
+import { Tab, XInput, Group, LoadingPlugin, XDialog, PopupRadio, Cell, CellBox, Checklist, XNumber, Search, InlineXNumber, Rater,Confirm, ConfirmPlugin, ButtonTab, ButtonTabItem } from 'vux'
 import Toasted from 'vue-toasted';
 import MessageBox from "element-ui/lib/message";
 import Button from "element-ui/lib/button";
@@ -136,6 +136,7 @@ Vue.component('inline-x-number', Vue.extend(InlineXNumber))
 Vue.component('rater', Vue.extend(Rater))
 Vue.use(LoadingPlugin)
 Vue.use(InfiniteScroll);//更多加载
+Vue.use(ConfirmPlugin);
 Vue.component("x-dialog", Vue.extend(XDialog));
 Vue.component("x-number", Vue.extend(XNumber));
 Vue.component(CellSwipe.name, Vue.extend(CellSwipe));

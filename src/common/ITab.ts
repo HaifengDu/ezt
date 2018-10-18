@@ -21,8 +21,8 @@ export class ATabArray<T extends ITab>{
         this.tabList = [];
     }
 
-    public push(item:T){
-        this.tabList.push(item);
+    public push(...item:T[]){
+        this.tabList.push(...item);
     }
     
     public setActive(index: number): void {

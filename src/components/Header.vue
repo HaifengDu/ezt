@@ -1,6 +1,6 @@
 <template>
     <div class="ezt-header" >
-        <span class="ezt-header-goback" :class=[{none:!back}] @click="goBack"></span>
+        <span class="ezt-header-goback" :class=[{none:!back}] @click="goBack" ></span>
         <span class="ezt-header-title" v-if="!custom">{{title}}</span>
         <span class="ezt-header-title" v-if="custom">
             <slot name="title">
@@ -36,9 +36,18 @@ export default class Header extends Vue{
     })
     custom:boolean;
 
+    @Prop({
+        type:Boolean,
+        default: false
+    })
+    isInfoGoback:boolean;
+
     goBack(){
-        this.$emit('goBack');
-        // this.$router.back();
+        if(this.isInfoGoback){
+            this.$emit('goBack');
+        }else{
+            this.$router.back();
+        }
     }
 }
 </script>

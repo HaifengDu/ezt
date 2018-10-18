@@ -2,7 +2,7 @@
 <div>
    <!--确认盘点单  审核盘点单  盘库详情  实盘录入-->
    <div class="ezt-page-con librarydetails" 
-        v-if="types== pageType.确认盘点单 || types== pageType.审核盘点单 || types== pageType.盘库详情 || types== pageType.实盘录入 || types== pageType.盘点类型导入">
+        v-if="types== pageType.ConfirmList || types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.RealdiscEntry || types== pageType.InventoryType">
       <ezt-header :back="true" title="title" @goBack="goBack">
         <div slot="action">
             <span></span>
@@ -11,7 +11,7 @@
       <div class="ezt-main">
           <div class="content">
           <div class="pkdetails_new">
-            <div class="librarytype_new" v-if="types== pageType.审核盘点单 || types== pageType.盘库详情 || types== pageType.确认盘点单 || !types== pageType.实盘录入 || types== pageType.盘点类型导入">             
+            <div class="librarytype_new" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">             
               <ul>
                <li>
                   <div><p>盘点仓库：<span>{{details.warehouse_name}}</span></p></div>
@@ -23,7 +23,7 @@
              </ul>
            </div>
            <div class="checklist">
-              <p class="title" v-if="types== pageType.审核盘点单 || types== pageType.盘库详情 || types== pageType.确认盘点单 || !types== pageType.实盘录入 || types== pageType.盘点类型导入">盘点单</p>
+              <p class="title" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">盘点单</p>
               <ul>
                 <li :key="index" v-for="(item,index) in inventoryDetails">
                     <div>
@@ -40,14 +40,14 @@
                       <p>理论库存：<span>{{item.thery_qty}}</span></p>
                       <p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p>
                     </div>
-                    <div v-if="types== pageType.审核盘点单 || types== pageType.盘库详情">
+                    <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                       <p>采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
                       <p>库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
                     </div>
-                    <div v-if="types== pageType.审核盘点单 || types== pageType.盘库详情">
+                    <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                        <p>消耗单位：<span>{{item.consume_num || '0'}}{{item.bom_name}}</span></p>
                     </div>
-                    <div class="purchase" v-if="types== pageType.实盘录入">
+                    <div class="purchase" v-if="types== pageType.RealdiscEntry">
                         <div>
                           <p>
                             <span>
@@ -72,18 +72,18 @@
               </ul>
            </div>
           </div>
-           <div class="temporary" slot="confirm" v-if="types== pageType.审核盘点单 || types== pageType.确认盘点单 || types== pageType.实盘录入 || types== pageType.盘点类型导入">
-              <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.盘库详情">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
+           <div class="temporary" slot="confirm" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry || types== pageType.InventoryType">
+              <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.LibraryDetails">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
                 <!-- 盘点类型导入之后的暂存提交接口 -->
-                <div class="button" v-if="types== pageType.审核盘点单 || types== pageType.确认盘点单 || types== pageType.实盘录入">
+                <div class="button" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry">
                     <div class="storage" @click="storage">暂存1</div>
                     <div class="sub" @click="sub">提交1</div>
                 </div>
-                <div class="button" v-if="types== pageType.审核盘点单">
+                <div class="button" v-if="types== pageType.AuditList">
                      <div class="storage"  @click="reviewpass">审核不通过</div>
                      <div class="sub" @click="auditfailed">审核通过</div>
                 </div>
-                 <div class="button" v-if="types== pageType.盘点类型导入">    
+                 <div class="button" v-if="types== pageType.InventoryType">    
                     <div class="storage" @click="temporarystorage">暂存2</div>
                     <div class="sub" @click="Submission">提交2</div>
                 </div>

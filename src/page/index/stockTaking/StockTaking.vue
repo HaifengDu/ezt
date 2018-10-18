@@ -26,7 +26,7 @@
                 </div>
                 <ul class="submitted" v-if="inventoryList">
                   <li :key="index" v-for="(item,index) in inventoryList.list">
-                    <div @click="librarydetails(item,pageType.盘库详情)">
+                    <div @click="librarydetails(item,pageType.LibraryDetails)">
                         <div class="state">   
                         <span>
                           <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
@@ -48,10 +48,10 @@
                     </div>  
                     <div class="footer">
                         <P>业务日期：<span>2017-07-28</span></P>
-                        <div v-if="tabList.getActive().status === 0" class="submit" @click="librarydetails(item,pageType.确认盘点单)">提交</div>
-                        <div v-if="tabList.getActive().status === 1" class="submit" @click="librarydetails(item,pageType.审核盘点单)">审核</div>
+                        <div v-if="tabList.getActive().status === 0" class="submit" @click="librarydetails(item,pageType.ConfirmList)">提交</div>
+                        <div v-if="tabList.getActive().status === 1" class="submit" @click="librarydetails(item,pageType.AuditList)">审核</div>
                         <div  v-if="tabList.getActive().status==2 && item.is_stock_valid ==null"  class="submit">生效</div>
-                        <div v-if="tabList.getActive().status === 3 || tabList.getActive().status==2 && item.is_stock_valid ==1"  class="submit" @click="librarydetails(item,pageType.实盘录入)">实盘录入</div>
+                        <div v-if="tabList.getActive().status === 3 || tabList.getActive().status==2 && item.is_stock_valid ==1"  class="submit" @click="librarydetails(item,pageType.RealdiscEntry)">实盘录入</div>
                     </div>   
                   </li>
                   <span v-if="allLoaded">已全部加载</span>
@@ -110,9 +110,9 @@
     </ul>
   </div> 
   <!-- 点击日周月盘如果有未审核单据会提示 -->
-   <confirm v-model="isAudited" @on-confirm="onConfirm('name')">
+   <!-- <confirm v-model="isAudited" @on-confirm="onConfirm('name')">
         <p style="text-align:center;">有单据未完成审核，是否进行盘点?</p>
-   </confirm>
+   </confirm> -->
 </div>
 </template>
 <script lang="ts">   
@@ -159,7 +159,7 @@ export default class stockTaking extends Vue{
     private searchParam:any={};//搜索时的查询条件
     private warehouseType:any[] = [];  //动态加载仓库
     private selectedWarehouse:any;//选中仓库id
-    private isAudited:boolean = false;  //有未审核盘点提示
+    // private isAudited:boolean = false;  //有未审核盘点提示
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -361,29 +361,29 @@ export default class stockTaking extends Vue{
       },err=>{
           if(err instanceof ResponseError){
             if(err.data.errmsg  === 'unreview'){
+                debugger
                 this.newlyadded = false
-                this.isAudited = true
                 this.names = type.name;
                 this.billType = type.bill_type;
+                this.$vux.confirm.show({   
+                  // 组件除show外的属性
+                  onConfirm (type:any,name:any,bill_type:string) {
+                      this.$router.push({
+                          name:'AddinventoryList',
+                          query:{
+                            name:this.names,
+                            bill_type:this.billType
+                          }
+                        });
+                      this.newlyadded = false
+                      this.type = this.billType;
+                  },
+                  content:'有单据未完成审核，是否进行盘点?'
+                })
             }
           }
       })
     }   
-
-   /** 
-    * 出现未审核单据
-    */
-    private onConfirm(type:any,name:any,bill_type:string){   
-        this.$router.push({
-            name:'AddinventoryList',
-            query:{
-              name:this.names,
-              bill_type:this.billType
-            }
-          });
-        this.newlyadded = false
-        this.type = this.billType;
-     }   
     /**
      * 数据整理
      */  

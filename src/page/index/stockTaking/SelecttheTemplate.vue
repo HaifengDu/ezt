@@ -14,7 +14,7 @@
             <em @click="goBack">返回</em>
           </div>  
          <checklist style="width:100%;" v-else :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
-         <div class="nextstep" @click="nextstep(pageType.盘点类型导入)">下一步</div>   
+         <div class="nextstep" @click="nextstep(pageType.InventoryType)">下一步</div>   
        </div> 
      </div>    
    </div>    

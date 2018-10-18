@@ -226,7 +226,7 @@
         <div class="ezt-foot-button">
           <a href="javascript:(0)" class="ezt-foot-storage" @click="viewSelectedItem">
             <span class="ezt-badge">{{selectedGoodList.length}}</span>已选择货品</a>  
-          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit(pageType.确认盘点单)">去提交</a>   
+          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit(pageType.ConfirmList)">去提交</a>   
         </div>  
       </div>       
     </ezt-footer>

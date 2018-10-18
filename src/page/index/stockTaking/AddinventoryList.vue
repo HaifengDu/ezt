@@ -43,7 +43,7 @@
               <ul>
                 <li @click="manualproduction('manual')">手工制单</li>
                 <li @click="templateimport()">模板导入</li>
-                <li @click="inventorytype(pageType.盘点类型导入)">盘点类型导入</li>
+                <li @click="inventorytype(pageType.InventoryType)">盘点类型导入</li>
               </ul>
           </div>
        </div>

@@ -49,13 +49,14 @@
                             <span class="good-detail-num">3</span>
                         </div>
                     </div>
-                    <div>
-                        <div class="good-detail-sort" v-model="content"  :class="fold ? 'fold' : 'unfold'">备注：
-                                {{item.remark}}
+                    <div class="good-detail-item" v-if="item.remark">
+                        <div class="good-detail-sort content" v-model="content">备注：
+                            <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                            <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
                         </div>
                         <div>
-                            <span @click='handleFold' v-show="fold">展开→</span>
-                            <span @click='handleFold' v-show="!fold">←收起</span>
+                            
+                            <!-- <span @click='handleFold' v-show="!fold">←收起</span> -->
                         </div>
                     </div>
                 </li>
@@ -130,8 +131,9 @@ export default class OrderGoods extends Vue{
         
     }
     // 备注出现查看更多
-    private handleFold() {
-      this.fold = !this.fold;
+    private handleFold(item:any) {
+    //   this.fold = !this.fold;
+        this.$set(item,'flod',!item.flod);
     }
     private getData() {
         this.content = this.content
@@ -249,17 +251,26 @@ export default class OrderGoods extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
-        letter-spacing: 0;
-        display: -webkit-box;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        // letter-spacing: 0;
+        // display: -webkit-box;
+        // -webkit-box-orient: vertical;
+        // overflow: hidden;
         margin-top: 5px;
     }
-    .good-detail-sort.fold {
-        -webkit-line-clamp: 2;
-    }     
+    .good-detail-item .content{       
+        word-break: break-all; 
+        word-wrap:break-word;
+    } 
+    .good-detail-item .remark-suitable{
+        line-height: 25px;
+        height: 50px;
+        overflow: hidden;
+    }
+    .good-detail-item .remark-suitable.auto{
+        height: auto;
+    }    
     .good-detail-sort.unfold {
-        -webkit-line-clamp: 100;
+        // -webkit-line-clamp: 100;
     }    
     .good-detail-billno,.good-num-t{
         font-size: 10px;

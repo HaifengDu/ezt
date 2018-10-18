@@ -226,7 +226,7 @@
         <div class="ezt-foot-button">
           <a href="javascript:(0)" class="ezt-foot-storage" @click="viewSelectedItem">
             <span class="ezt-badge">{{selectedGoodList.length}}</span>已选择货品</a>  
-          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit('d')">去提交</a>   
+          <a href="javascript:(0)" class="ezt-foot-sub" @click="goToCommit(pageType.ConfirmList)">去提交</a>   
         </div>  
       </div>       
     </ezt-footer>
@@ -243,7 +243,11 @@ import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import ObjectHelper from '../../../common/objectHelper'
+import ObjectHelper from '../../../common/objectHelper';
+import { CachePocily } from "../../../common/Cache";
+import { ECache } from "../../../enum/ECache";
+import CACHE_KEY from '../../../constans/cacheKey'
+import { PageType } from "../../../enum/EPageType";
 import _ from "lodash";
 
 @Component({
@@ -297,6 +301,7 @@ export default class AddGood extends Vue{
   private DirectedNum:number=0;//已直拨的数量
   private countFlag = 0;
   private oldValue = 0;
+  private pageType = PageType; //页面类型
   // private userpp:any[]=[];
   created(){ 
    
@@ -567,13 +572,13 @@ private changeDirect(item:any){
   /**
    * 选择完货品去提交
    * */ 
-  private goToCommit(types:any){
+  private goToCommit(types:PageType){
     this.setSelectedGood(this.selectedGoodList);
     if(this.$route.query.newType === 'manual'){
         this.$router.push({
           name:'LibraryDetails',
           query:{
-            types:types,
+            types:types.toString(),
         }
       });
     }else{

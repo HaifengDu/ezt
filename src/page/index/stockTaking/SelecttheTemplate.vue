@@ -7,14 +7,14 @@
        </div>        
     </ezt-header>    
     <div class="ezt-main">     
-       <div class="ezt-add-content"> 
+       <div class="ezt-add-content">    
           <div class="done-none" v-if="!inlineDescListValue||inlineDescListValue.length<=0">
             <div></div>
             <span>没有搜索结果</span>
             <em @click="goBack">返回</em>
           </div>  
          <checklist style="width:100%;" v-else :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
-         <div class="nextstep" @click="nextstep('d')">下一步</div>   
+         <div class="nextstep" @click="nextstep(pageType.InventoryType)">下一步</div>   
        </div> 
      </div>    
    </div>    
@@ -28,7 +28,10 @@ import { mapActions, mapGetters } from 'vuex'
 import IUser from "../../../interface/IUserModel"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import StockTakingService from "../../../service/StockTakingService"
-import librarydetails from './LibraryDetails'
+import { CachePocily } from "../../../common/Cache"
+import { ECache } from "../../../enum/ECache"
+import CACHE_KEY from '../../../constans/cacheKey'
+import { PageType } from "../../../enum/EPageType"
 @Component({  
    components:{  
       
@@ -36,56 +39,52 @@ import librarydetails from './LibraryDetails'
    computed:{
      ...mapGetters({
        "user":"user",
-       'pktemplateimport':'stockTaking/pktemplateimport',//模板导入
+       'addinventory':'stockTaking/addinventory',//新增盘库单数据
      }) 
    },
    methods:{ 
      ...mapActions({
-       'setPktemplateimport':"stockTaking/setPktemplateimport",
-       'setInventoryDetails':"stockTaking/setInventoryDetails",
-     })
 
+     })
    }   
 })  
 export default class stockTaking extends Vue{
     private pager:Pager;   
     private user:IUser;
     private service:StockTakingService;
-    private getTemplateDetails:INoopPromise;  //模板详情
+    private cache = CachePocily.getInstance();
+    private templateimport:any; 
     private labelPosition= 'left';
-    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private pktemplateimport:any; 
-    private setPktemplateimport:INoopPromise;//store中给setPktemplateimport赋值
     private templateList:any= [];
     private inlineDescListValue:any=[];
-    private busi_date:any;
-    private bill_type_name:any;
-    private warehouse_id:any;
-    private warehouse_name:any;
-    private stock_count_mode:any;
-    private stock_count_mode_name:any;
-    private pdtype:any;
+    private billName:any; //获取盘点类型
+    private pageType = PageType; //页面类型
+    private addinventory:any;//store中
     created() {
-      this.service = StockTakingService.getInstance();
-      this.pktemplateimport.pdtype = this.$route.query.pdtype
-      this.pktemplateimport.warehouse_id = this.$route.query.warehouse_id
-      this.pktemplateimport.warehouse_name = this.$route.query.warehouse_name
-      this.pktemplateimport.stock_count_mode = this.$route.query.stock_count_mode
-      this.pktemplateimport.stock_count_mode_name = this.$route.query.stock_count_mode_name
+       this.service = StockTakingService.getInstance();
+       if(this.cache.getData(CACHE_KEY.TEMPLATEIMPORT)){
+          const templateList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.TEMPLATEIMPORT));
+          this.templateimport = templateList
+       }
+       if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
+            this.billName = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ADDINVENTORY));
+       }
     }
-
     mounted(){
        this.list()
     }
     private goBack(){
       this.$router.back();
     }
+    /**
+     * 获取模板数据
+     */
     private list(){
-        this.pktemplateimport.forEach((item:any,index:any)=>{
+        this.templateimport.forEach((item:any,index:any)=>{
            let obj={
             key:'',
             value:''
-          }
+           }
            obj.key=item.id;
            obj.value=item.text;
            this.templateList.push(obj);         
@@ -93,36 +92,27 @@ export default class stockTaking extends Vue{
         if(this.templateList&&this.templateList.length>0){
           this.inlineDescListValue = [this.templateList[0]['key']]
         }
-        
      }
-     //下一步
-     private nextstep(types:any){   
-      if(this.pktemplateimport){  
-        const template_id = this.inlineDescListValue[0]  //选中模板id
-        const flag = this.pktemplateimport.pdtype
-        const warehouse_id = this.pktemplateimport.warehouse_id
-        this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 
-              this.$router.push({
-                name:'LibraryDetails',
-                 query:{
-                    busi_date:this.$route.query.busi_date,
-                    bill_type:this.pktemplateimport.pdtype,
-                    bill_type_name:this.$route.query.bill_type_name,
-                    warehouse_id:this.pktemplateimport.warehouse_id,
-                    warehouse_name:this.pktemplateimport.warehouse_name,
-                    stock_count_mode:this.pktemplateimport.stock_count_mode,
-                    stock_count_mode_name:this.pktemplateimport.stock_count_mode_name,
-                    types:types,
-                    template_name:"模板导入"   
-                }
-              });
-              this.setInventoryDetails(res.data.data); 
-          },err=>{
-              this.$toasted.show(err.message)
-          })
-        }
-     }
-      
+     /**
+      * 下一步
+      */
+     private nextstep(types:PageType){   
+      const template_id = this.inlineDescListValue[0]  //选中模板id
+      const flag = this.billName.bill_type
+      const warehouse_id = this.billName.stock.id
+      this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 
+            this.$router.push({
+              name:'LibraryDetails',
+              query:{
+                  types:types.toString(),
+              }
+            });
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+        },err=>{
+            this.$toasted.show(err.message)
+        })
+   }
 }
 </script>
 <style lang="less" scoped> 

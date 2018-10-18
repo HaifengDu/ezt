@@ -47,14 +47,12 @@ import StockTakingService from '../../../service/StockTakingService'
    },   
    computed:{
      ...mapGetters({
-      //  'queryResult':'stockTaking/queryResult',//查询结果
-       'inventoryDetails':'stockTaking/inventoryDetails',//盘点详情
+
      }) 
    },
    methods:{ 
      ...mapActions({
-       'setQueryResult':"stockTaking/setQueryResult",
-       'setInventoryDetails':"stockTaking/setInventoryDetails",
+       
      })
 
    }   

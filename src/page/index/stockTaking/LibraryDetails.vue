@@ -73,7 +73,7 @@
            </div>
           </div>
            <div class="temporary" slot="confirm" v-if="types== pageType.审核盘点单 || types== pageType.确认盘点单 || types== pageType.实盘录入 || types== pageType.盘点类型导入">
-              <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.盘库详情">货品数量合计：<span v-html="total"></span></div>
+              <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.盘库详情">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
                 <!-- 盘点类型导入之后的暂存提交接口 -->
                 <div class="button" v-if="types== pageType.审核盘点单 || types== pageType.确认盘点单 || types== pageType.实盘录入">
                     <div class="storage" @click="storage">暂存1</div>
@@ -130,7 +130,6 @@ export default class stockTaking extends Vue{
     private types:string = '';  //页面类型
     private title:string = '';//页面表头
     private pageType = PageType;
-    private total:string; //合计
     created() {
       this.service = StockTakingService.getInstance();
       this.types = this.$route.query.types
@@ -155,10 +154,7 @@ export default class stockTaking extends Vue{
       }
       if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
             this.inventoryDetails = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_DETAILS));
-            const total = JSON.stringify(this.inventoryDetails.length)
-            this.total = total
       }
-      
     }
     private goBack(){
       this.$router.back();

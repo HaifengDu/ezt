@@ -48,9 +48,9 @@
          </div>
     </div>
      <!-- 返回时提示保存信息 -->
-      <confirm v-model="isExit" @on-confirm="onConfirm">
+      <!-- <confirm v-model="isExit" @on-confirm="onConfirm">
         <p style="text-align:center;"> 请确认是否退出当前用户？</p>
-      </confirm>
+      </confirm> -->
   </div>
 </template>
 <script lang="ts">
@@ -74,7 +74,7 @@ export default class Mine extends Vue{
   private users:IUser;
   private service:LoginService;
   private balancAmt:number=0;
-  private isExit:boolean=false;
+  // private isExit:boolean=false;
   
   created() {
     this.service = LoginService.getInstance();     
@@ -89,13 +89,22 @@ export default class Mine extends Vue{
   }
   //退出
   private logout(){
-    this.isExit= true;   
+    let _this = this;
+    this.$vux.confirm.show({
+        // 组件除show外的属性
+        onConfirm () {
+          _this.service.logout().then(res=>{
+            _this.$router.replace({path:'/login'});
+          });
+        },
+        content:'请确认是否退出当前用户？',
+    })   
   }
-  private onConfirm(){
-    this.service.logout().then(res=>{
-      this.$router.replace({path:'/login'});
-    });
-  }
+  // private onConfirm(){
+  //   this.service.logout().then(res=>{
+  //     this.$router.replace({path:'/login'});
+  //   });
+  // }
   /**
    * 查询余额
    */

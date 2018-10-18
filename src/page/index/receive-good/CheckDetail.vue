@@ -116,7 +116,7 @@ declare var mobiscroll:any;
   //  }
 })
 export default class ReceiveGood extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private service: ReceiveGoodService;
     private pager:Pager;
     private tabList:TabList = new TabList();
@@ -187,9 +187,12 @@ export default class ReceiveGood extends Vue{
         ori.num = ori.num+Number(item.num); 
             if(item.price){
                 ori.Amt = ori.Amt + (item.num * item.price);
-            }else{
+            }else if(item.Amt){
                 ori.Amt = ori.Amt + (item.amt);
-            }      
+            }else{
+                ori.Amt = 0;
+                ori.num = 0;
+            }     
         
         return ori;
         },{num:0,Amt:0});

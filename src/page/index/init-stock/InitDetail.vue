@@ -71,7 +71,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 
 })
 export default class InitStock extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
     created(){

@@ -133,7 +133,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
   //  }
 })
 export default class InitStock extends Vue {
-  private cache = CachePocily.getInstance(ECache.LocCache);
+  private cache = CachePocily.getInstance();
   private confirmTitle:string="";//确认框里的确认信息通过后台动态数据
   private user:IUser;
   private isInit:boolean=false;//列表页初始化按钮弹出框

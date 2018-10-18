@@ -225,7 +225,7 @@ declare var mobiscroll:any;
    }
 })
 export default class ReceiveGood extends Vue{
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private service: ReceiveGoodService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;

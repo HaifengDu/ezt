@@ -65,9 +65,9 @@
     <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
         <div class="ezt-foot-total">合计：
-            <b>品项</b><span>2</span>，
-            <b>数量</b><span>2</span>，
-            <b>含税金额￥</b><span>3</span>
+            <b>品项</b><span>{{details.length}}</span>，
+            <b>数量</b><span>{{Total.num}}</span>，
+            <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
         </div>
         <div class="ezt-foot-button" v-if="isPayMent">
             <a href="javascript:(0)" class="ezt-foot-sub">支付</a>  
@@ -137,6 +137,25 @@ export default class OrderGoods extends Vue{
         this.content = this.content
 
         //   "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
+    }
+    /**
+     * computed demo
+     * 物料总数量、总金额
+     */
+    private get Total(){
+        return this.details.reduce((ori,item)=>{
+        ori.num = ori.num+Number(item.num); 
+            if(item.price){
+                ori.Amt = ori.Amt + (item.num * item.price);
+            }else if(item.Amt){
+                ori.Amt = ori.Amt + (item.amt);
+            }else{
+                ori.num = 0;
+                ori.Amt = 0;
+            }      
+        
+        return ori;
+        },{num:0,Amt:0});
     }
 
     // 返回

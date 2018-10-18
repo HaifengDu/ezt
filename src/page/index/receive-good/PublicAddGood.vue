@@ -287,19 +287,6 @@ export default class AddGood extends Vue{
       type: "m"
     }
   ];
-  // private goodList:any[]=[{
-  //   id:1,
-  //   name:'草鱼半成品',
-  //   price:'12',
-  //   utilname:'KG',
-  //   unit:'箱'
-  // },{
-  //  id:2,
-  //   name:'海参',
-  //   price:'9',
-  //   utilname:'KG',
-  //   unit:'箱'
-  // }]
   private goodBigType:any[] = [];
   private goodSmallType:any[] = [];
   private goodList:any[]=[];

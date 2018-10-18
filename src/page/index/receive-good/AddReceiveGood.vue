@@ -123,7 +123,7 @@ declare var mobiscroll:any;
    }
 })
 export default class ReceiveGood extends Vue{
-  private cache = CachePocily.getInstance(ECache.LocCache);
+  private cache = CachePocily.getInstance();
   private service: ReceiveGoodService;
   // private getGoodList:INoopPromise //调用store中的请求接口
   private hideMask:()=>void;

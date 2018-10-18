@@ -10,11 +10,11 @@
     <div class="ezt-main">   
        <div class="content">
           <div class="store">  
-            <group>   
+            <group>       
               <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name">{{user.auth.store_name||'-'}}</x-input>  
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
               <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input>   
-            </group>       
+            </group>        
           </div>    
           <div class="warehouse">
               <ul>   
@@ -39,11 +39,11 @@
               </ul>    
           </div>
           <div class="method">
-              <p>盘点方式</p>    
+              <p>盘点方式</p>        
               <ul>
                 <li @click="manualproduction('manual')">手工制单</li>
                 <li @click="templateimport()">模板导入</li>
-                <li @click="inventorytype('d')">盘点类型导入</li>
+                <li @click="inventorytype(pageType.盘点类型导入)">盘点类型导入</li>
               </ul>
           </div>
        </div>
@@ -63,10 +63,10 @@ import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import IUser from "../../../interface/IUserModel"
 import StockTakingService from "../../../service/StockTakingService"
-import librarydetails from './LibraryDetails'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
+import { PageType } from "../../../enum/EPageType";
 @Component({  
    components:{  
 
@@ -75,52 +75,29 @@ import CACHE_KEY from '../../../constans/cacheKey'
      ...mapGetters({
        "user":"user",
        'addinventory':'stockTaking/addinventory',//新增盘库单数据
-       'addBeforeInventory':'stockTaking/addBeforeInventory',//新增盘库单数据变化
        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
      }) 
    },
    methods:{ 
      ...mapActions({
-       'setAddinventory':"stockTaking/setAddinventory",
-       'setAddBeforeInventory':"stockTaking/setAddBeforeInventory",
-       'setInventoryType':"stockTaking/setInventoryType",
-       'setInventoryDetails':"stockTaking/setInventoryDetails",
-       'setPktemplateimport':"stockTaking/setPktemplateimport",
-       'setSelectedGood':'publicAddGood/setSelectedGood',
-     })
 
+     })
    }   
 })  
 
 export default class stockTaking extends Vue{
     private user:IUser;
-    private cache = CachePocily.getInstance(ECache.LocCache);
+    private cache = CachePocily.getInstance();
     private errTreatment:boolean = false;//必填项仓库 error样式
     private errStock: boolean = false;//必填项仓库 error样式
     private service:StockTakingService;
-    private getTemplateImport:INoopPromise;  //模板导入
-    private getWarehouse:INoopPromise;  //动态加载仓库
+    private name:any;
     private bill_type:string; //弹层盘点类型
-    private daily_inventory:string;
-    private week_inventory:string;
-    private period_inventory:string;
-    private inventory:string;
+    private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
     private isSave:boolean = false;//确认不保存
     private addinventory:any;//store中
-    private setAddinventory:INoopPromise//store中给setAddinventory赋值
-    private addBeforeInventory:any;//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    private setAddBeforeInventory:INoopPromise;
-    private setInventoryType:INoopPromise//store中给setInventoryType赋值
-    private setInventoryDetails:INoopPromise//store中给setInventoryDetails赋值
-    private setPktemplateimport:INoopPromise//store中给setPktemplateimport赋值
-    private name:any;
-    private warehouse_name:string;  
-    private busi_date:string;  
-    private bill_type_name:string;
-    private stock_count_mode_name:string;
     private selectedGood:any[];//store中selectedGood的值
-    private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
@@ -137,8 +114,7 @@ export default class stockTaking extends Vue{
        this.addinventory.name = this.$route.query.name
        this.addinventory.bill_type =  this.$route.query.bill_type
        //选择仓库
-       this.iswarehouseType();
-
+       this.getWarehouseType();
       (this.selectedGood||[]).forEach(item=>item.active = false);
       if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
           this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
@@ -148,49 +124,52 @@ export default class stockTaking extends Vue{
       }
     }
     mounted(){   
-     
+       
 
     }   
-    // 返回   
+    /**
+     * 返回上一页 
+     */   
     private goBack(){
       if((this.addinventory&&this.addinventory.stock)||this.addinventory.length>0){
-        this.isSave=true;
+         this.isSave=true;
       }else{
-        this.$router.push('/stocktaking');
+         this.$router.push('/stocktaking');
       }
     }
     private onConfirm(){//确认离开，清空store中的物料和单据信息
-      this.setAddinventory({}),
       this.$router.push('/stocktaking');
     }
         
-    //手工制单
-    manualproduction(newType:any){
-        if(this.addinventory){
-         if(!this.addinventory.stock){
-            this.errStock = true;
-            this.$toasted.show("请选择仓库！");
-            return false;
-         }
-         if(!this.addinventory.treatment){
-            this.errTreatment = true;
-            this.$toasted.show("请选择未盘处理方式！");
-            return false;
-         }
-         this.$router.push({
-            name:'PublicAddGood',
-            query:{
-              newType:newType
-            }
-         })
-         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-         this.setAddinventory(this.addinventory);
-        }
-    }
-   
-    //盘点类型导入
-     private inventorytype(types:any){
+    /**
+     * 手工制单
+     */
+      manualproduction(newType:any){
+          if(this.addinventory){
+          if(!this.addinventory.stock){
+              this.errStock = true;
+              this.$toasted.show("请选择仓库！");
+              return false;
+          }
+          if(!this.addinventory.treatment){
+              this.errTreatment = true;
+              this.$toasted.show("请选择未盘处理方式！");
+              return false;
+          }
+          this.$router.push({
+              name:'PublicAddGood',
+              query:{
+                newType:newType
+              }
+          })
+          this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
+          this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+          }
+      }
+     /**
+      * 盘点类型导入
+      */
+     private inventorytype(types:PageType){
         if(this.addinventory){
          if(!this.addinventory.stock){
             this.$toasted.show("请选择仓库！");
@@ -198,34 +177,27 @@ export default class stockTaking extends Vue{
          }  
          if(!this.addinventory.treatment){
             this.$toasted.show("请选择未盘处理方式！");
-            return false;
+            return false; 
          } 
         const flag = this.addinventory.bill_type;
         const warehouse_id = this.addinventory.stock.id;
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
-             this.setAddinventory(this.addinventory);
-             this.setAddBeforeInventory(this.addBeforeInventory);
              this.$router.push({
                 name:'LibraryDetails',
                  query:{
-                    busi_date:this.user.auth.busi_date,
-                    bill_type:this.addinventory.bill_type,
-                    bill_type_name:this.addinventory.name,
-                    warehouse_id:this.addinventory.stock.id,
-                    warehouse_name: this.addinventory.stock.text,
-                    stock_count_mode:this.addinventory.treatment.value,
-                    stock_count_mode_name:this.addinventory.treatment.name,
-                    types:types,
-                    template_name:"手工制单",
+                    types:types.toString(),
                 }
               });
-              this.setInventoryDetails(res.data.data); 
+              this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
           },err=>{
               this.$toasted.show(err.message)
           })
         }   
      }
-    //模板导入
+     /**
+      * 模板导入
+      */
      private templateimport(){    
        if(this.addinventory){
          if(!this.addinventory.stock){
@@ -237,41 +209,36 @@ export default class stockTaking extends Vue{
             return false;
          }
         const warehouse_id = this.addinventory.stock.id;
-        this.service.getTemplateImport(warehouse_id).then(res=>{ 
-              this.setAddinventory(this.addinventory);
-              this.setAddBeforeInventory(this.addBeforeInventory);
-              this.setInventoryType(this.addinventory.bill_type);
+        this.service.getTemplateImport(warehouse_id).then(res=>{
               this.$router.push({
                 name:'SelecttheTemplate',
-                 query:{
-                    busi_date:this.user.auth.busi_date,
-                    bill_type_name:this.addinventory.name,
-                    warehouse_id:this.addinventory.stock.id,
-                    warehouse_name: this.addinventory.stock.text,
-                    stock_count_mode:this.addinventory.treatment.value,
-                    stock_count_mode_name:this.addinventory.treatment.name,
-                    pdtype : this.addinventory.bill_type,
-                }
               });
-              this.setPktemplateimport(res.data.data); 
+              this.cache.save(CACHE_KEY.TEMPLATEIMPORT,JSON.stringify(res.data.data));
+              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
           },err=>{
               this.$toasted.show(err.message)
           })
         }
      }
-    //  动态加载仓库
-    private iswarehouseType(){
+    /**
+     * 动态加载仓库
+     */
+    private getWarehouseType(){
       this.service.getWarehouse(this.addinventory.bill_type).then(res=>{ 
           this.warehouseType = res.data.data;
       },err=>{
           this.$toasted.show(err.message)
       })
     }
-    //选择完仓库
+    /**
+     * 选择完仓库
+     */
     private handlerStock(){
       this.errStock = false;
     }
-    //选择完未盘处理
+    /**
+     * 选择完未盘处理
+     */
     private handlerTreatment(){
       this.errTreatment = false;
     }

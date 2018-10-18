@@ -118,7 +118,7 @@ export default class OrderGoods extends Vue{
     
     mounted(){ 
         this.detailList();
-        this.getData();
+        this.getData();   
         if(this.$route.params.isPayMent=='false'){
             this.isPayMent = false;
             this.paytitle = "订货单详情";

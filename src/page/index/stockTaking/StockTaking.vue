@@ -155,7 +155,6 @@ export default class stockTaking extends Vue{
     private searchParam:any={};//搜索时的查询条件
     private warehouseType:any[] = [];  //动态加载仓库
     private selectedWarehouse:any;//选中仓库id
-    // private isAudited:boolean = false;  //有未审核盘点提示
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -308,14 +307,6 @@ export default class stockTaking extends Vue{
           this.$toasted.show(err.message)
       })
     } 
-    
-    /**
-     * 生效按钮
-     */
-    private takeeffect(){
-     
-     
-    }
     
     /**
      * 新增盘库单

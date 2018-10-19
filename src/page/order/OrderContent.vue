@@ -177,7 +177,6 @@ import CACHE_KEY from '../../constans/cacheKey'
 export default class OrderGoods extends Vue{
     private cache = CachePocily.getInstance();
     private pager:Pager;
-    private getGoodList:INoopPromise
     private service: OrderGoodsService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
@@ -188,24 +187,17 @@ export default class OrderGoods extends Vue{
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
     private searchParam:any={};//搜索时的查询条件
-    // private isMaterielChange:boolean = false;  //供货物料是否发生变化
-    // private isCommodity:boolean = false;  //物料停止供货发生变化
-    // private deleteItem:any={};//删除时存储所删除数据
-    // private isDelete:boolean = false;  //删除单据提示
     private orderType:any=[{
       name:'仓库1',
       id:'01'
     }]
-    private paymentType:any=[
-      {
+    private paymentType:any=[{
       name:'月结',
       id:'01',
-      },
-      {
+      },{
       name:'下单即支付',
       id:'02',
-      },
-      {
+      },{
       name:'货到付款',
       id:'03',
       },
@@ -230,7 +222,6 @@ export default class OrderGoods extends Vue{
        this.getList();  
        this.searchParam = {};    
     }
-
     mounted(){      
       this.getList();
       this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
@@ -274,27 +265,9 @@ export default class OrderGoods extends Vue{
         content:'是否要删除该单据？。'
       })
     }
-    // 删除提示框
-    //  private Confirm(){
-    //      this.deleteSection(this.deleteItem);
-    //  }
-    //  private Cancel(){
-    //     this.isDelete = false;
-    //     let newIndex = this.goodList.findIndex((info:any,index:any)=>{
-    //       return this.deleteItem.id == info.id;
-    //     })
-    //     this.goodList[newIndex].active = false;
-    //  }
-    // 左滑删除某一项
-    // private deleteSection(item:any){
-    //   let newIndex = this.goodList.findIndex((info:any,index:any)=>{
-    //     return item.id == info.id;
-    //   })
-    //   this.goodList.splice(newIndex,1);
-    // }
     //下拉加载更多
     private loadMore() {
-      if(!this.allLoaded){
+      if(!this.allLoaded){  
          this.showMask();
       this.$vux.loading.show({
         text:'加载中..'
@@ -341,7 +314,6 @@ export default class OrderGoods extends Vue{
       if(status =="1"){
          item.active = active;
       }     
-     
     }
     private addPage(){
       this.addgoods = !this.addgoods
@@ -352,9 +324,6 @@ export default class OrderGoods extends Vue{
     //首页菜单跳转
     private toPage(info:string){
       if(info){
-        // if(info == '/addOrderGood'){
-          // this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify({orderType:0}))
-        // }
         this.$router.push(info);
       }      
     }
@@ -372,27 +341,25 @@ export default class OrderGoods extends Vue{
    // 跳转详情页面
     private orderdetails(info:any){
       if(this.tabList.getActive().status==3){
-        // this.$router.push('/OrderDetails'); 
-        //isPayMent true (去支付)
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
       }
       if(this.tabList.getActive().status ==2 && info == 'payMent'){
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
       }
-    }
+    }   
     // 审核要货单
-    private toexamine(type:any,item:any){
+    private toexamine(type:any,item:any){   
+      let OrderModule = {};
       if(this.tabList.getActive().status==1){
-        this.$router.push({
-          name:'AuditInvoice',
-          query:{
-              type:type,    
-              billno:item.bill_no,
-              unit:'供应商1号',
-              orderDate:item.ask_goods_date,   
-              arriveDate:item.arrive_date,
-              remark:'提前一天联系供应商',
-        }});  
+         OrderModule={
+          billno:item.bill_no,
+          unit:'供应商1号',
+          orderDate:item.ask_goods_date,   
+          arriveDate:item.arrive_date,
+          remark:'提前一天联系供应商',        
+        }   
+        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(OrderModule));
+        this.$router.push({name:'AuditInvoice',query:{type:type}});  
       }
      }     
     //  再来一单 
@@ -445,19 +412,8 @@ export default class OrderGoods extends Vue{
             confirmText:"手工订货"
           })
         }
-       
-       
-       
        }
      }
-    //再来一单的时候验证物料信息
-    // private onConfirm(){
-    //   this.$router.push({
-    //       name:'AddOrderGood',
-    //       query:{   
-    //       }
-    //   });  
-    // }
     private goBack(){
       this.$router.push('/');
     }

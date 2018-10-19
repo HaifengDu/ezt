@@ -111,7 +111,7 @@ import CACHE_KEY from '../../constans/cacheKey'
 import ObjectHelper from '../../common/objectHelper'
 @Component({
     computed:{
-        ...mapGetters({
+        ...mapGetters({    
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
         })
     },
@@ -130,18 +130,11 @@ export default class Order extends Vue{
          
     };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
-        // orderDate:new Date().format('yyyy-MM-dd'),
-        // arriveDate:new Date().format('yyyy-MM-dd'),
+        
     };//store中
-    // private isAudit:boolean = false;
-    // private isSave:boolean = false;
-    // private isDelete:boolean = false;
-    // private deleteItem:any = {}; //保存删除的物料信息
     private type:string;    
-    // private billno:string;    
-    // private unit:string;    
-    // private remark:string;       
     created() {     
+        debugger
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
@@ -149,29 +142,7 @@ export default class Order extends Vue{
         }    
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
-        this.addBillInfo.billno = this.$route.query.billno
-        this.addBillInfo.unit = this.$route.query.unit
-        this.addBillInfo.orderDate = this.$route.query.orderDate
-        this.addBillInfo.arriveDate = this.$route.query.arriveDate
-        this.addBillInfo.remark = this.$route.query.remark
-        
     }
-     //审核通过操作
-    // private onPassAudit(){
-    //     this.addBillInfo={},
-    //     this.setSelectedGood([]);
-    //     this.addBeforeBillInfo={};
-    //     this.$toasted.success("审核成功！");
-    //     this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
-    // }
-    //审核不通过操作
-    // private onUnpassAudit(){
-    //     this.addBillInfo={},
-    //     this.setSelectedGood([]);
-    //     this.addBeforeBillInfo={};
-    //     this.$toasted.success("审核成功！");
-    //     this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
-    // }
     // 点击删除按钮
     private deleteBill(item:any){
         let _this = this;
@@ -201,25 +172,10 @@ export default class Order extends Vue{
         })
         this.selectedGood.splice(newIndex,1);
     }
-    // 删除提示框
-    //  private Confirm(){
-    //      this.deleteSection(this.deleteItem);
-    //  }
-    //  private Cancel(){
-    //     this.isDelete = false;
-    //     let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
-    //       return this.deleteItem.id == info.id;
-    //     })
-    //     this.selectedGood[newIndex].active = false;
-    //  }
     // 向左滑动
     private handlerSwipe(item:any,active:boolean){     
         item.active = active;
     }
-    // private handlerRight(item:any){
-    //     item.active = false;
-    // }
-
     //选择物料
     private renderUrl(info: string) {
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
@@ -227,7 +183,6 @@ export default class Order extends Vue{
         // this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
         this.$router.push(info);
     }
-
    /**
    * 
    * 物料总数量\总金额
@@ -285,15 +240,6 @@ export default class Order extends Vue{
         this.$toasted.success("保存成功！");
         this.$router.push('/orderGood');
     }
-
-    //离开确认
-    // private onConfirm(){//确认离开，清空store中的物料和单据信息
-    //     this.addBillInfo={},
-    //     this.setSelectedGood([]);
-    //     this.addBeforeBillInfo={};
-    //     this.$router.push('/orderGood')
-    // }   
-
     /**
      * 返回
      */

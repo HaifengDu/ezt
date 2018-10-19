@@ -137,8 +137,6 @@ export default class OrderGoods extends Vue{
     }
     private getData() {
         this.content = this.content
-
-        //   "不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方不要啦就是你的济南市快递那福克斯地方";
     }
     /**
      * computed demo
@@ -171,10 +169,7 @@ export default class OrderGoods extends Vue{
         },err=>{
           this.$toasted.show(err.message);
       });
-    
     }
-
-   
 }
 </script>
 
@@ -258,7 +253,7 @@ export default class OrderGoods extends Vue{
         margin-top: 5px;
     }
     .good-detail-item .content{       
-        word-break: break-all; 
+        word-break: break-all;    
         word-wrap:break-word;
     } 
     .good-detail-item .remark-suitable{

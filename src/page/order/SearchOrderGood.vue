@@ -9,7 +9,7 @@
       <div class="ezt-add-content">
         <ul>
           <li>
-             <!-- 订货单列表  -->
+             <!-- 订货单列表  -->    
             <div class="receive-dc-list">
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>

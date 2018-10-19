@@ -1,8 +1,8 @@
 <!--审核要货单-->
 <template>
     <div class="ezt-page-con AuditInvoice">
-        <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack"></ezt-header>
-        <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack"></ezt-header>
+        <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
+        <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">

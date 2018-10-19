@@ -7,7 +7,7 @@
         :infinite-scroll-disabled="allLoaded" 
         infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="盘库" @goBack="goBack" :isInfoGoback="true">
+    <ezt-header :back="true" title="盘库">
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
@@ -228,12 +228,6 @@ export default class stockTaking extends Vue{
           })
        } 
        this.getpkList();
-    }
-    /**
-     * 返回上一页
-     */
-    private goBack(){
-      this.$router.push('/');
     }
     /**
      * tab切换

@@ -4,7 +4,7 @@
    <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="false" title="订单" :isInfoGoback="true" @goBack="goBack">
+    <ezt-header :back="false" title="订单">
       <div slot="action">
          <div class="add">
            <span class='ezt-action-point' @click="addPage">
@@ -414,9 +414,6 @@ export default class OrderGoods extends Vue{
         }
        }
      }
-    private goBack(){
-      this.$router.push('/');
-    }
 }
 </script>
 <style lang="less" scoped>

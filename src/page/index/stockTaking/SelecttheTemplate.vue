@@ -1,7 +1,7 @@
 <!--选择模板-->
 <template>
    <div class="ezt-page-con selectthetemplate">   
-    <ezt-header :back="true" title="选择模板" @goBack="goBack" :isInfoGoback="true">
+    <ezt-header :back="true" title="选择模板">
        <div slot="action">
           <span></span>
        </div>        
@@ -11,7 +11,7 @@
           <div class="done-none" v-if="!inlineDescListValue||inlineDescListValue.length<=0">
             <div></div>
             <span>没有搜索结果</span>
-            <em @click="goBack">返回</em>
+            <em @click="this.inlineDescListValue = false">返回</em>
           </div>  
          <checklist style="width:100%;" v-else :label-position="labelPosition" :options="templateList" v-model="inlineDescListValue"  :max="1"></checklist>
          <div class="nextstep" @click="nextstep(pageType.InventoryType)">下一步</div>   
@@ -72,9 +72,6 @@ export default class stockTaking extends Vue{
     }
     mounted(){
        this.list()
-    }
-    private goBack(){
-      this.$router.back();
     }
     /**
      * 获取模板数据

@@ -1,7 +1,7 @@
 <!--订货单详情-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" :title="paytitle" @goBack="goBack">
+    <ezt-header :back="true" :title="paytitle">
        <div slot="action">
        </div>    
     </ezt-header>    
@@ -156,11 +156,6 @@ export default class OrderGoods extends Vue{
         
         return ori;
         },{num:0,Amt:0});
-    }
-
-    // 返回
-    private goBack(){
-        this.$router.push('/orderGood');
     }
     // 物料明细
     private detailList(){

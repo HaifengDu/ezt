@@ -280,7 +280,8 @@ export default class InitStock extends Vue {
                 },
                 content:'确认审核该单据？',
                 confirmText:"审核通过",
-                cancelText:"审核不通过"
+                cancelText:"审核不通过",
+                hideOnBlur:true
             })
         // }else{
         //     this.$router.push({name:'InitStock',params:{'purStatus':'已完成'}});     

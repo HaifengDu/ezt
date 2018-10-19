@@ -11,7 +11,7 @@
           <li class="select-list">
             <span class="title-search-name is-required">单据类型：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
+              <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
                 @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
@@ -31,7 +31,7 @@
           <li class="select-list">
             <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select">
-              <select name="" id="" placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
+              <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
               @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[2].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
@@ -83,7 +83,7 @@
           <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{Total.num}}</span>，
-            <b>￥</b><span>{{Total.Amt}}</span>
+            <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
@@ -113,12 +113,12 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-       'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
      })
    },
    methods:{
     ...mapActions({
-    'setSelectedGood':'publicAddGood/setSelectedGood',
+      'setSelectedGood':'publicAddGood/setSelectedGood',
     })    
    }
 })
@@ -183,10 +183,9 @@ export default class ReceiveGood extends Vue{
    */
     private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
-       ori.num = ori.num+Number(item.num);       
-       ori.Amt = ori.Amt + (item.num * item.price);
-       ori.Amt = (ori.Amt).toFixed(2);
-      return ori;
+        ori.num = ori.num+Number(item.num);       
+        ori.Amt = ori.Amt + (Number(item.num) * Number(item.price));
+        return ori;
       },{num:0,Amt:0});
     }
   /**
@@ -267,7 +266,8 @@ export default class ReceiveGood extends Vue{
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",
-      cancelText:"审核不通过"
+      cancelText:"审核不通过",
+      hideOnBlur:true
     })
   }    
     //选择物料

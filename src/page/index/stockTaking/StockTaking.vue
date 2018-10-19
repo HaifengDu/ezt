@@ -202,7 +202,6 @@ export default class stockTaking extends Vue{
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
       this.getWarehouseType(); //动态加载仓库
-     
     }
    
     mounted(){
@@ -211,42 +210,24 @@ export default class stockTaking extends Vue{
           this.isSearch = false; 
           this.hideMask();
         });  
-      //   if(this.$route.params.purStatus=="待提交"){  
-      //     this.tabList.TabList.forEach((item,index)=>{
-      //       if(item.name == this.$route.params.purStatus){
-      //         item.active = true;
-      //       }else{
-      //         item.active = false;
-      //       }
-      //     })
-      //   } 
-      //   if(this.$route.params.purStatus=="待/已生效"){   
-      //     this.tabList.TabList.forEach((item,index)=>{
-      //       if(item.name == this.$route.params.purStatus){
-      //         item.active = true;
-      //       }else{
-      //         item.active = false;
-      //       }
-      //     })
-      //   } 
-      //   if(this.$route.params.purStatus=="待审核"){   
-      //     this.tabList.TabList.forEach((item,index)=>{
-      //       if(item.name == this.$route.params.purStatus){
-      //         item.active = true;
-      //       }else{
-      //         item.active = false;
-      //       }
-      //     })
-      //  } 
-      //   if(this.$route.params.purStatus=="审核失败"){  
-      //     this.tabList.TabList.forEach((item,index)=>{
-      //       if(item.name == this.$route.params.purStatus){
-      //         item.active = true;
-      //       }else{
-      //         item.active = false;
-      //       }
-      //     })
-      //  } 
+        if(this.$route.params.purStatus=="待/已生效"){   
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+        } 
+        if(this.$route.params.purStatus=="审核失败"){  
+          this.tabList.TabList.forEach((item,index)=>{
+            if(item.name == this.$route.params.purStatus){
+              item.active = true;
+            }else{
+              item.active = false;
+            }
+          })
+       } 
        this.getpkList();
     }
     /**

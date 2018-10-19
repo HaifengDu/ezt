@@ -3,7 +3,7 @@
    <!--确认盘点单  审核盘点单  盘库详情  实盘录入-->
    <div class="ezt-page-con librarydetails" 
         v-if="types== pageType.ConfirmList || types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.RealdiscEntry || types== pageType.InventoryType">
-      <ezt-header :back="true" title="title" @goBack="goBack" :isInfoGoback="true">
+      <ezt-header :back="true" :title="title" @goBack="goBack" :isInfoGoback="true">
         <div slot="action">
             <span></span>
         </div>        
@@ -133,6 +133,17 @@ export default class stockTaking extends Vue{
     created() {
       this.service = StockTakingService.getInstance();
       this.types = this.$route.query.types
+      if(this.types == '0'){
+         this.title = "盘库详情";
+      }else if(this.types == '1'){
+         this.title = "实盘录入"
+      }else if(this.types == '2'){
+         this.title = "确认盘点单"
+      }else if(this.types == '3'){
+         this.title = "审核盘点单"
+      }else if(this.types == '4'){
+         this.title = "盘点类型导入"
+      }
       
     }
     mounted(){       

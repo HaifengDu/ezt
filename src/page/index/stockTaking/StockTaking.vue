@@ -17,7 +17,12 @@
     </ezt-header>      
     <div class="ezt-main ezt-pk">       
       <tab :line-width=2 active-color='#fc378c'>
-        <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList" @on-item-click="tabClick(index)" :key="index">{{item.name}}</tab-item>
+        <tab-item 
+           class="vux-center" 
+           :selected="item.active" 
+           v-for="(item, index) in tabList.TabList" 
+           @on-item-click="tabClick(index)" 
+           :key="index">{{item.name}}</tab-item>
       </tab>       
       <div class="ezt-add-content" >
                 <div v-if="!inventoryList" class="done-none">
@@ -164,28 +169,25 @@ export default class stockTaking extends Vue{
     private names:string;
     private billType:string;
     private pageType = PageType;
-    
     created() {
       this.tabList.push({
         name:"待提交",
         status:0,
         active:true,
-      });   
-      this.tabList.push({
+      },{
         name:"待/已生效",
         status:2,
         active:false  
-      });
-      this.tabList.push({
+      },{
         name:"待审核",
         status:1,
         active:false
-      }); 
-      this.tabList.push({
+      },{
         name:"审核失败",
         status:3,
         active:false
-      });   
+      }
+      );   
       this.inventoryType.push({  
           name:"日盘",
           bill_type:'daily_inventory'
@@ -272,9 +274,8 @@ export default class stockTaking extends Vue{
       this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.data.length){
           this.allLoaded=true
-        }else{
-          this.inventoryList.list=this.inventoryList.list.concat(res.data.data)
         }
+        this.inventoryList.list=this.inventoryList.list.concat(res.data.data)
         setTimeout(()=>{
           this.$vux.loading.hide()
           this.hideMask()
@@ -284,7 +285,6 @@ export default class stockTaking extends Vue{
       })
       }     
     }
-    
     /**
      * 盘库详情  审核盘点单  实盘录入  确认盘点单
      */

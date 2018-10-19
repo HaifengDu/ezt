@@ -73,7 +73,7 @@
            </div>
           </div>
            <div class="temporary" slot="confirm" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry || types== pageType.InventoryType">
-              <div class="total" v-if="this.inventoryDetails.length>0 || !types== pageType.LibraryDetails">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
+              <div class="total" v-if="this.inventoryDetails.length>=0 || !types== pageType.LibraryDetails">货品数量合计：<span>{{this.inventoryDetails.length}}</span></div>
                 <!-- 盘点类型导入之后的暂存提交接口 --> 
                 <div class="button" v-if="types== pageType.AuditList || types== pageType.ConfirmList || types== pageType.RealdiscEntry">
                     <div class="storage" @click="storage">暂存1</div>
@@ -112,11 +112,12 @@ import CACHE_KEY from '../../../constans/cacheKey'
    computed:{
      ...mapGetters({
        "user":"user",
+       'addinventory':'stockTaking/addinventory',//新增盘库单数据
      }) 
    },
    methods:{ 
      ...mapActions({
-      
+      'setAddinventory':'stockTaking/setAddinventory'
      }),
    }        
 })  
@@ -129,6 +130,8 @@ export default class stockTaking extends Vue{
     private inventoryDetails:any[]=[];//详情页物品信息
     private types:string = '';  //页面类型
     private title:string = '';//页面表头
+    private addinventory:any;//新增盘库单
+    private setAddinventory:INoopPromise//store中给addinventory赋值
     private pageType = PageType;
     created() {
       this.service = StockTakingService.getInstance();
@@ -258,6 +261,8 @@ export default class stockTaking extends Vue{
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.addinventory.stock="";
+            this.addinventory.treatment="";
             this.$toasted.show("操作成功！")
             this.$router.push('/')   
         },err=>{
@@ -282,6 +287,8 @@ export default class stockTaking extends Vue{
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.addinventory.stock="";
+            this.addinventory.treatment="";
             this.$toasted.show("操作成功！")
             this.$router.push('/')
         },err=>{

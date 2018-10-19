@@ -89,7 +89,7 @@ export default class stockTaking extends Vue{
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any;//新增盘库单
-    private setAddinventory:INoopPromise//store中给selectedGood赋值
+    private setAddinventory:INoopPromise//store中给addinventory赋值
     private selectedGood:any[];//store中selectedGood的值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
@@ -221,7 +221,7 @@ export default class stockTaking extends Vue{
      /**
       * 模板导入
       */
-     private templateimport(){    
+     private templateimport(){ 
        if(this.addinventory){
          for(let i=0;i<this.LibraryField.length;i++){
             let item = this.LibraryField[i];

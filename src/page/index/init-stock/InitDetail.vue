@@ -40,7 +40,12 @@
                                     <span class="good-detail-sort">供应商：{{item.supplier}}</span>
                                     <span class="good-detail-sort">税率：{{item.rate}}</span>
                                 </div>
-                                <div class="good-detail-sort">备注：{{item.remark}}</div>
+                                <div class="good-detail-item" v-if="item.remark">
+                                    <div class="good-detail-sort content">备注：
+                                        <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                                        <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="good-detail-r">
                                 <span class="good-detail-num">{{item.num}}</span>
@@ -101,6 +106,10 @@ export default class InitStock extends Vue{
                 rate:20
             }];
         }
+    }
+    // 备注出现查看更多
+    private handleFold(item:any) {
+        this.$set(item,'flod',!item.flod);
     }
      /**
      * computed demo
@@ -242,6 +251,18 @@ export default class InitStock extends Vue{
     height: 30px;
     line-height: 30px;
 } 
+.good-detail-item .content{       
+    word-break: break-all;    
+    word-wrap:break-word;
+} 
+.good-detail-item .remark-suitable{
+    line-height: 25px;
+    height: 50px;
+    overflow: hidden;
+}
+.good-detail-item .remark-suitable.auto{
+    height: auto;
+}   
 </style>
 
 

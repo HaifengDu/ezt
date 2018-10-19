@@ -533,7 +533,8 @@ export default class ReceiveGood extends Vue{
             },
             content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。',
             cancelText:"返回",
-            showConfirmButton: false
+            showConfirmButton: false,
+            title:"入库失败"
           })
         }
       })

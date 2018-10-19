@@ -1,13 +1,10 @@
 <!--收货单详情页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title="收货单详情">
-       <div slot="action">
-       </div>
-    </ezt-header>    
+    <ezt-header :back="true" title="收货单详情"></ezt-header>    
     <div class="ezt-main"> 
         <div class="ezt-backcolor"></div>
-         <div class="ezt-detail-cot">
+        <div class="ezt-detail-cot">
             <!-- 单据信息 -->
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
@@ -48,7 +45,12 @@
                                 <span class="good-detail-billno">编号：{{item.billNo}}</span>
                                 <span class="good-detail-sort">￥{{item.amt}}</span>
                             </div>
-                            <div class="good-detail-sort">备注：{{item.remark}}</div>
+                            <div class="good-detail-item" v-if="item.remark">
+                                <div class="good-detail-sort content">备注：
+                                    <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                                    <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
+                                </div>
+                            </div>
                         </div>
                         <div class="good-detail-r">
                             <span class="good-detail-num">{{item.num}}</span>
@@ -196,6 +198,10 @@ export default class ReceiveGood extends Vue{
         
         return ori;
         },{num:0,Amt:0});
+    }
+    // 备注出现查看更多
+    private handleFold(item:any) {
+        this.$set(item,'flod',!item.flod);
     }
     private showOtherWare(item:any){
         if(item.active){
@@ -364,5 +370,17 @@ export default class ReceiveGood extends Vue{
 }
 .icon-trun-on.off{
     transform: rotate(180deg);
-}  
+} 
+.good-detail-item .content{       
+    word-break: break-all;    
+    word-wrap:break-word;
+} 
+.good-detail-item .remark-suitable{
+    line-height: 25px;
+    height: 50px;
+    overflow: hidden;
+}
+.good-detail-item .remark-suitable.auto{
+    height: auto;
+}    
 </style>

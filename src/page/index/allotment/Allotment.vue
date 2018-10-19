@@ -206,8 +206,10 @@ export default class allotment extends Vue{
         if(this.tabList.getActive().status==1){
             confirmGoodInfo={
                 bill_no:item.bill_no,
-                billType:'合同采购',
-                warehouse:'01',
+                outWarehouse:'02',
+                inWarehouse:'01',
+                outDate:"2018-9-10",
+                num:'2',
                 remark:'在途中',         
             }
             // this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采

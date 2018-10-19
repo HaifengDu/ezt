@@ -34,7 +34,7 @@
                     <li>
                         <span class="title-search-name is-required">选择物料：</span>
                         <span class="title-search-right" @click="renderUrl('/publicAddGood')">
-                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                            <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </span>
                         
                     </li>
@@ -136,8 +136,8 @@ export default class allotment extends Vue{
     }
     created(){
         this.service = AllotmentService.getInstance();
-        if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+        if(this.cache.getData(CACHE_KEY.ALLOTMENT_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_ADDINFO));
         }
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         //  this.getGoodList();
@@ -300,8 +300,8 @@ export default class allotment extends Vue{
                     return false;
                 }
             }
-            this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
-            this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+            this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(this.addBillInfo));
+            this.cache.save(CACHE_KEY.ALLOTMENT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
             this.$router.push(info);
             // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
         }      

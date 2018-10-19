@@ -221,7 +221,8 @@ export default class Order extends Vue{
             },
             content:'确认审核该单据？',
             confirmText:"审核通过",
-            cancelText:"审核不通过"
+            cancelText:"审核不通过",
+            hideOnBlur:true
         })
     }
 

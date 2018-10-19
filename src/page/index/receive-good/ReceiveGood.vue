@@ -8,7 +8,7 @@
     <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
        <div slot="action">
          <div>
-           <span class='ezt-action-point' @click="toPage('/addReceiveGood')">
+           <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
           <span class='ezt-action-point' @click="searchTitle">

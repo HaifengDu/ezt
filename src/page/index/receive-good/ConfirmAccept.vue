@@ -462,7 +462,7 @@ export default class ReceiveGood extends Vue{
         this.$toasted.show("请添加物料！");
         return false;
       }
-       this.$vux.confirm.show({
+      this.$vux.confirm.show({
         // 组件除show外的属性
         onCancel () {//审核不通过
           _this.addBillInfo={},
@@ -479,7 +479,8 @@ export default class ReceiveGood extends Vue{
         },
         content:'确认审核该单据？',
         confirmText:"审核通过",
-        cancelText:"审核不通过"
+        cancelText:"审核不通过",
+        hideOnBlur:true
       })
     }
     /**

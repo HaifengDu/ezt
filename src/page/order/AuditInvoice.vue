@@ -134,7 +134,6 @@ export default class Order extends Vue{
     };//store中
     private type:string;    
     created() {     
-        debugger
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){

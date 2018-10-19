@@ -1,7 +1,7 @@
 <!--查询结果-->
 <template>
 <div class="ezt-page-con queryresult">
-    <ezt-header :back="true" title="查询结果" @goBack="goBack" :isInfoGoback="true">
+    <ezt-header :back="true" title="查询结果">
        <div slot="action">
           <span></span>
        </div>        
@@ -14,7 +14,7 @@
                   <div></div>
                   <span>目前还没有任何订单</span>
                 </div> 
-                <ul v-if="queryResult">
+                <ul v-if="queryResult">   
                   <li :key="index" v-for="(item,index) in queryResult" >      
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
@@ -23,7 +23,7 @@
                       <div><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
                           <p>业务日期：<span>2018-12-13</span></p>
-                          <p class="see" @click="see(item,'a')">查看</p>
+                          <p class="see" @click="see(item,pageType.LibraryDetails)">查看</p>
                       </div>
                   </li>
                 </ul>
@@ -41,6 +41,9 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import StockTakingService from '../../../service/StockTakingService'
+import { CachePocily } from "../../../common/Cache"
+import { PageType } from "../../../enum/EPageType"
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({  
    components:{  
       
@@ -59,11 +62,11 @@ import StockTakingService from '../../../service/StockTakingService'
 })  
 export default class stockTaking extends Vue{
     private service: StockTakingService;
-    private getLibraryDetails:INoopPromise; //盘库详情
+    private cache = CachePocily.getInstance();  
     private pager:Pager;   
+    private pageType = PageType;
     private list:any[] = [];
-    private queryResult:any[] = [
-      {
+    private queryResult:any[] = [{
          bill_type_name:'月',
          bill_no:'YPCN0007201809240019',
          warehouse_name:'测试门店8仓库11',
@@ -78,48 +81,23 @@ export default class stockTaking extends Vue{
     mounted(){
       
     }
-    private goBack(){
-      this.$router.back();
-    }
-
     // 盘库详情
-    private see(item:any,types:any,audit_status:number){
-      this.$router.push({
-          name:'LibraryDetails',
-           query:{
-              warehouse_name:item.warehouse_name,
-              warehouse_id:item.warehouse_id,
-              busi_date:item.busi_date,
-              bill_type_name:item.bill_type_name,
-              stock_count_mode_name:item.stock_count_mode_name,
-              ids:item.id,  
-              types:types,
-              stock_count_mode:item.stock_count_mode,
-            }  
-          });  
-      // this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
-      //   this.$router.push({
-      //     name:'LibraryDetails',
-      //     query:{
-      //         warehouse_name:item.warehouse_name,
-      //         warehouse_id:item.warehouse_id,
-      //         busi_date:item.busi_date,
-      //         bill_type_name:item.bill_type_name,
-      //         stock_count_mode_name:item.stock_count_mode_name,
-      //         ids:item.id,  
-      //         types:types,
-      //         stock_count_mode:item.stock_count_mode,
-      //         // template_name:this.inventoryDetails.template_name,
-      //       }});  
-      //     // this.setInventoryDetails(res.data.data); 
-      // },err=>{
-      //     this.$toasted.show(err.message)
-      // })
+    // warehouse_name:item.warehouse_name,
+    // warehouse_id:item.warehouse_id,
+    // busi_date:item.busi_date,
+    // bill_type_name:item.bill_type_name,
+    // stock_count_mode_name:item.stock_count_mode_name,
+    // ids:item.id,  
+    // stock_count_mode:item.stock_count_mode,
+    private see(item:any,types:PageType,audit_status:number){
+      this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+      },err=>{
+          this.$toasted.show(err.message)
+      })
     } 
-    
-
-  
-      
 }
 </script>
 <style lang="less" scoped> 

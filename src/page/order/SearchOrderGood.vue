@@ -85,10 +85,6 @@ export default class OrderGoods extends Vue{
       console.log(this.searchParam,'00000');   
     }
    
-    private goBack(){
-      this.$router.push('/orderGood');
-    }
-   
 }
 </script>
 <style lang="less" scoped>

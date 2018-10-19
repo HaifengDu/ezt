@@ -123,9 +123,9 @@ import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { TabList } from '../../../common/ITab'
 import {maskMixin} from "../../../helper/maskMixin"
-import { CachePocily } from "../../../common/Cache";
-import { PageType } from "../../../enum/EPageType";
-import CACHE_KEY from '../../../constans/cacheKey';
+import { CachePocily } from "../../../common/Cache"
+import { PageType } from "../../../enum/EPageType"
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
    components:{  
       TabItem,
@@ -296,13 +296,9 @@ export default class stockTaking extends Vue{
      */
     private librarydetails(item:any,types:PageType,audit_status:number){
       this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
-        this.$router.push({
-          name:'LibraryDetails',
-          query:{ 
-              types:types.toString(),
-          }});  
-          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
       },err=>{
           this.$toasted.show(err.message)
       })
@@ -376,6 +372,12 @@ export default class stockTaking extends Vue{
         this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
         // this.setQueryResult(res.data.data); 
       },err=>{
+          /**
+           * 接口请求报错，测试页面看效果
+           */
+          this.hideMask();     
+          this.isSearch = false;
+          this.$router.push({name:'QueryResult'});
           this.$toasted.show("请求接口失败！")
           this.$toasted.show(err.message)
       })

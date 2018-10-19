@@ -7,7 +7,7 @@
         :infinite-scroll-disabled="allLoaded" 
         infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="盘库">
+    <ezt-header :back="true" title="盘库" :isInfoGoback="true" @goBack="goBack">
        <div slot="action">
            <div class="addbtn">
              <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
@@ -136,7 +136,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
       TabItem,
    },   
    mixins:[maskMixin],
-   computed:{    
+   computed:{       
      ...mapGetters({
        
      }) 
@@ -231,6 +231,9 @@ export default class stockTaking extends Vue{
        } 
        this.getpkList();
     }
+    private goBack(){
+      this.$router.push("/");
+    } 
     /**
      * tab切换
      */
@@ -305,26 +308,29 @@ export default class stockTaking extends Vue{
       this.newlyadded = true
     }  
     private addinventorylist(type:any,name:any,bill_type:string){
+      let InventoryType = {};
       this.service.getInventoryType(type.bill_type).then(res=>{ 
-        this.$router.push({
-            name:'AddinventoryList', 
-            query:{name:type.name,bill_type:type.bill_type}
-         });
-         this.newlyadded = false
-         this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
+        InventoryType={   
+          name:type.name,
+          bill_type:type.bill_type,
+        }   
+        this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
+        this.$router.push({name:'AddinventoryList'});
       },err=>{
           if(err instanceof ResponseError){
-            const that = this;
+            let that = this;
+            let OrderModule = {};
             if(err.data.errmsg  === 'unreview'){
                 this.newlyadded = false
                 this.$vux.confirm.show({   
                   // 组件除show外的属性
                   onConfirm () {
-                      that.$router.push({
-                          name:'AddinventoryList',
-                          query:{name:type.name,bill_type:type.bill_type}
-                      });
-                      that.newlyadded = false
+                     OrderModule={   
+                        name:type.name,
+                        bill_type:type.bill_type,
+                      }   
+                    that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+                    that.$router.push({name:'AddinventoryList'});
                   },
                   content:'有单据未完成审核，是否进行盘点?'
                 })

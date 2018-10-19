@@ -13,7 +13,7 @@
             <group>       
               <x-input title='门店名称' text-align="right" disabled  v-model="user.auth.store_name">{{user.auth.store_name||'-'}}</x-input>  
               <x-input title='盘点日期' text-align="right" disabled  v-model="user.auth.busi_date">{{user.auth.busi_date}}</x-input>
-              <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input>   
+              <x-input title='盘点类型' text-align="right" disabled v-model="addinventory.name">{{addinventory.name}}</x-input> 
             </group>        
           </div>    
           <div class="warehouse">
@@ -22,7 +22,7 @@
                   <span class="title-search-name is-required">仓库：</span>
                   <span class="title-select-name item-select">
                     <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
-                    @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]">
+                    @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
                       <option :value="item" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
                     </select> 
                   </span>   
@@ -76,6 +76,7 @@ import { PageType } from "../../../enum/EPageType"
    },
    methods:{ 
      ...mapActions({
+       'setAddinventory':'stockTaking/setAddinventory'
      })
    }   
 })  
@@ -88,6 +89,7 @@ export default class stockTaking extends Vue{
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any;//新增盘库单
+    private setAddinventory:INoopPromise//store中给addinventory赋值
     private selectedGood:any[];//store中selectedGood的值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
@@ -106,12 +108,6 @@ export default class stockTaking extends Vue{
     ];
     created() {
        this.service = StockTakingService.getInstance();
-       this.addinventory.name =  this.$route.query.name
-       this.addinventory.bill_type =  this.$route.query.bill_type
-       /**
-        * 选择仓库
-        */
-       this.getWarehouseType();
        /**
         * 选择货品
         */
@@ -122,9 +118,16 @@ export default class stockTaking extends Vue{
       if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
           this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
       }
-     
-
-    }
+      if(this.cache.getData(CACHE_KEY.INVENTORY_TYPE)){
+          const addinventory = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_TYPE));
+          this.addinventory.name = addinventory.name
+          this.addinventory.bill_type = addinventory.bill_type
+      }
+       /**
+        * 选择仓库
+        */
+       this.getWarehouseType();
+    }  
     mounted(){   
        
 
@@ -141,8 +144,8 @@ export default class stockTaking extends Vue{
                   console.log(this)   // 非当前 vm
               },       
               onConfirm () {
-                   _this.addinventory.stock = ""
-                   _this.addinventory.treatment = ""
+                   _this.addinventory.stock={};
+                   _this.addinventory.treatment={};
                    _this.$router.push('/stocktaking');
               },
               content:"返回后，本次操作记录将丢失，请确认是否离开？"
@@ -150,6 +153,26 @@ export default class stockTaking extends Vue{
       }else{
           this.$router.push('/stocktaking');
       }
+    }
+    /**
+     * 动态加载仓库
+     */
+    private getWarehouseType(){
+      this.service.getWarehouse(this.addinventory.bill_type).then(res=>{ 
+          this.warehouseType = res.data.data;
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
+    /**
+     * 选择完仓库  未盘处理方式
+     */
+    private handlerStock(val:any){
+      this.LibraryField.forEach(item=>{
+        if(item.id == val){
+           item[val]= false;
+        }
+      })      
     }
     /**
      * 手工制单
@@ -198,7 +221,7 @@ export default class stockTaking extends Vue{
      /**
       * 模板导入
       */
-     private templateimport(){    
+     private templateimport(){ 
        if(this.addinventory){
          for(let i=0;i<this.LibraryField.length;i++){
             let item = this.LibraryField[i];
@@ -218,28 +241,7 @@ export default class stockTaking extends Vue{
           })
         }
      }
-    /**
-     * 动态加载仓库
-     */
-    private getWarehouseType(){
-      this.service.getWarehouse(this.addinventory.bill_type).then(res=>{ 
-          this.warehouseType = res.data.data;
-      },err=>{
-          this.$toasted.show(err.message)
-      })
-    }
-    /**
-     * 选择完仓库  未盘处理方式
-     */
-    private handlerStock(val:any){
-       const _this = this;
-        _this.addinventory[val]=_this.addinventory[val];  
-        this.LibraryField.forEach(item=>{
-        if(item.id == val){
-           item[val]= false;
-        }
-      })      
-    }
+    
 }
 </script>
 <style lang="less" scoped> 

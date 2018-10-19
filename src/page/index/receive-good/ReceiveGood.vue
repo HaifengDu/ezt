@@ -30,7 +30,7 @@
       </tab>        
       <div class="ezt-add-content">
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage('')">
+          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
             <div class="receive-icon-title">
             <span class="receive-icon-dcName"></span>
             <span class="return-list-title">{{item.dc_name}}</span> 
@@ -196,7 +196,7 @@ export default class ReceiveGood extends Vue{
       } 
     }
     //详情页跳转
-    private toPage(info:string){
+    private toPage(item:any,info:string){
       let confirmGoodInfo = {};
       let detailList = {};
       if(info){
@@ -205,7 +205,7 @@ export default class ReceiveGood extends Vue{
       }
       if(this.tabList.getActive().status==1){
         confirmGoodInfo={
-          bill_no:'00111111',
+          bill_no:item.bill_no,
           billType:'合同采购',
           warehouse:'01',
           remark:'在途中',         

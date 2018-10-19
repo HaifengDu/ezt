@@ -106,6 +106,7 @@ export default class stockTaking extends Vue{
             });
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+            this.cache.save(CACHE_KEY.TEMPLATEIMPORT,JSON.stringify(this.templateimport));
         },err=>{
             this.$toasted.show(err.message)
         })

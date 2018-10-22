@@ -4,7 +4,7 @@
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-        <ezt-header :back="true" title="店内调拨" @goBack="goBack" :isInfoGoback="true">
+        <ezt-header :back="true" title="店间调拨" @goBack="goBack" :isInfoGoback="true">
             <div slot="action">
                 <div>
                     <span class='ezt-action-point' @click="toPage(null,'/allotAdd')">
@@ -189,6 +189,9 @@ export default class allotment extends Vue{
                     return item.id == info.id;
                 })
                 _this.goodList.splice(newIndex,1);
+                if(_this.goodList.length<5){
+                    _this.getList();
+                }
             },
             content:'是否要删除该单据？。'
         })
@@ -222,8 +225,7 @@ export default class allotment extends Vue{
             }
             this.cache.save(CACHE_KEY.ALLOTMENT_DETAILLIST,JSON.stringify(detailList));
             this.$router.push('/allotDetail');
-        }
-      
+        }      
     }
     /**
      * 列表页 tab切换
@@ -243,7 +245,7 @@ export default class allotment extends Vue{
         this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
             this.showMask();
             this.$vux.loading.show({
-            text: '加载中...'
+                text: '加载中...'
             });
             this.goodList=res.data.data;
             setTimeout(()=>{

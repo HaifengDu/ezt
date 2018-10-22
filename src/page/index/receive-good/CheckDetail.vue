@@ -99,7 +99,7 @@ import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
-import CACHE_KEY from '../../../constans/cacheKey'
+import CACHE_KEY from '../../../constans/cacheKey';
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -379,8 +379,13 @@ export default class ReceiveGood extends Vue{
     line-height: 25px;
     height: 50px;
     overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .good-detail-item .remark-suitable.auto{
     height: auto;
+    -webkit-line-clamp: initial;
 }    
 </style>

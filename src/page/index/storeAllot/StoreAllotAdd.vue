@@ -8,12 +8,12 @@
                     <li class="select-list">
                         <span class="title-search-name is-required">调出仓库：</span>
                         <span class="title-select-name item-select">
-                        <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outWarehouse" 
-                            @change="handlerBillType('outWarehouse','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
-                             :class="[{'selectError':billFiles[0].outWarehouse}]">
-                            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                        </select>
+                            <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outWarehouse" 
+                                @change="handlerBillType('outWarehouse','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
+                                :class="[{'selectError':billFiles[0].outWarehouse}]">
+                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            </select>
                         </span>
                     </li>
                     <li class="select-list">
@@ -126,6 +126,10 @@ export default class allotment extends Vue{
 
 
     mounted(){
+       
+    }
+    created(){
+        this.service = AllotmentService.getInstance();
         this.orderType = [{//单据类型下拉数据    
             name:"合同采购单",
             type:"q"
@@ -133,9 +137,8 @@ export default class allotment extends Vue{
             name:"采购单",
             type:"m"
         }]
-    }
-    created(){
-        this.service = AllotmentService.getInstance();
+        this.addBillInfo.outWarehouse = this.orderType[0].type;
+         this.addBillInfo.inWarehouse = this.orderType[0].type;
         if(this.cache.getData(CACHE_KEY.ALLOTMENT_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_ADDINFO));
         }
@@ -269,8 +272,9 @@ export default class allotment extends Vue{
                 },
                 onConfirm () {
                     if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
-                        _this.addBillInfo.inWarehouse = "";
-                        _this.addBeforeBillInfo.inWarehouse = "";
+                        // _this.addBillInfo.inWarehouse = "";
+                        _this.addBillInfo.inWarehouse = _this.orderType[0].type;
+                        _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
                     }
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
@@ -278,10 +282,15 @@ export default class allotment extends Vue{
                 content:title
             })
         }else{
-            _this.addBeforeBillInfo[val]=_this.addBillInfo[val];  
+            if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
+                // _this.addBillInfo.inWarehouse = "";
+                _this.addBillInfo.inWarehouse = _this.orderType[0].type;
+                _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
+            }
+            _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
             this.billFiles.forEach(item=>{
                 if(item.id == val){
-                item[val]= false;
+                    item[val]= false;
                 }
             })         
         }
@@ -302,8 +311,8 @@ export default class allotment extends Vue{
             }
             this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(this.addBillInfo));
             this.cache.save(CACHE_KEY.ALLOTMENT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-            this.$router.push(info);
-            // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+            // this.$router.push(info);
+            this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
         }      
     }
     /**
@@ -318,10 +327,10 @@ export default class allotment extends Vue{
             console.log(this) // 非当前 vm
             },
             onConfirm () {
-            _this.addBillInfo={},
-            _this.setSelectedGood([]);
-            _this.addBeforeBillInfo={};
-            _this.$router.push('/allotment');
+                _this.addBillInfo={},
+                _this.setSelectedGood([]);
+                _this.addBeforeBillInfo={};
+                _this.$router.push('/allotment');
             },
             content:"返回后，本次操作记录将丢失，请确认是否离开？"
         })

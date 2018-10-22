@@ -66,9 +66,13 @@
               <div class="overflowing"></div>
               <span>损溢</span>
             </li>
-            <li @click="renderUrl('/allotment')">
+            <li @click="renderUrl('/inStoreAllotment')">
               <div class="diaobo"></div>
-              <span>调拨</span>
+              <span>店内调拨</span>
+            </li>
+            <li @click="renderUrl('/storeAllotment')">
+              <div class="shouhuo"></div>
+              <span>店间调拨</span>
             </li>
         </ul>
         <!--内容-->

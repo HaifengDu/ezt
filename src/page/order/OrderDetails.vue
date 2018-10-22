@@ -50,7 +50,7 @@
                         </div>
                     </div>
                     <div class="good-detail-item" v-if="item.remark">
-                        <div class="good-detail-sort content" v-model="content">备注：
+                        <div class="good-detail-sort content">备注：
                             <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
                             <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
                         </div>
@@ -111,7 +111,7 @@ export default class OrderGoods extends Vue{
     private paytitle:string="";
     private Payment:boolean = false;  //订单支付页面显示已付
     private fold :boolean = true;  //备注超出显示查看更多
-    private content:string='';
+    private innerContent:string='';
     created() {          
        this.service = OrderGoodsService.getInstance();
        this.detailList();
@@ -136,7 +136,7 @@ export default class OrderGoods extends Vue{
         this.$set(item,'flod',!item.flod);
     }
     private getData() {
-        this.content = this.content
+        this.innerContent = this.innerContent
     }
     /**
      * computed demo
@@ -258,10 +258,7 @@ export default class OrderGoods extends Vue{
     }
     .good-detail-item .remark-suitable.auto{
         height: auto;
-    }    
-    .good-detail-sort.unfold {
-        // -webkit-line-clamp: 100;
-    }    
+    }  
     .good-detail-billno,.good-num-t{
         font-size: 10px;
         color: #A3B3C2;

@@ -51,6 +51,10 @@
                  <span v-if="!useObj.editPrice" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
+                 <!-- 库存 -->
+                <span v-if="useObj.allotOrderType" class="good-stock ezt-titleColor2">
+                  库存：{{item.stock||0}}
+                 </span>
                  <span class="good-number">
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
@@ -311,6 +315,9 @@ export default class AddGood extends Vue{
     this.useObj.costType = this.$route.params.costType; //价格与税额区分
     if(this.$route.params.receiveOrderType){//单据类型（收货价格是否可编辑）
       this.useObj.editPrice = this.$route.params.receiveOrderType;
+    }
+    if(this.$route.params.allotOrderType){//调拨单据 是否
+      this.useObj.allotOrderType = true;
     }
     this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
@@ -708,7 +715,7 @@ private changeDirect(item:any){
     .good-remark{     
       padding: 1px;
       display:inline-block;
-      margin-right: 20px;
+      // margin-right: 20px;
       flex:.4;
       font-size: 20px;
     }
@@ -716,8 +723,12 @@ private changeDirect(item:any){
       flex:1;
     }
     .good-collect{
-      flex:.6;
+      flex:.4;
       font-size: 20px;
+    }
+    .good-stock{
+      flex:.4;
+      font-size: 12px;
     }
     .good-collect.active{
       color:#1674fc;

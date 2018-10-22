@@ -91,7 +91,7 @@ export default class allotment extends Vue{
             unitName:"KG",
             billNo:"003222",
             amt: 360,
-            remark:"这是水果",
+            remark:"这是水果111111111111111111111111111111111111111111111111111122222222222222222",
             num:3,
             },{
                 name:"大猪蹄子",
@@ -234,14 +234,19 @@ export default class allotment extends Vue{
 }
 .good-detail-item .content{       
     word-break: break-all;    
-    word-wrap:break-word;
+    word-wrap:break-word;   
 } 
 .good-detail-item .remark-suitable{
     line-height: 25px;
     height: 50px;
-    overflow: hidden;
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .good-detail-item .remark-suitable.auto{
     height: auto;
+     -webkit-line-clamp: initial;
 }    
 </style>

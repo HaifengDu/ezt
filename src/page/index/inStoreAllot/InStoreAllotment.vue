@@ -193,7 +193,7 @@ export default class allotment extends Vue{
                     _this.getList();
                 }
             },
-            content:'是否要删除该单据？。'
+            content:'是否要删除该单据？'
         })
     }
     /**

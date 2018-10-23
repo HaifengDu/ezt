@@ -3,8 +3,8 @@ import { BaseService } from "./BaseService";
 import { ERequestType } from "../enum/ERequestType";
 import Axios from 'axios';
 import { IPagerData } from "../interface/IPagerData";
-export class AllotmentService extends BaseService{
-    private static _instance:AllotmentService;
+export class StoreAllotService extends BaseService{
+    private static _instance:StoreAllotService;
     private loginService : LoginService;
     private constructor(){
         super(ERequestType.AppOrder)
@@ -29,4 +29,4 @@ export class AllotmentService extends BaseService{
         return this._instance || (this._instance = new this());
     }
 }
-export default AllotmentService;
+export default StoreAllotService;

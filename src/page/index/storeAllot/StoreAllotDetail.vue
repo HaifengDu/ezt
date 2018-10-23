@@ -69,7 +69,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator";
-import { AllotmentService} from '../../../service/AllotmentService';
+import { StoreAllotService} from '../../../service/StoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -78,7 +78,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service: AllotmentService;
+    private service: StoreAllotService;
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
     mounted(){
@@ -107,7 +107,7 @@ export default class allotment extends Vue{
         }
     }
     created(){
-        this.service = AllotmentService.getInstance();
+        this.service = StoreAllotService.getInstance();
     }
     /**
      * computed demo

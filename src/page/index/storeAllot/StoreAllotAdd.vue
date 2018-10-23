@@ -97,7 +97,7 @@
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
-import { AllotmentService} from '../../../service/AllotmentService';
+import { StoreAllotService} from '../../../service/StoreAllotService';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -118,7 +118,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service : AllotmentService;
+    private service : StoreAllotService;
     /**
      * 调出仓库列表
      *  */
@@ -141,7 +141,7 @@ export default class allotment extends Vue{
        
     }
     created(){
-        this.service = AllotmentService.getInstance();
+        this.service = StoreAllotService.getInstance();
         this.orderType = [{//单据类型下拉数据    
             name:"合同采购单",
             type:"q"

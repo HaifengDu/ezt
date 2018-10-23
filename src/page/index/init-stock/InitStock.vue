@@ -195,7 +195,7 @@ export default class InitStock extends Vue {
           })
           _this.goodList.splice(newIndex,1);
         },
-        content:'是否要删除该单据？。'
+        content:'是否要删除该单据？'
       })
     }
     /**

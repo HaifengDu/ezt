@@ -9,7 +9,7 @@
     <div class="ezt-main">     
        <div class="ezt-add-content">    
           <div class="done-none" v-if="!inlineDescListValue||inlineDescListValue.length<=0">
-            <div></div>
+            <div></div>   
             <span>没有搜索结果</span>
             <em @click="this.inlineDescListValue = false">返回</em>
           </div>  
@@ -39,7 +39,6 @@ import { PageType } from "../../../enum/EPageType"
    computed:{
      ...mapGetters({
        "user":"user",
-       'addinventory':'stockTaking/addinventory',//新增盘库单数据
      }) 
    },
    methods:{ 
@@ -57,17 +56,16 @@ export default class stockTaking extends Vue{
     private labelPosition= 'left';
     private templateList:any= [];
     private inlineDescListValue:any=[];
-    private billName:any; //获取盘点类型
     private pageType = PageType; //页面类型
     private addinventory:any;//store中
-    created() {
+    created() {   
        this.service = StockTakingService.getInstance();
        if(this.cache.getData(CACHE_KEY.TEMPLATEIMPORT)){
-          const templateList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.TEMPLATEIMPORT));
+          const templateList = JSON.parse(this.cache.getData(CACHE_KEY.TEMPLATEIMPORT));
           this.templateimport = templateList
        }
        if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
-            this.billName = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ADDINVENTORY));
+            this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
        }
     }
     mounted(){
@@ -83,7 +81,7 @@ export default class stockTaking extends Vue{
             value:''
            }
            obj.key=item.id;
-           obj.value=item.text;
+           obj.value=item.text;    
            this.templateList.push(obj);         
         })
         if(this.templateList&&this.templateList.length>0){
@@ -93,20 +91,20 @@ export default class stockTaking extends Vue{
      /**
       * 下一步
       */
-     private nextstep(types:PageType){   
+     private nextstep(types:PageType,template_name:any){   
+      let templateName ={};
       const template_id = this.inlineDescListValue[0]  //选中模板id
-      const flag = this.billName.bill_type
-      const warehouse_id = this.billName.stock.id
+      const flag = this.addinventory.bill_type
+      const warehouse_id = this.addinventory.stock
       this.service.getTemplateDetails(template_id,flag,warehouse_id).then(res=>{ 
-            this.$router.push({
-              name:'LibraryDetails',
-              query:{
-                  types:types.toString(),
-              }
-            });
+            templateName={
+                templateName:"模板导入"
+            }
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
             this.cache.save(CACHE_KEY.TEMPLATEIMPORT,JSON.stringify(this.templateimport));
+            this.cache.save(CACHE_KEY.TEMPLATE_NAME,JSON.stringify(templateName))
+            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});
         },err=>{
             this.$toasted.show(err.message)
         })

@@ -15,7 +15,7 @@
               <ul>
                <li>
                   <div><p>盘点仓库：<span>{{details.warehouse_name}}</span></p></div>
-                  <div><p>盘点日期：<span>{{details.busi_date}}</span></p></div>
+                  <div><p>盘点日期：<span>{{user.auth.busi_date}}</span></p></div>
                   <div><p>盘库方式：<span>{{details.template_name}}</span></p></div>
                   <div><p>盘点类型：{{details.bill_type_name}}</p></div>
                   <div><p>未盘处理：<span>{{details.stock_count_mode_name}}</span></p></div>
@@ -112,12 +112,11 @@ import CACHE_KEY from '../../../constans/cacheKey'
    computed:{
      ...mapGetters({
        "user":"user",
-       'addinventory':'stockTaking/addinventory',//新增盘库单数据
      }) 
    },
    methods:{ 
      ...mapActions({
-      'setAddinventory':'stockTaking/setAddinventory'
+       
      }),
    }        
 })  
@@ -130,8 +129,6 @@ export default class stockTaking extends Vue{
     private inventoryDetails:any[]=[];//详情页物品信息
     private types:string = '';  //页面类型
     private title:string = '';//页面表头
-    private addinventory:any;//新增盘库单
-    private setAddinventory:INoopPromise//store中给addinventory赋值
     private pageType = PageType;
     created() {
       this.service = StockTakingService.getInstance();
@@ -151,24 +148,27 @@ export default class stockTaking extends Vue{
     }
     mounted(){       
       /**
-       * 只针对盘点类型导入
+       * 盘点类型导入 模板导入
        */
       if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
-            this.details = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ADDINVENTORY));
-            this.details.warehouse_name = this.details.stock.text
-            this.details.busi_date = this.user.auth.busi_date
-            this.details.template_name = this.details.template_name
+            this.details = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
+            this.details.warehouse_name = this.details.stock
             this.details.bill_type_name = this.details.name
-            this.details.stock_count_mode_name = this.details.treatment.name
-      }
+            this.details.stock_count_mode_name = this.details.treatment
+            this.details.warehouse_id = this.details.stock
+      }   
       /**
-       * 下边是页面公共方法
+       * 公共方法
        */
       if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
-            this.details = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_LIST));
+            this.details = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
       }
       if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
-            this.inventoryDetails = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_DETAILS));
+            this.inventoryDetails = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+      }
+      if(this.cache.getData(CACHE_KEY.TEMPLATE_NAME)){
+            const template_name = JSON.parse(this.cache.getData(CACHE_KEY.TEMPLATE_NAME));
+            this.details.template_name = template_name.templateName
       }
     }
     //审核不通过
@@ -252,17 +252,16 @@ export default class stockTaking extends Vue{
         const entry_name = this.user.auth.username
         const bill_status = 0   //暂存
         const bill_type_name = this.details.bill_type_name
-        const warehouse_id = this.details.stock.id
+        const warehouse_id = this.details.warehouse_id
         const bill_type = this.details.bill_type
-        const stock_count_mode_name = this.details.treatment.name
-        const busi_date = this.details.busi_date
+        const stock_count_mode_name = this.details.treatment
+        const busi_date = this.user.auth.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.details.treatment.value
+        const stock_count_mode = this.details.treatment
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.addinventory.stock="";
-            this.addinventory.treatment="";
+            this.cache.clear();
             this.$toasted.show("操作成功！")
             this.$router.push('/')   
         },err=>{
@@ -278,17 +277,16 @@ export default class stockTaking extends Vue{
         const entry_name = this.user.auth.username
         const bill_status = 1   //提交
         const bill_type_name = this.details.bill_type_name
-        const warehouse_id = this.details.stock.id
+        const warehouse_id = this.details.warehouse_id
         const bill_type = this.details.bill_type
-        const stock_count_mode_name = this.details.treatment.name
-        const busi_date = this.details.busi_date
+        const stock_count_mode_name = this.details.treatment
+        const busi_date = this.user.auth.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
-        const stock_count_mode = this.details.treatment.value
+        const stock_count_mode = this.details.treatment
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.addinventory.stock="";
-            this.addinventory.treatment="";
+            this.cache.clear();
             this.$toasted.show("操作成功！")
             this.$router.push('/')
         },err=>{

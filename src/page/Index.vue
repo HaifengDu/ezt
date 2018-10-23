@@ -62,7 +62,7 @@
             <li @click="renderUrl()">
               <div class="kucun"><span class="ezt-reddot-s"></span></div>
               <span>库存初始化</span></li>
-            <li @click="renderUrl('/reportLoss')">
+            <li @click="renderUrl('/spilledSheet')">
               <div class="overflowing"></div>
               <span>损溢</span>
             </li>

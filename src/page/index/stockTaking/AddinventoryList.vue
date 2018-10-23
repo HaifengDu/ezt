@@ -23,7 +23,7 @@
                   <span class="title-select-name item-select">
                     <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
                     @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
-                      <option :value="item" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
+                      <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
                     </select> 
                   </span>   
                 </li>   
@@ -32,9 +32,9 @@
                   <span class="title-select-name item-select">
                     <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment"
                     @change="handlerStock('treatment')" :class="[{'selectError':LibraryField[1].treatment}]">
-                      <option :value="item" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                      <option :value="mode.value" :key="index" v-for="(mode,index) in orderType">{{mode.name}}</option>
                     </select>
-                  </span>
+                  </span>  
                 </li>
               </ul>    
           </div>
@@ -71,12 +71,12 @@ import { PageType } from "../../../enum/EPageType"
    computed:{  
      ...mapGetters({
        "user":"user",
-       'addinventory':'stockTaking/addinventory',//新增盘库单数据
+      
      }) 
    },
    methods:{ 
      ...mapActions({
-       'setAddinventory':'stockTaking/setAddinventory'
+      
      })
    }   
 })  
@@ -88,8 +88,7 @@ export default class stockTaking extends Vue{
     private bill_type:string; //弹层盘点类型
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
-    private addinventory:any;//新增盘库单
-    private setAddinventory:INoopPromise//store中给addinventory赋值
+    private addinventory:any={};//新增盘库单
     private selectedGood:any[];//store中selectedGood的值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
@@ -113,15 +112,18 @@ export default class stockTaking extends Vue{
         */
       (this.selectedGood||[]).forEach(item=>item.active = false);
       if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
-          this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
+          this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_ADDINFO));
       }
       if(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO)){
-          this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDBEFOREINFO));
-      }
+          this.addBeforeBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_ADDBEFOREINFO));
+      }    
       if(this.cache.getData(CACHE_KEY.INVENTORY_TYPE)){
-          const addinventory = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_TYPE));
-          this.addinventory.name = addinventory.name
-          this.addinventory.bill_type = addinventory.bill_type
+          const InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_TYPE));
+          this.addinventory.name = InventoryType.name
+          this.addinventory.bill_type = InventoryType.bill_type
+      }
+      if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
+          this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
       }
        /**
         * 选择仓库
@@ -197,8 +199,12 @@ export default class stockTaking extends Vue{
      /**
       * 盘点类型导入
       */
-     private inventorytype(types:PageType){
+     private inventorytype(types:PageType,item:any,type:any){
         if(this.addinventory){
+         let templateName = {};
+         let addinventory = {};
+         const flag = this.addinventory.bill_type;
+         const warehouse_id = this.addinventory.stock;
          for(let i=0;i<this.LibraryField.length;i++){
             let item = this.LibraryField[i];
             if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
@@ -207,12 +213,20 @@ export default class stockTaking extends Vue{
                 return false;
              }
          }
-        const flag = this.addinventory.bill_type;
-        const warehouse_id = this.addinventory.stock.id;
+        templateName = {templateName:"盘点类型导入"}
+        addinventory = {
+            name:this.addinventory.name,
+            bill_type:this.addinventory.bill_type,
+            stock:this.addinventory.stock,
+            treatment:this.addinventory.treatment,
+            // stock_count_mode:this.addinventory.treatment.value,
+            // warehouse_id:this.addinventory.stock.id
+        }
         this.service.getInventorytypeImport(flag,warehouse_id).then(res=>{ 
               this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
-              this.$router.push({name:'LibraryDetails',query:{types:types.toString(),}});
+              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(addinventory));
+              this.cache.save(CACHE_KEY.TEMPLATE_NAME,JSON.stringify(templateName))
+              this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});
           },err=>{
               this.$toasted.show(err.message)
           })
@@ -223,6 +237,8 @@ export default class stockTaking extends Vue{
       */
      private templateimport(){ 
        if(this.addinventory){
+         let addinventory = {};
+         const warehouse_id = this.addinventory.stock;
          for(let i=0;i<this.LibraryField.length;i++){
             let item = this.LibraryField[i];
             if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
@@ -231,10 +247,17 @@ export default class stockTaking extends Vue{
                 return false;
              }
          }
-        const warehouse_id = this.addinventory.stock.id;
+        addinventory = {
+            name:this.addinventory.name,
+            bill_type:this.addinventory.bill_type,
+            stock:this.addinventory.stock,
+            treatment:this.addinventory.treatment,
+            // stock_count_mode:this.addinventory.treatment.value,
+            // warehouse_id:this.addinventory.stock.id
+        }
         this.service.getTemplateImport(warehouse_id).then(res=>{
               this.cache.save(CACHE_KEY.TEMPLATEIMPORT,JSON.stringify(res.data.data));
-              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+              this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(addinventory));
               this.$router.push({name:'SelecttheTemplate'});
           },err=>{
               this.$toasted.show(err.message)
@@ -318,8 +341,6 @@ select{
       }
    }
 }
-
-
 </style>
 
 

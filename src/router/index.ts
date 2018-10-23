@@ -36,6 +36,11 @@ import AllotAdd from '@/page/index/allotment/AllotAdd.vue';//添加调拨单
 import AllotAudit from '@/page/index/allotment/AllotAudit.vue';//审核调拨单
 import AllotSearch from '@/page/index/allotment/AllotSearch.vue';//查询调拨单
 import AllotDetail from '@/page/index/allotment/AllotDetail.vue';//调拨单详情
+import SpilledSheet from '@/page/index/SpilledSheet/SpilledSheet.vue'; //损溢单
+import SearchSpilledSheet from '@/page/index/SpilledSheet/SearchSpilledSheet.vue';//损溢单查询
+import SpilledSheetDetails from '@/page/index/SpilledSheet/SpilledSheetDetails.vue'; //损溢详情页
+import AddflossSheet from '@/page/index/SpilledSheet/AddflossSheet.vue';//添加损溢单
+import AuditoflossSheet from '@/page/index/SpilledSheet/AuditoflossSheet.vue'; //审核损溢单
 Vue.use(Router)
 
 const router = new Router({
@@ -182,6 +187,27 @@ const router = new Router({
       path: '/allotDetail',
       name: 'AllotDetail',
       component: AllotDetail
+    },{
+      path:"/spilledSheet",
+      name:"SpilledSheet",
+      component: SpilledSheet
+    },{
+      path:"/searchSpilledSheet",
+      name:"SearchSpilledSheet",
+      component: SearchSpilledSheet
+    },{
+      path:"/spilledSheetDetails",
+      name:"SpilledSheetDetails",
+      component: SpilledSheetDetails
+    },{
+      path:"/addflossSheet",
+      name:"AddflossSheet",
+      component:AddflossSheet
+    },{
+      path:"/auditoflossSheet",
+      name:"AuditoflossSheet",
+      component:AuditoflossSheet
+      
     }
   ]
 });

@@ -31,11 +31,6 @@ import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 import AuditInvoice from '@/page/order/AuditInvoice.vue';  //审核要货单
-import Allotment from '@/page/index/allotment/Allotment.vue';//调拨列表页
-import AllotAdd from '@/page/index/allotment/AllotAdd.vue';//添加调拨单
-import AllotAudit from '@/page/index/allotment/AllotAudit.vue';//审核调拨单
-import AllotSearch from '@/page/index/allotment/AllotSearch.vue';//查询调拨单
-import AllotDetail from '@/page/index/allotment/AllotDetail.vue';//调拨单详情
 import SpilledSheet from '@/page/index/SpilledSheet/SpilledSheet.vue'; //损溢单
 import SearchSpilledSheet from '@/page/index/SpilledSheet/SearchSpilledSheet.vue';//损溢单查询
 import SpilledSheetDetails from '@/page/index/SpilledSheet/SpilledSheetDetails.vue'; //损溢详情页
@@ -177,26 +172,6 @@ const router = new Router({
       path: '/auditInvoice',
       name:"AuditInvoice",
       component: AuditInvoice
-    },{
-      path: '/allotment',
-      name: "Allotment",
-      component: Allotment
-    },{
-      path: '/allotAdd',
-      name: "AllotAdd",
-      component: AllotAdd
-    },{
-      path: '/allotAudit',
-      name: "AllotAudit",
-      component : AllotAudit
-    },{
-      path: '/allotSearch',
-      name: "AllotSearch",
-      component: AllotSearch
-    },{
-      path: '/allotDetail',
-      name: 'AllotDetail',
-      component: AllotDetail
     },{
       path:"/spilledSheet",
       name:"SpilledSheet",

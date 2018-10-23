@@ -312,7 +312,7 @@ export default class Index extends Vue{
   }
 
   .icon-menu .overflowing{   
-    background: url(../assets/images/icon-kucun.png) no-repeat;
+    background: url(../assets/images/icon_require.png) no-repeat;
     background-size: 64px 64px;
   }
   .icon-menu .diaobo{

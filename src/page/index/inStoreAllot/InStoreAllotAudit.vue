@@ -239,7 +239,7 @@ export default class allotment extends Vue{
         this.addBillInfo={},
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
-        this.$router.push('/allotment');
+        this.$router.push('/inStoreAllotment');
     }
 
 

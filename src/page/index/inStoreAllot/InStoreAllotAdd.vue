@@ -330,12 +330,12 @@ export default class allotment extends Vue{
                 _this.addBillInfo={},
                 _this.setSelectedGood([]);
                 _this.addBeforeBillInfo={};
-                _this.$router.push('/allotment');
+                _this.$router.push('/inStoreAllotment');
             },
             content:"返回后，本次操作记录将丢失，请确认是否离开？"
         })
         }else{
-            this.$router.push('/allotment');
+            this.$router.push('/inStoreAllotment');
         }
     }
     

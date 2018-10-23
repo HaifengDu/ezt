@@ -4,10 +4,10 @@
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-        <ezt-header :back="true" title="店间调拨" @goBack="goBack" :isInfoGoback="true">
+        <ezt-header :back="true" title="店间平调" @goBack="goBack" :isInfoGoback="true">
             <div slot="action">
                 <div>
-                    <span class='ezt-action-point' @click="toPage(null,'/allotAdd')">
+                    <span class='ezt-action-point' @click="toPage(null,'/storeAllotAdd')">
                         <i class="fa fa-plus" aria-hidden="true" ></i>
                     </span>
                     <span class='ezt-action-point' @click="searchTitle">
@@ -58,29 +58,38 @@
         <div v-show="isSearch" class="search-dialog">
             <ul class="ezt-title-search">
                 <li class="select-list">
-                <span class="title-search-name ">调出仓库：</span>
-                <span class="title-select-name item-select">
-                <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
-                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                    <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                </select>
-                </span>
-            </li>
-            <li>
-                <span class="title-search-name">调出日期</span>
-                <span>
-                <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
-                    <span>至</span>
-                <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
-                </span>
-            </li>
-            <li>
-                <span class="title-search-name">单据或物料：</span>
-                <input type="text" class="ezt-middle">
-            </li>
-            <li>
-                <div class="ezt-two-btn" @click="toSearch">查询</div>
-            </li>
+                    <span class="title-search-name ">调出仓库：</span>
+                    <span class="title-select-name item-select">
+                    <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                        <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    </select>
+                    </span>
+                </li>
+                <li class="select-list">
+                    <span class="title-search-name ">调入门店：</span>
+                    <span class="title-select-name item-select">
+                    <select placeholder="请选择" class="ezt-select" v-model="searchParam.inStore">
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                        <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    </select>
+                    </span>
+                </li>
+                <li>
+                    <span class="title-search-name">单据日期：</span>
+                    <span>
+                    <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                        <span>至</span>
+                    <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+                    </span>
+                </li>
+                <li>
+                    <span class="title-search-name">单据或物料：</span>
+                    <input type="text" class="ezt-middle">
+                </li>
+                <li>
+                    <div class="ezt-two-btn" @click="toSearch">查询</div>
+                </li>
             </ul>
         </div> 
     </div>
@@ -217,14 +226,14 @@ export default class allotment extends Vue{
             }
             // this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
             this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(confirmGoodInfo));
-            this.$router.push('/allotAudit');
+            this.$router.push('/storeAllotAudit');
         }else if(this.tabList.getActive().status==3){
             detailList = {
                 dc_name:"配送中心-8店",
                 bill_no:"000111aab",         
             }
             this.cache.save(CACHE_KEY.ALLOTMENT_DETAILLIST,JSON.stringify(detailList));
-            this.$router.push('/allotDetail');
+            this.$router.push('/storeAllotDetail');
         }      
     }
     /**
@@ -293,7 +302,7 @@ export default class allotment extends Vue{
         this.isSearch = false;
         this.hideMask();
         this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
-        this.$router.push('/allotSearch');
+        this.$router.push('/storeAllotSearch');
     }
     /**
      * 返回

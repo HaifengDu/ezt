@@ -1,13 +1,13 @@
 <!-- 查询调拨单 -->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back='true' title="查询调拨单"></ezt-header>
+        <ezt-header :back='true' title="平调出库单查询"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul>
                     <li>
                         <!-- 收货单列表       -->
-                        <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'/allotDetail')">
+                        <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'/storeAllotDetail')">
                             <div class="receive-icon-title">
                                 <span class="receive-icon-dcName"></span>
                                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span> 

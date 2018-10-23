@@ -17,7 +17,7 @@
                         <div>
                             <span class="receive-dc-title">调拨日期：<span class="receive-dc-content">item.arrive_date</span></span>
                             <span class="receive-dc-title">调出仓库：<span class="receive-dc-content">item.arrive_date</span></span>
-                            <span class="receive-dc-title">调入仓库：<span class="receive-dc-content">item.arrive_date</span></span>
+                            <span class="receive-dc-title">调入门店：<span class="receive-dc-content">item.arrive_date</span></span>
                             <span class="receive-dc-title">备注：<span class="receive-dc-content">item.arrive_date</span></span>
                         </div>
                     </div>

@@ -1,30 +1,41 @@
 <!-- 调拨新增 -->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back='true' title="添加调拨出库单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
+        <ezt-header :back='true' title="添加平调出库单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
                     <li class="select-list">
-                        <span class="title-search-name is-required">调出仓库：</span>
+                        <span class="title-search-name is-required">调出门店：</span>
                         <span class="title-select-name item-select">
-                            <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outWarehouse" 
-                                @change="handlerBillType('outWarehouse','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
-                                :class="[{'selectError':billFiles[0].outWarehouse}]">
+                            <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outStore" 
+                                @change="handlerBillType('outStore','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
+                                :class="[{'selectError':billFiles[0].outStore}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name is-required">调入仓库：</span>
+                        <span class="title-search-name is-required">调出仓库：</span>
                         <span class="title-select-name item-select">
-                        <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.inWarehouse" 
-                            @change="handlerBillType('inWarehouse','您已选择物料，调整入库仓库，需重新选择调整物料。')"
-                             :class="[{'selectError':billFiles[1].inWarehouse}]">
+                        <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outWarehouse" 
+                            @change="handlerBillType('outWarehouse','您已选择物料，调整入库仓库，需重新选择调整物料。')"
+                             :class="[{'selectError':billFiles[1].outWarehouse}]">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                         </select>
+                        </span>
+                    </li>
+                    <li class="select-list">
+                        <span class="title-search-name is-required">调入门店：</span>
+                        <span class="title-select-name item-select">
+                            <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.inStore" 
+                                @change="handlerBillType('inStore','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
+                                :class="[{'selectError':billFiles[0].inStore}]">
+                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            </select>
                         </span>
                     </li>
                     <li>
@@ -121,7 +132,8 @@ export default class allotment extends Vue{
      */
     private billFiles=[
         {id:"outWarehouse",msg:"请选择调出仓库",outWarehouse:false},
-        {id:"inWarehouse",msg:"请选择调入仓库",inWarehouse:false},
+        {id:"inStore",msg:"请选择调入门店",inStore:false},
+        {id:"outStore",msg:"请选择调出门店",outStore:false},
     ];
 
 
@@ -219,14 +231,14 @@ export default class allotment extends Vue{
                     _this.addBillInfo={},
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo={};
-                    _this.$router.push('/allotment'); 
+                    _this.$router.push('/storeAllotment'); 
                 },
                 onConfirm () {//审核通过
                     _this.addBillInfo={},
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo={};
                     _this.$toasted.success("审核成功！");
-                    _this.$router.push({name:'Allotment',params:{'purStatus':'已完成'}}); 
+                    _this.$router.push({name:'StoreAllotment',params:{'purStatus':'已完成'}}); 
                 },
                 content:'确认审核该单据？',
                 confirmText:"审核通过",
@@ -256,7 +268,7 @@ export default class allotment extends Vue{
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("提交成功！");
-        this.$router.push("/allotment");
+        this.$router.push("/storeAllotment");
     }
 
     /**
@@ -330,12 +342,12 @@ export default class allotment extends Vue{
                 _this.addBillInfo={},
                 _this.setSelectedGood([]);
                 _this.addBeforeBillInfo={};
-                _this.$router.push('/allotment');
+                _this.$router.push('/storeAllotment');
             },
             content:"返回后，本次操作记录将丢失，请确认是否离开？"
         })
         }else{
-            this.$router.push('/allotment');
+            this.$router.push('/storeAllotment');
         }
     }
     

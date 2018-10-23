@@ -1,7 +1,7 @@
 <!-- 查询调拨单 -->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back='true' title="查询调拨单"></ezt-header>
+        <ezt-header :back='true' title="调拔出库单查询"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul>

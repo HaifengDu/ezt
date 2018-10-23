@@ -31,11 +31,11 @@ import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 import AuditInvoice from '@/page/order/AuditInvoice.vue';  //审核要货单
-import SpilledSheet from '@/page/index/SpilledSheet/SpilledSheet.vue'; //损溢单
-import SearchSpilledSheet from '@/page/index/SpilledSheet/SearchSpilledSheet.vue';//损溢单查询
-import SpilledSheetDetails from '@/page/index/SpilledSheet/SpilledSheetDetails.vue'; //损溢详情页
-import AddflossSheet from '@/page/index/SpilledSheet/AddflossSheet.vue';//添加损溢单
-import AuditoflossSheet from '@/page/index/SpilledSheet/AuditoflossSheet.vue'; //审核损溢单
+import SpilledSheet from '@/page/index/spilledSheet/SpilledSheet.vue'; //损溢单
+import SearchSpilledSheet from '@/page/index/spilledSheet/SearchSpilledSheet.vue';//损溢单查询
+import SpilledSheetDetails from '@/page/index/spilledSheet/SpilledSheetDetails.vue'; //损溢详情页
+import AddflossSheet from '@/page/index/spilledSheet/AddflossSheet.vue';//添加损溢单
+import AuditoflossSheet from '@/page/index/spilledSheet/AuditoflossSheet.vue'; //审核损溢单
 import StoreAllotment from '@/page/index/storeAllot/StoreAllotment.vue';//店间调拨列表页
 import StoreAllotAdd from '@/page/index/storeAllot/StoreAllotAdd.vue';//添加店间调拨单
 import StoreAllotAudit from '@/page/index/storeAllot/StoreAllotAudit.vue';//审核店间调拨单

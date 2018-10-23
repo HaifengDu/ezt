@@ -236,6 +236,7 @@ export default class stockTaking extends Vue{
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.$toasted.show("操作成功！")
             this.$router.push('/stocktaking')
         },err=>{
             this.$toasted.show(err.message)   

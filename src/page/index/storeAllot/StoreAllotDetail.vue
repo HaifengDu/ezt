@@ -17,7 +17,7 @@
                         <div>
                             <span class="receive-dc-title">调拨日期：<span class="receive-dc-content">item.arrive_date</span></span>
                             <span class="receive-dc-title">调出仓库：<span class="receive-dc-content">item.arrive_date</span></span>
-                            <span class="receive-dc-title">调入仓库：<span class="receive-dc-content">item.arrive_date</span></span>
+                            <span class="receive-dc-title">调入门店：<span class="receive-dc-content">item.arrive_date</span></span>
                             <span class="receive-dc-title">备注：<span class="receive-dc-content">item.arrive_date</span></span>
                         </div>
                     </div>
@@ -69,7 +69,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator";
-import { AllotmentService} from '../../../service/AllotmentService';
+import { StoreAllotService} from '../../../service/StoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -78,12 +78,12 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service: AllotmentService;
+    private service: StoreAllotService;
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
     mounted(){
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_DETAILLIST)){
-            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_DETAILLIST));
+        if(this.cache.getData(CACHE_KEY.STOREALLOT_DETAILLIST)){
+            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.STOREALLOT_DETAILLIST));
             this.detailList.goodList = [{
             name:"猪肉",
             sort:"规格",
@@ -91,7 +91,7 @@ export default class allotment extends Vue{
             unitName:"KG",
             billNo:"003222",
             amt: 360,
-            remark:"这是水果",
+            remark:"这是水果111111111111111111111111111111111111111111111111111122222222222222222",
             num:3,
             },{
                 name:"大猪蹄子",
@@ -107,7 +107,7 @@ export default class allotment extends Vue{
         }
     }
     created(){
-        this.service = AllotmentService.getInstance();
+        this.service = StoreAllotService.getInstance();
     }
     /**
      * computed demo
@@ -234,14 +234,19 @@ export default class allotment extends Vue{
 }
 .good-detail-item .content{       
     word-break: break-all;    
-    word-wrap:break-word;
+    word-wrap:break-word;   
 } 
 .good-detail-item .remark-suitable{
     line-height: 25px;
     height: 50px;
-    overflow: hidden;
+    overflow : hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
 }
 .good-detail-item .remark-suitable.auto{
     height: auto;
+     -webkit-line-clamp: initial;
 }    
 </style>

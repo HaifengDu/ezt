@@ -121,34 +121,34 @@ import CACHE_KEY from '../../../constans/cacheKey'
   }
 })
 export default class InitStock extends Vue {
-  private cache = CachePocily.getInstance();
-  private service: InitStockService;
-  private addBillInfo: any={
-    // date:new Date().format("yyyy-MM-dd"),
-  }; //store中
-  private addBeforeBillInfo: any={
-    // date:new Date().format("yyyy-MM-dd"),
-  };
-  private setSelectedGood: INoopPromise;
-  private selectedGood: any[]; //store中selectedGood的值
-  private isFirstStore:boolean;
-  private orderType: any[] = [
-    {
-      //单据类型下拉数据
-      name: "合同采购单",
-      type: "q"
-    },{
-        name:"采购单",
-        type:"m"
-    }
-  ];
-   /**
-   * 枚举 表单字段
-   */
-  private billFiles=[
-    {id:"date",msg:"请选择库存初始化日",date:false},
-    {id:"costType",msg:"请选择成本录入方式",costType:false},
-    {id:"warehouse",msg:"请选择仓库！",warehouse:false}];
+    private cache = CachePocily.getInstance();
+    private service: InitStockService;
+    private addBillInfo: any={
+        // date:new Date().format("yyyy-MM-dd"),
+    }; //store中
+    private addBeforeBillInfo: any={
+        // date:new Date().format("yyyy-MM-dd"),
+    };
+    private setSelectedGood: INoopPromise;
+    private selectedGood: any[]; //store中selectedGood的值
+    private isFirstStore:boolean;
+    private orderType: any[] = [
+        {
+            //单据类型下拉数据
+            name: "合同采购单",
+            type: "q"
+        },{
+            name:"采购单",
+            type:"m"
+        }
+    ];
+    /**
+     * 枚举 表单字段
+     */
+    private billFiles=[
+        {id:"date",msg:"请选择库存初始化日",date:false},
+        {id:"costType",msg:"请选择成本录入方式",costType:false},
+        {id:"warehouse",msg:"请选择仓库！",warehouse:false}];
 
     mounted(){
         if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){
@@ -156,69 +156,69 @@ export default class InitStock extends Vue {
             this.addBeforeBillInfo.date = JSON.parse(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)).initStockDate;
         }
     }
-  created() {
-    this.service = InitStockService.getInstance();
-    this.addBillInfo.warehouse = this.orderType[0].type;
-    this.addBeforeBillInfo.warehouse = this.orderType[0].type;
-    (this.selectedGood||[]).forEach(item=>item.active = false);
-    if(this.cache.getData(CACHE_KEY.INITSTOCK_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_ADDINFO));
+    created() {
+        this.service = InitStockService.getInstance();
+        this.addBillInfo.warehouse = this.orderType[0].type;
+        this.addBeforeBillInfo.warehouse = this.orderType[0].type;
+        (this.selectedGood||[]).forEach(item=>item.active = false);
+        if(this.cache.getData(CACHE_KEY.INITSTOCK_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_ADDINFO));
+        }
+        this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     }
-    this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-  }
-  //选择物料
-  private renderUrl(info: string) {
-    let _this = this;
-    for(let i=0;i<this.billFiles.length;i++){
-      let item = this.billFiles[i];
-      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-          if(this.addBillInfo[item.id]!=0){
-            this.$toasted.show(item.msg);
-            item[item.id]=true;
-            return false;
-          }
-       
-      }
+    //选择物料
+    private renderUrl(info: string) {
+        let _this = this;
+        for(let i=0;i<this.billFiles.length;i++){
+        let item = this.billFiles[i];
+        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+            if(this.addBillInfo[item.id]!=0){
+                this.$toasted.show(item.msg);
+                item[item.id]=true;
+                return false;
+            }
+        
+        }
+        }
+        this.cache.save(CACHE_KEY.INITSTOCK_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.INITSTOCK_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        // this.$router.push(info);
+        this.$router.push({
+            name:"PublicAddGood",
+            params:{
+                editPrice:"initStock",
+                costType:this.addBillInfo.costType}
+        })
     }
-    this.cache.save(CACHE_KEY.INITSTOCK_ADDINFO,JSON.stringify(this.addBillInfo));
-    this.cache.save(CACHE_KEY.INITSTOCK_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-    // this.$router.push(info);
-    this.$router.push({
-        name:"PublicAddGood",
-        params:{
-            editPrice:"initStock",
-            costType:this.addBillInfo.costType}
-    })
-  }
 
-    /**
-     * 左侧滑动删除
+        /**
+         * 左侧滑动删除
+         */
+        private handlerSwipe(item:any,active:boolean){     
+            item.active = active;
+        }
+        /**
+     * 删除物料操作
      */
-    private handlerSwipe(item:any,active:boolean){     
-        item.active = active;
+    private delAction(item:any){
+        let _this = this;
+        this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+            let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+            })
+            _this.selectedGood[newIndex].active = false;
+        },
+        onConfirm () {
+            let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+            })
+            _this.selectedGood.splice(newIndex,1);
+        },
+        content:'请确认是否删除该物料。'
+        })
     }
-    /**
-   * 删除物料操作
-   */
-  private delAction(item:any){
-    let _this = this;
-    this.$vux.confirm.show({
-      // 组件除show外的属性
-      onCancel () {
-        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
-          return item.id == info.id;
-        })
-        _this.selectedGood[newIndex].active = false;
-      },
-      onConfirm () {
-        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
-          return item.id == info.id;
-        })
-        _this.selectedGood.splice(newIndex,1);
-      },
-      content:'请确认是否删除该物料。'
-    })
-}
   /**
    * 切换仓库 校验
    */

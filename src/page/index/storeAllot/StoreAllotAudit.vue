@@ -1,7 +1,7 @@
 <!-- 审核调拨单 -->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back='true' title="审核调拨出库单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
+        <ezt-header :back='true' title="审核平调出库单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
@@ -18,8 +18,8 @@
                         {{addBillInfo.outWarehouse}}
                     </li>
                     <li>
-                        <span class="title-search-name">调入仓库：</span>
-                        {{addBillInfo.inWarehouse}}
+                        <span class="title-search-name">调入门店：</span>
+                        {{addBillInfo.inStore}}
                     </li>
                     <li class="input-list">
                         <span class="title-search-name">备注：</span>
@@ -82,7 +82,7 @@ import {Component, Watch} from "vue-property-decorator";
 import ObjectHelper from '../../../common/objectHelper'
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { mapActions, mapGetters } from 'vuex';
-import { AllotmentService } from '../../../service/AllotmentService';
+import { StoreAllotService } from '../../../service/StoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -100,15 +100,15 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service : AllotmentService;
+    private service : StoreAllotService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
     private addBillInfo: any = {};
     private addBeforeBillInfo: any = {};
 
     mounted(){
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_ADDINFO)){
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_ADDINFO));
+        if(this.cache.getData(CACHE_KEY.STOREALLOT_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.STOREALLOT_ADDINFO));
             this.addBillInfo.goodList = [{
                 id:21,
                 name:'牛肉',
@@ -129,7 +129,7 @@ export default class allotment extends Vue{
         (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
     created(){
-        this.service =  AllotmentService.getInstance();
+        this.service =  StoreAllotService.getInstance();
     }
      /**
      * 提交并审核 调拨单
@@ -157,14 +157,14 @@ export default class allotment extends Vue{
                     _this.addBillInfo={},
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo={};
-                    _this.$router.push('/allotment'); 
+                    _this.$router.push('/storeAllotment'); 
                 },
                 onConfirm () {//审核通过
                     _this.addBillInfo={},
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo={};
                     _this.$toasted.success("审核成功！");
-                    _this.$router.push({name:'Allotment',params:{'purStatus':'已完成'}}); 
+                    _this.$router.push({name:'StoreAllotment',params:{'purStatus':'已完成'}}); 
                 },
                 content:'确认审核该单据？',
                 confirmText:"审核通过",
@@ -186,7 +186,7 @@ export default class allotment extends Vue{
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("提交成功！");
-        this.$router.push("/allotment");
+        this.$router.push("/storeAllotment");
     }
     /**
      * 物品总数量、总金额
@@ -231,20 +231,16 @@ export default class allotment extends Vue{
      * 选择物料
      */
     private renderUrl(info:string){
-        this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(this.addBillInfo));
-        this.cache.save(CACHE_KEY.ALLOTMENT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.STOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.STOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.$router.push(info);
     }
     private goBack(){
         this.addBillInfo={},
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
-        this.$router.push('/allotment');
+        this.$router.push('/storeAllotment');
     }
-
-
-
-    
 }
 </script>
 <style lang="less" scoped>

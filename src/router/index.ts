@@ -41,6 +41,16 @@ import SearchSpilledSheet from '@/page/index/SpilledSheet/SearchSpilledSheet.vue
 import SpilledSheetDetails from '@/page/index/SpilledSheet/SpilledSheetDetails.vue'; //损溢详情页
 import AddflossSheet from '@/page/index/SpilledSheet/AddflossSheet.vue';//添加损溢单
 import AuditoflossSheet from '@/page/index/SpilledSheet/AuditoflossSheet.vue'; //审核损溢单
+import StoreAllotment from '@/page/index/storeAllot/StoreAllotment.vue';//店间调拨列表页
+import StoreAllotAdd from '@/page/index/storeAllot/StoreAllotAdd.vue';//添加店间调拨单
+import StoreAllotAudit from '@/page/index/storeAllot/StoreAllotAudit.vue';//审核店间调拨单
+import StoreAllotSearch from '@/page/index/storeAllot/StoreAllotSearch.vue';//查询店间调拨单
+import StoreAllotDetail from '@/page/index/storeAllot/StoreAllotDetail.vue';//店间调拨单详情
+import InStoreAllotment from '@/page/index/inStoreAllot/InStoreAllotment.vue';//店内调拨列表页
+import InStoreAllotAdd from '@/page/index/inStoreAllot/InStoreAllotAdd.vue';//添加店内调拨单
+import InStoreAllotAudit from '@/page/index/inStoreAllot/InStoreAllotAudit.vue';//审核店内调拨单
+import InStoreAllotSearch from '@/page/index/inStoreAllot/InStoreAllotSearch.vue';//查询店内调拨单
+import InStoreAllotDetail from '@/page/index/inStoreAllot/InStoreAllotDetail.vue';//店内调拨单详情
 Vue.use(Router)
 
 const router = new Router({
@@ -207,7 +217,46 @@ const router = new Router({
       path:"/auditoflossSheet",
       name:"AuditoflossSheet",
       component:AuditoflossSheet
-      
+    },{ //店间调拨 开始 
+      path: '/storeAllotment',
+      name: "StoreAllotment",
+      component: StoreAllotment
+    },{
+      path: '/storeAllotAdd',
+      name: "StoreAllotAdd",
+      component: StoreAllotAdd
+    },{
+      path: '/storeAllotAudit',
+      name: "StoreAllotAudit",
+      component : StoreAllotAudit
+    },{
+      path: '/storeAllotSearch',
+      name: "StoreAllotSearch",
+      component: StoreAllotSearch
+    },{//店间调拨 结束
+      path: '/storeAllotDetail',
+      name: 'StoreAllotDetail',
+      component: StoreAllotDetail
+    },{ //店内调拨 开始 
+      path: '/inStoreAllotment',
+      name: "InStoreAllotment",
+      component: InStoreAllotment
+    },{
+      path: '/inStoreAllotAdd',
+      name: "InStoreAllotAdd",
+      component: InStoreAllotAdd
+    },{
+      path: '/inStoreAllotAudit',
+      name: "InStoreAllotAudit",
+      component : InStoreAllotAudit
+    },{
+      path: '/inStoreAllotSearch',
+      name: "InStoreAllotSearch",
+      component: InStoreAllotSearch
+    },{//店内调拨 结束
+      path: '/inStoreAllotDetail',
+      name: 'InStoreAllotDetail',
+      component: InStoreAllotDetail
     }
   ]
 });

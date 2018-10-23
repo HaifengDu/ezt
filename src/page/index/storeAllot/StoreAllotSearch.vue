@@ -1,13 +1,13 @@
 <!-- 查询调拨单 -->
 <template>
     <div class="ezt-page-con">
-        <ezt-header :back='true' title="查询调拨单"></ezt-header>
+        <ezt-header :back='true' title="平调出库单查询"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul>
                     <li>
                         <!-- 收货单列表       -->
-                        <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'/allotDetail')">
+                        <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'/storeAllotDetail')">
                             <div class="receive-icon-title">
                                 <span class="receive-icon-dcName"></span>
                                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span> 
@@ -46,8 +46,8 @@ export default class allotment extends Vue{
     private searchParam: any ={};
     private goodList: any[]=[];
     mounted(){  
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_SEARCH)){
-            this.searchParam = this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_SEARCH);
+        if(this.cache.getData(CACHE_KEY.STOREALLOT_SEARCH)){
+            this.searchParam = this.cache.getDataOnce(CACHE_KEY.STOREALLOT_SEARCH);
         }
         this.goodList=[{
             bill_no:'1111000',
@@ -68,7 +68,7 @@ export default class allotment extends Vue{
             dc_name:'北京配送中心1'
         }
         if(info){
-            this.cache.save(CACHE_KEY.ALLOTMENT_DETAILLIST,JSON.stringify(confirmList));
+            this.cache.save(CACHE_KEY.STOREALLOT_DETAILLIST,JSON.stringify(confirmList));
             this.$router.push(info);
             return false;
         }

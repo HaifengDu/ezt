@@ -107,8 +107,8 @@ export default class allotment extends Vue{
     private addBeforeBillInfo: any = {};
 
     mounted(){
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_ADDINFO)){
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_ADDINFO));
+        if(this.cache.getData(CACHE_KEY.INSTOREALLOT_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INSTOREALLOT_ADDINFO));
             this.addBillInfo.goodList = [{
                 id:21,
                 name:'牛肉',
@@ -231,8 +231,8 @@ export default class allotment extends Vue{
      * 选择物料
      */
     private renderUrl(info:string){
-        this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(this.addBillInfo));
-        this.cache.save(CACHE_KEY.ALLOTMENT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.INSTOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.INSTOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.$router.push(info);
     }
     private goBack(){

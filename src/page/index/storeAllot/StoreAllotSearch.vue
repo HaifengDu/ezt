@@ -46,8 +46,8 @@ export default class allotment extends Vue{
     private searchParam: any ={};
     private goodList: any[]=[];
     mounted(){  
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_SEARCH)){
-            this.searchParam = this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_SEARCH);
+        if(this.cache.getData(CACHE_KEY.STOREALLOT_SEARCH)){
+            this.searchParam = this.cache.getDataOnce(CACHE_KEY.STOREALLOT_SEARCH);
         }
         this.goodList=[{
             bill_no:'1111000',
@@ -68,7 +68,7 @@ export default class allotment extends Vue{
             dc_name:'北京配送中心1'
         }
         if(info){
-            this.cache.save(CACHE_KEY.ALLOTMENT_DETAILLIST,JSON.stringify(confirmList));
+            this.cache.save(CACHE_KEY.STOREALLOT_DETAILLIST,JSON.stringify(confirmList));
             this.$router.push(info);
             return false;
         }

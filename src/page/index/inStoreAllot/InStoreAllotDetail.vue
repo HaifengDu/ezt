@@ -82,8 +82,8 @@ export default class allotment extends Vue{
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
     mounted(){
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_DETAILLIST)){
-            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_DETAILLIST));
+        if(this.cache.getData(CACHE_KEY.INSTOREALLOT_DETAILLIST)){
+            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INSTOREALLOT_DETAILLIST));
             this.detailList.goodList = [{
             name:"猪肉",
             sort:"规格",

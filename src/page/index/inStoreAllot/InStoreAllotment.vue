@@ -215,15 +215,14 @@ export default class allotment extends Vue{
                 num:'2',
                 remark:'在途中',         
             }
-            // this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
-            this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(confirmGoodInfo));
+            this.cache.save(CACHE_KEY.INSTOREALLOT_ADDINFO,JSON.stringify(confirmGoodInfo));
             this.$router.push('/inStoreAllotAudit');
         }else if(this.tabList.getActive().status==3){
             detailList = {
                 dc_name:"配送中心-8店",
                 bill_no:"000111aab",         
             }
-            this.cache.save(CACHE_KEY.ALLOTMENT_DETAILLIST,JSON.stringify(detailList));
+            this.cache.save(CACHE_KEY.INSTOREALLOT_DETAILLIST,JSON.stringify(detailList));
             this.$router.push('/inStoreAllotDetail');
         }      
     }
@@ -292,7 +291,7 @@ export default class allotment extends Vue{
     private toSearch(){
         this.isSearch = false;
         this.hideMask();
-        this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
+        this.cache.save(CACHE_KEY.INSTOREALLOT_SEARCH,JSON.stringify(this.searchParam));
         this.$router.push('/inStoreAllotSearch');
     }
     /**

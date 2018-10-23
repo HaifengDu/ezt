@@ -139,8 +139,8 @@ export default class allotment extends Vue{
         }]
         this.addBillInfo.outWarehouse = this.orderType[0].type;
          this.addBillInfo.inWarehouse = this.orderType[0].type;
-        if(this.cache.getData(CACHE_KEY.ALLOTMENT_ADDINFO)){
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ALLOTMENT_ADDINFO));
+        if(this.cache.getData(CACHE_KEY.INSTOREALLOT_ADDINFO)){
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INSTOREALLOT_ADDINFO));
         }
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         //  this.getGoodList();
@@ -309,8 +309,8 @@ export default class allotment extends Vue{
                     return false;
                 }
             }
-            this.cache.save(CACHE_KEY.ALLOTMENT_ADDINFO,JSON.stringify(this.addBillInfo));
-            this.cache.save(CACHE_KEY.ALLOTMENT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+            this.cache.save(CACHE_KEY.INSTOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
+            this.cache.save(CACHE_KEY.INSTOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
             // this.$router.push(info);
             this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
         }      

@@ -95,7 +95,7 @@ import { mapActions, mapGetters } from "vuex";
 import { maskMixin } from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
-import { AllotmentService} from '../../../service/AllotmentService';
+import { InStoreAllotService} from '../../../service/InStoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -107,7 +107,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service: AllotmentService;
+    private service: InStoreAllotService;
     private pager:Pager;
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
@@ -148,7 +148,7 @@ export default class allotment extends Vue{
             active:false
         });
        this.pager = new Pager().setLimit(20)
-       this.service = AllotmentService.getInstance();
+       this.service = InStoreAllotService.getInstance();
     }
     mounted(){      
         this.getList();

@@ -1,1 +1,2 @@
-import "./hammer"
+import "./hammer";
+import "./remarkNote";

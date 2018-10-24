@@ -261,6 +261,7 @@ export default class SpilledSheet extends Vue{
   }    
     //选择物料
   private selectMaterials(info:string){
+    let goodTerm = {};
     if(this.addBillInfo){
       let _this = this;
       for(let i=0;i<this.billFiles.length;i++){
@@ -271,9 +272,14 @@ export default class SpilledSheet extends Vue{
           return false;
         }
       }
+      goodTerm={
+        billsPageType: 'spilledSheet',
+      }  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+      this.$router.push(info);
+      // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
     }      
   }
   /**

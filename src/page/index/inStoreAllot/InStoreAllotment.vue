@@ -189,9 +189,7 @@ export default class allotment extends Vue{
                     return item.id == info.id;
                 })
                 _this.goodList.splice(newIndex,1);
-                if(_this.goodList.length<5){
-                    _this.getList();
-                }
+                _this.getList();
             },
             content:'是否要删除该单据？'
         })

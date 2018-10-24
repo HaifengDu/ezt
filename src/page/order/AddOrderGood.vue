@@ -170,6 +170,7 @@ import { ECache } from "../../enum/ECache";
 import ObjectHelper from '../../common/objectHelper'
 import CACHE_KEY from '../../constans/cacheKey'
 import commonService from '../../service/commonService.js';
+import {EGoodType} from '../../enum/EGoodType';
 @Component({
     computed:{
         ...mapGetters({
@@ -191,6 +192,7 @@ export default class Order extends Vue{
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private systemParamSetting:any;
+    private EGoodType = EGoodType;//添加物料限制 
     private addBeforeBillInfo:any={
     };
     /**
@@ -435,6 +437,7 @@ export default class Order extends Vue{
     //选择物料
     private renderUrl(info: string) {
         let _this = this;
+        let goodTerm = {};
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
@@ -443,11 +446,16 @@ export default class Order extends Vue{
                 return false;
             }
         }
+        goodTerm={
+            billsPageType: 'orderGood',
+        }  
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.setSelectedGood(this.goodData);
         this.$router.push(info);
+        // this.$router.push({name:'PublicAddGood',params:{'GoodPriceIsEdit':this.addBillInfo.GoodPriceIsEdit}});
     }
     /**
      * 校验要货方式没有时；

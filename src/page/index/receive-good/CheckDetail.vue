@@ -47,8 +47,8 @@
                             </div>
                             <div class="good-detail-item" v-if="item.remark">
                                 <div class="good-detail-sort content">备注：
-                                    <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
-                                    <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
+                                    <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                                    <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                                 </div>
                             </div>
                         </div>
@@ -117,6 +117,7 @@ declare var mobiscroll:any;
   //    })
   //  }
 })
+//这是调用的文件
 export default class ReceiveGood extends Vue{
     private cache = CachePocily.getInstance();
     private service: ReceiveGoodService;
@@ -125,8 +126,10 @@ export default class ReceiveGood extends Vue{
     private showOther: boolean=false;
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
+    private domEles: {};
     created() {     
-        this.service = ReceiveGoodService.getInstance();       
+        this.service = ReceiveGoodService.getInstance(); 
+        let test = document.getElementById('contentDiv');
     }
 
     mounted(){ 
@@ -139,7 +142,7 @@ export default class ReceiveGood extends Vue{
             unitName:"KG",
             billNo:"003222",
             amt: 360,
-            remark:"这是水果",
+            remark:"这是水果11111111111111111111111111111111111111111111222222222222222222222366666",
             num:3,
             directWarehouse:[{
                 name:"仓库1",
@@ -198,6 +201,17 @@ export default class ReceiveGood extends Vue{
         
         return ori;
         },{num:0,Amt:0});
+    }
+    /**
+     * 获取备注的高度
+     */
+    private getFixHeight(item:any){
+        // getFixHeight (flag) {
+        return (el:any)=>{
+            // this.domEles[flag] = el;
+
+        }
+        // }
     }
     // 备注出现查看更多
     private handleFold(item:any) {
@@ -377,7 +391,7 @@ export default class ReceiveGood extends Vue{
 } 
 .good-detail-item .remark-suitable{
     line-height: 25px;
-    height: 50px;
+    // height: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -387,5 +401,8 @@ export default class ReceiveGood extends Vue{
 .good-detail-item .remark-suitable.auto{
     height: auto;
     -webkit-line-clamp: initial;
+}
+.test{
+    display:none;
 }    
 </style>

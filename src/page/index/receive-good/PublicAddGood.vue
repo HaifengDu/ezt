@@ -13,11 +13,11 @@
     <div class="ezt-main">
       <div class="ezt-add-content">
         <div class="good-type">
-          <span class="collect-good active"  v-if="!useObj.GoodPriceIsEdit">
+          <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
           </span>
-          <div class="good-type-list" :class="{collect:!useObj.GoodPriceIsEdit}">
+          <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
             <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>
@@ -66,14 +66,16 @@
                   <div>
                     <x-dialog v-model="isRemark" class="dialog-demo"> 
                       <div class="ezt-dialog-header">
-                        <span class="header-name">
+                        <!-- 默认编辑 备注 -->
+                        <span class="header-name" v-if="materialLimit.billsPageType!='initStock'">
                           <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
                         </span>
                         <span class="ezt-close" @click="isRemark=false" >
                           <i class="fa fa-times" aria-hidden="true"></i>
                         </span>
                       </div>
-                      <div>
+                      <!-- 只有收货模块时才有直拨 -->
+                      <div v-if="materialLimit.billsPageType=='receiveGood'">
                           <div class="ezt-dialog-title">
                             <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
                             <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
@@ -93,7 +95,6 @@
                       </div>
                     </x-dialog>
                   </div>
-                <!-- </confirm> -->
                 <!-- 编辑价格信息时  -->
                  <div>
                     <x-dialog v-model="isPrice" class="dialog-demo">
@@ -108,13 +109,13 @@
                                 <span class="title-select-name">数量：</span>
                                 <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
                             </li>
-                            <li v-if="useObj.GoodPriceOrAmt !=2">
+                            <li v-if="materialLimit.costType=='0'">
                                 <span class="title-dialog-name">价格：</span>
                                 <span class="icon-input price">
                                     <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
                                 </span>                                       
                             </li>
-                            <li v-if="useObj.GoodPriceOrAmt == 2">
+                            <li v-if="materialLimit.costType=='1'">
                                 <span class="title-dialog-name">含税额：</span>
                                 <span class="icon-input price">
                                     <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
@@ -286,10 +287,10 @@ export default class AddGood extends Vue{
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
   private isRemark:boolean=false;//编辑备注
-  private useObj:any={
-    GoodPriceIsEdit:"",
-    GoodPriceOrAmt:0,
-  }
+  // private useObj:any={
+  //   GoodPriceIsEdit:"",
+  //   GoodPriceOrAmt:0,
+  // }
   private isPrice:boolean=false;//编辑价格
   // private addBillInfo:any;//价格与备注显示切换
   private orderType: any[] = [
@@ -610,9 +611,9 @@ private changeDirect(item:any){
   }
   //点击备注
   private handlerRemark(item:any){
-    if(!this.useObj.editPrice){
+    if(this.materialLimit.billsPageType!='initStock'){
       this.isRemark=true;//收货
-    }else if(this.useObj.editPrice=="initStock"){
+    }else if(this.materialLimit.billsPageType=="initStock"){
       this.isPrice=true;//库存初始化
     }
     this.restBindRemark = item;

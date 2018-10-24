@@ -272,6 +272,7 @@ export default class ReceiveGood extends Vue{
   }    
     //选择物料
   private renderUrl(info:string){
+    let goodTerm = {};
     if(this.addBillInfo){
       let _this = this;
       for(let i=0;i<this.billFiles.length;i++){
@@ -282,10 +283,14 @@ export default class ReceiveGood extends Vue{
           return false;
         }
       }
+      goodTerm={
+        billsPageType: 'receiveGood',
+      }  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      // this.$router.push(info);
-      this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+      this.$router.push(info);
+      // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
     }      
   }
   private checkEmpty(errorMsg:any){

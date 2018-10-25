@@ -1,12 +1,7 @@
 <!--盘库模块-->
 <template>
 <div>
-   <div class="ezt-page-con stocktaking" 
-        ref="listContainer"  
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" 
-        infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+   <div class="ezt-page-con stocktaking">
     <ezt-header :back="true" title="盘库" :isInfoGoback="true" @goBack="goBack">
        <div slot="action">
            <div class="addbtn">
@@ -59,7 +54,6 @@
                         <div v-if="tabList.getActive().status === 3 || tabList.getActive().status==2 && item.is_stock_valid ==1"  class="submit" @click="librarydetails(item,pageType.RealdiscEntry)">实盘录入</div>
                     </div>   
                   </li>
-                  <span v-if="allLoaded">已全部加载</span>
                 </ul>                
           </div>
       </div>    
@@ -154,7 +148,6 @@ export default class stockTaking extends Vue{
     private cache = CachePocily.getInstance();   
     private inventoryList:{list?:any[]} = {};//盘库列表   
     private tabList:TabList = new TabList();
-    private allLoaded:boolean= false;
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
     private searchParam:any={};//搜索时的查询条件
@@ -239,8 +232,6 @@ export default class stockTaking extends Vue{
      */
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getpkList();  
     }
@@ -262,31 +253,6 @@ export default class stockTaking extends Vue{
         },err=>{
           this.$toasted.show(err.message)
       });
-    }
-    /**
-     *下拉加载更多
-     * */    
-    private loadMore() {
-      if(!this.allLoaded){
-         this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });       
-      this.pager.setNext();
-      const status = this.tabList.getActive().status;
-      this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true
-        }
-        this.inventoryList.list=this.inventoryList.list.concat(res.data.data)
-        setTimeout(()=>{
-          this.$vux.loading.hide()
-          this.hideMask()
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message)
-      })
-      }     
     }
     /**
      * 盘库详情  审核盘点单  实盘录入  确认盘点单

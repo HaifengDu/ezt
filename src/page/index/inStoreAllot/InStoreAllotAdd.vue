@@ -311,7 +311,6 @@ export default class allotment extends Vue{
             }
             this.cache.save(CACHE_KEY.INSTOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
             this.cache.save(CACHE_KEY.INSTOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-            // this.$router.push(info);
             this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
         }      
     }

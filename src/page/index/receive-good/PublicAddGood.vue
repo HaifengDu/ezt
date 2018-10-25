@@ -52,7 +52,7 @@
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <!-- 库存 -->
-                <span v-if="useObj.allotOrderType" class="good-stock ezt-titleColor2">
+                <span v-if="useObj.allotOrderType || useObj.addflossSheetType" class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                  </span>
                  <span class="good-number">
@@ -319,7 +319,13 @@ export default class AddGood extends Vue{
     if(this.$route.params.allotOrderType){//调拨单据 是否
       this.useObj.allotOrderType = true;
     }
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
+    /**
+     * 添加审核损溢单价格可修改
+     */
+    if(this.$route.params.addflossSheetType){  
+       this.useObj.addflossSheetType =true;
+    }
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -576,7 +582,7 @@ private changeDirect(item:any){
   private handlerCollect(item:any){
     item.active = !item.active;
   }
-  /**
+  /**    
    * 选择完货品去提交
    * */ 
   private goToCommit(types:PageType){

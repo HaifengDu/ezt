@@ -1,5 +1,5 @@
 <!--审核要货单-->
-<template>
+<template>   
     <div class="ezt-page-con AuditInvoice">
         <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
@@ -126,12 +126,8 @@ export default class Order extends Vue{
     private service: OrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private addBeforeBillInfo:any={    
-         
-    };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    private addBillInfo:any={
-        
-    };//store中
+    private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    private addBillInfo:any={};
     private type:string;    
     created() {     
         this.service = OrderGoodsService.getInstance();

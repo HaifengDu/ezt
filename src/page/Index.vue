@@ -266,7 +266,7 @@ export default class Index extends Vue{
     border-bottom: 1px solid #E1ECFF;
   }
 
-  .icon-menu li:nth-child(3) {
+  .icon-menu li:nth-child(4) {
     border-right: none;
   }
 

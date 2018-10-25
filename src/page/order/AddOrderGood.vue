@@ -491,6 +491,7 @@ export default class Order extends Vue{
                 onConfirm () {
                     _this.goodData=[];
                     _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+                    _this.checkNone();    
                 },
                 content:title
             })
@@ -500,7 +501,8 @@ export default class Order extends Vue{
                 if(item.id == val){
                 item[val]= false;
                 }
-            })         
+            }) 
+            this.checkNone();        
         }
     }
      /**

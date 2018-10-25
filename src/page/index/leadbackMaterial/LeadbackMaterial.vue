@@ -1,7 +1,7 @@
 <!--损溢模块首页-->
 <template>
 <div>
-   <div class="ezt-page-con SpilledSheet">
+   <div class="ezt-page-con LeadbackMaterial">
     <ezt-header :back="true" title="领/退料" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
@@ -120,7 +120,7 @@ import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { TabList } from '../../../common/ITab'
-import {SpilledSheetService} from '../../../service/SpilledSheetService'
+import {LeadbackMaterialService} from '../../../service/LeadbackMaterialService'
 import { CachePocily } from "../../../common/Cache"
 import {ECache} from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -131,7 +131,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-
+  
      })
    },
    methods:{
@@ -140,10 +140,10 @@ import CACHE_KEY from '../../../constans/cacheKey'
      })
    }
 })
-export default class SpilledSheet extends Vue{
+export default class leadbackMaterial extends Vue{
     private cache = CachePocily.getInstance();
     private pager:Pager;
-    private service: SpilledSheetService;
+    private service: LeadbackMaterialService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
@@ -173,7 +173,7 @@ export default class SpilledSheet extends Vue{
         status:4,
         active:false
       });
-      this.service = SpilledSheetService.getInstance();
+      this.service = LeadbackMaterialService.getInstance();
       this.pager= new Pager();   
       this.pager.setLimit(20);
       this.getList();  

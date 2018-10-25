@@ -46,6 +46,7 @@ import InStoreAllotAdd from '@/page/index/inStoreAllot/InStoreAllotAdd.vue';//�
 import InStoreAllotAudit from '@/page/index/inStoreAllot/InStoreAllotAudit.vue';//审核店内调拨单
 import InStoreAllotSearch from '@/page/index/inStoreAllot/InStoreAllotSearch.vue';//查询店内调拨单
 import InStoreAllotDetail from '@/page/index/inStoreAllot/InStoreAllotDetail.vue';//店内调拨单详情
+import LeadbackMaterial from '@/page/index/leadbackMaterial/LeadbackMaterial.vue';//领退料
 Vue.use(Router)
 
 const router = new Router({
@@ -232,6 +233,10 @@ const router = new Router({
       path: '/inStoreAllotDetail',
       name: 'InStoreAllotDetail',
       component: InStoreAllotDetail
+    },{
+      path: '/leadbackMaterial',
+      name: 'LeadbackMaterial',
+      component: LeadbackMaterial
     }
   ]
 });

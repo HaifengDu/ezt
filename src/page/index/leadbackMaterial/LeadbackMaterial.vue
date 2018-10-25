@@ -2,7 +2,7 @@
 <template>
 <div>
    <div class="ezt-page-con SpilledSheet">
-    <ezt-header :back="true" title="报损单" :isInfoGoback="true" @goBack="goBack">
+    <ezt-header :back="true" title="领/退料" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
            <span class='ezt-action-point' @click="addPage">
@@ -26,37 +26,64 @@
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="return-list-title">单号：{{item.bill_no}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine(item)">报损</span>
-                <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
+                <span class="receive-status" @click.stop="toexamine(item)">2018-10-25</span>
               </div>
               <div class="receive-icon-content" @click="spilledetails(item)">
                 <div style="display:flex">
-                  <span class="receive-dc-title">仓库：
+                  <span class="receive-dc-title">领/退料库：
                     <span class="receive-dc-content">{{item.warehouse}}</span>  
                   </span>
-                  <span class="receive-dc-title">制单日期：
+                  <span class="receive-dc-title">数量：
                     <span class="receive-dc-content">{{item.arrive_date}}</span>
                   </span>
                 </div>
-                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
-              </div>
-              <div class="receive-icon-bottom">
-                <div class="glow-1">
-                  <span>共{{item.material_size}}件货品<span class="receive-total">损溢金额：￥434</span></span>
+                <div style="display:flex">
+                  <span class="receive-dc-title">主仓库：
+                    <span class="receive-dc-content">{{item.warehouse}}</span>  
+                  </span>
+                  <span class="receive-dc-title">单据金额：
+                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                  </span>
                 </div>
+                <span class="receive-dc-title">货品摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
               </div>
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
         </div>
       </div>
     </div>
+    <ezt-footer>
+      <ul slot="confirm" class="ezt-footer-tab">
+        <li @click="toPage('/')" >
+          <span class="footer-index"></span>
+          <div>首页</div>
+        </li>
+        <li @click="toPage('/orderGood')" class="active">
+          <span class="footer-order"></span>
+          <div>订货</div>
+        </li>
+        <li @click="toPage('/chartContent')">
+          <span class="footer-chart"></span>
+          <div>报表</div>
+        </li>
+      </ul>
+    </ezt-footer>
   </div>
   <!-- 查询损溢单 -->  
   <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
        <li class="select-list">
-        <span class="title-search-name is-required">仓库名称：</span>
+        <span class="title-search-name">单据类型：</span>
+        <span class="title-select-name item-select">
+          <select name="" id="" placeholder="请选择" class="ezt-select">
+            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+          </select>
+        </span>
+      </li>
+       <li class="select-list">
+        <span class="title-search-name">领/退料仓库：</span>
         <span class="title-select-name item-select">
           <select name="" id="" placeholder="请选择" class="ezt-select">
             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
@@ -65,16 +92,12 @@
         </span>
       </li>
       <li>
-        <span class="title-search-name is-required">单据日期：</span>
+        <span class="title-search-name">单据日期：</span>
         <span>
           <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
             <span>至</span>
           <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
-      </li>
-      <li>
-        <span class="title-search-name">盘点单号：</span>
-        <input type="text" placeholder="输入盘点单号查询" class="ezt-middle">
       </li>
       <li>
         <span class="title-search-name">单据或物料：</span>
@@ -134,12 +157,20 @@ export default class SpilledSheet extends Vue{
     }]
     created() {
       this.tabList.push({
-        name:"待审核",
+        name:"领料待审",
         status:1,
         active:true,
       },{
-        name:"已完成",
+        name:"领料已审",
         status:2,
+        active:false
+      },{
+        name:"退料待审",
+        status:3,
+        active:false
+      },{
+        name:"退料已审",
+        status:4,
         active:false
       });
       this.service = SpilledSheetService.getInstance();
@@ -219,7 +250,13 @@ export default class SpilledSheet extends Vue{
       }     
     }
     private addPage(){
-      this.$router.push('/addflossSheet')
+      // this.$router.push('/addflossSheet')
+    }
+    //首页菜单跳转
+    private toPage(info:string){
+      if(info){
+        this.$router.push(info);
+      }      
     }
    // 查询损溢单
    private queryPage(){
@@ -230,7 +267,7 @@ export default class SpilledSheet extends Vue{
       this.isSearch = false;
       this.hideMask();
       this.cache.save(CACHE_KEY.SPILLEDSHEET_SEARCH,JSON.stringify(this.searchParam));
-      this.$router.push('/searchSpilledSheet');
+      // this.$router.push('/searchSpilledSheet');
    }   
    // 跳转损溢详情
     private spilledetails(item:any){  
@@ -246,7 +283,7 @@ export default class SpilledSheet extends Vue{
           remark:item.remark,
         }
         this.cache.save(CACHE_KEY.SPILLEDSHEET_DETAILS,JSON.stringify(details));
-        this.$router.push('/spilledSheetDetails');
+        // this.$router.push('/spilledSheetDetails');
       }
     }   
     // 审核损溢单
@@ -263,7 +300,7 @@ export default class SpilledSheet extends Vue{
           remark:item.remark,        
         }   
         this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(addBillInfo));
-        this.$router.push({name:'AuditoflossSheet'});  
+        // this.$router.push({name:'AuditoflossSheet'});  
       }
      }     
 }
@@ -273,9 +310,6 @@ export default class SpilledSheet extends Vue{
       padding: 0;
       height: 45px;
       align-items: center;
-    }
-    .ezt-add-content{
-      padding-bottom: 0px;
     }
     .ezt-action-point{
       margin-top: 10px;

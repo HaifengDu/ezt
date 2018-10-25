@@ -84,7 +84,9 @@
                     </div>                    
                   </div>               
               </div> 
-              <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
+              <div class="ezt-detail-del" @click="delAction(item)">
+                <i class="fa fa-trash" aria-hidden="true"></i>  
+              </div> 
              <div>
               <x-dialog v-model="isDirect" class="dialog-demo">
                 <div class="ezt-dialog-header">
@@ -142,7 +144,9 @@
                     
                   </div>                 
               </div> 
-              <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
+              <div class="ezt-detail-del" @click="delAction(item)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </div> 
           </li>                   
         </ul>
 
@@ -171,7 +175,9 @@
                     
                   </div>                 
               </div> 
-              <div class="ezt-detail-del" @click="deleteSection(item)">删除</div> 
+              <div class="ezt-detail-del" @click="deleteSection(item)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+              </div> 
           </li>                   
         </ul>
       </div> 
@@ -740,10 +746,11 @@ export default class ReceiveGood extends Vue{
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
+    // background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 22px;
   }
 </style>

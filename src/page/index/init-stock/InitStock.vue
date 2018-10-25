@@ -47,7 +47,9 @@
                 </div>
               </div>
             </div>
-            <div class="ezt-list-del" @click.stop="deleteBill(item)">删除</div>
+            <div class="ezt-list-del" @click.stop="deleteBill(item)">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
         </div>
          <span v-show="allLoaded">已全部加载</span>          
       </div>
@@ -372,11 +374,12 @@ export default class InitStock extends Vue {
     position: absolute;
     right: 12px;
     top: 42px;
-    background: pink;
+    // background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 22px;
 }
 //左侧滑动删除
   .ezt-list-show{

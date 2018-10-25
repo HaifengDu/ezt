@@ -62,7 +62,9 @@
                             </div>                    
                             </div>
                         </div> 
-                        <div class="ezt-detail-del" @click="delAction(item)">删除</div>
+                        <div class="ezt-detail-del" @click="delAction(item)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </div>
                     </li>
                 </ul>   
             </div>
@@ -433,11 +435,12 @@ export default class allotment extends Vue{
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
+    // background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 22px;
 }
    
     //物料明细结束 

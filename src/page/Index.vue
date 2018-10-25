@@ -78,7 +78,7 @@
         <!--内容-->
         
     </div>
-    <ezt-footer v-if="tabStatus">
+    <ezt-footer v-if="!titleSelect">
       <ul slot="confirm" class="ezt-footer-tab">
         <li @click="renderUrl('/')" class="active">
           <span class="footer-index"></span>

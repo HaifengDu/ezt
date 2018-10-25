@@ -238,7 +238,6 @@ export default class allotment extends Vue{
 } 
 .good-detail-item .remark-suitable{
     line-height: 25px;
-    height: 50px;
     overflow : hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

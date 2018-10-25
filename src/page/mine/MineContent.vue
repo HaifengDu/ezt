@@ -1,7 +1,7 @@
   <!--首页我的页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title="我的" @goBack="goBack"></ezt-header>  
+    <ezt-header :back="true" title="我的" @goBack="goBack" :isInfoGoback="true"></ezt-header>  
     <div class="ezt-main">   
         <!--内容-->
          <div class="ezt-add-content">

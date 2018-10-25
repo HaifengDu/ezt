@@ -167,7 +167,6 @@ export default class OrderGoods extends Vue{
     }
 }
 </script>
-
 <style lang="less" scoped>
      .receive-icon-content{
          position: relative;
@@ -241,10 +240,6 @@ export default class OrderGoods extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
-        // letter-spacing: 0;
-        // display: -webkit-box;
-        // -webkit-box-orient: vertical;
-        // overflow: hidden;
         margin-top: 5px;
     }
     .good-detail-item .content{       
@@ -263,7 +258,7 @@ export default class OrderGoods extends Vue{
         font-size: 10px;
         color: #A3B3C2;
         letter-spacing: 0;
-    }
+    }   
     .good-num-t{
         display: inline-block;
         text-align: center;

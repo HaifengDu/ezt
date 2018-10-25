@@ -1,9 +1,7 @@
 <!--损溢模块首页-->
 <template>
 <div>
-   <div class="ezt-page-con SpilledSheet"  ref="listContainer" v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+   <div class="ezt-page-con SpilledSheet">
     <ezt-header :back="true" title="报损单" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
@@ -27,14 +25,14 @@
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
-                <span class="return-list-title">单号：{{item.dc_name}}</span> 
+                <span class="return-list-title">单号：{{item.bill_no}}</span> 
                 <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine(item)">报损</span>
                 <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
               </div>
-              <div class="receive-icon-content" @click="spilledetails()">
+              <div class="receive-icon-content" @click="spilledetails(item)">
                 <div style="display:flex">
                   <span class="receive-dc-title">仓库：
-                    <span class="receive-dc-content">{{item.bill_no}}</span>  
+                    <span class="receive-dc-content">{{item.warehouse}}</span>  
                   </span>
                   <span class="receive-dc-title">制单日期：
                     <span class="receive-dc-content">{{item.arrive_date}}</span>
@@ -51,7 +49,6 @@
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
         </div>
-         <span v-show="allLoaded">已全部加载</span>          
       </div>
     </div>
     <ezt-footer>
@@ -142,7 +139,6 @@ export default class SpilledSheet extends Vue{
     private service: SpilledSheetService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
-    private allLoaded:boolean= false;//数据是否已经全部加载完
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -162,11 +158,11 @@ export default class SpilledSheet extends Vue{
         status:2,
         active:false
       });
-       this.service = SpilledSheetService.getInstance();
-       this.pager= new Pager();   
-       this.pager.setLimit(20);
-       this.getList();  
-       this.searchParam = {};    
+      this.service = SpilledSheetService.getInstance();
+      this.pager= new Pager();   
+      this.pager.setLimit(20);
+      this.getList();  
+      this.searchParam = {};    
     }
     mounted(){      
       this.getList();
@@ -188,8 +184,6 @@ export default class SpilledSheet extends Vue{
     } 
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
@@ -212,29 +206,6 @@ export default class SpilledSheet extends Vue{
         },
         content:'是否要删除该单据？。'
       })
-    }
-    //下拉加载更多
-    private loadMore() {
-      if(!this.allLoaded){  
-         this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });
-      this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }  
-        this.goodList=this.goodList.concat(res.data.data);
-        (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })      
-      }     
     }
     //获取列表
     private getList(){
@@ -283,24 +254,37 @@ export default class SpilledSheet extends Vue{
       this.cache.save(CACHE_KEY.SPILLEDSHEET_SEARCH,JSON.stringify(this.searchParam));
       this.$router.push('/searchSpilledSheet');
    }   
-   // 跳转详情页面   
-    private spilledetails(){
+   // 跳转损溢详情
+    private spilledetails(item:any){  
+      let details={} 
       if(this.tabList.getActive().status==2){
+        details={
+          bill_no:item.bill_no,
+          currentdate:item.arrive_date,
+          warehouse:item.warehouse,
+          bill_type:"报损单",
+          causeofloss:"提前一天发货",
+          singlenumber:"12124124",
+          remark:item.remark,
+        }
+        this.cache.save(CACHE_KEY.SPILLEDSHEET_DETAILS,JSON.stringify(details));
         this.$router.push('/spilledSheetDetails');
       }
     }   
     // 审核损溢单
-    private toexamine(item:any){   
-      let OrderModule = {};
+    private toexamine(item:any){  
+      debugger 
+      let addBillInfo = {};
       if(this.tabList.getActive().status==1){
-         OrderModule={
+         debugger
+         addBillInfo={
           billno:item.bill_no,
-          unit:'供应商1号',
-          orderDate:item.ask_goods_date,   
-          arriveDate:item.arrive_date,
-          remark:'提前一天联系供应商',        
+          warehouse:item.warehouse,
+          billType:"损溢单",
+          causeofloss:"提前一天发货",
+          remark:item.remark,        
         }   
-        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(OrderModule));
+        this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(addBillInfo));
         this.$router.push({name:'AuditoflossSheet'});  
       }
      }     

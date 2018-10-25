@@ -37,9 +37,9 @@
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单</span>
+                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单>></span>
               </div>
-              <div class="receive-icon-content" @click="orderdetails()">
+              <div class="receive-icon-content" @click="orderdetails('payMent')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
                 <!-- <div style="display:flex"> -->
                   <span class="receive-dc-title">要货日期：
@@ -51,7 +51,7 @@
                 <!-- </div> -->
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
-              <div class="receive-icon-bottom" @click="orderdetails('payMent')">
+              <div class="receive-icon-bottom">
                 <div class="glow-1">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
@@ -264,7 +264,7 @@ export default class OrderGoods extends Vue{
           })
           _this.goodList.splice(newIndex,1);
         },
-        content:'是否要删除该单据？。'
+        content:'是否要删除该单据？'
       })
     }
     //下拉加载更多
@@ -351,7 +351,7 @@ export default class OrderGoods extends Vue{
     }   
     // 审核要货单
     private toexamine(type:any,item:any){   
-      let OrderModule = {};
+      let OrderModule = {}; 
       if(this.tabList.getActive().status==1){
          OrderModule={
           billno:item.bill_no,
@@ -390,7 +390,7 @@ export default class OrderGoods extends Vue{
               _this.$set(addInfo,'billTypes','handlers');
               // addInfo.billTypes = 'handlers';
               _this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(addInfo));
-              _this.$router.push('/addOrderGood'); 
+              _this.$router.push({name:'AuditInvoice',query:{type:type}}); 
             },
             content:'***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。',
             confirmText:"继续下单"

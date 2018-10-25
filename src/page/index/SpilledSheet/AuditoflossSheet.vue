@@ -3,40 +3,26 @@
   <div class="ezt-page-con AuditoflossSheet">
     <ezt-header :back="true" title='审核损溢单' @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
-       </div>
+       </div>   
     </ezt-header>    
     <div class="ezt-main">
       <div class="ezt-add-content">
          <ul class="ezt-title-search">
-          <li class="select-list">
-            <span class="title-search-name is-required">单据类型：</span>
-            <span class="title-select-name item-select">
-              <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+          <li>
+              <span class="title-search-name">单号：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billno">
           </li>
-          <li class="select-list">
-            <span class="title-search-name is-required">仓库：</span>
-            <span class="title-select-name item-select">
-              <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[1].warehouse}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+           <li>
+              <span class="title-search-name">仓库：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.warehouse">
           </li>
-          <li class="select-list">
-            <span class="title-search-name is-required">损溢原因：</span>
-            <span class="title-select-name item-select">
-              <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.causeofloss"
-              @change="handlerBillType('causeofloss','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[2].causeofloss}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+           <li>
+              <span class="title-search-name">单据类型：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billType">
+          </li>
+           <li>
+              <span class="title-search-name">损溢原因：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.causeofloss">
           </li>
           <li>
             <x-input title="备注：" v-model="addBillInfo.remark"></x-input>
@@ -49,7 +35,7 @@
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">              
+           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
                 <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
                 v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                     <div class="good-detail-l">
@@ -121,18 +107,10 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class SpilledSheet extends Vue{
   private cache = CachePocily.getInstance();
   private service: SpilledSheetService;
-  private hideMask:()=>void;
-  private showMask:()=>void;
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-  private addBillInfo:any={
-    billType:"",
-    warehouse:"",    
-    causeofloss:"",
-    remark: "",
-    editPrice:false//添加物料时 区分价格是否可以编辑
-  };//store中
+  private addBillInfo:any={};
   private orderType:any[] = [{//单据类型下拉数据    
     name:"报损",
     type:"q"
@@ -151,7 +129,7 @@ export default class SpilledSheet extends Vue{
   created() {  
     this.service = SpilledSheetService.getInstance();
     if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -277,6 +255,7 @@ export default class SpilledSheet extends Vue{
       }  
       this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.$router.push({name:'PublicAddGood',params:{'addflossSheetType':'true'}});
       this.$router.push(info);
       // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
     }      
@@ -467,7 +446,6 @@ input.ezt-smart{
       display: inline-block;
       height: 20px;
       border: 1px solid #ccc;
-      // width: 20px;
       text-align: center;
     }
     .park-input{
@@ -480,44 +458,10 @@ input.ezt-smart{
     .title-search-name.remark{
       margin-left: 10px;
     }
-    //直拨仓库   
-    .warehouse-list{
-        flex: 1;
-        text-align: center;
-        margin-left: 10px;
-        max-height: 240px;
-        overflow-x: auto;
-        .warehouse-isDefault{           
-          display: inline-block;               
-            
-        }   
-    }
-    .warehouse-title-num{
-      display: flex;
-      flex-direction: column;
-      background: #ccc;
-    }
-    .good-warehouse-num{
-      margin-left: 10px;
-      color: #95A7BA;
-      letter-spacing: 0;
-    }
-    .remark-area{
-      flex: .8;
-    }  
     .title-search-right{
       flex: 2;
       text-align: right;
     }
-    .warehouse-isDefault li{
-      display:flex;
-      flex-direction: row;
-      align-items: center;
-      flex:1;
-      span{
-        flex:1;
-      }
-    }    
     .swipe-transform{
       transform: translateX(-50px);
     }

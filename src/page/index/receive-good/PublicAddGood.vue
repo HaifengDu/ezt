@@ -53,6 +53,8 @@
                  <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
+                 <!-- 库存 -->
+                <span v-if="useObj.allotOrderType || useObj.addflossSheetType" class="good-stock ezt-titleColor2">
                  <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
                   materialLimit.billsPageType == 'spilledSheet'" 
@@ -343,7 +345,8 @@ export default class AddGood extends Vue{
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getDataOnce(CACHE_KEY.MATERIAL_LIMIT));
     }
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
+
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -600,7 +603,7 @@ private changeDirect(item:any){
   private handlerCollect(item:any){
     item.active = !item.active;
   }
-  /**
+  /**    
    * 选择完货品去提交
    * */ 
   private goToCommit(types:PageType){

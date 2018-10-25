@@ -31,15 +31,15 @@
                         <span class="title-search-name is-required">调入门店：</span>
                         <span class="title-select-name item-select">
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.inStore" 
-                                @change="handlerBillType('inStore','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
-                                :class="[{'selectError':billFiles[0].inStore}]">
+                                @change="handlerBillType('inStore','您已选择物料，调整出库仓库，需重新选择物料。')"
+                                :class="[{'selectError':billFiles[2].inStore}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
                     <li>
-                        <span class="title-search-name">备注：</span>
+                        <span class="title-search-name">备注：</span> 
                         <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
                     </li>
                     <li>
@@ -123,7 +123,9 @@ export default class allotment extends Vue{
      * 调出仓库列表
      *  */
     private orderType:any[] = [];
-    private addBillInfo:any = {};
+    private addBillInfo:any = {
+        inWarehouse:''
+    };
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -131,9 +133,10 @@ export default class allotment extends Vue{
      * 枚举 表单字段
      */
     private billFiles=[
+        {id:"outStore",msg:"请选择调出门店",outStore:false},
         {id:"outWarehouse",msg:"请选择调出仓库",outWarehouse:false},
         {id:"inStore",msg:"请选择调入门店",inStore:false},
-        {id:"outStore",msg:"请选择调出门店",outStore:false},
+       
     ];
 
 
@@ -276,29 +279,19 @@ export default class allotment extends Vue{
    */
     private handlerBillType(val:any,title:any){
         let _this = this;
-        if(this.selectedGood.length>0){
+        if(this.selectedGood.length>0&& val =='outWarehouse'){
             this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {
                     _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
                 },
                 onConfirm () {
-                    if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
-                        // _this.addBillInfo.inWarehouse = "";
-                        _this.addBillInfo.inWarehouse = _this.orderType[0].type;
-                        _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
-                    }
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
                 },
                 content:title
             })
         }else{
-            if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
-                // _this.addBillInfo.inWarehouse = "";
-                _this.addBillInfo.inWarehouse = _this.orderType[0].type;
-                _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
-            }
             _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
             this.billFiles.forEach(item=>{
                 if(item.id == val){
@@ -311,6 +304,7 @@ export default class allotment extends Vue{
      * 选择物料
      */
     private renderUrl(info:string){
+        let goodTerm = {}
         if(this.addBillInfo){
             let _this = this;
             for(let i=0;i<this.billFiles.length;i++){
@@ -321,10 +315,14 @@ export default class allotment extends Vue{
                     return false;
                 }
             }
+            goodTerm={
+                billsPageType: 'storeAllot',
+            }  
+            this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
             this.cache.save(CACHE_KEY.STOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
             this.cache.save(CACHE_KEY.STOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-            // this.$router.push(info);
-            this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
+            this.$router.push(info);
+            // this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
         }      
     }
     /**

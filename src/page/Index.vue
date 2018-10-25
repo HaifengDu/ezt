@@ -78,7 +78,7 @@
         <!--内容-->
         
     </div>
-    <ezt-footer v-if="tabStatus">
+    <ezt-footer v-if="!titleSelect">
       <ul slot="confirm" class="ezt-footer-tab">
         <li @click="renderUrl('/')" class="active">
           <span class="footer-index"></span>
@@ -266,7 +266,7 @@ export default class Index extends Vue{
     border-bottom: 1px solid #E1ECFF;
   }
 
-  .icon-menu li:nth-child(3) {
+  .icon-menu li:nth-child(4) {
     border-right: none;
   }
 

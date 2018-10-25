@@ -13,11 +13,11 @@
     <div class="ezt-main">
       <div class="ezt-add-content">
         <div class="good-type">
-          <span class="collect-good active"  v-if="!useObj.editPrice">
+          <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
           </span>
-          <div class="good-type-list" :class="{collect:!useObj.editPrice}">
+          <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
             <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>
@@ -30,29 +30,35 @@
            </ul>
            <div class="good-content-list">
              <div class="good-item" v-for="(item) in goodList" :key='item.id'>
-               <div class="good-item-title">
-                 <span class="good-item-name">{{item.name}}</span>
-                 <!-- <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span> -->
-                 <span v-if="!useObj.editPrice" class="good-item-sort edit">
-                    价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
-                 </span>
-                 <span v-if="useObj.editPrice" class="good-item-sort edit">
-                    <span v-if="useObj.costType==0||useObj.editPrice=='m'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>
-                    <span class="good-item-sort" v-if="useObj.editPrice == 'q'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-                    <span v-if="useObj.costType==1">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-                 </span>
-               </div>
+                <div class="good-item-title">
+                  <span class="good-item-name">{{item.name}}</span>  
+                  <!--库存初始化-->
+                    <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                      <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+                      <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+                    </span>
+                  <!--默认显示价格 可编辑-->  
+                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                      价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
+                  </span>
+                    <!--订货手工制单价格 不可编辑-->  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
                  <span class="good-remark" @click="handlerRemark(item)">
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 收藏图标 -->
-                 <span v-if="!useObj.editPrice" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
+                 <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <!-- 库存 -->
-                <span v-if="useObj.allotOrderType" class="good-stock ezt-titleColor2">
+                <span v-if="useObj.allotOrderType || useObj.addflossSheetType" class="good-stock ezt-titleColor2">
+                 <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
+                <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
+                  materialLimit.billsPageType == 'spilledSheet'" 
+                class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                  </span>
                  <span class="good-number">
@@ -62,31 +68,36 @@
                   <div>
                     <x-dialog v-model="isRemark" class="dialog-demo"> 
                       <div class="ezt-dialog-header">
-                        <span class="header-name">
-                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
-                        </span>
-                        <span class="ezt-close" @click="isRemark=false" >
+                        <div class="ezt-close" @click="isRemark=false" >
                           <i class="fa fa-times" aria-hidden="true"></i>
-                        </span>
+                        </div>
+                        <!-- 默认编辑 备注 -->
+                        <div class="header-name" v-if="materialLimit.billsPageType!='initStock'">
+                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
+                        </div>
+                        
                       </div>
-                      <div class="ezt-dialog-title">
-                        <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
-                        <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
+                      <!-- 只有收货模块时才有直拨 -->
+                      <div v-if="materialLimit.billsPageType=='receiveGood'">
+                          <div class="ezt-dialog-title">
+                            <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
+                            <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
+                          </div>
+                          <div class="warehouse-list">
+                              <ul class="warehouse-isDefault">
+                                  <li v-for="(item,index) in ((bindRemark.roundValue&&bindRemark.roundValue.list)||[])" :key="index">
+                                    <span>{{item.name}}</span>
+                                    <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
+                                  </li>
+                              </ul>
+                          </div>
                       </div>
-                      <div class="warehouse-list">
-                          <ul class="warehouse-isDefault">
-                              <li v-for="(item,index) in ((bindRemark.roundValue&&bindRemark.roundValue.list)||[])" :key="index">
-                                <span>{{item.name}}</span>
-                                <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
-                              </li>
-                          </ul>
-                      </div>
+                      
                       <div class="mine-bot-btn">
                         <span class="ezt-lone-btn" @click="remarkConfirm">提交</span>
                       </div>
                     </x-dialog>
                   </div>
-                <!-- </confirm> -->
                 <!-- 编辑价格信息时  -->
                  <div>
                     <x-dialog v-model="isPrice" class="dialog-demo">
@@ -101,13 +112,13 @@
                                 <span class="title-select-name">数量：</span>
                                 <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
                             </li>
-                            <li v-if="useObj.costType==0">
+                            <li v-if="materialLimit.costType=='0'">
                                 <span class="title-dialog-name">价格：</span>
                                 <span class="icon-input price">
                                     <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
                                 </span>                                       
                             </li>
-                            <li v-if="useObj.costType==1">
+                            <li v-if="materialLimit.costType=='1'">
                                 <span class="title-dialog-name">含税额：</span>
                                 <span class="icon-input price">
                                     <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
@@ -158,11 +169,17 @@
           <div class="item-left-good">
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-              <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-              <span v-if="useObj.editPrice" class="good-item-sort edit">
-                <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
-                <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
-              </span>
+               <!--库存初始化-->
+                    <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                      <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+                      <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+                    </span>
+                  <!--默认显示价格 可编辑-->  
+                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                      价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
+                  </span>
+                    <!--订货手工制单价格 不可编辑-->  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
@@ -202,10 +219,10 @@
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
-            <span class="good-item-sort" v-if="!useObj.editPrice">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-            <span v-if="useObj.editPrice" class="good-item-sort edit">
-              <span v-if="useObj.costType==0">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
-              <span v-if="useObj.costType==1">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
+            <span class="good-item-sort" v-if="!useObj.GoodPriceIsEdit">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span v-if="useObj.GoodPriceIsEdit == 1" class="good-item-sort edit">
+              <span v-if="!useObj.GoodPriceOrAmt">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
+              <span v-if="useObj.GoodPriceOrAmt==2">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
             </span>
           </div>
           <div class="good-item-bot">
@@ -214,7 +231,7 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="!useObj.editPrice" class="good-collect">
+            <span v-if="!useObj.GoodPriceIsEdit" class="good-collect">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span class="good-number">
@@ -272,16 +289,17 @@ export default class AddGood extends Vue{
   private addMaskClickListener:(...args:any[])=>void;
   private hideMask:()=>void;
   private showMask:()=>void;
+  private cache = CachePocily.getInstance();
   private isSelected:boolean=false;//已选货品
   private isSearch:boolean=false;//搜索所有物品
   private selectedGoodList:any[] = [];
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
   private isRemark:boolean=false;//编辑备注
-  private useObj:any={
-    editPrice:"",
-    costType:0,
-  }
+  // private useObj:any={
+  //   GoodPriceIsEdit:"",
+  //   GoodPriceOrAmt:0,
+  // }
   private isPrice:boolean=false;//编辑价格
   // private addBillInfo:any;//价格与备注显示切换
   private orderType: any[] = [
@@ -306,20 +324,29 @@ export default class AddGood extends Vue{
   private countFlag = 0;
   private oldValue = 0;
   private pageType = PageType; //页面类型
+  private materialLimit: any = {};//限制 
   // private userpp:any[]=[];
   created(){ 
    
   }
   mounted() {     
-    this.useObj.editPrice = this.$route.params.editPrice; //是否价格可编辑
-    this.useObj.costType = this.$route.params.costType; //价格与税额区分
-    if(this.$route.params.receiveOrderType){//单据类型（收货价格是否可编辑）
-      this.useObj.editPrice = this.$route.params.receiveOrderType;
+    // this.useObj.editPrice = this.$route.params.editPrice; //是否价格可编辑
+    // this.useObj.costType = this.$route.params.costType; //价格与税额区分
+    // debugger
+    // if(this.$route.params.GoodPriceIsEdit){//单据类型（收货价格是否可编辑）订货是否可以编辑
+    //   this.useObj.GoodPriceIsEdit = this.$route.params.GoodPriceIsEdit;
+    // }
+    // if(this.$route.params.GoodPriceOrAmt){//库存初始化 订货方式为金额或者价格显示 
+    //   this.useObj.GoodPriceOrAmt = this.$route.params.GoodPriceOrAmt;
+    // }
+    // if(this.$route.params.allotOrderType){//调拨单据 是否
+    //   this.useObj.allotOrderType = true;
+    // }
+    if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
+      this.materialLimit = JSON.parse(this.cache.getDataOnce(CACHE_KEY.MATERIAL_LIMIT));
     }
-    if(this.$route.params.allotOrderType){//调拨单据 是否
-      this.useObj.allotOrderType = true;
-    }
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
+
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -576,7 +603,7 @@ private changeDirect(item:any){
   private handlerCollect(item:any){
     item.active = !item.active;
   }
-  /**
+  /**    
    * 选择完货品去提交
    * */ 
   private goToCommit(types:PageType){
@@ -594,9 +621,9 @@ private changeDirect(item:any){
   }
   //点击备注
   private handlerRemark(item:any){
-    if(!this.useObj.editPrice){
+    if(this.materialLimit.billsPageType!='initStock'){
       this.isRemark=true;//收货
-    }else if(this.useObj.editPrice=="initStock"){
+    }else if(this.materialLimit.billsPageType=="initStock"){
       this.isPrice=true;//库存初始化
     }
     this.restBindRemark = item;
@@ -948,14 +975,17 @@ private changeDirect(item:any){
   }    
   .ezt-dialog-header{
   padding: 10px 0px;
-  display: flex;
-  flex-direction: row;
+  // display: flex;
+  flex-direction: column;
+
   .header-name{
     flex:1;
-    margin-right: -20px;
+    margin-right: 5px;
   }
   .ezt-close{
-    margin-right:20px;
+    margin-bottom:10px;
+    text-align: right;
+    font-size: 18px;
   }
 }
 .ezt-dialog-title{

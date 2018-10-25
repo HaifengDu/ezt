@@ -10,20 +10,20 @@
          <div class="ezt-detail-cot">
             <div class="receive-dc-list detail-order-info">   
                 <div class="receive-icon-title">
-                    <span class="return-list-title">单号：item.dc_name</span> 
-                    <span class="receive-status">2018-10-13</span>
+                    <span class="return-list-title">单号：{{spilledDetails.bill_no}}</span> 
+                    <span class="receive-status">{{spilledDetails.currentdate}}</span>
                 </div>
                 <div class="receive-icon-content">
                      <div style="display:flex">
-                        <span class="receive-dc-title">仓库：<span class="receive-dc-content">asd123123</span></span>
-                        <span class="receive-dc-title">单据类型：<span class="receive-dc-content">报损</span></span>
+                        <span class="receive-dc-title">仓库：<span class="receive-dc-content">{{spilledDetails.warehouse}}</span></span>
+                        <span class="receive-dc-title">单据类型：<span class="receive-dc-content">{{spilledDetails.bill_type}}</span></span>
                     </div>
                     <div style="display:flex">
-                        <span class="receive-dc-title">报损原因：<span class="receive-dc-content">dsbvkassadf</span></span>
-                        <span class="receive-dc-title">盘点单号：<span class="receive-dc-content">21412ssss</span></span>
+                        <span class="receive-dc-title">报损原因：<span class="receive-dc-content">{{spilledDetails.causeofloss}}</span></span>
+                        <span class="receive-dc-title">盘点单号：<span class="receive-dc-content">{{spilledDetails.singlenumber}}</span></span>
                     </div>
                     <div style="display:flex;padding-bottom:20px;">
-                        <span class="receive-dc-title">备注：<span class="receive-dc-content">不要啦就是你的济南市快递那福克斯地方</span></span>
+                        <span class="receive-dc-title">备注：<span class="receive-dc-content">{{spilledDetails.remark}}</span></span>
                     </div>
                 </div>
             </div>
@@ -35,8 +35,8 @@
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>
-                                <span class="good-detail-name">{{item.dc_name}}</span>
-                                <span class="good-detail-sort">￥12.000/KG</span>
+                                <span class="good-detail-name">{{item.dc_name}}【{{item.model}}】</span>
+                                <span class="good-detail-sort">￥{{item.unit}}/KG</span>
                             </div>
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>
@@ -79,7 +79,9 @@ import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { SpilledSheetService } from '../../../service/SpilledSheetService'
-import { strictEqual } from 'assert';
+import { CachePocily } from "../../../common/Cache"
+import {ECache} from '../../../enum/ECache'
+import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
    components:{
 
@@ -98,12 +100,17 @@ import { strictEqual } from 'assert';
 })
 export default class SpilledSheet extends Vue{
     private service: SpilledSheetService;
+    private cache = CachePocily.getInstance();
+    private spilledDetails:any={};//损溢详情页面表头
     private details:any[] = [];  //物料明细
     private fold :boolean = true;  //备注超出显示查看更多
     private content:string='';
     created() {          
        this.service = SpilledSheetService.getInstance();
        this.detailList();
+        if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS)){
+            this.spilledDetails = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS));
+        }
     }
     
     mounted(){ 
@@ -112,7 +119,6 @@ export default class SpilledSheet extends Vue{
     }
     // 备注出现查看更多
     private handleFold(item:any) {
-    //   this.fold = !this.fold;
         this.$set(item,'flod',!item.flod);
     }
     private getData() {
@@ -170,6 +176,9 @@ export default class SpilledSheet extends Vue{
         overflow-x: hidden;
         margin-bottom: 68px;
     }
+    .receive-dc-content{
+        width: 100px;
+    }
     .detail-acount-title{
         font-size: 12px;
         color: #95A7BA;
@@ -223,6 +232,9 @@ export default class SpilledSheet extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
+    }
+    .good-detail-item{
+        margin-top: 5px;
     }
     .good-detail-item .content{       
         word-break: break-all;    

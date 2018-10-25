@@ -127,12 +127,8 @@ export default class SpilledSheet extends Vue{
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   private addBillInfo:any={
-    billType:"",
-    warehouse:"",    
-    causeofloss:"",
-    remark: "",
-    editPrice:false//添加物料时 区分价格是否可以编辑
-  };//store中
+    remark:"",
+  };
   private orderType:any[] = [{//单据类型下拉数据    
     name:"报损",
     type:"q"
@@ -151,7 +147,7 @@ export default class SpilledSheet extends Vue{
   created() {  
     this.service = SpilledSheetService.getInstance();
     if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -178,7 +174,7 @@ export default class SpilledSheet extends Vue{
       },{num:0,Amt:0});
     }
   /**
-   * 删除物料操作
+   * 删除物料操作    
    */
   private delAction(item:any){
     let _this = this;
@@ -244,7 +240,6 @@ export default class SpilledSheet extends Vue{
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
-        _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
       },
       onConfirm () {//审核通过
         _this.addBillInfo={},
@@ -261,6 +256,7 @@ export default class SpilledSheet extends Vue{
   }    
     //选择物料
   private selectMaterials(info:string){
+    let goodTerm = {};
     if(this.addBillInfo){
       let _this = this;
       for(let i=0;i<this.billFiles.length;i++){
@@ -271,9 +267,14 @@ export default class SpilledSheet extends Vue{
           return false;
         }
       }
+      goodTerm={
+        billsPageType: 'spilledSheet',
+      }  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+      this.$router.push({name:'PublicAddGood',params:{}});
+       //'addflossSheetType':'true'
     }      
   }
   /**
@@ -289,6 +290,7 @@ export default class SpilledSheet extends Vue{
         },
         onConfirm () {
           _this.setSelectedGood([]);
+          _this.addBillInfo.remark =""
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
         },
         content:title
@@ -406,14 +408,6 @@ input.ezt-smart{
       z-index: 2;
     }
 }
-    .icon-dail{
-      flex: .1;
-      background: pink;
-      display: inline-block;
-      height: 20px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
     .park-input{
       display: flex;
       flex:1;

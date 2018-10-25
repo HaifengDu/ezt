@@ -16,12 +16,12 @@ export class SpilledSheetService extends BaseService{
         //     "oper": "UNDER_RECEIVING_LIST",
         //     "pagination": pager
         // });
-        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }    
 
     getGoodDetail(){
-        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
     static createInstance() {

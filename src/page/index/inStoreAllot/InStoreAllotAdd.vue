@@ -112,7 +112,9 @@ export default class allotment extends Vue{
      * 调出仓库列表
      *  */
     private orderType:any[] = [];
-    private addBillInfo:any = {};
+    private addBillInfo:any = {
+        inWarehouse:''
+    };
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -138,7 +140,7 @@ export default class allotment extends Vue{
             type:"m"
         }]
         this.addBillInfo.outWarehouse = this.orderType[0].type;
-         this.addBillInfo.inWarehouse = this.orderType[0].type;
+        //  this.addBillInfo.inWarehouse = this.orderType[0].type;
         if(this.cache.getData(CACHE_KEY.INSTOREALLOT_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INSTOREALLOT_ADDINFO));
         }
@@ -299,6 +301,7 @@ export default class allotment extends Vue{
      * 选择物料
      */
     private renderUrl(info:string){
+        let goodTerm = {};
         if(this.addBillInfo){
             let _this = this;
             for(let i=0;i<this.billFiles.length;i++){
@@ -309,10 +312,15 @@ export default class allotment extends Vue{
                     return false;
                 }
             }
+            goodTerm={
+                billsPageType: 'inStoreAllot',
+            }  
+            this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
             this.cache.save(CACHE_KEY.INSTOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));
             this.cache.save(CACHE_KEY.INSTOREALLOT_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-            // this.$router.push(info);
             this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
+            this.$router.push(info);
+            // this.$router.push({name:'PublicAddGood',params:{'allotOrderType':'true'}});
         }      
     }
     /**

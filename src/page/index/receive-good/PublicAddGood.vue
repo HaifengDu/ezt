@@ -38,7 +38,7 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="!materialLimit.billsPageType" class="good-item-sort edit">
+                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
                     <!--订货手工制单价格 不可编辑-->  
@@ -66,13 +66,14 @@
                   <div>
                     <x-dialog v-model="isRemark" class="dialog-demo"> 
                       <div class="ezt-dialog-header">
-                        <!-- 默认编辑 备注 -->
-                        <span class="header-name" v-if="materialLimit.billsPageType!='initStock'">
-                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
-                        </span>
-                        <span class="ezt-close" @click="isRemark=false" >
+                        <div class="ezt-close" @click="isRemark=false" >
                           <i class="fa fa-times" aria-hidden="true"></i>
-                        </span>
+                        </div>
+                        <!-- 默认编辑 备注 -->
+                        <div class="header-name" v-if="materialLimit.billsPageType!='initStock'">
+                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
+                        </div>
+                        
                       </div>
                       <!-- 只有收货模块时才有直拨 -->
                       <div v-if="materialLimit.billsPageType=='receiveGood'">
@@ -166,11 +167,17 @@
           <div class="item-left-good">
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-              <span class="good-item-sort" v-if="useObj.GoodPriceIsEdit==1">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-              <span v-if="!useObj.GoodPriceIsEdit" class="good-item-sort edit">
-                <span v-if="useObj.GoodPriceOrAmt!=2">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
-                <span v-if="useObj.GoodPriceOrAmt==2">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
-              </span>
+               <!--库存初始化-->
+                    <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                      <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+                      <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+                    </span>
+                  <!--默认显示价格 可编辑-->  
+                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                      价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
+                  </span>
+                    <!--订货手工制单价格 不可编辑-->  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
@@ -965,14 +972,17 @@ private changeDirect(item:any){
   }    
   .ezt-dialog-header{
   padding: 10px 0px;
-  display: flex;
-  flex-direction: row;
+  // display: flex;
+  flex-direction: column;
+
   .header-name{
     flex:1;
-    margin-right: -20px;
+    margin-right: 5px;
   }
   .ezt-close{
-    margin-right:20px;
+    margin-bottom:10px;
+    text-align: right;
+    font-size: 18px;
   }
 }
 .ezt-dialog-title{

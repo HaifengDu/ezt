@@ -61,8 +61,9 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
-                                    </span>
+                                    <span class="good-detail-sort" v-if="addBillInfo.costType==0">￥{{item.price}}/{{item.utilname}}</span>
+                                    <span class="good-detail-sort" v-if="addBillInfo.costType==1">￥{{item.amt}}/{{item.utilname}}</span>
+                                    
                                     <span class="good-detail-sort">数量：{{item.num}}</span>
                                 </div>                     
                             </div>
@@ -257,12 +258,11 @@ export default class InitStock extends Vue {
     private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
        ori.num = ori.num+Number(item.num); 
-        if(item.price){
-            ori.Amt = ori.Amt + (item.num * item.price);
+        if(this.addBillInfo.costType==0){
+            ori.Amt = ori.Amt + (Number(item.num) * item.price);
         }else{
-            ori.Amt = ori.Amt + (item.amt);
-        }      
-     
+            ori.Amt = ori.Amt + Number(item.amt);
+        }
       return ori;
       },{num:0,Amt:0});
     }

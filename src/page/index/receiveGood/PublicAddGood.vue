@@ -184,12 +184,7 @@
               <span class="good-remark" @click="handlerRemark(item)">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
-              <!-- 收藏图标 -->
-              <!-- <span v-if="!useObj.editPrice" class="good-collect">
-                <i class="fa fa-star-o" aria-hidden="true"></i>
-              </span> -->
-              <span class="good-number">
-                <!-- <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number> -->
+              <span class="good-number">                
                 <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
               </span>
             </div>
@@ -233,11 +228,10 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="!useObj.GoodPriceIsEdit" class="good-collect">
+            <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
-            <span class="good-number">
-              <!-- <x-number name="" title="" fillable v-model="item.num" :min=0 @on-change="handlerNum(item)"></x-number> -->
+            <span class="good-number">              
               <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
             </span>
           </div>

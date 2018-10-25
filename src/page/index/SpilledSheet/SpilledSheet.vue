@@ -30,14 +30,12 @@
                 <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
               </div>
               <div class="receive-icon-content" @click="spilledetails(item)">
-                <div style="display:flex">
-                  <span class="receive-dc-title">仓库：
-                    <span class="receive-dc-content">{{item.warehouse}}</span>  
-                  </span>
-                  <span class="receive-dc-title">制单日期：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
-                  </span>
-                </div>
+                <span class="receive-dc-title">仓库：
+                  <span class="receive-dc-content">{{item.warehouse}}</span>  
+                </span>
+                <span class="receive-dc-title">制单日期：
+                  <span class="receive-dc-content">{{item.arrive_date}}</span>
+                </span>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
                 <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
               </div>

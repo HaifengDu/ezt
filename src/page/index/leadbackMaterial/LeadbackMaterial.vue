@@ -34,7 +34,7 @@
                     <span class="receive-dc-content">{{item.warehouse}}</span>  
                   </span>
                   <span class="receive-dc-title">数量：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                    <span class="receive-dc-content">{{item.number}}</span>
                   </span>
                 </div>
                 <div style="display:flex">
@@ -42,7 +42,7 @@
                     <span class="receive-dc-content">{{item.warehouse}}</span>  
                   </span>
                   <span class="receive-dc-title">单据金额：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                    <span class="receive-dc-content">{{item.amount}}</span>
                   </span>
                 </div>
                 <span class="receive-dc-title">货品摘要：<span class="receive-dc-content">{{item.details}}</span></span>

@@ -53,8 +53,6 @@
                  <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
-                 <!-- 库存 -->
-                <span v-if="useObj.allotOrderType || useObj.addflossSheetType" class="good-stock ezt-titleColor2">
                  <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
                   materialLimit.billsPageType == 'spilledSheet'" 
@@ -219,10 +217,14 @@
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
-            <span class="good-item-sort" v-if="!useObj.GoodPriceIsEdit">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
-            <span v-if="useObj.GoodPriceIsEdit == 1" class="good-item-sort edit">
-              <span v-if="!useObj.GoodPriceOrAmt">价格：<input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="item.price"></span>
-              <span v-if="useObj.GoodPriceOrAmt==2">税额：<input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="item.amt"></span>
+            <!--库存初始化-->
+            <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+              <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+              <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+            </span>
+            <!--默认显示价格 可编辑-->  
+            <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
             </span>
           </div>
           <div class="good-item-bot">
@@ -345,8 +347,7 @@ export default class AddGood extends Vue{
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getDataOnce(CACHE_KEY.MATERIAL_LIMIT));
     }
-
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
@@ -603,7 +604,7 @@ private changeDirect(item:any){
   private handlerCollect(item:any){
     item.active = !item.active;
   }
-  /**    
+  /**
    * 选择完货品去提交
    * */ 
   private goToCommit(types:PageType){

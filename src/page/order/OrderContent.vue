@@ -61,7 +61,9 @@
                 <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
               </div>
             </div>
-            <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
+            <div class="ezt-list-del" @click="deleteBill(item)">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
         </div>
          <span v-show="allLoaded">已全部加载</span>          
       </div>
@@ -449,16 +451,15 @@ export default class OrderGoods extends Vue{
       z-index: 2;
     }
     .ezt-list-del{
-        position: absolute;
-        right: 0px;
+       position: absolute;
+        right: 12px;
         top: 42px;
+        // background: pink;
         width: 50px;
-        height: 85px;
-        background: red;
-        z-index: 1;
-        line-height: 85px;
+        height: 50px;
         text-align: center;
-        color: #fff;
+        line-height: 50px;
+        font-size: 22px;
     }
     .swipe-transform{
       transform: translateX(-50px);

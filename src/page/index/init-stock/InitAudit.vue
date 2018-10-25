@@ -66,7 +66,9 @@
                                 </div>                    
                             </div>
                         </div>
-                         <div class="ezt-detail-del" @click="delAction(item)">删除</div>                                               
+                        <div class="ezt-detail-del" @click="delAction(item)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>     
+                        </div>                                               
                     </li>
                 </ul> 
                  
@@ -483,11 +485,12 @@ private delAction(item:any){
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
+    // background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 22px;
   }
 </style>
 

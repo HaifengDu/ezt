@@ -42,8 +42,8 @@
                                 </div>
                                 <div class="good-detail-item" v-if="item.remark">
                                     <div class="good-detail-sort content">备注：
-                                        <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
-                                        <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
+                                        <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                                        <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                                     </div>
                                 </div>
                             </div>
@@ -257,7 +257,6 @@ export default class InitStock extends Vue{
 } 
 .good-detail-item .remark-suitable{
     line-height: 25px;
-    height: 50px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;

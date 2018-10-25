@@ -481,7 +481,7 @@ input.ezt-middle{
   }
   /* 下拉左侧lable字体样式 */
   .title-search-name,.AuditInvoice .weui-label{
-    font-size: 13px;
+    font-size: 14px;
     color: #5F7B9A;
   }
   /* 下拉选项值样式 */
@@ -682,5 +682,37 @@ input.ezt-middle{
     border: 1px solid #ff1300;
     border-radius: 3px;
    }
+   .ezt-action-point{
+     margin: 0 5px;
+     font-size: 16px;
+   }
 
+  /* 字体放大新调整  开始*/
+  .ezt-header-title{
+    font-size: 18px;
+  }
+  .receive-dc-title{
+    font-size: 15px;
+    line-height: 24px;
+  }
+  .receive-total{
+    font-size: 14px;
+  }
+  .icon-menu span{
+    font-size: 14px !important;
+  }
+  .detail-acount-title{
+    font-size: 15px !important;
+  }
+  .good-detail-billno{
+    flex: 1.3!important;
+    font-size: 14px !important;
+  }
+  .receive-status{
+    font-size: 13px!important;
+  }
+  /* 字体放大新调整  结束*/
+.ezt-pri-remark{
+  width: 100%;
+}
    

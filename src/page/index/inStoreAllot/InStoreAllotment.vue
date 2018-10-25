@@ -40,11 +40,11 @@
                         <div class="receive-icon-content">                        
                             <div style="display:flex">
                                 <span class="receive-dc-title">调出：<span class="receive-dc-content">{{item.mater_name}}</span></span>
-                                <span class="receive-dc-title">调出数量：<span class="receive-dc-content">{{item.exportNum}}</span></span>
+                                <span class="receive-dc-title">数量：<span class="receive-dc-content">{{item.exportNum}}</span></span>
                             </div>
                             <div style="display:flex">
                                 <span class="receive-dc-title">调入：<span class="receive-dc-content">{{item.mater_name}}</span></span>
-                                <span class="receive-dc-title">单据金额：<span class="receive-dc-content">￥{{item.exportNum}}</span></span>
+                                <span class="receive-dc-title">金额：<span class="receive-dc-content">￥{{item.exportNum}}</span></span>
                             </div>
                             <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
                             <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
@@ -189,9 +189,7 @@ export default class allotment extends Vue{
                     return item.id == info.id;
                 })
                 _this.goodList.splice(newIndex,1);
-                if(_this.goodList.length<5){
-                    _this.getList();
-                }
+                _this.getList();
             },
             content:'是否要删除该单据？'
         })

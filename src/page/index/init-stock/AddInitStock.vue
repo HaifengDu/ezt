@@ -106,7 +106,8 @@ import { InitStockService } from "../../../service/InitStockService";
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
-import CACHE_KEY from '../../../constans/cacheKey'
+import CACHE_KEY from '../../../constans/cacheKey';
+import {EGoodType} from '../../../enum/EGoodType';
 @Component({
   computed: {
     ...mapGetters({
@@ -132,6 +133,7 @@ export default class InitStock extends Vue {
     private setSelectedGood: INoopPromise;
     private selectedGood: any[]; //store中selectedGood的值
     private isFirstStore:boolean;
+    private EGoodType = EGoodType;//区分是税额还是价格
     private orderType: any[] = [
         {
             //单据类型下拉数据
@@ -169,26 +171,31 @@ export default class InitStock extends Vue {
     //选择物料
     private renderUrl(info: string) {
         let _this = this;
+        let goodTerm = {};
         for(let i=0;i<this.billFiles.length;i++){
         let item = this.billFiles[i];
-        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-            if(this.addBillInfo[item.id]!=0){
-                this.$toasted.show(item.msg);
-                item[item.id]=true;
-                return false;
+            if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+                if(this.addBillInfo[item.id]!=0){
+                    this.$toasted.show(item.msg);
+                    item[item.id]=true;
+                    return false;
+                }
+            
             }
-        
         }
-        }
+        goodTerm={
+            billsPageType: 'initStock',
+            costType: this.addBillInfo.costType
+        }     
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.INITSTOCK_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.INITSTOCK_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        // this.$router.push(info);
-        this.$router.push({
-            name:"PublicAddGood",
-            params:{
-                editPrice:"initStock",
-                costType:this.addBillInfo.costType}
-        })
+        this.$router.push(info);
+        // this.$router.push({
+        //     name:"PublicAddGood",
+        //     params:{
+        //         GoodPriceOrAmt:this.addBillInfo.GoodPriceOrAmt}
+        // })
     }
 
         /**

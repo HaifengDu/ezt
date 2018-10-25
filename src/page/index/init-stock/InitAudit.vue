@@ -202,14 +202,15 @@ export default class InitStock extends Vue{
     }
     //选择物料
     private renderUrl(info: string) {
+        let goodTerm = {};
         this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.$router.push({
-            name:"PublicAddGood",
-            params:{
-                editPrice:"initStock",
-                costType:this.addBillInfo.costType}
-        })
+        this.$router.push(info);
+         goodTerm={
+            billsPageType: 'initStock',
+            costType: this.addBillInfo.costType
+        }     
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
     }
     /**
      * 左侧滑动

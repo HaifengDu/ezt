@@ -51,22 +51,6 @@
         </div>
       </div>
     </div>
-    <ezt-footer>
-      <ul slot="confirm" class="ezt-footer-tab">
-        <li @click="toPage('/')" >
-          <span class="footer-index"></span>
-          <div>首页</div>
-        </li>
-        <li @click="toPage('/orderGood')" class="active">
-          <span class="footer-order"></span>
-          <div>订货</div>
-        </li>
-        <li @click="toPage('/chartContent')">
-          <span class="footer-chart"></span>
-          <div>报表</div>
-        </li>
-      </ul>
-    </ezt-footer>
   </div>
   <!-- 查询损溢单 -->  
   <div v-show="isSearch" class="search-dialog">
@@ -236,12 +220,6 @@ export default class SpilledSheet extends Vue{
     }
     private addPage(){
       this.$router.push('/addflossSheet')
-    }
-    //首页菜单跳转
-    private toPage(info:string){
-      if(info){
-        this.$router.push(info);
-      }      
     }
    // 查询损溢单
    private queryPage(){

@@ -1,4 +1,4 @@
-<!--损溢模块首页-->
+<!--领退料模块-->
 <template>
 <div>
    <div class="ezt-page-con LeadbackMaterial">
@@ -15,7 +15,6 @@
        </div>
     </ezt-header>  
     <div class="ezt-main">      
-        <!--内容-->
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
         @on-item-click="tabClick(index)" :key="index">{{item.name}}
@@ -53,24 +52,8 @@
         </div>
       </div>
     </div>
-    <ezt-footer>
-      <ul slot="confirm" class="ezt-footer-tab">
-        <li @click="toPage('/')" >
-          <span class="footer-index"></span>
-          <div>首页</div>
-        </li>
-        <li @click="toPage('/orderGood')" class="active">
-          <span class="footer-order"></span>
-          <div>订货</div>
-        </li>
-        <li @click="toPage('/chartContent')">
-          <span class="footer-chart"></span>
-          <div>报表</div>
-        </li>
-      </ul>
-    </ezt-footer>
   </div>
-  <!-- 查询损溢单 -->  
+  <!-- 查询领退料 -->  
   <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
        <li class="select-list">
@@ -252,13 +235,7 @@ export default class leadbackMaterial extends Vue{
     private addPage(){
       // this.$router.push('/addflossSheet')
     }
-    //首页菜单跳转
-    private toPage(info:string){
-      if(info){
-        this.$router.push(info);
-      }      
-    }
-   // 查询损溢单
+   // 查询领退料
    private queryPage(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
@@ -269,7 +246,7 @@ export default class leadbackMaterial extends Vue{
       this.cache.save(CACHE_KEY.SPILLEDSHEET_SEARCH,JSON.stringify(this.searchParam));
       // this.$router.push('/searchSpilledSheet');
    }   
-   // 跳转损溢详情
+   // 跳转领退料详情
     private spilledetails(item:any){  
       let details={} 
       if(this.tabList.getActive().status==2){
@@ -286,12 +263,10 @@ export default class leadbackMaterial extends Vue{
         // this.$router.push('/spilledSheetDetails');
       }
     }   
-    // 审核损溢单
+    // 审核领退料
     private toexamine(item:any){  
-      debugger 
       let addBillInfo = {};
       if(this.tabList.getActive().status==1){
-         debugger
          addBillInfo={
           billno:item.bill_no,
           warehouse:item.warehouse,

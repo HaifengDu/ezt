@@ -1,24 +1,23 @@
 <!--整体页面的头部布局-->
 <template>
-<div>
-  <div class="ezt-page-con"  ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
-    <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
-       <div slot="action">
-         <div>
-           <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')">
-            <i class="fa fa-plus" aria-hidden="true" ></i>
-           </span>
-          <span class='ezt-action-point' @click="searchTitle">
-            <i class="fa fa-search" aria-hidden="true"></i>
-          </span>          
-         </div>
-       </div>
+<div class="ezt-page-con" ref="listContainer" 
+  v-infinite-scroll="loadMore"
+  :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+  infinite-scroll-distance="10">
+    <ezt-header :back="true" title="退货" @goBack="goBack" :isInfoGoback="true">
+      <div slot="action">
+        <div>
+          <span class='ezt-action-point' @click="toPage(null,'/returnGoodAdd')">
+          <i class="fa fa-plus" aria-hidden="true" ></i>
+          </span>
+        <span class='ezt-action-point' @click="searchTitle">
+          <i class="fa fa-search" aria-hidden="true"></i>
+        </span>          
+        </div>
+      </div>
     </ezt-header>    
     <div class="ezt-main">       
-      <tab :line-width=2 active-color='#fc378c'>
+       <tab :line-width=2 active-color='#fc378c'>
         <tab-item 
         class="vux-center" 
         :selected="item.active" 
@@ -27,10 +26,10 @@
         :key="index">
           {{item.name}}
         </tab-item>
-      </tab>        
-      <div class="ezt-add-content">
-        <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
+      </tab>         
+      <div class="ezt-add-content">       
+         <!-- 收货单列表       -->
+        <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
             <div class="receive-icon-title">
             <span class="receive-icon-dcName"></span>
             <span class="return-list-title">{{item.dc_name}}</span> 
@@ -53,11 +52,10 @@
               </div>
             </div>
         </div>
-         <span v-show="allLoaded">已全部加载</span>          
-      </div>
-    </div>         
-  </div>
-  <div v-show="isSearch" class="search-dialog">
+        <span v-show="allLoaded">已全部加载</span>  
+      </div>    
+    </div>
+    <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
         <li class="select-list">
         <span class="title-search-name ">收货类型：</span>
@@ -105,49 +103,50 @@
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>
       </li>
-    </ul>
-  </div> 
-  </div> 
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
+import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
+import {SupplierReturnService} from '../../../service/SupplierReturnService'
 import Pager from '../../../common/Pager';
 import {TabItem,LoadingPlugin} from 'vux'
-import { mapActions, mapGetters } from 'vuex';
-import {maskMixin} from "../../../helper/maskMixin";
-import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import {maskMixin} from "../../../helper/maskMixin";
+import { mapActions, mapGetters } from 'vuex';
+import { INoop, INoopPromise } from '../../../helper/methods';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
+declare var mobiscroll:any;
 @Component({
    components:{
      TabItem
    },
    mixins:[maskMixin],
-   computed:{
-     ...mapGetters({
-     })
-   },
+  //  computed:{
+  //    ...mapGetters({
+  //      'goodList':'returnGood/goodList'
+  //    })
+  //  },
   //  methods:{
   //    ...mapActions({
-  //      'getGoodList':"receiveGood/getGoodList"
+  //      'getGoodList':"returnGood/getGoodList"
   //    })
   //  }
 })
-export default class ReceiveGood extends Vue{
+export default class ReturnGood extends Vue{
     private cache = CachePocily.getInstance();
-    // private selected:String = 'deliver';
-    private service: ReceiveGoodService;
+    private service: SupplierReturnService;
     private pager:Pager;
     private getGoodList:INoopPromise
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
     private showMask:()=>void;
-    // private updateUser:INoop;
     /**
      * 列表页list数据
      */
@@ -169,9 +168,10 @@ export default class ReceiveGood extends Vue{
       name:'仓库1',
       id:'01'
     }]
+
     created() {
       this.tabList.push({
-        name:"待收货",
+        name:"待审核",
         status:1,
         active:true,
       },{
@@ -180,10 +180,10 @@ export default class ReceiveGood extends Vue{
         active:false
       });
       this.pager = new Pager().setLimit(20)
-      this.service = ReceiveGoodService.getInstance();
+      this.service = SupplierReturnService.getInstance();
     }
 
-    mounted(){      
+    mounted(){
       this.getList();
       this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
         this.isSearch=false; 
@@ -195,110 +195,111 @@ export default class ReceiveGood extends Vue{
        })
       } 
     }
-    //详情页跳转
-    private toPage(item:any,info:string){
-      let confirmGoodInfo = {};
-      let detailList = {};
-      if(info){
-         this.$router.push(info);
-         return false;
-      }
-      if(this.tabList.getActive().status==1){
-        confirmGoodInfo={
-          bill_no:item.bill_no,
-          billType:'合同采购',
-          warehouse:'01',
-          remark:'在途中',         
-        }
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
-        this.$router.push('/comfirmAccept');
-      }else if(this.tabList.getActive().status==3){
-        detailList = {
-          dc_name:"配送中心-8店",
-          bill_no:"000111aab",         
-        }
-        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
-        this.$router.push('/checkDetail');
-      }
-      
-    }
+
   /**
-   * computed demo
+   * watch demo
    */
-    private get Total(){
-      return this.goodList.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
+    @Watch("list",{
+      deep:true
+    })
+    private listWatch(newValue:any[],oldValue:any[]){
+
     }
-    private get billStatus(){
-      return this.tabList.getActive().status==1?'待审核':'已完成';
+    //详情页跳转
+  private toPage(item:any,info:string){
+    let confirmGoodInfo = {};
+    let detailList = {};
+    if(info){
+        this.$router.push(info);
+        return false;
     }
-    private tabClick(index:number){
-      this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
-      this.pager.resetStart();//分页加载还原pageNum值
-      this.getList();     
+    if(this.tabList.getActive().status==1){
+      confirmGoodInfo={
+        bill_no:item.bill_no,
+        billType:'合同采购',
+        warehouse:'01',
+        remark:'在途中',         
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
+      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
+      this.$router.push('/returnGoodAudit');
+    }else if(this.tabList.getActive().status==3){
+      detailList = {
+        dc_name:"配送中心-8店",
+        bill_no:"000111aab",         
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
+      this.$router.push('/returnGoodDetail');
     }
-    //下拉加载更多
-    private loadMore() {
-      if(!this.allLoaded){
-        this.showMask();
+    
+  }
+
+ private tabClick(index:number){
+  this.tabList.setActive(index);
+  this.allLoaded=false;
+  (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+  this.pager.resetStart();//分页加载还原pageNum值
+  this.getList();     
+}
+  //下拉加载更多
+  private loadMore() {
+    if(!this.allLoaded){
+      this.showMask();
       this.$vux.loading.show({
         text:'加载中..'
       });
       this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }
-        this.goodList=this.goodList.concat(res.data.data);
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })
-      }     
-    }
-    //获取列表
-    private getList(){
-      const status = this.tabList.getActive().status;
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
-        this.showMask();
-        this.$vux.loading.show({
-          text: '加载中...'
-          });
-        this.goodList=res.data.data;
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },400); 
-        },err=>{
-          this.$toasted.show(err.message);
-      });
-    }
-    //搜索选择的条件显示/隐藏
-    private searchTitle(){
-      this.isSearch = !this.isSearch;
-      this.isSearch?this.showMask():this.hideMask();
-    }
-    private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
-      this.$router.push('/searchReceiveGood');
-    }  
-    private goBack(){
-      this.$router.push("/");
-    } 
+      // this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+      //   if(this.pager.getPage().limit>res.data.data.length){
+      //     this.allLoaded=true;
+      //   }
+      //   this.goodList=this.goodList.concat(res.data.data);
+      //   setTimeout(()=>{
+      //     this.$vux.loading.hide();
+      //     this.hideMask();
+      //   },500); 
+      // },err=>{
+      //     this.$toasted.show(err.message);
+      // })
+    }     
+  }
+  //获取列表
+  private getList(){
+    const status = this.tabList.getActive().status;
+    // this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+    //   this.showMask();
+    //   this.$vux.loading.show({
+    //     text: '加载中...'
+    //     });
+    //   this.goodList=res.data.data;
+    //   setTimeout(()=>{
+    //     this.$vux.loading.hide();
+    //     this.hideMask();
+    //   },400); 
+    //   },err=>{
+    //     this.$toasted.show(err.message);
+    // });
+  }
+  //搜索选择的条件显示/隐藏
+  private searchTitle(){
+    this.isSearch = !this.isSearch;
+    this.isSearch?this.showMask():this.hideMask();
+  }
+  private toSearch(){
+    this.isSearch = false;
+    this.hideMask();
+    this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
+    this.$router.push('/returnGoodSearch');
+  }  
+  private goBack(){
+    this.$router.push("/");
+  } 
+   
 }
 </script>
 
 <style lang="less" scoped> 
- //tab切换颜色设置
+//tab切换颜色设置
   .mint-tab-item.is-selected .deliver {
     color: #54B1FD;
     border-bottom: 2px solid #54B1FD;
@@ -320,28 +321,5 @@ export default class ReceiveGood extends Vue{
   }
   .mint-navbar{
     display: flex;
-  } 
-  .add{
-      font-size: 20px;
-      i{
-        margin-right: 10px;
-      }
-    }
-    .ezt-action-point{
-      width: 20px;
-      height: 26px;
-      display: inline-block;
-    }
-    //搜索弹框
-    .search-dialog{
-      width: 100%; 
-      position:absolute;
-      top:45px; 
-      z-index:10001;
-    }
-    .oo{
-      display: inline-block;
-      width:10px;
-      height: 10px;
-    }
+  }
 </style>

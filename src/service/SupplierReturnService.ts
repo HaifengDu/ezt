@@ -7,9 +7,9 @@ import ErrorMsg from "../model/ErrorMsg";
 import Axios from "axios";
 import store from "../store"
 import { IPagerData } from "../interface/IPagerData";
-export class ReturnGoodService extends BaseService{
+export class SupplierReturnService extends BaseService{
 
-    private static _instance: ReturnGoodService;
+    private static _instance: SupplierReturnService;
     private loginService:LoginService;
     private constructor() {
         super(ERequestType.AppOrder)
@@ -26,7 +26,7 @@ export class ReturnGoodService extends BaseService{
         return promise;
     }
     static createInstance() {
-        ReturnGoodService.getInstance();
+        SupplierReturnService.getInstance();
     }
 
     static getInstance() {
@@ -35,4 +35,4 @@ export class ReturnGoodService extends BaseService{
 
 }
 
-export default ReturnGoodService;
+export default SupplierReturnService;

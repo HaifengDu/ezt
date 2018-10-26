@@ -46,5 +46,6 @@ const CACHE_KEY = {
     "STOREALLOT_SEARCH":"STOREALLOT_SEARCH",
     //添加物料
     "MATERIAL_LIMIT":"MATERIAL_LIMIT", //添加物料的一种限制判断
+    //供应商退货
 }
 export default CACHE_KEY;

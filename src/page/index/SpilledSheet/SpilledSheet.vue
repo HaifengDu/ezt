@@ -30,12 +30,14 @@
                 <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
               </div>
               <div class="receive-icon-content" @click="spilledetails(item)">
-                <span class="receive-dc-title">仓库：
-                  <span class="receive-dc-content">{{item.warehouse}}</span>  
-                </span>
-                <span class="receive-dc-title">制单日期：
-                  <span class="receive-dc-content">{{item.arrive_date}}</span>
-                </span>
+                <div style="display:flex">
+                  <span class="receive-dc-title">仓库：
+                    <span class="receive-dc-content">{{item.warehouse}}</span>  
+                  </span>
+                  <span class="receive-dc-title">制单日期：
+                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                  </span>
+                </div>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
                 <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
               </div>
@@ -49,6 +51,22 @@
         </div>
       </div>
     </div>
+    <ezt-footer>
+      <ul slot="confirm" class="ezt-footer-tab">
+        <li @click="toPage('/')" >
+          <span class="footer-index"></span>
+          <div>首页</div>
+        </li>
+        <li @click="toPage('/orderGood')" class="active">
+          <span class="footer-order"></span>
+          <div>订货</div>
+        </li>
+        <li @click="toPage('/chartContent')">
+          <span class="footer-chart"></span>
+          <div>报表</div>
+        </li>
+      </ul>
+    </ezt-footer>
   </div>
   <!-- 查询损溢单 -->  
   <div v-show="isSearch" class="search-dialog">
@@ -219,6 +237,12 @@ export default class SpilledSheet extends Vue{
     private addPage(){
       this.$router.push('/addflossSheet')
     }
+    //首页菜单跳转
+    private toPage(info:string){
+      if(info){
+        this.$router.push(info);
+      }      
+    }
    // 查询损溢单
    private queryPage(){
       this.isSearch = !this.isSearch;
@@ -271,9 +295,6 @@ export default class SpilledSheet extends Vue{
       padding: 0;
       height: 45px;
       align-items: center;
-    }
-    .ezt-add-content{
-      padding-bottom: 0px;
     }
     .ezt-action-point{
       margin-top: 10px;

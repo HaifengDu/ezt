@@ -4,7 +4,7 @@ import { IRootState } from "../interface/store/IRootState";
 import { RootType } from "./mutation-types";
 import { IUser } from "../interface/IUserModel";
 import * as actions from "./action"
-import returnGood from "./returnGood";
+import supplierReturn from "./supplierReturn";
 import needGood from "./needGood";
 import stockTaking from "./stockTaking"
 import receiveGood from './receiveGood'
@@ -35,7 +35,7 @@ export default new Store<IRootState>({
         ...actions
     },
     modules:{
-        returnGood,//退货
+        supplierReturn,//退货
         needGood,//要货
         stockTaking,//盘库
         receiveGood,//收货

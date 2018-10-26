@@ -4,7 +4,7 @@ import { GoodType } from "./mutation-types";
 import * as actions from "./action"
 import { IRootState } from "../../interface/store/IRootState";
 Vue.use(VueX);
-const returnGood:Module<any,IRootState> = {
+const supplierReturn:Module<any,IRootState> = {
     namespaced:true,
     state:{
         goodList:[]
@@ -21,4 +21,4 @@ const returnGood:Module<any,IRootState> = {
         ...actions
     }
 }
-export default returnGood
+export default supplierReturn

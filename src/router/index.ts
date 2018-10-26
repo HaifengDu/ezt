@@ -3,7 +3,6 @@ import Router from 'vue-router';
 import {interceptRouter} from "./intercept";
 import Index from "@/page/Index.vue";
 import Login from "@/page/Login.vue";
-import ReturnGood from '@/page/index/returnGood/ReturnGood.vue';
 import NeedGood from '@/page/index/needGood/NeedGood.vue';
 import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue';
 import ReceiveGood from '@/page/index/receiveGood/ReceiveGood.vue';//收货页
@@ -46,6 +45,11 @@ import InStoreAllotAdd from '@/page/index/inStoreAllot/InStoreAllotAdd.vue';//�
 import InStoreAllotAudit from '@/page/index/inStoreAllot/InStoreAllotAudit.vue';//审核店内调拨单
 import InStoreAllotSearch from '@/page/index/inStoreAllot/InStoreAllotSearch.vue';//查询店内调拨单
 import InStoreAllotDetail from '@/page/index/inStoreAllot/InStoreAllotDetail.vue';//店内调拨单详情
+import SupplierReturn from '@/page/index/supplierReturn/supplierReturn.vue';
+import SupplierReturnAdd from '@/page/index/supplierReturn/supplierReturnAdd.vue';
+import SupplierReturnAudit from '@/page/index/supplierReturn/supplierReturnAudit.vue';
+import SupplierReturnSearch from '@/page/index/supplierReturn/supplierReturnSearch.vue';
+import SupplierReturnDetail from '@/page/index/supplierReturn/supplierReturnDetail.vue';
 Vue.use(Router)
 
 const router = new Router({
@@ -58,10 +62,6 @@ const router = new Router({
       path:"/",
       name:"Home",
       component:Index
-    },{
-      path:"/returnGood",
-      name:"ReturnGood",
-      component:ReturnGood
     },{
       path:"/needGood",
       name:"NeedGood",
@@ -232,6 +232,26 @@ const router = new Router({
       path: '/inStoreAllotDetail',
       name: 'InStoreAllotDetail',
       component: InStoreAllotDetail
+    },{
+      path:"/supplierReturn",
+      name:"SupplierReturn",
+      component:SupplierReturn
+    },{
+      path:'/supplierReturnAdd',
+      name:"SupplierReturnAdd",
+      component:SupplierReturnAdd
+    },{
+      path:'/supplierReturnDetail',
+      name:'SupplierReturnDetail',
+      component:SupplierReturnDetail
+    },{
+      path:'/supplierReturnAudit',
+      name:'SupplierReturnAudit',
+      component:SupplierReturnAudit
+    },{
+      path:'/supplierReturnSearch',
+      name:"SupplierReturnSearch",
+      component:SupplierReturnSearch
     }
   ]
 });

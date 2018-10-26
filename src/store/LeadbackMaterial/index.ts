@@ -4,7 +4,7 @@ import { LeadbackMaterialType } from "./mutation-types";
 import * as actions from "./action"
 import { IRootState } from "../../interface/store/IRootState";
 Vue.use(VueX);
-const leadbackMaterial:Module<any,IRootState> = {
+const LeadbackMaterial:Module<any,IRootState> = {
     namespaced:true,
     state:{
         goodList:[],
@@ -20,4 +20,4 @@ const leadbackMaterial:Module<any,IRootState> = {
         ...actions
     }
 }
-export default leadbackMaterial
+export default LeadbackMaterial

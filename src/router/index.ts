@@ -50,6 +50,7 @@ import SupplierReturnAdd from '@/page/index/supplierReturn/supplierReturnAdd.vue
 import SupplierReturnAudit from '@/page/index/supplierReturn/supplierReturnAudit.vue';
 import SupplierReturnSearch from '@/page/index/supplierReturn/supplierReturnSearch.vue';
 import SupplierReturnDetail from '@/page/index/supplierReturn/supplierReturnDetail.vue';
+import LeadbackMaterial from '@/page/index/leadbackMaterial/LeadbackMaterial.vue';//领退料
 Vue.use(Router)
 
 const router = new Router({
@@ -252,6 +253,10 @@ const router = new Router({
       path:'/supplierReturnSearch',
       name:"SupplierReturnSearch",
       component:SupplierReturnSearch
+    },{
+      path: '/leadbackMaterial',
+      name: 'LeadbackMaterial',
+      component: LeadbackMaterial
     }
   ]
 });

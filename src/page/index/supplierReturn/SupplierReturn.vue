@@ -7,7 +7,7 @@
     <ezt-header :back="true" title="退货" @goBack="goBack" :isInfoGoback="true">
       <div slot="action">
         <div>
-          <span class='ezt-action-point' @click="toPage(null,'/returnGoodAdd')">
+          <span class='ezt-action-point' @click="toPage(null,'/supplierReturnAdd')">
           <i class="fa fa-plus" aria-hidden="true" ></i>
           </span>
         <span class='ezt-action-point' @click="searchTitle">
@@ -17,7 +17,7 @@
       </div>
     </ezt-header>    
     <div class="ezt-main">       
-       <tab :line-width=2 active-color='#fc378c'>
+      <tab :line-width=2 active-color='#fc378c'>
         <tab-item 
         class="vux-center" 
         :selected="item.active" 
@@ -30,27 +30,29 @@
       <div class="ezt-add-content">       
          <!-- 收货单列表       -->
         <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
-            <div class="receive-icon-title">
-            <span class="receive-icon-dcName"></span>
-            <span class="return-list-title">{{item.dc_name}}</span> 
-            <span class="receive-status">{{billStatus}}</span>
-            </div>
-            <div class="receive-icon-content">
-              <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-              <!-- <div style="display:flex"> -->
-                <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
-              <!-- </div> -->
-              <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-            </div>
-            <div class="receive-icon-bottom">
-              <div class="glow-1">
-                <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)" 
+              v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
+              <div class="receive-icon-title">
+                <span class="receive-icon-dcName"></span>
+                <span class="return-list-title">{{item.dc_name}}</span> 
+                <span class="receive-status">{{item.arrive_date}}</span>
               </div>
-              <div>
-                <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
-              </div>
-            </div>
+              <div class="receive-icon-content">
+                <!-- <div style="display:flex"> -->
+                  <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                  <span class="receive-dc-title">仓库：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>                
+                <!-- </div>               -->
+                <div style="display:flex">                
+                  <span class="receive-dc-title">数量：<span class="receive-dc-content">{{item.exportNum}}</span></span>
+                  <span class="receive-dc-title">金额：<span class="receive-dc-content">￥{{item.exportNum}}</span></span>
+                </div>
+                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
+              </div>     
+            </div> 
+            <div class="ezt-list-del" @click.stop="deleteBill(item)">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>     
         </div>
         <span v-show="allLoaded">已全部加载</span>  
       </div>    
@@ -58,51 +60,38 @@
     <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
         <li class="select-list">
-        <span class="title-search-name ">收货类型：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
+          <span class="title-search-name ">退货类型：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
+          </span>
+        </li>
         <li class="select-list">
-        <span class="title-search-name ">来货单位：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
-      <li>
-        <span class="title-search-name">收货日期：</span>
-        <span>
-          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
-            <span>至</span>
-          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
-        </span>
-      </li>
-      <li class="select-list">
-        <span class="title-search-name ">仓库：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
-      <li>
-        <span class="title-search-name">源单号：</span>
-        <input type="text" class="ezt-middle">
-      </li>
+          <span class="title-search-name ">供货机构：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
+          </span>
+        </li>
         <li>
-        <span class="title-search-name">单据或物料：</span>
-        <input type="text" class="ezt-middle">
-      </li>
-      <li>
-        <div class="ezt-two-btn" @click="toSearch">查询</div>
-      </li>
+          <span class="title-search-name">单据日期：</span>
+          <span>
+            <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+              <span>至</span>
+            <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          </span>
+        </li>
+        <li>
+          <span class="title-search-name">单据或物料：</span>
+          <input type="text" class="ezt-middle">
+        </li>
+        <li>
+          <div class="ezt-two-btn" @click="toSearch">查询</div>
+        </li>
       </ul>
     </div>
   </div>
@@ -124,10 +113,10 @@ import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
-   components:{
-     TabItem
-   },
-   mixins:[maskMixin],
+  components:{
+    TabItem
+  },
+  mixins:[maskMixin],
   //  computed:{
   //    ...mapGetters({
   //      'goodList':'returnGood/goodList'
@@ -140,71 +129,103 @@ declare var mobiscroll:any;
   //  }
 })
 export default class ReturnGood extends Vue{
-    private cache = CachePocily.getInstance();
-    private service: SupplierReturnService;
-    private pager:Pager;
-    private getGoodList:INoopPromise
-    private addMaskClickListener:(...args:any[])=>void;
-    private hideMask:()=>void;
-    private showMask:()=>void;
-    /**
-     * 列表页list数据
-     */
-    private goodList:any[] = [];
-    /**
-     * 数据是否已经全部加载完
-     */
-    private allLoaded:boolean= false;
-    /**
-     * 搜索显示
-     */
-    private isSearch:boolean= false; 
-    /**
-     * 搜索时的查询条件
-     */
-    private searchParam:any={};
-    private tabList:TabList = new TabList();
-    private orderType:any=[{
-      name:'仓库1',
-      id:'01'
-    }]
+  private cache = CachePocily.getInstance();
+  private service: SupplierReturnService;
+  private pager:Pager;
+  private getGoodList:INoopPromise
+  private addMaskClickListener:(...args:any[])=>void;
+  private hideMask:()=>void;
+  private showMask:()=>void;
+  /**
+   * 列表页list数据
+   */
+  private goodList:any[] = [];
+  /**
+   * 数据是否已经全部加载完
+   */
+  private allLoaded:boolean= false;
+  /**
+   * 搜索显示
+   */
+  private isSearch:boolean= false; 
+  /**
+   * 搜索时的查询条件
+   */
+  private searchParam:any={};
+  private tabList:TabList = new TabList();
+  private orderType:any=[{
+    name:'仓库1',
+    id:'01'
+  }]
 
-    created() {
-      this.tabList.push({
-        name:"待审核",
-        status:1,
-        active:true,
-      },{
-        name:"已完成",
-        status:3,
-        active:false
-      });
-      this.pager = new Pager().setLimit(20)
-      this.service = SupplierReturnService.getInstance();
-    }
+  created() {
+    this.tabList.push({
+      name:"待审核",
+      status:1,
+      active:true,
+    },{
+      name:"已完成",
+      status:3,
+      active:false
+    });
+    this.pager = new Pager().setLimit(20)
+    this.service = SupplierReturnService.getInstance();
+  }
 
-    mounted(){
-      this.getList();
-      this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
-        this.isSearch=false; 
-        this.hideMask();
-      }); 
-      if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
-       this.tabList.TabList.forEach((item,index)=>{
-         item.active = item.name == this.$route.params.purStatus;
-       })
-      } 
-    }
+  mounted(){
+    this.getList();
+    this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
+      this.isSearch=false; 
+      this.hideMask();
+    }); 
+    if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
+      this.tabList.TabList.forEach((item,index)=>{
+        item.active = item.name == this.$route.params.purStatus;
+      })
+    } 
+  }
 
   /**
    * watch demo
    */
-    @Watch("list",{
-      deep:true
-    })
-    private listWatch(newValue:any[],oldValue:any[]){
+  @Watch("list",{
+    deep:true
+  })
+  private listWatch(newValue:any[],oldValue:any[]){
 
-    }
+  }
+  /**
+   * 左侧滑动删除
+   */
+  private handlerSwipe(item:any,active:boolean){
+      const status = this.tabList.getActive().status;
+      if(status =="1"){
+          this.$set(item,'active',active);
+      }  
+  }
+    /**
+   * 左滑确认删除单据
+   */
+  private deleteBill(item:any){
+    let _this = this;
+    this.$vux.confirm.show({
+        // 组件除show外的属性
+        onCancel () {
+            let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+                return item.id == info.id;
+            })
+            _this.goodList[newIndex].active = false;
+        },
+        onConfirm () {
+            let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+                return item.id == info.id;
+            })
+            _this.goodList.splice(newIndex,1);
+            _this.getList();
+        },
+        content:'是否要删除该单据？'
+    })
+  }
     //详情页跳转
   private toPage(item:any,info:string){
     let confirmGoodInfo = {};
@@ -220,27 +241,26 @@ export default class ReturnGood extends Vue{
         warehouse:'01',
         remark:'在途中',         
       }
-      this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
-      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
-      this.$router.push('/returnGoodAudit');
+      this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
+      this.$router.push('/supplierReturnAudit');
     }else if(this.tabList.getActive().status==3){
       detailList = {
         dc_name:"配送中心-8店",
         bill_no:"000111aab",         
       }
-      this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
-      this.$router.push('/returnGoodDetail');
+      this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(detailList));
+      this.$router.push('/supplierReturnDetail');
     }
     
   }
 
- private tabClick(index:number){
-  this.tabList.setActive(index);
-  this.allLoaded=false;
-  (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
-  this.pager.resetStart();//分页加载还原pageNum值
-  this.getList();     
-}
+  private tabClick(index:number){
+    this.tabList.setActive(index);
+    this.allLoaded=false;
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+    this.pager.resetStart();//分页加载还原pageNum值
+    this.getList();     
+  }
   //下拉加载更多
   private loadMore() {
     if(!this.allLoaded){
@@ -249,36 +269,36 @@ export default class ReturnGood extends Vue{
         text:'加载中..'
       });
       this.pager.setNext();
-      // this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-      //   if(this.pager.getPage().limit>res.data.data.length){
-      //     this.allLoaded=true;
-      //   }
-      //   this.goodList=this.goodList.concat(res.data.data);
-      //   setTimeout(()=>{
-      //     this.$vux.loading.hide();
-      //     this.hideMask();
-      //   },500); 
-      // },err=>{
-      //     this.$toasted.show(err.message);
-      // })
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+        if(this.pager.getPage().limit>res.data.data.length){
+          this.allLoaded=true;
+        }
+        this.goodList=this.goodList.concat(res.data.data);
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500); 
+      },err=>{
+          this.$toasted.show(err.message);
+      })
     }     
   }
   //获取列表
   private getList(){
     const status = this.tabList.getActive().status;
-    // this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
-    //   this.showMask();
-    //   this.$vux.loading.show({
-    //     text: '加载中...'
-    //     });
-    //   this.goodList=res.data.data;
-    //   setTimeout(()=>{
-    //     this.$vux.loading.hide();
-    //     this.hideMask();
-    //   },400); 
-    //   },err=>{
-    //     this.$toasted.show(err.message);
-    // });
+    this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+      this.showMask();
+      this.$vux.loading.show({
+        text: '加载中...'
+        });
+      this.goodList=res.data.data;
+      setTimeout(()=>{
+        this.$vux.loading.hide();
+        this.hideMask();
+      },400); 
+      },err=>{
+        this.$toasted.show(err.message);
+    });
   }
   //搜索选择的条件显示/隐藏
   private searchTitle(){
@@ -288,8 +308,8 @@ export default class ReturnGood extends Vue{
   private toSearch(){
     this.isSearch = false;
     this.hideMask();
-    this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
-    this.$router.push('/returnGoodSearch');
+    this.cache.save(CACHE_KEY.SUPPLIERRETURN_SEARCH,JSON.stringify(this.searchParam));
+    this.$router.push('/supplierReturnSearch');
   }  
   private goBack(){
     this.$router.push("/");
@@ -299,27 +319,53 @@ export default class ReturnGood extends Vue{
 </script>
 
 <style lang="less" scoped> 
-//tab切换颜色设置
-  .mint-tab-item.is-selected .deliver {
-    color: #54B1FD;
-    border-bottom: 2px solid #54B1FD;
-    padding: 3px 6px;
+.add{
+  font-size: 20px;
+  i{
+    margin-right: 10px;
   }
-
-  .mint-tab-item.is-selected .purchase {
-    color: #6EDB90;
-    border-bottom: 2px solid #6EDB90;
-    padding: 3px 6px;
-  }
-
-  .mint-navbar .mint-tab-item.is-selected {
-    border: none;
-  }
-
-  .mint-navbar .mint-tab-item {
-    padding: 7px 0;
-  }
-  .mint-navbar{
-    display: flex;
-  }
+}
+.ezt-action-point{
+  width: 20px;
+  height: 26px;
+  display: inline-block;
+}
+//搜索弹框
+.search-dialog{
+  width: 100%; 
+  position:absolute;
+  top:45px; 
+  z-index:10001;
+}
+.oo{
+  display: inline-block;
+  width:10px;
+  height: 10px;
+}
+  // 左侧滑动删除
+.swipe-transform{
+    transform: translateX(-60px);
+}
+.receive-dc-list{
+    position: relative;
+}
+.ezt-list-del{
+    position: absolute;
+    right: 12px;
+    top: 42px;
+    // background: pink;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 22px;
+    // color: #018BFF;
+}
+//左侧滑动删除
+.ezt-list-show{
+    position: relative;
+    transition: transform .5s;
+    background: #fff;
+    z-index: 2;
+}
 </style>

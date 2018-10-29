@@ -246,6 +246,8 @@ private delAction(item:any){
      * 页面列表审核
      */
     private confirmReceive() {
+        //过滤掉物料中数量为0的物品；
+        this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("请添加物料！");
             return false;
@@ -272,6 +274,8 @@ private delAction(item:any){
      * 页面保存
      */
     private saveReceive(){
+        //过滤掉物料中数量为0的物品；
+        this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("请添加物料！");
             return false;

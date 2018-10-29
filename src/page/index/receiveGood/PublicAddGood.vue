@@ -59,6 +59,10 @@
                 class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                  </span>
+                <span v-if="materialLimit.billsPageType =='supplierReturn'" 
+                class="good-stock ezt-titleColor2">
+                  可退：{{item.stock||0}}
+                 </span>
                  <span class="good-number">
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>

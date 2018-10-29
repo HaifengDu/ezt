@@ -224,6 +224,8 @@ export default class ReceiveGood extends Vue{
         return false;
       }
     }
+    //过滤掉物料中数量为0的物品；
+    this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
@@ -247,6 +249,8 @@ export default class ReceiveGood extends Vue{
         return false;
       }
     }
+    //过滤掉物料中数量为0的物品；
+    this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
@@ -356,23 +360,23 @@ input.ezt-smart{
   border: 1px solid #ccc;
 }
 .mine-bot-btn{
-    width: 100%;
-    // position: absolute;
-    margin-top: 20px;
-        .ezt-lone-btn{
-        display: inline-block;
-        font-size: 14px;
-        color: #FFFFFF;
-        letter-spacing: 0;
-        padding: 8px 90px;
-        margin-bottom: 10px;
-        border-radius: 40px;
-        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-    }
+  width: 100%;
+  // position: absolute;
+  margin-top: 20px;
+    .ezt-lone-btn{
+    display: inline-block;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    padding: 8px 90px;
+    margin-bottom: 10px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+    background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
   }
+}
 .ezt-dialog-header{
   padding: 10px 0px;
   display: flex;
@@ -405,78 +409,78 @@ input.ezt-smart{
 .good-detail-content{
   position: relative;
   overflow: hidden;
-    text-align: left;
-    margin: 8px 10px;
-    padding: 12px 10px 12px 15px;
-    background: #FFFFFF;
-    border: 1px solid #DDECFD;
-    box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-    display: flex;
-    flex: row;
-    flex-direction: column;
-    .good-detail-l{
-        display: inline-block;
-        flex:.8;
-    }
-    .good-detail-l>div{
+  text-align: left;
+  margin: 8px 10px;
+  padding: 12px 10px 12px 15px;
+  background: #FFFFFF;
+  border: 1px solid #DDECFD;
+  box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
+  display: flex;
+  flex: row;
+  flex-direction: column;
+  .good-detail-l{
+      display: inline-block;
+      flex:.8;
+  }
+  .good-detail-l>div{
+    display:flex;
+    flex-direction: row;
+  }
+  .good-detail-l>div>span{
+    // padding: 5px 0px;
+    align-items: baseline;
+    flex: 1;
+  }
+  .good-detail-r{
+      display: inline-block;
       display:flex;
-      flex-direction: row;
-    }
-    .good-detail-l>div>span{
-      // padding: 5px 0px;
-      align-items: baseline;
-      flex: 1;
-    }
-    .good-detail-r{
-        display: inline-block;
-        display:flex;
-    }
-    .good-detail-num{
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        font-size: 20px;
-        color: #FF885E;
-        letter-spacing: 0;
-        line-height: 3;
-    }
-    .good-detail-name{
-        font-size: 14px;
-        color: #395778;
-        letter-spacing: 0;
-        display: flex;
-        line-height: 16px;
-    }
-    .good-detail-sort{
-      font-size: 13px;
-      color: #5F7B9A;
+  }
+  .good-detail-num{
+      display: inline-block;
+      width: 100%;
+      text-align: center;
+      font-size: 20px;
+      color: #FF885E;
+      letter-spacing: 0;
+      line-height: 3;
+  }
+  .good-detail-name{
+      font-size: 14px;
+      color: #395778;
       letter-spacing: 0;
       display: flex;
-      flex-direction: row;
-    }
-    .good-detail-nobreak{
-      display:flex;
-      flex:1;
-      padding: 6px 0px 6px 0px;      
-    }
-    .ezt-dense-box{
-      align-items: center;
-      flex: 1 !important;
-    }
-    .good-detail-billno{
-        font-size: 10px;
-        color: #A3B3C2;
-        letter-spacing: 0;
-        padding: 0px 0px 5px;
-    }
-    .ezt-detail-good{
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 10px;
-      transition: transform .5s;
-      background: #fff;
-      z-index: 2;
-    }
+      line-height: 16px;
+  }
+  .good-detail-sort{
+    font-size: 13px;
+    color: #5F7B9A;
+    letter-spacing: 0;
+    display: flex;
+    flex-direction: row;
+  }
+  .good-detail-nobreak{
+    display:flex;
+    flex:1;
+    padding: 6px 0px 6px 0px;      
+  }
+  .ezt-dense-box{
+    align-items: center;
+    flex: 1 !important;
+  }
+  .good-detail-billno{
+      font-size: 10px;
+      color: #A3B3C2;
+      letter-spacing: 0;
+      padding: 0px 0px 5px;
+  }
+  .ezt-detail-good{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    transition: transform .5s;
+    background: #fff;
+    z-index: 2;
+  }
 }
    
     //物料明细结束 

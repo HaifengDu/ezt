@@ -72,7 +72,7 @@
             </li>
             <li @click="renderUrl('/storeAllotment')">
               <div class="shouhuo"></div>
-              <span>店间调拨</span>
+              <span>店间平调</span>
             </li>
             <li @click="renderUrl('/leadbackMaterial')">
               <div class="overflowing"></div>
@@ -270,7 +270,7 @@ export default class Index extends Vue{
     border-bottom: 1px solid #E1ECFF;
   }
 
-  .icon-menu li:nth-child(4) {
+  .icon-menu li:nth-child(4n) {
     border-right: none;
   }
 

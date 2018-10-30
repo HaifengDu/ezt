@@ -1,49 +1,43 @@
-<!--添加损溢单-->
-<template> 
-  <div class="ezt-page-con AddflossSheet">
-    <ezt-header :back="true" title='添加损溢单' @goBack="goBack" :isInfoGoback="true">
+<!--审核领料单-->
+<template>
+  <div class="ezt-page-con AuditoleadbackMaterial">
+    <ezt-header :back="true" :title="title" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
-       </div>
+       </div>   
     </ezt-header>    
     <div class="ezt-main">
-      <div class="ezt-add-content">
+      <div class="ezt-add-content">   
          <ul class="ezt-title-search">
-          <li class="select-list">
-            <span class="title-search-name is-required">单据类型：</span>
-            <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择单据类型</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+          <li>
+              <span class="title-search-name">单号：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billno">
           </li>
-          <li class="select-list">
-            <span class="title-search-name is-required">仓库：</span>
-            <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[1].warehouse}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+          <li v-if="this.$route.query.pageType == 'requisition'">
+              <span class="title-search-name">领料日期：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.warehouse">
           </li>
-          <li class="select-list">
-            <span class="title-search-name is-required">损溢原因：</span>
-            <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.causeofloss"
-              @change="handlerBillType('causeofloss','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[2].causeofloss}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择损溢原因</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
+          <li v-if="this.$route.query.pageType == 'requisition'">
+              <span class="title-search-name">领料仓库：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billType">
+          </li>
+          <li  v-if="this.$route.query.pageType == 'retreating'">
+              <span class="title-search-name">退料日期：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.warehouse">
+          </li>
+          <li  v-if="this.$route.query.pageType == 'retreating'">
+              <span class="title-search-name">退料仓库：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billType">
+          </li>
+           <li>
+              <span class="title-search-name">主仓库：</span>
+              <input type="text" class="ezt-middle" disabled v-model="addBillInfo.causeofloss">
           </li>
           <li>
-            <x-input title="备注：" v-model="addBillInfo.remark" placeholder="请填写备注信息"></x-input>
+            <x-input title="备注：" v-model="addBillInfo.remark" placeholder="输入备注信息"></x-input>
           </li>
           <li>
             <span class="title-search-name is-required">选择物料：</span>
-            <span class="title-search-right" @click="selectMaterials('/publicAddGood')">
+            <span class="title-search-right" @click="selectMaterials()">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
           </li>
@@ -98,7 +92,7 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { SpilledSheetService } from '../../../service/SpilledSheetService'
+import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -116,34 +110,34 @@ import CACHE_KEY from '../../../constans/cacheKey'
     ...mapActions({
       'setSelectedGood':'publicAddGood/setSelectedGood',
     })    
-   }   
+   }
 })
-export default class SpilledSheet extends Vue{
+export default class leadbackMaterial extends Vue{
   private cache = CachePocily.getInstance();
-  private service: SpilledSheetService;
+  private title:any;
+  private service: LeadbackMaterialService;
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   private addBillInfo:any={};
   private orderType:any[] = [{//单据类型下拉数据    
-    name:"报损",
+    name:"领料单",
     type:"q"
   },{
-    name:"盘点损溢",
+    name:"退料单",
     type:"m"
   }];
-  /**
-   * 枚举 表单字段
-   */
-  private billFiles=[
-    {id:"billType",msg:"请选择单据类型！",billType:false},
-    {id:"warehouse",msg:"请选择仓库！",warehouse:false},
-    {id:"causeofloss",msg:"请选择损溢原因！",causeofloss:false},
-    ];
+  
   created() {  
-    this.service = SpilledSheetService.getInstance();
-    if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO));
+    this.service = LeadbackMaterialService.getInstance();
+    if(this.$route.query.pageType == 'requisition'){
+          this.title = '领料单审核'
+    }
+    if(this.$route.query.pageType == 'retreating'){
+      this.title = '退料单审核'
+    }
+    if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO)){
+        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -170,7 +164,7 @@ export default class SpilledSheet extends Vue{
       },{num:0,Amt:0});
     }
   /**
-   * 删除物料操作    
+   * 删除物料操作
    */
   private delAction(item:any){
     let _this = this;
@@ -192,62 +186,42 @@ export default class SpilledSheet extends Vue{
     })
   }
   /**
-   *  损溢单 提交
+   *  领料退料 提交
    */
   private saveReceive(){
-    for(let i=0;i<this.billFiles.length;i++){
-      let item = this.billFiles[i];
-      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-        this.$toasted.show(item.msg);
-        item[item.id]=true;
-        return false;
-      }
-    }
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
     } 
     this.addBillInfo={},
     this.setSelectedGood([]);
-    this.cache.clear();
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
-    this.$router.push("/spilledSheet");
+    this.$router.push("/leadbackMaterial");
   }
   /**
-   * 损溢单 审核
+   * 领料退料 审核
    */
   private confirmReceive(){
     let _this = this;
-     for(let i=0;i<this.billFiles.length;i++){
-      let item = this.billFiles[i];
-      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-        this.$toasted.show(item.msg);
-        item[item.id]=true;
-        return false;
-      }
-    }
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
     }
     this.$vux.confirm.show({
-      /**
-       * 审核不通过
-       */
-      onCancel () {
-        
-      },
-      /**
-       * 审核通过
-       */
-      onConfirm () {
+      // 组件除show外的属性
+      onCancel () {//审核不通过
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
-        _this.cache.clear();
+        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'已审核'}}); 
+      },
+      onConfirm () {//审核通过
+        _this.addBillInfo={},
+        _this.setSelectedGood([]);
+        _this.addBeforeBillInfo={};
         _this.$toasted.success("审核成功！");
-        _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
+        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'已审核'}}); 
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",
@@ -255,56 +229,18 @@ export default class SpilledSheet extends Vue{
       hideOnBlur:true
     })
   }    
-  /**
-   * 选择物料
-   */
-  private selectMaterials(info:string){
+    //选择物料
+  private selectMaterials(){
     let goodTerm = {};
     if(this.addBillInfo){
-      let _this = this;
-      for(let i=0;i<this.billFiles.length;i++){
-        let item = this.billFiles[i];
-        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-          this.$toasted.show(item.msg);
-          item[item.id]=true;
-          return false;   
-        }
-      }
       goodTerm={
-        billsPageType: 'spilledSheet',
+        billsPageType: 'leadbackMaterial',
       }  
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
-      this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
+      this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDBEFORE,JSON.stringify(this.addBeforeBillInfo));
       this.$router.push({name:'PublicAddGood',params:{}});
     }      
-  }
-  /**
-   * 选择单据类型 仓库  损溢原因
-   */
-  private handlerBillType(val:any,title:any){
-    let _this = this;
-    if(this.selectedGood.length>0){
-       this.$vux.confirm.show({
-        // 组件除show外的属性
-        onCancel () {
-          _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
-        },
-        onConfirm () {
-          _this.setSelectedGood([]);
-          _this.addBillInfo.remark =""
-          _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
-        },
-        content:title
-      })
-    }else{
-      _this.addBeforeBillInfo[val]=_this.addBillInfo[val];  
-      this.billFiles.forEach(item=>{
-        if(item.id == val){
-          item[val]= false;
-        }
-      })         
-    }
   }
   /**
    * 返回
@@ -317,22 +253,26 @@ export default class SpilledSheet extends Vue{
         onCancel () {
           console.log(this) // 非当前 vm
         },
-        onConfirm () {      
+        onConfirm () {
           _this.addBillInfo={},
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
-          _this.cache.clear();
-          _this.$router.push('/spilledSheet');
+          _this.cache.clear()
+          _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"
       })
     }else{
-      this.$router.push('/spilledSheet');
+      this.cache.clear()
+      this.$router.push('/leadbackMaterial');
     }
   } 
 }
 </script>
 <style lang="less" scoped>
+input{
+  text-align: right;
+}
 input.ezt-smart{
   border: 1px solid #ccc;
 }
@@ -361,12 +301,22 @@ input.ezt-smart{
       flex-direction: row;
     }
     .good-detail-l>div>span{
+      // padding: 5px 0px;
       align-items: baseline;
       flex: 1;
     }
     .good-detail-r{
         display: inline-block;
         display:flex;
+    }
+    .good-detail-num{
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        font-size: 20px;
+        color: #FF885E;
+        letter-spacing: 0;
+        line-height: 3;
     }
     .good-detail-name{
         font-size: 14px;
@@ -406,12 +356,17 @@ input.ezt-smart{
       z-index: 2;
     }
 }
+   
+    //物料明细结束 
     .park-input{
       display: flex;
       flex:1;
     }
     .park-input span{
       flex:2;
+    }
+    .title-search-name.remark{
+      margin-left: 10px;
     }
     .title-search-right{
       flex: 2;

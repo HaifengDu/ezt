@@ -1,45 +1,35 @@
-<!--添加损溢单-->
+<!--添加领料单-->
 <template> 
-  <div class="ezt-page-con AddflossSheet">
-    <ezt-header :back="true" title='添加损溢单' @goBack="goBack" :isInfoGoback="true">
+  <div class="ezt-page-con AddleadbackMaterial">
+    <ezt-header :back="true" title='添加领料单' @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
        </div>
-    </ezt-header>    
+    </ezt-header>       
     <div class="ezt-main">
       <div class="ezt-add-content">
          <ul class="ezt-title-search">
           <li class="select-list">
-            <span class="title-search-name is-required">单据类型：</span>
+            <span class="title-search-name is-required">领料仓库：</span>
             <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择单据类型</option>
+              <select value class="ezt-select" v-model="addBillInfo.materialwarehouse" 
+                @change="handlerBillType('materialwarehouse','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].materialwarehouse}]">
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择领料仓库</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
           </li>
           <li class="select-list">
-            <span class="title-search-name is-required">仓库：</span>
+            <span class="title-search-name is-required">主仓库：</span>
             <span class="title-select-name item-select">
               <select value class="ezt-select" v-model="addBillInfo.warehouse"
               @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[1].warehouse}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-              </select>
-            </span>
-          </li>
-          <li class="select-list">
-            <span class="title-search-name is-required">损溢原因：</span>
-            <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.causeofloss"
-              @change="handlerBillType('causeofloss','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[2].causeofloss}]">
-                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择损溢原因</option>
+                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择主仓库</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
           </li>
           <li>
-            <x-input title="备注：" v-model="addBillInfo.remark" placeholder="请填写备注信息"></x-input>
+            <x-input title="备注：" v-model="addBillInfo.remark" placeholder="请输入备注信息"></x-input>
           </li>
           <li>
             <span class="title-search-name is-required">选择物料：</span>
@@ -98,7 +88,7 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { SpilledSheetService } from '../../../service/SpilledSheetService'
+import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -113,37 +103,39 @@ import CACHE_KEY from '../../../constans/cacheKey'
      })
    },
    methods:{
-    ...mapActions({
-      'setSelectedGood':'publicAddGood/setSelectedGood',
+    ...mapActions({   
+        'setSelectedGood':'publicAddGood/setSelectedGood',
     })    
    }   
 })
-export default class SpilledSheet extends Vue{
+export default class leadbackMaterial extends Vue{
   private cache = CachePocily.getInstance();
-  private service: SpilledSheetService;
+  private service: LeadbackMaterialService;
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   private addBillInfo:any={};
-  private orderType:any[] = [{//单据类型下拉数据    
-    name:"报损",
+  /**
+   * 数据类型
+   */
+  private orderType:any[] = [{ 
+    name:"领料单",
     type:"q"
   },{
-    name:"盘点损溢",
+    name:"退料单",
     type:"m"
   }];
   /**
    * 枚举 表单字段
    */
   private billFiles=[
-    {id:"billType",msg:"请选择单据类型！",billType:false},
-    {id:"warehouse",msg:"请选择仓库！",warehouse:false},
-    {id:"causeofloss",msg:"请选择损溢原因！",causeofloss:false},
+    {id:"materialwarehouse",msg:"请选择领料仓库！",materialwarehouse:false},
+    {id:"warehouse",msg:"请选择主仓库！",warehouse:false},
     ];
   created() {  
-    this.service = SpilledSheetService.getInstance();
-    if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO));
+    this.service = LeadbackMaterialService.getInstance();
+    if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO)){
+        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -156,7 +148,7 @@ export default class SpilledSheet extends Vue{
    * 左侧滑动
    */
   private handleSwipe(item:any,active:boolean){ 
-    item.active=active;
+    item.active = active;
   }
   /**
    * 
@@ -175,13 +167,18 @@ export default class SpilledSheet extends Vue{
   private delAction(item:any){
     let _this = this;
     this.$vux.confirm.show({
-      // 组件除show外的属性
+      /**
+       * 取消操作
+       */
       onCancel () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
         })
         _this.selectedGood[newIndex].active = false;
       },
+      /**
+       * 确定操作
+       */
       onConfirm () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
@@ -192,7 +189,7 @@ export default class SpilledSheet extends Vue{
     })
   }
   /**
-   *  损溢单 提交
+   *  领料单 提交
    */
   private saveReceive(){
     for(let i=0;i<this.billFiles.length;i++){
@@ -209,13 +206,13 @@ export default class SpilledSheet extends Vue{
     } 
     this.addBillInfo={},
     this.setSelectedGood([]);
-    this.cache.clear();
     this.addBeforeBillInfo={};
+    this.cache.clear();
     this.$toasted.success("提交成功！");
-    this.$router.push("/spilledSheet");
+    this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料待审'}});
   }
   /**
-   * 损溢单 审核
+   * 领料单 审核
    */
   private confirmReceive(){
     let _this = this;
@@ -236,7 +233,7 @@ export default class SpilledSheet extends Vue{
        * 审核不通过
        */
       onCancel () {
-        
+
       },
       /**
        * 审核通过
@@ -247,7 +244,7 @@ export default class SpilledSheet extends Vue{
         _this.addBeforeBillInfo={};
         _this.cache.clear();
         _this.$toasted.success("审核成功！");
-        _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
+        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料已审'}});
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",
@@ -271,25 +268,30 @@ export default class SpilledSheet extends Vue{
         }
       }
       goodTerm={
-        billsPageType: 'spilledSheet',
+        billsPageType: 'leadbackMaterial',
       }  
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
-      this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
+      this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDBEFORE,JSON.stringify(this.addBeforeBillInfo));
       this.$router.push({name:'PublicAddGood',params:{}});
     }      
   }
   /**
-   * 选择单据类型 仓库  损溢原因
+   * 选择单据领料仓库  主仓库
    */
   private handlerBillType(val:any,title:any){
     let _this = this;
     if(this.selectedGood.length>0){
        this.$vux.confirm.show({
-        // 组件除show外的属性
+        /**
+         * 取消操作
+         */
         onCancel () {
           _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
         },
+        /**
+         * 确定操作
+         */
         onConfirm () {
           _this.setSelectedGood([]);
           _this.addBillInfo.remark =""
@@ -311,9 +313,8 @@ export default class SpilledSheet extends Vue{
    */
   private goBack(){
     let _this = this;
-    if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
+    if((this.addBillInfo&&this.addBillInfo.materialwarehouse)||this.selectedGood.length>0){
       this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
           console.log(this) // 非当前 vm
         },
@@ -322,12 +323,13 @@ export default class SpilledSheet extends Vue{
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
           _this.cache.clear();
-          _this.$router.push('/spilledSheet');
+          _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"
       })
     }else{
-      this.$router.push('/spilledSheet');
+      this.$router.push('/leadbackMaterial');
+      this.cache.clear()
     }
   } 
 }
@@ -412,6 +414,9 @@ input.ezt-smart{
     }
     .park-input span{
       flex:2;
+    }
+    .title-search-name.remark{
+      margin-left: 10px;
     }
     .title-search-right{
       flex: 2;

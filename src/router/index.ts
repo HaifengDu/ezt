@@ -51,6 +51,11 @@ import SupplierReturnAudit from '@/page/index/supplierReturn/supplierReturnAudit
 import SupplierReturnSearch from '@/page/index/supplierReturn/supplierReturnSearch.vue';
 import SupplierReturnDetail from '@/page/index/supplierReturn/supplierReturnDetail.vue';
 import LeadbackMaterial from '@/page/index/leadbackMaterial/LeadbackMaterial.vue';//领退料
+import AddleadbackMaterial from '@/page/index/leadbackMaterial/AddleadbackMaterial.vue';//添加领料单
+import SearchLeadbackMaterial from '@/page/index/leadbackMaterial/SearchLeadbackMaterial.vue'; //领料搜索结果
+import AddleadbackRetreating from '@/page/index/leadbackMaterial/AddleadbackRetreating.vue';//添加退料单
+import LeadbackMaterialDetails from '@/page/index/leadbackMaterial/LeadbackMaterialDetails.vue';//领料详情页
+import AuditoleadbackMaterial from '@/page/index/leadbackMaterial/AuditoleadbackMaterial.vue';//审核领料单
 Vue.use(Router)
 
 const router = new Router({
@@ -249,7 +254,7 @@ const router = new Router({
       path:'/supplierReturnAudit',
       name:'SupplierReturnAudit',
       component:SupplierReturnAudit
-    },{
+    },{   
       path:'/supplierReturnSearch',
       name:"SupplierReturnSearch",
       component:SupplierReturnSearch
@@ -257,6 +262,26 @@ const router = new Router({
       path: '/leadbackMaterial',
       name: 'LeadbackMaterial',
       component: LeadbackMaterial
+    },{
+      path: '/addleadbackMaterial',
+      name: 'AddleadbackMaterial',
+      component: AddleadbackMaterial
+    },{
+      path: '/searchLeadbackMaterial',
+      name: 'SearchLeadbackMaterial',
+      component: SearchLeadbackMaterial
+    },{
+      path: '/addleadbackRetreating',
+      name: 'AddleadbackRetreating',
+      component: AddleadbackRetreating
+    },{
+      path:'/leadbackMaterialDetails',
+      name:'LeadbackMaterialDetails',
+      component:LeadbackMaterialDetails
+    },{
+      path:'/auditoleadbackMaterial',
+      name:'AuditoleadbackMaterial',
+      component:AuditoleadbackMaterial
     }
   ]
 });

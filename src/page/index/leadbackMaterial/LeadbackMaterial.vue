@@ -10,8 +10,14 @@
            </span>
           <span class='ezt-action-point' @click="queryPage">
             <i class="fa fa-search" aria-hidden="true"></i>
-          </span>          
+          </span>            
          </div>
+         <div v-if="addgoods" class="addgoods">
+          <ul>
+            <li @click="Material('/addleadbackMaterial')">领料单</li>
+            <li @click="Material('/addleadbackRetreating')">退料单</li>
+          </ul>
+        </div>  
        </div>
     </ezt-header>  
     <div class="ezt-main">      
@@ -22,15 +28,18 @@
       </tab>
       <div class="ezt-add-content main-menu">
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
+            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" @click="MaterialDetails(item)">
               <div class="receive-icon-title">
                 <span class="return-list-title">单号：{{item.bill_no}}</span> 
-                <span class="receive-status" @click.stop="toexamine(item)">2018-10-25</span>
+                <span class="receive-status">2018-10-25</span>
               </div>
-              <div class="receive-icon-content" @click="spilledetails(item)">
+              <div class="receive-icon-content">
                 <div style="display:flex">
-                  <span class="receive-dc-title">领/退料库：
-                    <span class="receive-dc-content">{{item.warehouse}}</span>  
+                  <span class="receive-dc-title" v-if="tabList.getActive().status==1 || tabList.getActive().status==2">领料库：
+                    <span class="receive-dc-content">{{item.storehouse}}</span>  
+                  </span>
+                  <span class="receive-dc-title" v-if="tabList.getActive().status==3 || tabList.getActive().status==4">退料库：
+                    <span class="receive-dc-content">{{item.storehouse}}</span>  
                   </span>
                   <span class="receive-dc-title">数量：
                     <span class="receive-dc-content">{{item.number}}</span>
@@ -130,6 +139,8 @@ export default class leadbackMaterial extends Vue{
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
+    private addgoods:boolean = false;//显示领退料单
+    // private type:string;//根据type判断是领料单还是退料单
     private hideMask:()=>void;
     private showMask:()=>void;
     private isSearch:boolean = false; //订货查询
@@ -162,17 +173,35 @@ export default class leadbackMaterial extends Vue{
       this.getList();  
       this.searchParam = {};    
     }
-    mounted(){      
-      this.getList();
-      this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
+    mounted(){   
+      /**
+       * 点击遮罩层
+       * */   
+      this.addMaskClickListener(()=>{ 
         this.isSearch=false; 
         this.hideMask();
       });
-      if(this.$route.params.purStatus=="已完成"){
+      if(this.$route.params.purStatus=="领料待审"){
        this.tabList.TabList.forEach((item,index)=>{
          item.active = item.name == this.$route.params.purStatus;
        })
       } 
+      if(this.$route.params.purStatus=="领料已审"){
+       this.tabList.TabList.forEach((item,index)=>{
+         item.active = item.name == this.$route.params.purStatus;
+       })
+      } 
+      if(this.$route.params.purStatus=="退料待审"){
+       this.tabList.TabList.forEach((item,index)=>{
+         item.active = item.name == this.$route.params.purStatus;
+       })
+      } 
+      if(this.$route.params.purStatus=="退料已审"){
+       this.tabList.TabList.forEach((item,index)=>{
+         item.active = item.name == this.$route.params.purStatus;
+       })
+      } 
+      this.getList();
     } 
     /**
      * 返回上一页
@@ -180,32 +209,49 @@ export default class leadbackMaterial extends Vue{
     private goBack(){
       this.$router.push("/");
     } 
+    private Material(info:string){
+      if(info){
+        this.$router.push(info);
+      }      
+    }
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
-    // 点击删除按钮
+    /**
+     * 删除按钮
+     */
     private deleteBill(item:any){
       let _this = this;
       this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
           let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
             return item.id == info.id;
           })
           _this.goodList[newIndex].active = false;
-        },
+        },   
         onConfirm () {
           let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
             return item.id == info.id;
           })
           _this.goodList.splice(newIndex,1);
         },
-        content:'是否要删除该单据？。'
+        content:'是否要删除该单据?'
       })
     }
-    //获取列表
+     /**
+     * 左侧滑动删除
+     */
+    private handlerSwipe(item:any,active:boolean){
+      const status = this.tabList.getActive().status;
+      if(status =="1" || status =="3"){
+         item.active = active;
+      }     
+    }
+    /**
+     * 获取列表
+     */
     private getList(){
       const status = this.tabList.getActive().status;
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
@@ -223,19 +269,15 @@ export default class leadbackMaterial extends Vue{
           this.$toasted.show(err.message);
       });
     } 
-    /**
-     * 左侧滑动删除
-     */
-    private handlerSwipe(item:any,active:boolean){
-      const status = this.tabList.getActive().status;
-      if(status =="1"){
-         item.active = active;
-      }     
-    }
     private addPage(){
-      // this.$router.push('/addflossSheet')
+      this.addgoods = !this.addgoods
+      setTimeout(() => {
+          this.addgoods = false
+      }, 5000);
     }
-   // 查询领退料
+   /**
+    * 查询领退料
+    */
    private queryPage(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
@@ -243,51 +285,60 @@ export default class leadbackMaterial extends Vue{
    private toSearch(){
       this.isSearch = false;
       this.hideMask();
-      this.cache.save(CACHE_KEY.SPILLEDSHEET_SEARCH,JSON.stringify(this.searchParam));
-      // this.$router.push('/searchSpilledSheet');
+      this.cache.save(CACHE_KEY.LEADBACKSHEET_SEARCH,JSON.stringify(this.searchParam));
+      this.$router.push('/searchLeadbackMaterial');
    }   
-   // 跳转领退料详情
-    private spilledetails(item:any){  
-      let details={} 
-      if(this.tabList.getActive().status==2){
-        details={
-          bill_no:item.bill_no,
-          currentdate:item.arrive_date,
-          warehouse:item.warehouse,
-          bill_type:"报损单",
-          causeofloss:"提前一天发货",
-          singlenumber:"12124124",
-          remark:item.remark,
-        }
-        this.cache.save(CACHE_KEY.SPILLEDSHEET_DETAILS,JSON.stringify(details));
-        // this.$router.push('/spilledSheetDetails');
-      }
-    }   
-    // 审核领退料
-    private toexamine(item:any){  
+   //领退料详情   审核领退料单
+    private MaterialDetails(item:any){  
       let addBillInfo = {};
-      if(this.tabList.getActive().status==1){
-         addBillInfo={
+      let details={}; 
+      addBillInfo={
           billno:item.bill_no,
           warehouse:item.warehouse,
-          billType:"损溢单",
+          billType:"领料单",
           causeofloss:"提前一天发货",
-          remark:item.remark,        
-        }   
-        this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(addBillInfo));
-        // this.$router.push({name:'AuditoflossSheet'});  
+          remark:item.remark,    
+      }  
+      details={
+          bill_no:item.bill_no,
+          arrive_date:item.arrive_date,
+          storehouse:item.storehouse,
+          warehouse:item.warehouse,
+          remark:item.remark,
+      } 
+      /**
+       * 领退料审核
+       */
+      if(this.tabList.getActive().status==1){   
+        this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDINFO,JSON.stringify(addBillInfo));
+        this.$router.push({name:'AuditoleadbackMaterial',query:{pageType:'requisition'}});  
       }
-     }     
+      if(this.tabList.getActive().status==3){   
+        this.cache.save(CACHE_KEY.LEADBACKSHEET_ADDINFO,JSON.stringify(addBillInfo));
+        this.$router.push({name:'AuditoleadbackMaterial',query:{pageType:'retreating'}});  
+      }
+      /**
+       * 领退料详情
+       */
+      if(this.tabList.getActive().status==2){
+        this.cache.save(CACHE_KEY.LEADBACKSHEET_DETAILS,JSON.stringify(details));
+        this.$router.push({name:'LeadbackMaterialDetails',query:{pageType:'requisition'}}); 
+      }
+      if(this.tabList.getActive().status==4){
+        this.cache.save(CACHE_KEY.LEADBACKSHEET_DETAILS,JSON.stringify(details));
+        this.$router.push({name:'LeadbackMaterialDetails',query:{pageType:'retreating'}}); 
+      }
+    }   
 }
-</script>
+</script>   
 <style lang="less" scoped>
     .ezt-header{
       padding: 0;
       height: 45px;
       align-items: center;
     }
-    .ezt-action-point{
-      margin-top: 10px;
+    .ezt-add-content{
+      padding-bottom: 0;
     }
     .main-menu{
       background-color: #F1F6FF;
@@ -307,6 +358,7 @@ export default class leadbackMaterial extends Vue{
     .ezt-action-point{
       width: 20px;
       height: 26px;
+      margin-top: 10px;
       display: inline-block;
     }
     //左侧滑动删除
@@ -331,11 +383,33 @@ export default class leadbackMaterial extends Vue{
     .swipe-transform{
       transform: translateX(-50px);
     }
-    // 损溢单查询
+    // 领退料查询
     .search-dialog{
       width: 100%; 
       position:absolute;
       top:45px; 
       z-index:10001;
+    }
+    .addgoods{
+      position: absolute;
+      top: 44px;
+      right: 0;
+      width: 120px;
+      background: #fff;
+      border: 1px solid #ccc;
+      ul{
+
+        li{
+          border-bottom: 1px solid #ccc;
+          color: #000;
+          height: 35px;
+          line-height: 35px;
+          text-align: center;
+          cursor: pointer;
+        }
+        li:last-child{
+          border-bottom: none;
+        }
+      }
     }
 </style>

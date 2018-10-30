@@ -74,6 +74,10 @@
               <div class="shouhuo"></div>
               <span>店间调拨</span>
             </li>
+            <li @click="renderUrl('/leadbackMaterial')">
+              <div class="overflowing"></div>
+              <span>领退料</span>
+            </li>
         </ul>
         <!--内容-->
         

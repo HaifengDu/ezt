@@ -9,7 +9,7 @@
           </span>          
          </div>
        </div>
-    </ezt-header>    
+    </ezt-header>        
     <div class="ezt-main">
       <div class="ezt-add-content">
         <div class="good-type">
@@ -55,7 +55,7 @@
                  </span>
                  <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
-                  materialLimit.billsPageType == 'spilledSheet'" 
+                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'" 
                 class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                  </span>

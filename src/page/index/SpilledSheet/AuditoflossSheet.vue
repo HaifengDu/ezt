@@ -29,7 +29,7 @@
           </li>
           <li>
             <span class="title-search-name is-required">选择物料：</span>
-            <span class="title-search-right" @click="selectMaterials('/publicAddGood')">
+            <span class="title-search-right" @click="selectMaterials()">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
           </li>
@@ -118,14 +118,7 @@ export default class SpilledSheet extends Vue{
     name:"盘点损溢",
     type:"m"
   }];
-  /**
-   * 枚举 表单字段
-   */
-  private billFiles=[
-    {id:"billType",msg:"请选择单据类型！",billType:false},
-    {id:"warehouse",msg:"请选择仓库！",warehouse:false},
-    {id:"causeofloss",msg:"请选择损溢原因！",causeofloss:false},
-    ];
+  
   created() {  
     this.service = SpilledSheetService.getInstance();
     if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
@@ -174,21 +167,13 @@ export default class SpilledSheet extends Vue{
         })
         _this.selectedGood.splice(newIndex,1);
       },
-      content:'请确认是否删除该物料。'
+      content:'请确认是否删除该物料?'
     })
   }
   /**
    *  损溢单 提交
    */
   private saveReceive(){
-    for(let i=0;i<this.billFiles.length;i++){
-      let item = this.billFiles[i];
-      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-        this.$toasted.show(item.msg);
-        item[item.id]=true;
-        return false;
-      }
-    }
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
@@ -204,14 +189,6 @@ export default class SpilledSheet extends Vue{
    */
   private confirmReceive(){
     let _this = this;
-     for(let i=0;i<this.billFiles.length;i++){
-      let item = this.billFiles[i];
-      if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-        this.$toasted.show(item.msg);
-        item[item.id]=true;
-        return false;
-      }
-    }
     if(!this.selectedGood||this.selectedGood.length<=0){
       this.$toasted.show("请添加物料！");
       return false;
@@ -238,26 +215,16 @@ export default class SpilledSheet extends Vue{
     })
   }    
     //选择物料
-  private selectMaterials(info:string){
+  private selectMaterials(){
     let goodTerm = {};
     if(this.addBillInfo){
-      let _this = this;
-      for(let i=0;i<this.billFiles.length;i++){
-        let item = this.billFiles[i];
-        if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-          this.$toasted.show(item.msg);
-          item[item.id]=true;
-          return false;
-        }
-      }
       goodTerm={
         billsPageType: 'spilledSheet',
       }  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.$router.push({name:'PublicAddGood',params:{'addflossSheetType':'true'}});
-      this.$router.push(info);
-      // this.$router.push({name:'PublicAddGood',params:{'receiveOrderType':this.addBillInfo.billType}});
+      this.$router.push({name:'PublicAddGood',params:{}});
     }      
   }
   /**
@@ -279,11 +246,6 @@ export default class SpilledSheet extends Vue{
       })
     }else{
       _this.addBeforeBillInfo[val]=_this.addBillInfo[val];  
-      this.billFiles.forEach(item=>{
-        if(item.id == val){
-          item[val]= false;
-        }
-      })         
     }
   }
   /**
@@ -301,70 +263,32 @@ export default class SpilledSheet extends Vue{
           _this.addBillInfo={},
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
+          _this.cache.clear()
           _this.$router.push('/spilledSheet');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"
       })
     }else{
+      this.cache.clear()
       this.$router.push('/spilledSheet');
     }
   } 
 }
 </script>
 <style lang="less" scoped>
+input{
+  text-align: right;
+}
 input.ezt-smart{
   border: 1px solid #ccc;
-}
-.mine-bot-btn{
-    width: 100%;
-    // position: absolute;
-    margin-top: 20px;
-        .ezt-lone-btn{
-        display: inline-block;
-        font-size: 14px;
-        color: #FFFFFF;
-        letter-spacing: 0;
-        padding: 8px 90px;
-        margin-bottom: 10px;
-        border-radius: 40px;
-        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-    }
-  }
-.ezt-dialog-header{
-  padding: 10px 0px;
-  display: flex;
-  flex-direction: row;
-  .header-name{
-    flex:1;
-    margin-right: -20px;
-  }
-  .ezt-close{
-    margin-right:20px;
-  }
-}
-.ezt-dialog-title{
-  padding: 10px 0px;
-  background: #FFF8DD;
-  display:flex;
-  flex-direction: row;
-  span.num{
-    font-size: 15px;
-    color:red;
-  }
-}
-.ezt-dialog-title>span{
-  flex:1;
 }
 .weui-cell:before{
   border:none;
 }
  //物料信息
 .good-detail-content{
-  position: relative;
-  overflow: hidden;
+    position: relative;
+    overflow: hidden;
     text-align: left;
     margin: 8px 10px;
     padding: 12px 10px 12px 15px;
@@ -438,16 +362,7 @@ input.ezt-smart{
       z-index: 2;
     }
 }
-   
     //物料明细结束 
-    .icon-dail{
-      flex: .1;
-      background: pink;
-      display: inline-block;
-      height: 20px;
-      border: 1px solid #ccc;
-      text-align: center;
-    }
     .park-input{
       display: flex;
       flex:1;

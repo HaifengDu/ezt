@@ -148,6 +148,7 @@ export default class stockTaking extends Vue{
               onConfirm () {
                    _this.addinventory.stock={};
                    _this.addinventory.treatment={};
+                   _this.cache.clear();
                    _this.$router.push('/stocktaking');
               },
               content:"返回后，本次操作记录将丢失，请确认是否离开？"

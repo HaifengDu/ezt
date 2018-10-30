@@ -21,7 +21,7 @@ export class OrderGoodsService extends BaseService{
     }    
 
     getGoodDetail(){
-        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
     static createInstance() {

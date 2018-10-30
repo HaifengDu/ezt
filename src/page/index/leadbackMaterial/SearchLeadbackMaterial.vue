@@ -103,5 +103,5 @@ export default class leadbackMaterial extends Vue{
  }
  .ezt-add-content{
    padding-bottom: 0;
- }
+ }  
 </style>

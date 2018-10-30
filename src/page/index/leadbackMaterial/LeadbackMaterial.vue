@@ -140,7 +140,6 @@ export default class leadbackMaterial extends Vue{
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
     private addgoods:boolean = false;//显示领退料单
-    // private type:string;//根据type判断是领料单还是退料单
     private hideMask:()=>void;
     private showMask:()=>void;
     private isSearch:boolean = false; //订货查询
@@ -288,7 +287,9 @@ export default class leadbackMaterial extends Vue{
       this.cache.save(CACHE_KEY.LEADBACKSHEET_SEARCH,JSON.stringify(this.searchParam));
       this.$router.push('/searchLeadbackMaterial');
    }   
-   //领退料详情   审核领退料单
+   /**
+    * 领料单详情   审核领料单
+    */
     private MaterialDetails(item:any){  
       let addBillInfo = {};
       let details={}; 

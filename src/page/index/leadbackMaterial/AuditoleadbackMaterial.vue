@@ -211,10 +211,7 @@ export default class leadbackMaterial extends Vue{
     this.$vux.confirm.show({
       // 组件除show外的属性
       onCancel () {//审核不通过
-        _this.addBillInfo={},
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'已审核'}}); 
+        
       },
       onConfirm () {//审核通过
         _this.addBillInfo={},

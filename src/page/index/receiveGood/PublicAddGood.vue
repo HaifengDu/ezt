@@ -38,7 +38,7 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                  <span v-if="materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
                     <!--订货手工制单价格 不可编辑-->  
@@ -351,17 +351,17 @@ export default class AddGood extends Vue{
     });  
     this.allType = [{
         id:1,
-        name:'牛羊肉',
+        name:"牛羊肉",
         cdata:[{
           id:1,
           name:"全部",
           goodList:[{
             id:1,
-            name:'草鱼半成品',
-            price:'12',
-            amt:'10',
-            utilname:'KG',
-            unit:'箱',
+            name:"草鱼半成品",
+            price:12,
+            amt:10,
+            utilname:"KG",
+            unit:"箱",
             roundValue:{//可直拨的数据
               num: 10,
               numed:3,
@@ -371,18 +371,18 @@ export default class AddGood extends Vue{
         }]
       },{
         id:2,
-        name:'成本类',
+        name:"成本类",
         cdata:[{
           id:2,
-          name:'全部',
+          name:"全部",
           goodList:[{
             id:2,
-            name:'海参',
-            price:'9',
-            amt:'8',
+            name:"海参",
+            price:9,
+            amt:8,
             num:0,
-            utilname:'KG',
-            unit:'箱',
+            utilname:"KG",
+            unit:"箱",
             roundValue:{//可直拨的数据
               num: 10,
               numed:3,
@@ -390,12 +390,12 @@ export default class AddGood extends Vue{
             }
           },{
             id:3,
-            name:'土豆',
-            price:'3',
-            amt:'4',
+            name:"土豆",
+            price:3,
+            amt:4,
             num:0,
-            utilname:'KG',
-            unit:'斤',
+            utilname:"KG",
+            unit:"斤",
             roundValue:{//可直拨的数据
               num: 10,
               numed:3,
@@ -404,48 +404,48 @@ export default class AddGood extends Vue{
           }]
         },{
           id:21,
-          name:'速冻类',
+          name:"速冻类",
           goodList:[{
             id:21,
-            name:'牛肉',
-            price:'15',
-            amt:'22',
-            utilname:'KG',
-            unit:'斤',
+            name:"牛肉",
+            price:15,
+            amt:22,
+            utilname:"KG",
+            unit:"斤",
             roundValue:{//可直拨的数据
               num: 10,
               numed:3,
               list:[{
-                name:'仓库一号',
+                name:"仓库一号",
                 num:0
               },{
-                name:'仓库二号',
+                name:"仓库二号",
                 num:0
               },{
-                name:'仓库三号',
+                name:"仓库三号",
                 num:0
               },{
-                name:'仓库四号',
+                name:"仓库四号",
                 num:0
               },{
-                name:'仓库五号',
+                name:"仓库五号",
                 num:0
               },{
-                name:'仓库六号',
+                name:"仓库六号",
                 num:0
               }]
             }
           }]
         },{
           id:22,
-          name:'演示品项',
+          name:"演示品项",
         }]
       },{
         id:3,
-        name:'222222222222222222222222',
+        name:"222222222222222222222222",
         cdata:[{
           id:3,
-          name:'全部'
+          name:"全部"
         }]
     }];
     //TODO:把收藏从货品类别里抽出来

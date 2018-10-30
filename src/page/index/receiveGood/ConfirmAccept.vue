@@ -207,7 +207,6 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -243,7 +242,6 @@ export default class ReceiveGood extends Vue{
     private restActiveRound:any={};
     private activeRound:any={};
     private errWarehouse:boolean = false;
-    private tabList:TabList = new TabList();
     private isDirect:boolean = false; //是否可直拨弹框
     private receive_billtype: any = {
       shou:false,
@@ -622,135 +620,135 @@ export default class ReceiveGood extends Vue{
       margin-left: 10px;
   }
   //物料信息
-    .good-detail-content{
-       position: relative;
-       overflow: hidden;
-        text-align: left;
-        margin: 8px 10px;
-        padding: 12px 10px 12px 15px;
-        background: #FFFFFF;
-        border: 1px solid #DDECFD;
-        box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-        display: flex;
-        flex: row;
-        flex-direction: column;
-    }
-    .good-detail-l{
-        display: inline-block;
-        flex:.8;
-    }
-    .good-detail-l>div{
-       display:flex;
-       flex-direction: row;
-       align-items: center;
-    }
-    .good-detail-l>div>span{
-       flex:1;
-    }
-    .good-detail-r{
-        display: inline-block;
-        display:flex;
-    }
-    .good-detail-num{
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        font-size: 20px;
-        color: #FF885E;
-        letter-spacing: 0;
-        line-height: 3;
-    }
-    .good-detail-name{
-        font-size: 14px;
-        color: #395778;
-        letter-spacing: 0;
-        display: flex;
-    }
-    .good-detail-sort{
-        font-size: 13px;
-        color: #5F7B9A;
-        letter-spacing: 0;
-        display: flex;
-        flex-direction: row;
-    }
-    .good-detail-billno{
-        font-size: 10px;
-        color: #A3B3C2;
-        letter-spacing: 0;
-        margin: 12px 0px;
-    }
-    .ezt-detail-good{
+  .good-detail-content{
+      position: relative;
+      overflow: hidden;
+      text-align: left;
+      margin: 8px 10px;
+      padding: 12px 10px 12px 15px;
+      background: #FFFFFF;
+      border: 1px solid #DDECFD;
+      box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
       display: flex;
+      flex: row;
       flex-direction: column;
-      padding-bottom: 10px;
-      // margin: 8px 10px;
-      // padding: 12px 10px 12px 15px;
-      transition: transform .5s;
-      background: #fff;
-      z-index: 2;
-    }
-    //物料明细结束 
-    .icon-dail{
-      flex: .1;
-      background: pink;
+  }
+  .good-detail-l{
       display: inline-block;
-      height: 20px;
-      border: 1px solid #ccc;
-      // width: 20px;
-      text-align: center;
-    }
-    .park-input{
-      display: flex;
+      flex:.8;
+  }
+  .good-detail-l>div{
+      display:flex;
+      flex-direction: row;
+      align-items: center;
+  }
+  .good-detail-l>div>span{
       flex:1;
-    }
-    .park-input span{
-      flex:2;
-    }
-    .title-search-name.remark{
-      margin-left: 10px;
-    }
-    .title-search-name.ezt-dense-box input{
-      border: 1px solid #ccc;
-    }
-    //直拨仓库
-  .warehouse-list{
-      flex: 1;
+  }
+  .good-detail-r{
+      display: inline-block;
+      display:flex;
+  }
+  .good-detail-num{
+      display: inline-block;
+      width: 100%;
       text-align: center;
-      margin-left: 10px;
-      max-height: 240px;
-      overflow-x: auto;
-      .warehouse-isDefault{           
-          display: inline-block;               
-        
-      }  
-    }
-    .warehouse-title-num{
+      font-size: 20px;
+      color: #FF885E;
+      letter-spacing: 0;
+      line-height: 3;
+  }
+  .good-detail-name{
+      font-size: 14px;
+      color: #395778;
+      letter-spacing: 0;
       display: flex;
-      flex-direction: column;
-      background: #ccc;
-    }
-    .good-warehouse-num{
-        margin-left: 10px;
-        color: #95A7BA;
-        letter-spacing: 0;
-    }
-    .remark-area{
-      flex: .8;
-    } 
-    // 结束 
-  // 左侧滑动删除
-  .swipe-transform{
-    transform: translateX(-50px);
   }
-  .ezt-detail-del{
-    position: absolute;
-    right: 10px;
-    top: 30px;
-    // background: pink;
-    width: 50px;
-    height: 50px;
+  .good-detail-sort{
+      font-size: 13px;
+      color: #5F7B9A;
+      letter-spacing: 0;
+      display: flex;
+      flex-direction: row;
+  }
+  .good-detail-billno{
+      font-size: 10px;
+      color: #A3B3C2;
+      letter-spacing: 0;
+      margin: 12px 0px;
+  }
+  .ezt-detail-good{
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+    // margin: 8px 10px;
+    // padding: 12px 10px 12px 15px;
+    transition: transform .5s;
+    background: #fff;
+    z-index: 2;
+  }
+  //物料明细结束 
+  .icon-dail{
+    flex: .1;
+    background: pink;
+    display: inline-block;
+    height: 20px;
+    border: 1px solid #ccc;
+    // width: 20px;
     text-align: center;
-    line-height: 50px;
-    font-size: 22px;
   }
+  .park-input{
+    display: flex;
+    flex:1;
+  }
+  .park-input span{
+    flex:2;
+  }
+  .title-search-name.remark{
+    margin-left: 10px;
+  }
+  .title-search-name.ezt-dense-box input{
+    border: 1px solid #ccc;
+  }
+  //直拨仓库
+.warehouse-list{
+    flex: 1;
+    text-align: center;
+    margin-left: 10px;
+    max-height: 240px;
+    overflow-x: auto;
+    .warehouse-isDefault{           
+        display: inline-block;               
+      
+    }  
+  }
+  .warehouse-title-num{
+    display: flex;
+    flex-direction: column;
+    background: #ccc;
+  }
+  .good-warehouse-num{
+      margin-left: 10px;
+      color: #95A7BA;
+      letter-spacing: 0;
+  }
+  .remark-area{
+    flex: .8;
+  } 
+  // 结束 
+// 左侧滑动删除
+.swipe-transform{
+  transform: translateX(-50px);
+}
+.ezt-detail-del{
+  position: absolute;
+  right: 10px;
+  top: 30px;
+  // background: pink;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  line-height: 50px;
+  font-size: 22px;
+}
 </style>

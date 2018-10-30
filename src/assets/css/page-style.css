@@ -715,4 +715,12 @@ input.ezt-middle{
 .ezt-pri-remark{
   width: 100%;
 }
+/*搜索弹框*/
+.search-dialog{
+  width: 100%; 
+  position:absolute;
+  top:45px; 
+  z-index:10001;
+}
+
    

@@ -53,7 +53,7 @@
             <li @click="renderUrl('/receiveGood')">
               <div class="shouhuo"><span class="ezt-reddot-s"></span></div>
               <span>收货</span></li>
-            <li @click="renderUrl('/returnGood')">
+            <li @click="renderUrl('/supplierReturn')">
               <div class="tuihuo"></div>
               <span>退货</span></li>
             <li @click="renderUrl('/stockTaking')">

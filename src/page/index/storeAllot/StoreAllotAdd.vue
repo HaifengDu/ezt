@@ -215,6 +215,8 @@ export default class allotment extends Vue{
                 return false;
             }
         }
+        //过滤掉物料中数量为0的物品；
+        this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("请添加物料！");
             return false;
@@ -265,6 +267,8 @@ export default class allotment extends Vue{
                 return false;
             }
         }
+        //过滤掉物料中数量为0的物品；
+        this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("请添加物料！");
             return false;

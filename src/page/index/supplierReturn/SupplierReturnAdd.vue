@@ -22,7 +22,7 @@
                                 @change="handlerBillType('returnType','您已维护物料信息，如调整退货类型，须重新选择供货机构、源单号、物料信息。')"
                                 :class="[{'selectError':billFiles[1].returnType}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <option :value="item.id" :key="index" v-for="(item,index) in returnType">{{item.typeName}}</option>
                             </select>
                         </span>
                     </li>
@@ -38,7 +38,7 @@
                         </span>
                     </li>
                     <li class="select-list">
-                        <span class="title-search-name is-required">源单号：</span>
+                        <span class="title-search-name" :class="[{'is-required':isRequired}]">源单号：</span>
                         <span class="title-select-name item-select">
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.sourceBillno" 
                                 @change="handlerBillType('sourceBillno','您已维护物料信息，如调整源单号，须重新选择物料。')"
@@ -86,15 +86,15 @@
             </div>
             <ezt-footer>
                 <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                    <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                    <b>数量</b><span>{{Total.num}}</span>，
-                    <b>￥</b><span>{{(Total.Amt).toFixed(2)}}</span>
-                </div>
-                <div class="ezt-foot-button">
-                    <a href="javascript:(0)" class="ezt-foot-storage" @click="saveAllot">提交</a>  
-                    <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmAllot"> 提交并审核</a>   
-                </div>  
+                    <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
+                        <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                        <b>数量</b><span>{{Total.num}}</span>，
+                        <b>￥</b><span>{{(Total.Amt).toFixed(2)}}</span>
+                    </div>
+                    <div class="ezt-foot-button">
+                        <a href="javascript:(0)" class="ezt-foot-storage" @click="saveAllot">提交</a>  
+                        <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmAllot"> 提交并审核</a>   
+                    </div>  
                 </div>
             </ezt-footer>
         </div>
@@ -137,6 +137,17 @@ export default class ReturnGood extends Vue{
         supplier:'',
         sourceBillno:''
     };
+    /**
+     * 退货类型
+     */
+    private returnType:any[] = [{
+        id:'store',
+        typeName:'配送退货'
+    },{
+        id:'supplier',
+        typeName:'供应商退货'
+    }];
+    private _isRequired:boolean;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -178,6 +189,15 @@ export default class ReturnGood extends Vue{
         },{num:0,Amt:0});
     }
     /**
+     * 退货类型为配送退货，必填源单号
+     */
+    private get isRequired(){
+        return this.addBillInfo.returnType == 'store';
+    }
+    private set isRequired(isRequired){
+        this._isRequired == isRequired;
+    }
+    /**
      * 左滑删除
      */
     private handleSwipe(item:any,active:boolean){ 
@@ -205,9 +225,9 @@ export default class ReturnGood extends Vue{
             content:'请确认是否删除该物料。'
         })
     }
-      /**
-   * 选择仓库、供应商、退货类型、源单号
-   */
+    /**
+     * 选择仓库、供应商、退货类型、源单号
+     */
     private handlerBillType(val:any,title:any){
         let _this = this;
         if(this.selectedGood.length>0){
@@ -240,6 +260,9 @@ export default class ReturnGood extends Vue{
             })
         }else{
             _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+            if(!_this.isRequired){//退货类型为配送退货 源单号必填
+                this.billFiles[3]['sourceBillno'] = false;
+            }
             this.billFiles.forEach(item=>{
                 if(item.id == val){
                     item[val]= false;
@@ -254,9 +277,14 @@ export default class ReturnGood extends Vue{
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-                this.$toasted.show(item.msg);
-                item[item.id]=true;
-                return false;
+                if(!this.isRequired&&item.id=='sourceBillno'){//退货类型为供应商退货，非必填
+                    item[item.id] = false;
+                }else{
+                    this.$toasted.show(item.msg);
+                    item[item.id]=true;
+                    return false;
+                }
+               
             }
         }
         this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
@@ -278,9 +306,14 @@ export default class ReturnGood extends Vue{
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-                this.$toasted.show(item.msg);
-                item[item.id]=true;
-                return false;
+                if(!this.isRequired&&item.id=='sourceBillno'){//退货类型为供应商退货，非必填
+                    item[item.id] = false;
+                }else{
+                    this.$toasted.show(item.msg);
+                    item[item.id]=true;
+                    return false;
+                }
+              
             }
         }
         this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
@@ -319,9 +352,14 @@ export default class ReturnGood extends Vue{
             for(let i=0;i<this.billFiles.length;i++){
                 let item = this.billFiles[i];
                 if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
-                    this.$toasted.show(item.msg);
-                    item[item.id]=true;
-                    return false;
+                    if(!this.isRequired&&item.id=='sourceBillno'){//退货类型为供应商退货，非必填
+                        item[item.id] = false;
+                    }else{
+                        this.$toasted.show(item.msg);
+                        item[item.id]=true;
+                        return false;
+                    }
+                   
                 }
             }
             goodTerm={

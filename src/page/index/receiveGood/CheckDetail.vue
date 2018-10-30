@@ -129,9 +129,7 @@ export default class ReceiveGood extends Vue{
     private domEles: {};
     created() {     
         this.service = ReceiveGoodService.getInstance(); 
-        let test = document.getElementById('contentDiv');
     }
-
     mounted(){ 
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
             this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
@@ -184,34 +182,22 @@ export default class ReceiveGood extends Vue{
         }
     }
     /**
-     * computed demo
+     * 
      * 物料总数量、总金额
      */
     private get Total(){
         return this.goodList.reduce((ori,item)=>{
         ori.num = ori.num+Number(item.num); 
-            if(item.price){
-                ori.Amt = ori.Amt + (item.num * item.price);
-            }else if(item.Amt){
-                ori.Amt = ori.Amt + (item.amt);
-            }else{
-                ori.Amt = 0;
-                ori.num = 0;
-            }     
-        
+        if(item.price){
+            ori.Amt = ori.Amt + (item.num * item.price);
+        }else if(item.Amt){
+            ori.Amt = ori.Amt + (item.amt);
+        }else{
+            ori.Amt = 0;
+            ori.num = 0;
+        } 
         return ori;
         },{num:0,Amt:0});
-    }
-    /**
-     * 获取备注的高度
-     */
-    private getFixHeight(item:any){
-        // getFixHeight (flag) {
-        return (el:any)=>{
-            // this.domEles[flag] = el;
-
-        }
-        // }
     }
     // 备注出现查看更多
     private handleFold(item:any) {
@@ -256,7 +242,7 @@ export default class ReceiveGood extends Vue{
     // overflow-y: auto;
     // overflow-x: hidden;
 }
-    .ezt-main{
+.ezt-main{
     overflow-y: auto;
     overflow-x: hidden;
     margin-bottom: 28px;
@@ -402,7 +388,4 @@ export default class ReceiveGood extends Vue{
     height: auto;
     -webkit-line-clamp: initial;
 }
-.test{
-    display:none;
-}    
 </style>

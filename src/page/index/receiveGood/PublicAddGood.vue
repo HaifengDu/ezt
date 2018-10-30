@@ -1,4 +1,4 @@
-<!--选择物品-->
+/* <!--选择物品-->
 <template>
   <div class="ezt-page-con">
     <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch">
@@ -1008,3 +1008,4 @@ private changeDirect(item:any){
 }
 
 </style>
+ */

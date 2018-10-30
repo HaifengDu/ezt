@@ -36,7 +36,8 @@
                 </div> 
                 <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
-                        <div class="ezt-detail-good" :class="{'swipe-transform':item.active}">
+                        <div class="ezt-detail-good"  v-swipeleft="handlerSwipe.bind(this,item,true)" 
+                        v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                             <div class="good-detail-l">
                                 <div>
                                     <span class="good-detail-name">{{item.name}}
@@ -53,12 +54,11 @@
                             </div>
                             <div class="good-detail-r">
                                 <div class="park-input">
-                                <span class="title-search-name">备注：{{item.remark}}</span>
+                                    <span class="title-search-name">备注：{{item.remark}}</span>
                                 </div>
-                                
                             </div>                 
                         </div> 
-                        <div class="ezt-detail-del" @click="deleteSection(item)">
+                        <div class="ezt-detail-del" @click="delAction(item)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
                         </div> 
                     </li>

@@ -24,6 +24,7 @@ export class LeadbackMaterialService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
+    
     static createInstance() {
         LeadbackMaterialService.getInstance();
     }

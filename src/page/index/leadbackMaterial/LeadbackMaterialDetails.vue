@@ -1,7 +1,7 @@
-<!--损溢单详情-->
+<!--领/退料详情-->
 <template>
-  <div class="ezt-page-con SpilldetailsPage">
-    <ezt-header :back="true" title="损溢单详情">
+  <div class="ezt-page-con LeadbackMaterialDetails">
+    <ezt-header :back="true" :title="title">
        <div slot="action">
        </div>    
     </ezt-header>    
@@ -10,24 +10,30 @@
          <div class="ezt-detail-cot">
             <div class="receive-dc-list detail-order-info">   
                 <div class="receive-icon-title">
-                    <span class="return-list-title">单号：{{spilledDetails.bill_no}}</span> 
-                    <span class="receive-status">{{spilledDetails.currentdate}}</span>
+                    <span class="return-list-title">{{material.bill_no}}</span> 
+                    <span class="receive-status">已完成</span>
                 </div>
                 <div class="receive-icon-content">
-                    <span class="receive-dc-title">仓库：
-                        <span class="receive-dc-content">{{spilledDetails.warehouse}}</span>
+                    <span class="receive-dc-title">单号：
+                        <span class="receive-dc-content">{{material.warehouse}}</span>
                     </span>
-                    <span class="receive-dc-title">单据类型：
-                        <span class="receive-dc-content">{{spilledDetails.bill_type}}</span>
+                    <span class="receive-dc-title" v-if="this.$route.query.pageType == 'requisition'">领料日期：
+                        <span class="receive-dc-content">{{material.arrive_date}}</span>
                     </span>
-                    <span class="receive-dc-title">报损原因：
-                        <span class="receive-dc-content">{{spilledDetails.causeofloss}}</span>
+                    <span class="receive-dc-title" v-if="this.$route.query.pageType == 'requisition'">领料仓库：
+                        <span class="receive-dc-content">{{material.storehouse}}</span>
                     </span>
-                    <span class="receive-dc-title">盘点单号：
-                        <span class="receive-dc-content">{{spilledDetails.singlenumber}}</span>
+                    <span class="receive-dc-title" v-if="this.$route.query.pageType == 'retreating'">退料日期：
+                        <span class="receive-dc-content">{{material.arrive_date}}</span>
+                    </span>
+                    <span class="receive-dc-title" v-if="this.$route.query.pageType == 'retreating'">退料仓库：
+                        <span class="receive-dc-content">{{material.storehouse}}</span>
+                    </span>
+                    <span class="receive-dc-title">主仓库：
+                        <span class="receive-dc-content">{{material.warehouse}}</span>
                     </span>
                     <div style="display:flex;padding-bottom:20px;">
-                        <span class="receive-dc-title">备注：<span class="receive-dc-content">{{spilledDetails.remark}}</span></span>
+                        <span class="receive-dc-title">备注：<span class="receive-dc-content">{{material.remark}}</span></span>
                     </div>
                 </div>
             </div>
@@ -82,7 +88,7 @@ import {LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { SpilledSheetService } from '../../../service/SpilledSheetService'
+import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
 import { CachePocily } from "../../../common/Cache"
 import {ECache} from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -99,29 +105,38 @@ import CACHE_KEY from '../../../constans/cacheKey'
    },
    methods:{
      ...mapActions({
+         
      })
    }
 })
-export default class SpilledSheet extends Vue{
-    private service: SpilledSheetService;
+export default class leadbackMaterial extends Vue{
+    private service: LeadbackMaterialService;
     private cache = CachePocily.getInstance();
-    private spilledDetails:any={};//损溢详情页面表头
+    private title:string;
+    private material:any={};//领退料详情页面表头
     private details:any[] = [];  //物料明细
     private fold :boolean = true;  //备注超出显示查看更多
     private content:string='';
     created() {          
-       this.service = SpilledSheetService.getInstance();
+       this.service = LeadbackMaterialService.getInstance();
        this.detailList();
-        if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS)){
-            this.spilledDetails = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS));
+       if(this.$route.query.pageType == 'requisition'){
+          this.title = '领料单详情'
+       }
+       if(this.$route.query.pageType == 'retreating'){
+          this.title = '退料单详情'
+       }
+       if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_DETAILS)){
+            this.material = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_DETAILS));
         }
     }
-    
     mounted(){ 
         this.detailList();
         this.getData();   
     }
-    // 备注出现查看更多
+    /**
+     * 备注出现更多
+     */
     private handleFold(item:any) {
         this.$set(item,'flod',!item.flod);
     }
@@ -143,14 +158,16 @@ export default class SpilledSheet extends Vue{
                 ori.num = 0;
                 ori.Amt = 0;
             }      
-        
         return ori;
         },{num:0,Amt:0});
     }
-    // 物料明细
+    /**
+     * 物料明细
+     */
     private detailList(){
      this.service.getGoodDetail().then(res=>{
           this.details=res.data.data;
+          console.log(JSON.stringify(this.details))
         },err=>{
           this.$toasted.show(err.message);
       });
@@ -178,7 +195,6 @@ export default class SpilledSheet extends Vue{
     .ezt-main{
         overflow-y: auto;
         overflow-x: hidden;
-        margin-bottom: 68px;
     }
     .receive-dc-content{
         width: 100px;

@@ -14,7 +14,7 @@
          </div>
        </div>
     </ezt-header>  
-    <div class="ezt-main">      
+    <div class="ezt-main">            
         <!--内容-->
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item class="vux-center" :selected="item.active" v-for="(item, index) in tabList.TabList"
@@ -30,14 +30,12 @@
                 <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
               </div>
               <div class="receive-icon-content" @click="spilledetails(item)">
-                <div style="display:flex">
-                  <span class="receive-dc-title">仓库：
-                    <span class="receive-dc-content">{{item.warehouse}}</span>  
-                  </span>
-                  <span class="receive-dc-title">制单日期：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
-                  </span>
-                </div>
+                <span class="receive-dc-title">仓库：
+                  <span class="receive-dc-content">{{item.warehouse}}</span>  
+                </span>
+                <span class="receive-dc-title">制单日期：
+                  <span class="receive-dc-content">{{item.arrive_date}}</span>
+                </span>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
                 <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
               </div>
@@ -51,22 +49,6 @@
         </div>
       </div>
     </div>
-    <ezt-footer>
-      <ul slot="confirm" class="ezt-footer-tab">
-        <li @click="toPage('/')" >
-          <span class="footer-index"></span>
-          <div>首页</div>
-        </li>
-        <li @click="toPage('/orderGood')" class="active">
-          <span class="footer-order"></span>
-          <div>订货</div>
-        </li>
-        <li @click="toPage('/chartContent')">
-          <span class="footer-chart"></span>
-          <div>报表</div>
-        </li>
-      </ul>
-    </ezt-footer>
   </div>
   <!-- 查询损溢单 -->  
   <div v-show="isSearch" class="search-dialog">
@@ -204,7 +186,7 @@ export default class SpilledSheet extends Vue{
           })
           _this.goodList.splice(newIndex,1);
         },
-        content:'是否要删除该单据？。'
+        content:'是否要删除该单据?'
       })
     }
     //获取列表
@@ -237,12 +219,6 @@ export default class SpilledSheet extends Vue{
     private addPage(){
       this.$router.push('/addflossSheet')
     }
-    //首页菜单跳转
-    private toPage(info:string){
-      if(info){
-        this.$router.push(info);
-      }      
-    }
    // 查询损溢单
    private queryPage(){
       this.isSearch = !this.isSearch;
@@ -273,10 +249,8 @@ export default class SpilledSheet extends Vue{
     }   
     // 审核损溢单
     private toexamine(item:any){  
-      debugger 
       let addBillInfo = {};
       if(this.tabList.getActive().status==1){
-         debugger
          addBillInfo={
           billno:item.bill_no,
           warehouse:item.warehouse,
@@ -296,8 +270,8 @@ export default class SpilledSheet extends Vue{
       height: 45px;
       align-items: center;
     }
-    .ezt-action-point{
-      margin-top: 10px;
+    .ezt-add-content{
+      padding-bottom: 0px;
     }
     .main-menu{
       background-color: #F1F6FF;
@@ -315,6 +289,7 @@ export default class SpilledSheet extends Vue{
       }
     }
     .ezt-action-point{
+      margin-top: 10px;
       width: 20px;
       height: 26px;
       display: inline-block;

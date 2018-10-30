@@ -197,7 +197,8 @@
   padding:0 0;
 }
 /*添加报损单*/
-.AddflossSheet .weui-cell,.AuditoflossSheet .weui-cell{
+.AddflossSheet .weui-cell,.AuditoflossSheet .weui-cell,.AuditoleadbackMaterial .weui-cell,.AddleadbackMaterial .weui-cell{
+  width:100%;
   padding: 0 0;
   color: #5F7B9A;
 }

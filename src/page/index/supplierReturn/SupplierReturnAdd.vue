@@ -44,7 +44,9 @@
                                 @change="handlerBillType('sourceBillno','您已维护物料信息，如调整源单号，须重新选择物料。')"
                                 :class="[{'selectError':billFiles[3].sourceBillno}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <!--（1）可退数量为0，隐藏（2）有待处理的退货信息，样式 置灰（3）点击置灰选项 弹框 提示-->
+                                <option v-if="item.returnNum!=0" :class="[{'disNum':item.noHand!=0}]" :value="item"
+                                 :key="index" v-for="(item,index) in sourceBillList">{{item.sourceBillName}}</option>
                             </select>
                         </span>
                     </li>
@@ -147,6 +149,10 @@ export default class ReturnGood extends Vue{
         id:'supplier',
         typeName:'供应商退货'
     }];
+    /**
+     * 源单号列表
+     */
+    private sourceBillList:any[] = [];
     private _isRequired:boolean;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
@@ -160,6 +166,13 @@ export default class ReturnGood extends Vue{
         {id:"supplier",msg:"请选择供应商",supplier:false},  
         {id:"sourceBillno",msg:"请选择源单号",sourceBillno:false}     
     ];
+    mounted(){
+        if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){
+            this.sourceBillList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SOURCERBILLLIST));
+        }else{
+            this.getSourceBillList();
+        }
+    }
     created(){
         this.service = SupplierReturnService.getInstance();
         this.orderType = [{//单据类型下拉数据    
@@ -173,6 +186,7 @@ export default class ReturnGood extends Vue{
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));
         }
+       
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         //  this.getGoodList();
         (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -196,6 +210,16 @@ export default class ReturnGood extends Vue{
     }
     private set isRequired(isRequired){
         this._isRequired == isRequired;
+    }
+    /**
+     * 获取 源单号列表
+     */
+    private getSourceBillList(){
+        this.service.getSourceBillList().then(res=>{
+            this.sourceBillList = res.data.data;
+        },err=>{
+            this.$toasted.show(err.message);
+        })
     }
     /**
      * 左滑删除
@@ -253,22 +277,53 @@ export default class ReturnGood extends Vue{
                         _this.addBillInfo['sourceBillno'] = '';
                         _this.addBeforeBillInfo['sourceBillno'] = '';
                     }
-                    _this.setSelectedGood([]);
-                    _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+                    if(val == 'sourceBillno' && _this.addBillInfo[val].noHand!=0){
+                        _this.changeSourceBill(val);
+                    }else{
+                        _this.setSelectedGood([]);
+                        _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+                    }
+                   
                 },
                 content:title
             })
         }else{
-            _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
-            if(!_this.isRequired){//退货类型为配送退货 源单号必填
-                this.billFiles[3]['sourceBillno'] = false;
-            }
-            this.billFiles.forEach(item=>{
-                if(item.id == val){
-                    item[val]= false;
+            if(val == 'sourceBillno'){
+                if(this.addBillInfo.sourceBillno.noHand!=0){
+                    this.changeSourceBill(val);
+                }else{
+                    this.addBeforeBillInfo[val] = this.addBillInfo[val];
                 }
-            })         
+               
+            }else{
+                _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+                if(!_this.isRequired){//退货类型为配送退货 源单号必填
+                    this.billFiles[3]['sourceBillno'] = false;
+                }
+            
+                this.billFiles.forEach(item=>{
+                    if(item.id == val){
+                        item[val]= false;
+                    }
+                })  
+            }
+           
+                 
         }
+    }
+    /**
+     * 切换源单号 有未处理单据弹框校验显示
+     */
+    private changeSourceBill(val:any){
+        let _this = this;     
+        this.$vux.confirm.show({
+            onConfirm(){
+
+            },
+            confirmText:'查看',
+            content:"该收货单有待处理的退货单："+ _this.addBillInfo.sourceBillno.billNo
+        })
+        this.addBillInfo[val] = this.addBeforeBillInfo[val];
     }
       /**
      * 提交
@@ -367,6 +422,7 @@ export default class ReturnGood extends Vue{
             }  
             this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
             this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
+            this.cache.save(CACHE_KEY.SOURCERBILLLIST,JSON.stringify(this.sourceBillList));
             this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
             this.$router.push(info);
         }      
@@ -397,99 +453,103 @@ export default class ReturnGood extends Vue{
 }
 </script>
 <style lang="less" scoped>
-//物料信息
-.good-detail-content{
-    position: relative;
-    overflow: hidden;
-    text-align: left;
-    margin: 8px 10px;
-    padding: 12px 10px 12px 15px;
-    background: #FFFFFF;
-    border: 1px solid #DDECFD;
-    box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-    display: flex;
-    flex: row;
-    flex-direction: column;
-    .good-detail-l{
-        display: inline-block;
-        flex:.8;
-    }
-    .good-detail-l>div{
-        display:flex;
-        flex-direction: row;
-    }
-    .good-detail-l>div>span{
-        // padding: 5px 0px;
-        align-items: baseline;
-        flex: 1;
-    }
-    .good-detail-r{
-        display: inline-block;
-        display:flex;
-    }
-    .good-detail-num{
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        font-size: 20px;
-        color: #FF885E;
-        letter-spacing: 0;
-        line-height: 3;
-    }
-    .good-detail-name{
-        font-size: 14px;
-        color: #395778;
-        letter-spacing: 0;
+    //物料信息
+    .good-detail-content{
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+        margin: 8px 10px;
+        padding: 12px 10px 12px 15px;
+        background: #FFFFFF;
+        border: 1px solid #DDECFD;
+        box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
         display: flex;
-        line-height: 16px;
-    }
-    .good-detail-sort{
-        font-size: 13px;
-        color: #5F7B9A;
-        letter-spacing: 0;
-        display: flex;
-        flex-direction: row;
-    }
-    .good-detail-nobreak{
-        display:flex;
-        flex:1;
-        padding: 6px 0px 6px 0px;      
-    }
-    .ezt-dense-box{
-        align-items: center;
-        flex: 1 !important;
-    }
-    .good-detail-billno{
-        font-size: 10px;
-        color: #A3B3C2;
-        letter-spacing: 0;
-        padding: 0px 0px 5px;
-    }
-    .ezt-detail-good{
-        display: flex;
+        flex: row;
         flex-direction: column;
-        padding-bottom: 10px;
-        transition: transform .5s;
-        background: #fff;
-        z-index: 2;
+        .good-detail-l{
+            display: inline-block;
+            flex:.8;
+        }
+        .good-detail-l>div{
+            display:flex;
+            flex-direction: row;
+        }
+        .good-detail-l>div>span{
+            // padding: 5px 0px;
+            align-items: baseline;
+            flex: 1;
+        }
+        .good-detail-r{
+            display: inline-block;
+            display:flex;
+        }
+        .good-detail-num{
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            font-size: 20px;
+            color: #FF885E;
+            letter-spacing: 0;
+            line-height: 3;
+        }
+        .good-detail-name{
+            font-size: 14px;
+            color: #395778;
+            letter-spacing: 0;
+            display: flex;
+            line-height: 16px;
+        }
+        .good-detail-sort{
+            font-size: 13px;
+            color: #5F7B9A;
+            letter-spacing: 0;
+            display: flex;
+            flex-direction: row;
+        }
+        .good-detail-nobreak{
+            display:flex;
+            flex:1;
+            padding: 6px 0px 6px 0px;      
+        }
+        .ezt-dense-box{
+            align-items: center;
+            flex: 1 !important;
+        }
+        .good-detail-billno{
+            font-size: 10px;
+            color: #A3B3C2;
+            letter-spacing: 0;
+            padding: 0px 0px 5px;
+        }
+        .ezt-detail-good{
+            display: flex;
+            flex-direction: column;
+            padding-bottom: 10px;
+            transition: transform .5s;
+            background: #fff;
+            z-index: 2;
+        }
     }
-}
-.swipe-transform{
-    transform: translateX(-50px);
-}
-.ezt-detail-del{
-    position: absolute;
-    right: 10px;
-    top: 30px;
-    // background: pink;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    line-height: 50px;
-    font-size: 22px;
-}
+    .swipe-transform{
+        transform: translateX(-50px);
+    }
+    .ezt-detail-del{
+        position: absolute;
+        right: 10px;
+        top: 30px;
+        // background: pink;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        line-height: 50px;
+        font-size: 22px;
+    }
    
     //物料明细结束 
+    .ezt-select .disNum{
+        background: #ccc;
+        border-bottom: 1px solid #000;
+    }
 </style>
 
 

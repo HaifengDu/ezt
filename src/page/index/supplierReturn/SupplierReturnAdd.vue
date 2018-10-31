@@ -118,6 +118,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
     computed:{
         ...mapGetters({
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+            'logistics':'logistics',//物流设置
         })
     },
     methods:{
@@ -155,7 +156,8 @@ export default class ReturnGood extends Vue{
     private sourceBillList:any[] = [];
     private _isRequired:boolean;
     private selectedGood:any[];//store中selectedGood的值
-    private setSelectedGood:INoopPromise//store中给selectedGood赋值
+    private setSelectedGood:INoopPromise;//store中给selectedGood赋值
+    private logistics:{};
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
      /**
      * 枚举 表单字段
@@ -190,7 +192,7 @@ export default class ReturnGood extends Vue{
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         //  this.getGoodList();
         (this.selectedGood||[]).forEach(item=>item.active = false);
-        console.log(this.selectedGood,'00000');
+        console.log(this.logistics,'00000');
     }
       /**
      * 物料总数量、总金额

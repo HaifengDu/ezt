@@ -154,13 +154,18 @@ export default class SpilledSheet extends Vue{
   private delAction(item:any){
     let _this = this;
     this.$vux.confirm.show({
-      // 组件除show外的属性
+      /**
+       * 取消操作
+       */
       onCancel () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
         })
         _this.selectedGood[newIndex].active = false;
       },
+      /**
+       * 确认操作
+       */
       onConfirm () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
@@ -194,14 +199,19 @@ export default class SpilledSheet extends Vue{
       return false;
     }
     this.$vux.confirm.show({
-      // 组件除show外的属性
-      onCancel () {//审核不通过
+      /**
+       * 审核不通过
+       */
+      onCancel () {
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
       },
-      onConfirm () {//审核通过
+      /**
+       * 审核通过
+       */
+      onConfirm () {
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
@@ -214,7 +224,9 @@ export default class SpilledSheet extends Vue{
       hideOnBlur:true
     })
   }    
-    //选择物料
+  /**
+   * 选择物料
+   */
   private selectMaterials(){
     let goodTerm = {};
     if(this.addBillInfo){
@@ -234,10 +246,15 @@ export default class SpilledSheet extends Vue{
     let _this = this;
     if(this.selectedGood.length>0){
        this.$vux.confirm.show({
-        // 组件除show外的属性
+        /**
+         * 取消操作
+         */
         onCancel () {
           _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
         },
+        /**
+         * 确认操作
+         */
         onConfirm () {
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
@@ -255,10 +272,15 @@ export default class SpilledSheet extends Vue{
     let _this = this;
     if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
       this.$vux.confirm.show({
-        // 组件除show外的属性
+        /**
+         * 取消操作
+         */
         onCancel () {
-          console.log(this) // 非当前 vm
+          console.log(this) 
         },
+        /**
+         * 确认操作
+         */
         onConfirm () {
           _this.addBillInfo={},
           _this.setSelectedGood([]);

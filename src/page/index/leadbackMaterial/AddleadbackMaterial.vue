@@ -316,7 +316,7 @@ export default class leadbackMaterial extends Vue{
     if((this.addBillInfo&&this.addBillInfo.materialwarehouse)||this.selectedGood.length>0){
       this.$vux.confirm.show({
         onCancel () {
-          console.log(this) // 非当前 vm
+          console.log(this) 
         },
         onConfirm () {      
           _this.addBillInfo={},

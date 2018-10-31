@@ -175,13 +175,18 @@ export default class SpilledSheet extends Vue{
   private delAction(item:any){
     let _this = this;
     this.$vux.confirm.show({
-      // 组件除show外的属性
+      /**
+       * 取消操作
+       */
       onCancel () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
         })
         _this.selectedGood[newIndex].active = false;
       },
+      /**
+       * 确认操作
+       */
       onConfirm () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
@@ -218,7 +223,7 @@ export default class SpilledSheet extends Vue{
    * 损溢单 审核
    */
   private confirmReceive(){
-    let _this = this;
+     let _this = this;
      for(let i=0;i<this.billFiles.length;i++){
       let item = this.billFiles[i];
       if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
@@ -286,13 +291,11 @@ export default class SpilledSheet extends Vue{
     let _this = this;
     if(this.selectedGood.length>0){
        this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
           _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
         },
         onConfirm () {
           _this.setSelectedGood([]);
-          _this.addBillInfo.remark =""
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
         },
         content:title
@@ -313,9 +316,8 @@ export default class SpilledSheet extends Vue{
     let _this = this;
     if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
       this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
-          console.log(this) // 非当前 vm
+          console.log(this) 
         },
         onConfirm () {      
           _this.addBillInfo={},

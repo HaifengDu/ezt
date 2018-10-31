@@ -20,7 +20,7 @@
               <span class="title-search-name">领料仓库：</span>
               <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billType">
           </li>
-          <li  v-if="this.$route.query.pageType == 'retreating'">
+          <li  v-if="this.$route.query.pageType == 'retreating'">  
               <span class="title-search-name">退料日期：</span>
               <input type="text" class="ezt-middle" disabled v-model="addBillInfo.warehouse">
           </li>
@@ -76,9 +76,13 @@
             <b>数量</b><span>{{Total.num}}</span>，
             <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
           </div>
-          <div class="ezt-foot-button">
+          <div class="ezt-foot-button" v-if="this.$route.query.pageType == 'requisition'">>
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
             <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 审核</a>   
+          </div>  
+          <div class="ezt-foot-button" v-if="this.$route.query.pageType == 'retreating'">
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive01">提交1</a>  
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive01"> 审核1</a>   
           </div>  
         </div>
       </ezt-footer>
@@ -186,7 +190,7 @@ export default class leadbackMaterial extends Vue{
     })
   }
   /**
-   *  领料退料 提交
+   *  领料单 提交
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
@@ -198,9 +202,11 @@ export default class leadbackMaterial extends Vue{
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
     this.$router.push("/leadbackMaterial");
+    this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料待审'}}); 
   }
+
   /**
-   * 领料退料 审核
+   * 领料单 审核
    */
   private confirmReceive(){
     let _this = this;
@@ -209,24 +215,79 @@ export default class leadbackMaterial extends Vue{
       return false;
     }
     this.$vux.confirm.show({
-      // 组件除show外的属性
-      onCancel () {//审核不通过
+      /**
+       * 审核不通过
+       */
+      onCancel () {
         
       },
-      onConfirm () {//审核通过
+      /**
+       * 审核通过
+       */
+      onConfirm () {
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.$toasted.success("审核成功！");
-        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'已审核'}}); 
+        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料已审'}}); 
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",
       cancelText:"审核不通过",
       hideOnBlur:true
     })
-  }    
-    //选择物料
+  }   
+
+  /**
+   * 退料单 提交
+   */
+private saveReceive01(){
+    if(!this.selectedGood||this.selectedGood.length<=0){
+      this.$toasted.show("请添加物料！");
+      return false;
+    } 
+    this.addBillInfo={},
+    this.setSelectedGood([]);
+    this.addBeforeBillInfo={};
+    this.$toasted.success("提交成功！");
+    this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料待审'}}); 
+  }
+
+  /**
+   * 退料单  审核
+   */
+  private confirmReceive01(){
+      let _this = this;
+      if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("请添加物料！");
+        return false;
+      }
+      this.$vux.confirm.show({
+        /**
+         * 审核不通过
+         */
+        onCancel () {
+          
+        },
+        /**
+         * 审核通过
+         */
+        onConfirm () {
+          _this.addBillInfo={},
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo={};
+          _this.$toasted.success("审核成功！");
+          _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料已审'}}); 
+        },
+        content:'确认审核该单据？',
+        confirmText:"审核通过",
+        cancelText:"审核不通过",
+        hideOnBlur:true
+      })
+    }  
+   /**
+    * 选择物料
+    */
   private selectMaterials(){
     let goodTerm = {};
     if(this.addBillInfo){

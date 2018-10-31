@@ -121,7 +121,9 @@ export default class SpilledSheet extends Vue{
         this.detailList();
         this.getData();   
     }
-    // 备注出现查看更多
+    /**
+     * 备注出现查看更多
+     */
     private handleFold(item:any) {
         this.$set(item,'flod',!item.flod);
     }
@@ -147,7 +149,9 @@ export default class SpilledSheet extends Vue{
         return ori;
         },{num:0,Amt:0});
     }
-    // 物料明细
+    /**
+     * 物料明细
+     */
     private detailList(){
      this.service.getGoodDetail().then(res=>{
           this.details=res.data.data;

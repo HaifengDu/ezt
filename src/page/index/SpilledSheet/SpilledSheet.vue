@@ -146,7 +146,10 @@ export default class SpilledSheet extends Vue{
     }
     mounted(){      
       this.getList();
-      this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
+      /**
+       * 点击遮罩层
+       */
+      this.addMaskClickListener(()=>{  
         this.isSearch=false; 
         this.hideMask();
       });
@@ -167,11 +170,12 @@ export default class SpilledSheet extends Vue{
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
-    // 点击删除按钮
+    /**
+     * 点击删除按钮
+     */
     private deleteBill(item:any){
       let _this = this;
       this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
           let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
             return item.id == info.id;
@@ -187,7 +191,9 @@ export default class SpilledSheet extends Vue{
         content:'是否要删除该单据?'
       })
     }
-    //获取列表
+    /**
+     * 获取列表
+     */
     private getList(){
       const status = this.tabList.getActive().status;
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
@@ -217,7 +223,9 @@ export default class SpilledSheet extends Vue{
     private addPage(){
       this.$router.push('/addflossSheet')
     }
-   // 查询损溢单
+   /**
+    * 查询损溢单
+    */
    private queryPage(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
@@ -228,7 +236,9 @@ export default class SpilledSheet extends Vue{
       this.cache.save(CACHE_KEY.SPILLEDSHEET_SEARCH,JSON.stringify(this.searchParam));
       this.$router.push('/searchSpilledSheet');
    }   
-   // 跳转损溢详情
+   /**
+    * 损溢详情
+    */
     private spilledetails(item:any){  
       let details={} 
       if(this.tabList.getActive().status==2){
@@ -245,7 +255,9 @@ export default class SpilledSheet extends Vue{
         this.$router.push('/spilledSheetDetails');
       }
     }   
-    // 审核损溢单
+    /**
+     * 审核损溢单
+     */
     private toexamine(item:any){  
       let addBillInfo = {};
       if(this.tabList.getActive().status==1){

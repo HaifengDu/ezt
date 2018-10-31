@@ -12,7 +12,7 @@
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>            
          </div>
-         <div v-if="addgoods" class="addgoods">
+         <div v-show="addgoods" class="addgoods">
           <ul>
             <li @click="Material('/addleadbackMaterial')">领料单</li>
             <li @click="Material('/addleadbackRetreating')">退料单</li>
@@ -63,13 +63,13 @@
     </div>
   </div>
   <!-- 查询领退料 -->  
-  <div v-show="isSearch" class="search-dialog">
+  <div v-show="isSearch" class="search-dialog LeadbackMaterial">
       <ul class="ezt-title-search">
        <li class="select-list">
         <span class="title-search-name">单据类型：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.billType">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
@@ -77,8 +77,8 @@
        <li class="select-list">
         <span class="title-search-name">领/退料仓库：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.Warehouse">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
@@ -92,8 +92,7 @@
         </span>
       </li>
       <li>
-        <span class="title-search-name">单据或物料：</span>
-        <input type="text" placeholder="输入单据号和物料名称查询" class="ezt-middle">
+        <x-input title="单据或物料：" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -337,6 +336,11 @@ export default class leadbackMaterial extends Vue{
       padding: 0;
       height: 45px;
       align-items: center;
+    }
+    .search-dialog .weui-cell{
+      width: 100%;
+      padding: 0 0;
+      
     }
     .ezt-add-content{
       padding-bottom: 0;

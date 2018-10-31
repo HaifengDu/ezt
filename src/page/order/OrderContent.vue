@@ -14,7 +14,7 @@
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
          </div>
-         <div v-if="addgoods" class="addgoods">
+         <div v-show="addgoods" class="addgoods">
           <ul>
             <li @click="toPage('/addOrderGood')">配送要货</li>
             <li>供应商订货</li>
@@ -86,13 +86,13 @@
     </ezt-footer>
   </div>
   <!-- 查询订货 -->  
-  <div v-if="isSearch" class="search-dialog">
+  <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
        <li class="select-list">
         <span class="title-search-name ">订货类型：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.orderType">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
@@ -100,8 +100,8 @@
       <li class="select-list">
         <span class="title-search-name ">供货机构：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.supplyAgency">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
@@ -109,13 +109,13 @@
        <li class="select-list">
         <span class="title-search-name ">支付类型：</span> 
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
           </select>
         </span>
       </li>
-      <li>
+      <li>   
         <span class="title-search-name">业务日期：</span>
         <span>
           <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
@@ -125,7 +125,7 @@
       </li>
       <li>
         <span class="title-search-name">单据或物料：</span>
-        <input type="text" class="ezt-middle">
+        <input type="text" class="ezt-middle" v-model="searchParam.materiel">
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>

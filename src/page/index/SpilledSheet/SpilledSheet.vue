@@ -51,13 +51,13 @@
     </div>
   </div>
   <!-- 查询损溢单 -->  
-  <div v-show="isSearch" class="search-dialog">
+  <div v-show="isSearch" class="search-dialog SpilledSheet">
       <ul class="ezt-title-search">
        <li class="select-list">
         <span class="title-search-name is-required">仓库名称：</span>
         <span class="title-select-name item-select">
-          <select name="" id="" placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouseName">
+            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
             <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
@@ -71,12 +71,10 @@
         </span>
       </li>
       <li>
-        <span class="title-search-name">盘点单号：</span>
-        <input type="text" placeholder="输入盘点单号查询" class="ezt-middle">
+        <x-input title="盘点单号：" v-model="searchParam.singleNumber" placeholder="输入盘点单号查询"></x-input>
       </li>
       <li>
-        <span class="title-search-name">单据或物料：</span>
-        <input type="text" placeholder="输入单据号和物料名称查询" class="ezt-middle">
+        <x-input title="单据或物料：" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -317,7 +315,7 @@ export default class SpilledSheet extends Vue{
       transform: translateX(-50px);
     }
     // 损溢单查询
-    .search-dialog{
+    .search-dialog{    
       width: 100%; 
       position:absolute;
       top:45px; 

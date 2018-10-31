@@ -76,17 +76,16 @@
     </x-dialog>
   </div>
   <!-- 查询盘点单 -->
-  <div v-show="isSearch" class="search-dialog">
+  <div v-show="isSearch" class="search-dialog stocktaking">
       <ul class="ezt-title-search">
        <li>
-        <span class="title-search-name">单据号：</span>
-        <input type="text" placeholder="请输入单据号" class="ezt-middle" v-model="searchParam.djNumber">
+         <x-input title="单据号：" v-model="searchParam.djNumber" placeholder="请输入单据号"></x-input>
        </li>
        <li class="select-list">
         <span class="title-search-name ">盘点库：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.selectedWarehouse">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
+             <option style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
              <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
           </select>
         </span>
@@ -159,8 +158,6 @@ export default class stockTaking extends Vue{
     private djNumber:any; //单据号
     private inventoryType:any[] = [];//盘点类型
     private type:string; //盘点类型数据
-    private names:string;
-    private billType:string;
     private pageType = PageType;
     created() {
       this.tabList.push({
@@ -195,11 +192,16 @@ export default class stockTaking extends Vue{
       this.pager = new Pager().setLimit(20)
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
-      this.getWarehouseType(); //动态加载仓库
+      /**
+       * 动态加载仓库
+       */
+      this.getWarehouseType(); 
     }
    
     mounted(){
-        // 点击遮罩层
+        /**
+         * 点击遮罩层
+         */
         this.addMaskClickListener(()=>{  
           this.isSearch = false; 
           this.hideMask();
@@ -254,7 +256,7 @@ export default class stockTaking extends Vue{
           this.$toasted.show(err.message)
       });
     }
-    /**
+    /**    
      * 盘库详情  审核盘点单  实盘录入  确认盘点单
      */
     private librarydetails(item:any,types:PageType,audit_status:number){

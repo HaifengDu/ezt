@@ -191,13 +191,8 @@
 .mint-indexlist-navlist{
   color: #1188FC;
 }
-/*审核要货单*/
-.AuditInvoice .weui-cell{
-  width:100%;
-  padding:0 0;
-}
-/*添加报损单*/
-.AddflossSheet .weui-cell,.AuditoflossSheet .weui-cell,.AuditoleadbackMaterial .weui-cell,.AddleadbackMaterial .weui-cell{
+/*添加报损单 审核要货单  损溢列表页   领退料列表页  盘点库*/
+.AddflossSheet .weui-cell,.AuditInvoice .weui-cell,.AuditoflossSheet .weui-cell,.AuditoleadbackMaterial .weui-cell,.AddleadbackMaterial .weui-cell,.SpilledSheet .weui-cell,.LeadbackMaterial .weui-cell,.stocktaking .weui-cell{
   width:100%;
   padding: 0 0;
   color: #5F7B9A;

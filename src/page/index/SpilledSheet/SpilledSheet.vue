@@ -11,9 +11,9 @@
           <span class='ezt-action-point' @click="queryPage">
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
-         </div>
+         </div>    
        </div>
-    </ezt-header>  
+    </ezt-header>      
     <div class="ezt-main">            
         <!--内容-->
       <tab :line-width=2 active-color='#fc378c'>
@@ -22,14 +22,19 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
+         <div v-if="!goodList" class="done-none">
+            <div></div>
+            <span>目前还没有任何订单</span>
+          </div>
+        <div v-if="goodList">
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
-            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
+            <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" @click="toexamine(item)">
               <div class="receive-icon-title">
                 <span class="return-list-title">单号：{{item.bill_no}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine(item)">报损</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1">报损</span>
                 <span class="receive-status" v-if="tabList.getActive().status==2">盘点报溢</span>
               </div>
-              <div class="receive-icon-content" @click="spilledetails(item)">
+              <div class="receive-icon-content">
                 <span class="receive-dc-title">仓库：
                   <span class="receive-dc-content">{{item.warehouse}}</span>  
                 </span>
@@ -47,6 +52,7 @@
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -240,7 +246,31 @@ export default class SpilledSheet extends Vue{
     * 损溢详情
     */
     private spilledetails(item:any){  
+      
+    }   
+    /**
+     * 审核损溢单    损溢单详情
+     */
+    private toexamine(item:any){
+      /**
+       * 审核损溢单
+       */
+      let addBillInfo = {};
+      /**
+       * 损溢单详情
+       */
       let details={} 
+      if(this.tabList.getActive().status==1){
+         addBillInfo={
+          billno:item.bill_no,
+          warehouse:item.warehouse,
+          billType:"损溢单",
+          causeofloss:"提前一天发货",
+          remark:item.remark,        
+        }   
+        this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(addBillInfo));
+        this.$router.push({name:'AuditoflossSheet'});  
+      }
       if(this.tabList.getActive().status==2){
         details={
           bill_no:item.bill_no,
@@ -254,24 +284,7 @@ export default class SpilledSheet extends Vue{
         this.cache.save(CACHE_KEY.SPILLEDSHEET_DETAILS,JSON.stringify(details));
         this.$router.push('/spilledSheetDetails');
       }
-    }   
-    /**
-     * 审核损溢单
-     */
-    private toexamine(item:any){  
-      let addBillInfo = {};
-      if(this.tabList.getActive().status==1){
-         addBillInfo={
-          billno:item.bill_no,
-          warehouse:item.warehouse,
-          billType:"损溢单",
-          causeofloss:"提前一天发货",
-          remark:item.remark,        
-        }   
-        this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(addBillInfo));
-        this.$router.push({name:'AuditoflossSheet'});  
-      }
-     }     
+    }     
 }
 </script>
 <style lang="less" scoped>

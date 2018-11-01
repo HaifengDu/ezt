@@ -27,7 +27,12 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
+        <div v-if="!goodList" class="done-none">
+           <div></div>
+           <span>目前还没有任何订单</span>
+        </div>
+        <div v-if="goodList">
+          <div class="receive-dc-list"  v-if="goodList" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" @click="MaterialDetails(item)">
               <div class="receive-icon-title">
                 <span class="return-list-title">单号：{{item.bill_no}}</span> 
@@ -58,6 +63,7 @@
               </div>
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
+          </div>
         </div>
       </div>
     </div>

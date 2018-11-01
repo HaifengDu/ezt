@@ -16,7 +16,7 @@ export default new Store<IRootState>({
         user:void 0,
         systemParamSetting:{},//系统设置参数
         logistics:{
-            isAnyReturn:false,//是否任意退货
+            isAnyReturn:true,//是否任意退货
         },//物流设置
     },
     getters:{

@@ -39,16 +39,16 @@
                                 <div class="title">
                                     <span class="good-detail-billno">编号：{{item.billNo}}</span>
                                     <span class="good-detail-sort">￥{{item.amt}}</span>
-                                </div>
-                                <div class="good-detail-item" v-if="item.remark">
-                                    <div class="good-detail-sort content">备注：
-                                        <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
-                                        <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
-                                    </div>
-                                </div>
+                                </div>                               
                             </div>
                             <div class="good-detail-r">
                                 <span class="good-detail-num">{{item.num}}</span>
+                            </div>
+                        </div>
+                        <div class="good-detail-item" v-if="item.remark">
+                            <div class="good-detail-sort content">备注：
+                                <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                                <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                             </div>
                         </div>
                     </li>
@@ -219,7 +219,7 @@ export default class ReturnGood extends Vue{
     font-size: 20px;
     color: #FF885E;
     letter-spacing: 0;
-    line-height: 6;
+    line-height: 2;
 }
 .good-detail-name{
     font-size: 14px;
@@ -245,6 +245,7 @@ export default class ReturnGood extends Vue{
     display: flex;
     border-bottom: 1px solid #E0EBF9;
     padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 .good-detail-item .content{       
     word-break: break-all;    
@@ -258,6 +259,7 @@ export default class ReturnGood extends Vue{
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    padding-bottom: 10px;
 }
 .good-detail-item .remark-suitable.auto{
     height: auto;

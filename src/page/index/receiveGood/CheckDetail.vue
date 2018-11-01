@@ -44,16 +44,16 @@
                             <div class="title">
                                 <span class="good-detail-billno">编号：{{item.billNo}}</span>
                                 <span class="good-detail-sort">￥{{item.amt}}</span>
-                            </div>
-                            <div class="good-detail-item" v-if="item.remark">
-                                <div class="good-detail-sort content">备注：
-                                    <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
-                                    <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
-                                </div>
-                            </div>
+                            </div>                            
                         </div>
                         <div class="good-detail-r">
                             <span class="good-detail-num">{{item.num}}</span>
+                        </div>
+                    </div>
+                    <div class="good-detail-item" v-if="item.remark">
+                        <div class="good-detail-sort content">备注：
+                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                            <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                         </div>
                     </div>
                     <div class='good-warehouse'>
@@ -320,6 +320,7 @@ export default class ReceiveGood extends Vue{
     display: flex;
     border-bottom: 1px solid #E0EBF9;
     padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 //直拨仓库
 .good-warehouse{
@@ -371,6 +372,10 @@ export default class ReceiveGood extends Vue{
 .icon-trun-on.off{
     transform: rotate(180deg);
 } 
+.good-detail-item{
+    border-bottom: 1px solid #E0EBF9;
+    padding-bottom: 10px;
+}
 .good-detail-item .content{       
     word-break: break-all;    
     word-wrap:break-word;
@@ -383,6 +388,7 @@ export default class ReceiveGood extends Vue{
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    padding-bottom: 10px;
 }
 .good-detail-item .remark-suitable.auto{
     height: auto;

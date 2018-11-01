@@ -14,11 +14,15 @@ Vue.use(VueX);
 export default new Store<IRootState>({
     state:{
         user:void 0,
-        systemParamSetting:{},
+        systemParamSetting:{},//系统设置参数
+        logistics:{
+            isAnyReturn:false,//是否任意退货
+        },//物流设置
     },
     getters:{
         user:state=>state.user,
-        systemParamSetting:state=>state.systemParamSetting
+        systemParamSetting:state=>state.systemParamSetting,
+        logistics:state=>state.logistics,
     },
     mutations:{
         [RootType.UPDATE_USER](state,user:IUser){
@@ -29,6 +33,9 @@ export default new Store<IRootState>({
         },
         [RootType.SET_SYSTEMPARAM](state,systemParamSetting:{}){
             state.systemParamSetting = systemParamSetting;
+        },
+        [RootType.SET_LOGISTICS](state,logistics:{}){
+            state.logistics = logistics;
         }
     },
     actions:{

@@ -11,8 +11,8 @@
           <li class="select-list">
             <span class="title-search-name is-required">单据类型：</span>
             <span class="title-select-name item-select">
-              <select value class="ezt-select" v-model="addBillInfo.billType" 
-                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
+              <select value class="ezt-select" v-model="addBillInfo.billType"     
+                @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择单据类型、仓库、损溢原因。')" :class="[{'selectError':billFiles[0].billType}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择单据类型</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -22,7 +22,7 @@
             <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select">
               <select value class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[1].warehouse}]">
+              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择单据类型、仓库、损溢原因。')" :class="[{'selectError':billFiles[1].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择仓库</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -32,7 +32,7 @@
             <span class="title-search-name is-required">损溢原因：</span>
             <span class="title-select-name item-select">
               <select value class="ezt-select" v-model="addBillInfo.causeofloss"
-              @change="handlerBillType('causeofloss','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[2].causeofloss}]">
+              @change="handlerBillType('causeofloss','您已维护物料信息，如调整损溢原因，须重新选择单据类型、仓库、损溢原因。')" :class="[{'selectError':billFiles[2].causeofloss}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择损溢原因</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>

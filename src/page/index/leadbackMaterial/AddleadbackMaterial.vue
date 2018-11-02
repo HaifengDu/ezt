@@ -12,7 +12,7 @@
             <span class="title-search-name is-required">领料仓库：</span>
             <span class="title-select-name item-select">
               <select value class="ezt-select" v-model="addBillInfo.materialwarehouse" 
-                @change="handlerBillType('materialwarehouse','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].materialwarehouse}]">
+                @change="handlerBillType('materialwarehouse','您已维护物料信息，如调整领料仓库，须重新选择领料仓库、主仓库。')" :class="[{'selectError':billFiles[0].materialwarehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择领料仓库</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -22,7 +22,7 @@
             <span class="title-search-name is-required">主仓库：</span>
             <span class="title-select-name item-select">
               <select value class="ezt-select" v-model="addBillInfo.warehouse"
-              @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[1].warehouse}]">
+              @change="handlerBillType('warehouse','您已维护物料信息，如调整主仓库，须重新选择领料仓库、主仓库。')" :class="[{'selectError':billFiles[1].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择主仓库</option>
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
@@ -425,7 +425,7 @@ input.ezt-smart{
     .swipe-transform{
       transform: translateX(-50px);
     }
-    .ezt-detail-del{
+    .ezt-detail-del{ 
       position: absolute;
       right: 10px;
       top: 30px;

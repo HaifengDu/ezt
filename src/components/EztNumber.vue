@@ -69,7 +69,6 @@ import { parse } from 'querystring';
                 this.dValue = this.oldValue||0;
             }
             this.dValue = parseInt(this.dValue);
-            // this.dValue=this.dValue.replace(/[\.]/g,'');
             this.$emit('change',this.dValue);
         },
         selectChange(){

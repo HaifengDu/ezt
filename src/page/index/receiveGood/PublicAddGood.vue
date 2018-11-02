@@ -38,30 +38,31 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'" class="good-item-sort edit">
+                  <span v-if="materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'||(materialLimit.billsPageType != 'supplierReturn'&&logistics.isAnyReturn)" 
+                    class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
-                    <!--订货手工制单价格 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                    <!--订货手工制单价格、退货价格 不可编辑-->  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
                 </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
                  <span class="good-remark" @click="handlerRemark(item)">
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
-                 <!-- 收藏图标 -->
-                 <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
+                 <!-- 库存初始化、退货 收藏图标 -->
+                 <span v-if="materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
-                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'" 
+                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)" 
                 class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                  </span>
-                <span v-if="materialLimit.billsPageType =='supplierReturn'" 
+                <span v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn" 
                 class="good-stock ezt-titleColor2">
-                  可退：{{item.stock||0}}
+                  可退：{{item.returnNum||0}}
                  </span>
                  <span class="good-number">
                     <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
@@ -177,11 +178,11 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+                  <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType != 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
                     <!--订货手工制单价格 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
@@ -222,7 +223,7 @@
               <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
             </span>
             <!--默认显示价格 可编辑-->  
-            <span v-if="materialLimit.billsPageType!='initStock'" class="good-item-sort edit">
+            <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType != 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
             </span>
           </div>
@@ -232,7 +233,7 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="materialLimit.billsPageType != 'initStock'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
+            <span v-if="materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span class="good-number">              
@@ -276,7 +277,7 @@ import _ from "lodash";
    computed:{
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',
-      //  'addBillInfo':'publicAddGood/addBillInfo',
+       'logistics':'logistics',//物流设置
      }),
    },
    methods:{
@@ -295,6 +296,7 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
+  private logistics:{};
   private isRemark:boolean=false;//编辑备注
   // private useObj:any={
   //   GoodPriceIsEdit:"",
@@ -359,6 +361,7 @@ export default class AddGood extends Vue{
             id:1,
             name:"草鱼半成品",
             price:12,
+            returnNum:2,
             amt:10,
             utilname:"KG",
             unit:"箱",
@@ -380,6 +383,7 @@ export default class AddGood extends Vue{
             name:"海参",
             price:9,
             amt:8,
+            returnNum:0,
             num:0,
             utilname:"KG",
             unit:"箱",
@@ -394,6 +398,7 @@ export default class AddGood extends Vue{
             price:3,
             amt:4,
             num:0,
+            returnNum:8,
             utilname:"KG",
             unit:"斤",
             roundValue:{//可直拨的数据
@@ -410,6 +415,7 @@ export default class AddGood extends Vue{
             name:"牛肉",
             price:15,
             amt:22,
+            returnNum:2,
             utilname:"KG",
             unit:"斤",
             roundValue:{//可直拨的数据
@@ -511,6 +517,12 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
+    if(this.materialLimit.billsPageType == 'supplierReturn'){
+      if(item.num>item.returnNum){
+        item.num = item.num-1;
+        return false;
+      }
+    }
     if(item.num>0){
       //新增
       var ret = this.selectedGoodList.find((value:any)=>{

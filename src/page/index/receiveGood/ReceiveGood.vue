@@ -210,7 +210,7 @@ export default class ReceiveGood extends Vue{
           warehouse:'01',
           remark:'在途中',         
         }
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
+        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))//配、直、调、采
         this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
         this.$router.push('/comfirmAccept');
       }else if(this.tabList.getActive().status==3){

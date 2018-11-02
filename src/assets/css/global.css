@@ -176,7 +176,7 @@ CLEARFIX ：清除浮动
 
 ::-webkit-scrollbar { /*滚动条整体部分*/
   width: 0px;
-  height: 8px;
+  height: 0px;
 }
 
 ::-webkit-scrollbar-track { /* 滚动条的轨道（里面装有Thumb）*/

@@ -39,14 +39,14 @@
                     </li>
                     <li class="select-list">
                         <span class="title-search-name" :class="[{'is-required':isRequired}]">源单号：</span>
-                        <span class="title-select-name item-select">
+                        <span class="title-select-name item-select" @click="sourceBillData.isSourceVisible=!sourceBillData.isSourceVisible">
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.sourceBillno" 
                                 @change="handlerBillType('sourceBillno','您已维护物料信息，如调整源单号，须重新选择物料。')"
                                 :class="[{'selectError':billFiles[3].sourceBillno}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <!--（1）可退数量为0，隐藏（2）有待处理的退货信息，样式 置灰（3）点击置灰选项 弹框 提示-->
+                                <!-- （1）可退数量为0，隐藏（2）有待处理的退货信息，样式 置灰（3）点击置灰选项 弹框 提示 -->
                                 <option v-if="item.returnNum!=0" :class="[{'disNum':item.noHand!=0}]" :value="item"
-                                 :key="index" v-for="(item,index) in sourceBillList">{{item.sourceBillName}}</option>
+                                 :key="index" v-for="(item,index) in sourceBillList"><span v-if="item.noHand!=0">禁用</span>{{item.sourceBillName}}</option>
                             </select>
                         </span>
                     </li>
@@ -128,6 +128,9 @@ import CACHE_KEY from '../../../constans/cacheKey'
     }
 })
 export default class ReturnGood extends Vue{
+    // $refs:{
+    //     picker1: HTMLSelectElement
+    // }
     private cache = CachePocily.getInstance();
     private service : SupplierReturnService;
     /**
@@ -158,7 +161,24 @@ export default class ReturnGood extends Vue{
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise;//store中给selectedGood赋值
     private logistics:{};
-    private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
+    /**
+     * 源单号 picker中value值
+     */
+    private :any[]=[{}];
+    private values:[{}];
+    /**
+     * 自定义select 
+     */
+    private sourceBillData:any = {
+        isSourceVisible:false,
+        sourceList:[{
+            values:['']
+        }],
+        values:['']
+    };
+    private addBeforeBillInfo:any = {
+        sourceBillnoName:''
+    };//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
      /**
      * 枚举 表单字段
      */
@@ -169,14 +189,20 @@ export default class ReturnGood extends Vue{
         {id:"sourceBillno",msg:"请选择源单号",sourceBillno:false}     
     ];
     mounted(){
-        if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){
-            this.sourceBillList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SOURCERBILLLIST));
-        }else{
-            this.getSourceBillList();
-        }
-    }
+      
+    }  
     created(){
         this.service = SupplierReturnService.getInstance();
+          if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){
+            this.sourceBillList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SOURCERBILLLIST));
+
+            this.sourceBillList.forEach((item,index)=>{
+                this.sourceBillData.values.push(item.sourceBillName);            
+            })
+            this.$set(this.sourceBillData.sourceList[0],'values',this.sourceBillData.values);
+        }else{
+            this.getSourceBillList();
+        } 
         this.orderType = [{//单据类型下拉数据    
             name:"合同采购单",
             type:"q"
@@ -213,12 +239,27 @@ export default class ReturnGood extends Vue{
     private set isRequired(isRequired){
         this._isRequired == isRequired;
     }
+    private get dataList(){
+        let dateSlots = [
+            {
+                flex:1,
+                values:this.sourceBillList,
+                className:'slot1',
+                textAlign:'center'
+            }
+        ]
+        return dateSlots
+    }
     /**
      * 获取 源单号列表
      */
     private getSourceBillList(){
         this.service.getSourceBillList().then(res=>{
             this.sourceBillList = res.data.data;
+            this.sourceBillList.forEach((item,index)=>{
+                this.sourceBillData.values.push(item.sourceBillName);            
+            })
+            this.$set(this.sourceBillData.sourceList[0],'values',this.sourceBillData.values);
         },err=>{
             this.$toasted.show(err.message);
         })
@@ -295,8 +336,7 @@ export default class ReturnGood extends Vue{
                     this.changeSourceBill(val);
                 }else{
                     this.addBeforeBillInfo[val] = this.addBillInfo[val];
-                }
-               
+                }               
             }else{
                 _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
                 if(!_this.isRequired){//退货类型为配送退货 源单号必填
@@ -320,12 +360,13 @@ export default class ReturnGood extends Vue{
         let _this = this;     
         this.$vux.confirm.show({
             onConfirm(){
-
+            },
+            onCancel(){
+                _this.addBillInfo.sourceBillno=_this.addBeforeBillInfo.sourceBillno;
             },
             confirmText:'查看',
             content:"该收货单有待处理的退货单："+ _this.addBillInfo.sourceBillno.billNo
         })
-        this.addBillInfo[val] = this.addBeforeBillInfo[val];
     }
       /**
      * 提交
@@ -549,7 +590,7 @@ export default class ReturnGood extends Vue{
    
     //物料明细结束 
     .ezt-select .disNum{
-        background: #ccc;
+        color: red;
         border-bottom: 1px solid #000;
     }
 </style>

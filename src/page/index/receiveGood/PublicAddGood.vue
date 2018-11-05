@@ -1,4 +1,4 @@
-/* <!--选择物品-->
+ <!--选择物品-->
 <template>
   <div class="ezt-page-con">
     <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch">
@@ -38,7 +38,7 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'||(materialLimit.billsPageType != 'supplierReturn'&&logistics.isAnyReturn)" 
+                  <span v-if="materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" 
                     class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
@@ -178,7 +178,7 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                   <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType != 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
+                  <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>
                     <!--订货手工制单价格 不可编辑-->  
@@ -1020,4 +1020,3 @@ private changeDirect(item:any){
 }
 
 </style>
- */

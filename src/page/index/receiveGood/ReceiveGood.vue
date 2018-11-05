@@ -245,22 +245,22 @@ export default class ReceiveGood extends Vue{
     private loadMore() {
       if(!this.allLoaded){
         this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });
-      this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }
-        this.goodList=this.goodList.concat(res.data.data);
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })
+        this.$vux.loading.show({
+          text:'加载中..'
+        });
+        this.pager.setNext();
+        this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+          if(this.pager.getPage().limit>res.data.data.length){
+            this.allLoaded=true;
+          }
+          this.goodList=this.goodList.concat(res.data.data);
+          setTimeout(()=>{
+            this.$vux.loading.hide();
+            this.hideMask();
+          },500); 
+        },err=>{
+            this.$toasted.show(err.message);
+        })
       }     
     }
     //获取列表

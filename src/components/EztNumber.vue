@@ -30,6 +30,14 @@ import { parse } from 'querystring';
        type:String,
        disabled:Boolean,
        placeholder:String,
+       /**
+        * 最大可退数量或者库存量
+        */
+       returnMax:Number,
+       /**
+        * 是否要限制增加的数量
+        */
+       limitNum:Boolean,
     },
     computed:{
         minusDisabled:{
@@ -76,8 +84,16 @@ import { parse } from 'querystring';
         },
         handlerPlus(){
             //加
-            this.dValue=this.dValue+1;
-            this.minusDisabled=false;
+            if(this.limitNum){
+                if(this.dValue<this.returnMax){
+                    this.dValue=this.dValue+1;
+                    this.minusDisabled=false;
+                }
+            }else{
+                this.dValue=this.dValue+1;
+                this.minusDisabled=false;
+            }
+           
             this.pubChange();
         },
         handlerMinus(){

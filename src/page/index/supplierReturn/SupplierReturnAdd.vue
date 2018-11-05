@@ -39,7 +39,7 @@
                     </li>
                     <li class="select-list">
                         <span class="title-search-name" :class="[{'is-required':isRequired}]">源单号：</span>
-                        <span class="title-select-name item-select" @click="sourceBillData.isSourceVisible=!sourceBillData.isSourceVisible">
+                        <span class="title-select-name item-select">
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.sourceBillno" 
                                 @change="handlerBillType('sourceBillno','您已维护物料信息，如调整源单号，须重新选择物料。')"
                                 :class="[{'selectError':billFiles[3].sourceBillno}]">
@@ -160,7 +160,7 @@ export default class ReturnGood extends Vue{
     private _isRequired:boolean;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise;//store中给selectedGood赋值
-    private logistics:{};
+    private logistics:any;
     /**
      * 源单号 picker中value值
      */
@@ -234,7 +234,8 @@ export default class ReturnGood extends Vue{
      * 退货类型为配送退货，必填源单号
      */
     private get isRequired(){
-        return this.addBillInfo.returnType == 'store';
+        return this.addBillInfo.returnType == 'store'||
+        (this.addBillInfo.returnType == 'supplier' && this.logistics.isAnyReturn);
     }
     private set isRequired(isRequired){
         this._isRequired == isRequired;

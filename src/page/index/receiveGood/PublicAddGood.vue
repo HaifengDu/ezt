@@ -65,7 +65,16 @@
                   可退：{{item.returnNum||0}}
                  </span>
                  <span class="good-number">
-                    <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                   <!-- 库存数量限制 -->
+                    <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
+                      materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)"
+                      :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                    <!-- 可退数量限制  -->
+                    <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
+                      :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                    <!-- 正常数量选择 -->
+                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!='spilledSheet'
+                      &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
                   <div>
@@ -331,19 +340,7 @@ export default class AddGood extends Vue{
   created(){ 
    
   }
-  mounted() {     
-    // this.useObj.editPrice = this.$route.params.editPrice; //是否价格可编辑
-    // this.useObj.costType = this.$route.params.costType; //价格与税额区分
-    // debugger
-    // if(this.$route.params.GoodPriceIsEdit){//单据类型（收货价格是否可编辑）订货是否可以编辑
-    //   this.useObj.GoodPriceIsEdit = this.$route.params.GoodPriceIsEdit;
-    // }
-    // if(this.$route.params.GoodPriceOrAmt){//库存初始化 订货方式为金额或者价格显示 
-    //   this.useObj.GoodPriceOrAmt = this.$route.params.GoodPriceOrAmt;
-    // }
-    // if(this.$route.params.allotOrderType){//调拨单据 是否
-    //   this.useObj.allotOrderType = true;
-    // }
+  mounted() {  
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getDataOnce(CACHE_KEY.MATERIAL_LIMIT));
     }
@@ -362,6 +359,7 @@ export default class AddGood extends Vue{
             name:"草鱼半成品",
             price:12,
             returnNum:2,
+            stock:3,
             amt:10,
             utilname:"KG",
             unit:"箱",
@@ -384,6 +382,7 @@ export default class AddGood extends Vue{
             price:9,
             amt:8,
             returnNum:0,
+            stock:2,
             num:0,
             utilname:"KG",
             unit:"箱",
@@ -399,6 +398,7 @@ export default class AddGood extends Vue{
             amt:4,
             num:0,
             returnNum:8,
+            stock:5,
             utilname:"KG",
             unit:"斤",
             roundValue:{//可直拨的数据
@@ -416,6 +416,7 @@ export default class AddGood extends Vue{
             price:15,
             amt:22,
             returnNum:2,
+            stock:8,
             utilname:"KG",
             unit:"斤",
             roundValue:{//可直拨的数据
@@ -511,7 +512,6 @@ export default class AddGood extends Vue{
         item[info]=0;
       }
     }
-    // this.dValue=this.dValue.replace(/[\.]/g,'');
   }
   /**
    * 添加/删除物品数量

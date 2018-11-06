@@ -69,9 +69,9 @@
                           <span class="good-detail-sort">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">
                             <!-- SAAS可编辑数量 -->
-                            收：<input v-if="!InterfaceSysTypeBOH" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
-                            <!-- BOH不可编辑数量 -->
-                            <span v-if="InterfaceSysTypeBOH">{{item.num}}</span>
+                            收：<input v-if="!InterfaceSysTypeBOH&&materialSetting.isModifyActNum" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
+                            <!-- BOH不可编辑数量 SAAS物料参数控制不可编辑数量false为禁止-->
+                            <span v-if="InterfaceSysTypeBOH||(!InterfaceSysTypeBOH&&!materialSetting.isModifyActNum)">{{item.num}}</span>
                           </span>
                       </div>                     
                   </div>
@@ -226,6 +226,7 @@ declare var mobiscroll:any;
       //  'goodList':'receiveGood/goodList'
       selectedGood:"publicAddGood/selectedGood",
       'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
+      materialSetting:'materialSetting',
      })
    },
    methods:{

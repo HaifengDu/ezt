@@ -8,6 +8,10 @@
     <div class="ezt-main">   
       <div class="ezt-add-content">
         <ul>
+          <div v-if="!details" class="done-none">
+            <div></div>
+            <span>未查到符合条件的记录</span>
+          </div>
           <li v-for="(item,index) in details" :key="index">
             <div class="receive-dc-list">
               <div class="receive-icon-title">

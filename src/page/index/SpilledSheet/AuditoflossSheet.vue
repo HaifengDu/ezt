@@ -285,13 +285,11 @@ export default class SpilledSheet extends Vue{
           _this.addBillInfo={},
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
-          _this.cache.clear()
           _this.$router.push('/spilledSheet');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"
       })
     }else{
-      this.cache.clear()
       this.$router.push('/spilledSheet');
     }
   } 
@@ -375,7 +373,7 @@ input.ezt-smart{
         letter-spacing: 0;
         padding: 0px 0px 5px;
     }
-    .ezt-detail-good{
+    .ezt-detail-good{    
       display: flex;
       flex-direction: column;
       padding-bottom: 10px;

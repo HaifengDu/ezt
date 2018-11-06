@@ -74,7 +74,7 @@
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 审核</a>   
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
         </div>
       </ezt-footer>
@@ -114,7 +114,11 @@ export default class leadbackMaterial extends Vue{
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-  private addBillInfo:any={};
+  private addBillInfo:any={
+    materialwarehouse:"",
+    warehouse:"",
+    remark:"",
+  };
   /**
    * 数据类型
    */
@@ -189,7 +193,7 @@ export default class leadbackMaterial extends Vue{
     })
   }
   /**
-   *  领料单 提交
+   *  领料单 提交   
    */
   private saveReceive(){
     for(let i=0;i<this.billFiles.length;i++){
@@ -215,7 +219,7 @@ export default class leadbackMaterial extends Vue{
    * 领料单 审核
    */
   private confirmReceive(){
-    let _this = this;
+     let _this = this;
      for(let i=0;i<this.billFiles.length;i++){
       let item = this.billFiles[i];
       if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
@@ -251,6 +255,15 @@ export default class leadbackMaterial extends Vue{
       cancelText:"审核不通过",
       hideOnBlur:true
     })
+    // this.$vux.confirm.show({
+    //   onCancel () {
+    //     console.log(this) 
+    //   },
+    //   onConfirm () {      
+        
+    //   },
+    //   content:"物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库，或调整物料的仓库分配关系后再操作。"
+    // })
   }    
   /**
    * 选择物料

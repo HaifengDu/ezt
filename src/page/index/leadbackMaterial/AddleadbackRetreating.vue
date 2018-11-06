@@ -74,7 +74,7 @@
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 审核</a>   
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
         </div>
       </ezt-footer>
@@ -114,7 +114,11 @@ export default class leadbackMaterial extends Vue{
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-  private addBillInfo:any={};
+  private addBillInfo:any={
+    materialwarehouse:"",
+    warehouse:"",
+    remark:""
+  };
   /**
    * 数据类型
    */

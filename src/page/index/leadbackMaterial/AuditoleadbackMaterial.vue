@@ -76,13 +76,13 @@
             <b>数量</b><span>{{Total.num}}</span>，
             <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
           </div>
-          <div class="ezt-foot-button" v-if="this.$route.query.pageType == 'requisition'">>
+          <div class="ezt-foot-button" v-if="this.$route.query.pageType == 'requisition'">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 审核</a>   
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
           </div>  
           <div class="ezt-foot-button" v-if="this.$route.query.pageType == 'retreating'">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive01">提交1</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive01"> 审核1</a>   
+            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive01"> 提交并审核1</a>   
           </div>  
         </div>
       </ezt-footer>
@@ -138,7 +138,7 @@ export default class leadbackMaterial extends Vue{
           this.title = '领料单审核'
     }
     if(this.$route.query.pageType == 'retreating'){
-      this.title = '退料单审核'
+          this.title = '退料单审核'
     }
     if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO));
@@ -307,21 +307,19 @@ private saveReceive01(){
     let _this = this;
     if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
       this.$vux.confirm.show({
-        // 组件除show外的属性
         onCancel () {
-          console.log(this) // 非当前 vm
+          console.log(this) 
         },
         onConfirm () {
           _this.addBillInfo={},
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
-          _this.cache.clear()
+          // _this.cache.clear()
           _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"
       })
     }else{
-      this.cache.clear()
       this.$router.push('/leadbackMaterial');
     }
   } 
@@ -359,7 +357,6 @@ input.ezt-smart{
       flex-direction: row;
     }
     .good-detail-l>div>span{
-      // padding: 5px 0px;
       align-items: baseline;
       flex: 1;
     }

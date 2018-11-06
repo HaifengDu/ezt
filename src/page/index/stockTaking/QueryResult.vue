@@ -12,8 +12,8 @@
               <div class="librarytype">  
                 <div v-if="!queryResult" class="done-none">
                   <div></div>
-                  <span>目前还没有任何订单</span>
-                </div> 
+                  <span>未查到符合条件的记录</span>
+                </div>
                 <ul v-if="queryResult">   
                   <li :key="index" v-for="(item,index) in queryResult" >      
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>

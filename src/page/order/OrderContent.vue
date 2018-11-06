@@ -4,7 +4,7 @@
    <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="false" title="订单">
+    <ezt-header :back="false" title="订货">
       <div slot="action">
          <div class="add">
            <span class='ezt-action-point' @click="addPage">
@@ -86,7 +86,7 @@
     </ezt-footer>
   </div>
   <!-- 查询订货 -->  
-  <div v-show="isSearch" class="search-dialog">
+  <div v-show="isSearch" class="search-dialog orderList">
       <ul class="ezt-title-search">
        <li class="select-list">
         <span class="title-search-name ">订货类型：</span>
@@ -119,13 +119,12 @@
         <span class="title-search-name">业务日期：</span>
         <span>
           <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
-            <span>至</span>
+            <span>至</span>   
           <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
       <li>
-        <span class="title-search-name">单据或物料：</span>
-        <input type="text" class="ezt-middle" v-model="searchParam.materiel">
+        <x-input title="单据或物料：" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>

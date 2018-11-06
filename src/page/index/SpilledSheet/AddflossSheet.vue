@@ -27,7 +27,7 @@
                 <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
               </select>
             </span>
-          </li>
+          </li>    
           <li class="select-list">
             <span class="title-search-name is-required">损溢原因：</span>
             <span class="title-select-name item-select">
@@ -124,7 +124,12 @@ export default class SpilledSheet extends Vue{
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-  private addBillInfo:any={};
+  private addBillInfo:any={
+    billType:"",
+    warehouse:"",
+    causeofloss:"",
+    remark:"",
+  };
   private orderType:any[] = [{//单据类型下拉数据    
     name:"报损",
     type:"q"
@@ -214,7 +219,6 @@ export default class SpilledSheet extends Vue{
     } 
     this.addBillInfo={},
     this.setSelectedGood([]);
-    this.cache.clear();
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
     this.$router.push("/spilledSheet");
@@ -250,7 +254,6 @@ export default class SpilledSheet extends Vue{
         _this.addBillInfo={},
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
-        _this.cache.clear();
         _this.$toasted.success("审核成功！");
         _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
       },
@@ -323,7 +326,6 @@ export default class SpilledSheet extends Vue{
           _this.addBillInfo={},
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
-          _this.cache.clear();
           _this.$router.push('/spilledSheet');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"

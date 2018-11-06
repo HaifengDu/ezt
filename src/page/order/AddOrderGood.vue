@@ -116,7 +116,9 @@
                                 </div>                 
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="delAction(item)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </div> 
                     </li>
                 </ul>   
             </div>
@@ -721,7 +723,6 @@ export default class Order extends Vue{
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
     width: 50px;
     height: 50px;
     text-align: center;

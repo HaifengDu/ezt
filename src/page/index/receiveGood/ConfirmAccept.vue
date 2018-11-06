@@ -225,7 +225,7 @@ declare var mobiscroll:any;
      ...mapGetters({
       //  'goodList':'receiveGood/goodList'
       selectedGood:"publicAddGood/selectedGood",
-      'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
+      InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
       materialSetting:'materialSetting',
      })
    },

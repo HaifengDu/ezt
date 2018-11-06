@@ -148,7 +148,7 @@ export default class SpilledSheet extends Vue{
   created() {  
     this.service = SpilledSheetService.getInstance();
     if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -225,7 +225,7 @@ export default class SpilledSheet extends Vue{
   }
   /**
    * 损溢单 审核
-   */
+   */  
   private confirmReceive(){
      let _this = this;
      for(let i=0;i<this.billFiles.length;i++){

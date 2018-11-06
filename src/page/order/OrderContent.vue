@@ -37,7 +37,7 @@
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单>></span>
+                <span class="receive-status" @click.stop="morelist('add',item)" v-if="(tabList.getActive().status==2 || tabList.getActive().status==3)&&!InterfaceSysTypeBOH">再来一单>></span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -166,7 +166,7 @@ import CACHE_KEY from '../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-
+      InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
      })
    },
    methods:{
@@ -176,6 +176,7 @@ import CACHE_KEY from '../../constans/cacheKey'
    }
 })
 export default class OrderGoods extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private pager:Pager;
     private service: OrderGoodsService;
@@ -208,20 +209,30 @@ export default class OrderGoods extends Vue{
         name:"待审核",
         status:1,
         active:true,
-      },{
-        name:"待支付",
-        status:2,
-        active:false
-      },{
-        name:"已完成",
-        status:3,
-        active:false
       });
-       this.service = OrderGoodsService.getInstance();
-       this.pager= new Pager();
-       this.pager.setLimit(20);
-       this.getList();  
-       this.searchParam = {};    
+      // SAAS有待支付
+      if(!this.InterfaceSysTypeBOH){
+        this.tabList.push({
+          name:"待支付",
+          status:2,
+          active:false
+        },{
+          name:"已完成",
+          status:3,
+          active:false
+        })
+      }else{//BOH没有待支付
+        this.tabList.push({          
+          name:"已完成",
+          status:3,
+          active:false      
+        })
+      }
+      this.service = OrderGoodsService.getInstance();
+      this.pager= new Pager();
+      this.pager.setLimit(20);
+      this.getList();  
+      this.searchParam = {};    
     }
     mounted(){      
       this.getList();

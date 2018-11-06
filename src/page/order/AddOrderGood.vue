@@ -28,7 +28,8 @@
                             <ezt-canlendar ref="arriveDate" v-model="addBillInfo.arriveDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :min="addBillInfo.orderDate"
                              class="input-canlendar" :defaultValue="addBillInfo.arriveDate" @change="selectArriveChange"></ezt-canlendar>                                                       
                         </span>
-                        <span>
+                        <!--BOH不支持 时分-->
+                        <span v-if="!InterfaceSysTypeBOH">
                             <span class="title-select-name item-select select-time">
                                 <select class="ezt-select" v-model="containTime.newHour" @change="handlerNewHour">
                                     <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
@@ -41,7 +42,8 @@
                            </span>
                         </span>
                     </li>
-                    <li v-if="!isShowObj.isorderType">
+                    <!--SAAS环境 并且不是再来一单-->
+                    <li v-if="!isShowObj.isorderType&&!InterfaceSysTypeBOH">
                         <span class="title-search-name is-required">要货方式：</span>
 
                          <button-tab v-model="addBillInfo.orderType" >
@@ -176,7 +178,8 @@ import {EGoodType} from '../../enum/EGoodType';
         ...mapGetters({
             'user':'user',
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            'systemParamSetting':"systemParamSetting"
+            'systemParamSetting':"systemParamSetting",//系统设置
+            InterfaceSysTypeBOH:'InterfaceSysTypeBOH',//后台接口是否为BOH
         })
     },
     methods:{
@@ -186,6 +189,7 @@ import {EGoodType} from '../../enum/EGoodType';
     }
 })
 export default class Order extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private user:IUser;
     private service: OrderGoodsService;
@@ -566,6 +570,7 @@ export default class Order extends Vue{
             content:'确认审核该单据？',
             confirmText:"审核通过",
             cancelText:"审核不通过",
+            showCancelButton:!_this.InterfaceSysTypeBOH,
             hideOnBlur:true
         })
         

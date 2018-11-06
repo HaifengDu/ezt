@@ -5,7 +5,7 @@
        <div slot="action">
        </div>    
     </ezt-header>    
-    <div class="ezt-main" :class="{'no-pament':!isPayMent}"> 
+    <div class="ezt-main" :class="{'no-pament':!isPayMent||InterfaceSysTypeBOH}"> 
         <div class="ezt-backcolor"></div>
          <div class="ezt-detail-cot">
             <!-- 单据信息 -->
@@ -70,7 +70,7 @@
             <b>数量</b><span>{{Total.num}}</span>，
             <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
         </div>
-        <div class="ezt-foot-button" v-if="isPayMent">
+        <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
             <a href="javascript:(0)" class="ezt-foot-sub">支付</a>  
         </div>  
         </div>
@@ -95,7 +95,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-
+        InterfaceSysTypeBOH:"InterfaceSysTypeBOH"
      })
     
    },
@@ -105,6 +105,7 @@ declare var mobiscroll:any;
    }
 })
 export default class OrderGoods extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private service: OrderGoodsService;
     private details:any[] = [];  //物料明细
     private isPayMent:boolean=false; //是否有支付按钮

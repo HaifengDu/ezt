@@ -113,6 +113,7 @@ import ObjectHelper from '../../common/objectHelper'
     computed:{
         ...mapGetters({    
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+            InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
         })
     },
     methods:{
@@ -122,6 +123,7 @@ import ObjectHelper from '../../common/objectHelper'
     }
 })  
 export default class Order extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private service: OrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
@@ -218,6 +220,7 @@ export default class Order extends Vue{
             content:'确认审核该单据？',
             confirmText:"审核通过",
             cancelText:"审核不通过",
+            showCancelButton:!_this.InterfaceSysTypeBOH,
             hideOnBlur:true
         })
     }

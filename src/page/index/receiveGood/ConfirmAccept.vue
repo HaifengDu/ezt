@@ -541,7 +541,7 @@ export default class ReceiveGood extends Vue{
           let _this = this;
            this.$vux.confirm.show({
             // 组件除show外的属性
-            onCancel () {//审核不通过
+            onCancel () {//入库失败
               _this.addBillInfo.warehouse = _this.addBeforeBillInfo.warehouse;
             },
             content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。',

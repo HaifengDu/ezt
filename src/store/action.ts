@@ -12,3 +12,9 @@ export const setSystemParam:Action<IRootState,IRootState> = ({commit},systemPara
 export const setLogistics:Action<IRootState,IRootState> = ({commit},logistics:object) =>{
     commit(RootType.SET_LOGISTICS,logistics);
 };
+export const setInterfaceSysTypeBOH:Action<IRootState,IRootState> = ({commit},InterfaceSysTypeBOH:Boolean) =>{
+    commit(RootType.SET_INTERFACESYSTYPEBOH,InterfaceSysTypeBOH);
+};
+export const setMaterialSetting:Action<IRootState,IRootState> = ({commit},materialSetting:object) =>{
+    commit(RootType.SET_MATERIALSETTING,materialSetting);
+};

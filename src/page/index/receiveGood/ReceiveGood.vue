@@ -8,7 +8,7 @@
     <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
        <div slot="action">
          <div>
-           <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')">
+           <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')" v-if="!InterfaceSysTypeBOH">
             <i class="fa fa-plus" aria-hidden="true" ></i>
            </span>
           <span class='ezt-action-point' @click="searchTitle">
@@ -96,11 +96,15 @@
       </li>
       <li>
         <span class="title-search-name">源单号：</span>
-        <input type="text" class="ezt-middle">
+        <input type="text" class="ezt-middle" placeholder="请输入源单号">
       </li>
-        <li>
-        <span class="title-search-name">单据或物料：</span>
-        <input type="text" class="ezt-middle">
+      <li>
+        <span class="title-search-name">单据：</span>
+        <input type="text" class="ezt-middle" placeholder="请输入单据号">
+      </li>
+      <li>
+        <span class="title-search-name">物料：</span>
+        <input type="text" class="ezt-middle" placeholder="请输入物料名称">
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -130,6 +134,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
+       'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
      })
    },
   //  methods:{
@@ -139,161 +144,162 @@ import CACHE_KEY from '../../../constans/cacheKey'
   //  }
 })
 export default class ReceiveGood extends Vue{
-    private cache = CachePocily.getInstance();
-    // private selected:String = 'deliver';
-    private service: ReceiveGoodService;
-    private pager:Pager;
-    private getGoodList:INoopPromise
-    private addMaskClickListener:(...args:any[])=>void;
-    private hideMask:()=>void;
-    private showMask:()=>void;
-    // private updateUser:INoop;
-    /**
-     * 列表页list数据
-     */
-    private goodList:any[] = [];
-    /**
-     * 数据是否已经全部加载完
-     */
-    private allLoaded:boolean= false;
-    /**
-     * 搜索显示
-     */
-    private isSearch:boolean= false; 
-    /**
-     * 搜索时的查询条件
-     */
-    private searchParam:any={};
-    private tabList:TabList = new TabList();
-    private orderType:any=[{
-      name:'仓库1',
-      id:'01'
-    }]
-    created() {
-      this.tabList.push({
-        name:"待收货",
-        status:1,
-        active:true,
-      },{
-        name:"已完成",
-        status:3,
-        active:false
-      });
-      this.pager = new Pager().setLimit(20)
-      this.service = ReceiveGoodService.getInstance();
-    }
-
-    mounted(){      
-      this.getList();
-      this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
-        this.isSearch=false; 
-        this.hideMask();
-      }); 
-      if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
-       this.tabList.TabList.forEach((item,index)=>{
-         item.active = item.name == this.$route.params.purStatus;
-       })
-      } 
-    }
-    //详情页跳转
-    private toPage(item:any,info:string){
-      let confirmGoodInfo = {};
-      let detailList = {};
-      if(info){
-         this.$router.push(info);
-         return false;
-      }
-      if(this.tabList.getActive().status==1){
-        confirmGoodInfo={
-          bill_no:item.bill_no,
-          billType:'合同采购',
-          warehouse:'01',
-          remark:'在途中',         
-        }
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))//配、直、调、采
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
-        this.$router.push('/comfirmAccept');
-      }else if(this.tabList.getActive().status==3){
-        detailList = {
-          dc_name:"配送中心-8店",
-          bill_no:"000111aab",         
-        }
-        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
-        this.$router.push('/checkDetail');
-      }
-      
-    }
+  private InterfaceSysTypeBOH:boolean;
+  private cache = CachePocily.getInstance();
+  // private selected:String = 'deliver';
+  private service: ReceiveGoodService;
+  private pager:Pager;
+  private getGoodList:INoopPromise
+  private addMaskClickListener:(...args:any[])=>void;
+  private hideMask:()=>void;
+  private showMask:()=>void;
+  // private updateUser:INoop;
   /**
-   * computed demo
+   * 列表页list数据
    */
-    private get Total(){
-      return this.goodList.reduce((ori,item)=>{
-        return ori.uprice+item;
-      },0);
+  private goodList:any[] = [];
+  /**
+   * 数据是否已经全部加载完
+   */
+  private allLoaded:boolean= false;
+  /**
+   * 搜索显示
+   */
+  private isSearch:boolean= false; 
+  /**
+   * 搜索时的查询条件
+   */
+  private searchParam:any={};
+  private tabList:TabList = new TabList();
+  private orderType:any=[{
+    name:'仓库1',
+    id:'01'
+  }]
+  created() {
+    this.tabList.push({
+      name:"待收货",
+      status:1,
+      active:true,
+    },{
+      name:"已完成",
+      status:3,
+      active:false
+    });
+    this.pager = new Pager().setLimit(20)
+    this.service = ReceiveGoodService.getInstance();
+  }
+
+  mounted(){      
+    this.getList();
+    this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
+      this.isSearch=false; 
+      this.hideMask();
+    }); 
+    if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
+      this.tabList.TabList.forEach((item,index)=>{
+        item.active = item.name == this.$route.params.purStatus;
+      })
+    } 
+  }
+  //详情页跳转
+  private toPage(item:any,info:string){
+    let confirmGoodInfo = {};
+    let detailList = {};
+    if(info){
+        this.$router.push(info);
+        return false;
     }
-    private get billStatus(){
-      return this.tabList.getActive().status==1?'待审核':'已完成';
+    if(this.tabList.getActive().status==1){
+      confirmGoodInfo={
+        bill_no:item.bill_no,
+        billType:'合同采购',
+        warehouse:'01',
+        remark:'在途中',         
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))//配、直、调、采
+      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
+      this.$router.push('/comfirmAccept');
+    }else if(this.tabList.getActive().status==3){
+      detailList = {
+        dc_name:"配送中心-8店",
+        bill_no:"000111aab",         
+      }
+      this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
+      this.$router.push('/checkDetail');
     }
-    private tabClick(index:number){
-      this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
-      this.pager.resetStart();//分页加载还原pageNum值
-      this.getList();     
-    }
-    //下拉加载更多
-    private loadMore() {
-      if(!this.allLoaded){
-        this.showMask();
-        this.$vux.loading.show({
-          text:'加载中..'
-        });
-        this.pager.setNext();
-        this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-          if(this.pager.getPage().limit>res.data.data.length){
-            this.allLoaded=true;
-          }
-          this.goodList=this.goodList.concat(res.data.data);
-          setTimeout(()=>{
-            this.$vux.loading.hide();
-            this.hideMask();
-          },500); 
-        },err=>{
-            this.$toasted.show(err.message);
-        })
-      }     
-    }
-    //获取列表
-    private getList(){
-      const status = this.tabList.getActive().status;
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
-        this.showMask();
-        this.$vux.loading.show({
-          text: '加载中...'
-          });
-        this.goodList=res.data.data;
+    
+  }
+/**
+ * computed demo
+ */
+  private get Total(){
+    return this.goodList.reduce((ori,item)=>{
+      return ori.uprice+item;
+    },0);
+  }
+  private get billStatus(){
+    return this.tabList.getActive().status==1?'待审核':'已完成';
+  }
+  private tabClick(index:number){
+    this.tabList.setActive(index);
+    this.allLoaded=false;
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+    this.pager.resetStart();//分页加载还原pageNum值
+    this.getList();     
+  }
+  //下拉加载更多
+  private loadMore() {
+    if(!this.allLoaded){
+      this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setNext();
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+        if(this.pager.getPage().limit>res.data.data.length){
+          this.allLoaded=true;
+        }
+        this.goodList=this.goodList.concat(res.data.data);
         setTimeout(()=>{
           this.$vux.loading.hide();
           this.hideMask();
-        },400); 
-        },err=>{
+        },500); 
+      },err=>{
           this.$toasted.show(err.message);
-      });
-    }
-    //搜索选择的条件显示/隐藏
-    private searchTitle(){
-      this.isSearch = !this.isSearch;
-      this.isSearch?this.showMask():this.hideMask();
-    }
-    private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
-      this.$router.push('/searchReceiveGood');
-    }  
-    private goBack(){
-      this.$router.push("/");
-    } 
+      })
+    }     
+  }
+  //获取列表
+  private getList(){
+    const status = this.tabList.getActive().status;
+    this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+      this.showMask();
+      this.$vux.loading.show({
+        text: '加载中...'
+        });
+      this.goodList=res.data.data;
+      setTimeout(()=>{
+        this.$vux.loading.hide();
+        this.hideMask();
+      },400); 
+      },err=>{
+        this.$toasted.show(err.message);
+    });
+  }
+  //搜索选择的条件显示/隐藏
+  private searchTitle(){
+    this.isSearch = !this.isSearch;
+    this.isSearch?this.showMask():this.hideMask();
+  }
+  private toSearch(){
+    this.isSearch = false;
+    this.hideMask();
+    this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
+    this.$router.push('/searchReceiveGood');
+  }  
+  private goBack(){
+    this.$router.push("/");
+  } 
 }
 </script>
 

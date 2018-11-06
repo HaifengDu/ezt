@@ -63,6 +63,8 @@ export class LoginService extends BaseService{
             user.store_id = res.data.store_id;
             this.cache.save(cacheKey.USER_MODEL,JSON.stringify(user));
             store.commit(RootType.UPDATE_USER,user);
+            // store.commit(RootType.SET_INTERFACESYSTYPE,auth.interface_systype=='BOH')
+            console.log(store.getters.InterfaceSysTypeBOH,'后台接口为BOH')
             this.user = user;
             return Promise.resolve(res);
         });

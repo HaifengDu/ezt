@@ -62,8 +62,7 @@
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
                                     <span class="good-detail-sort" v-if="addBillInfo.costType==0">￥{{item.price}}/{{item.utilname}}</span>
-                                    <span class="good-detail-sort" v-if="addBillInfo.costType==1">￥{{item.amt}}/{{item.utilname}}</span>
-                                    
+                                    <span class="good-detail-sort" v-if="addBillInfo.costType==1">￥{{item.amt}}</span>                                    
                                     <span class="good-detail-sort">数量：{{item.num}}</span>
                                 </div>                     
                             </div>
@@ -110,7 +109,6 @@ import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey';
-import {EGoodType} from '../../../enum/EGoodType';
 @Component({
   computed: {
     ...mapGetters({
@@ -136,7 +134,6 @@ export default class InitStock extends Vue {
     private setSelectedGood: INoopPromise;
     private selectedGood: any[]; //store中selectedGood的值
     private isFirstStore:boolean;
-    private EGoodType = EGoodType;//区分是税额还是价格
     private orderType: any[] = [
         {
             //单据类型下拉数据

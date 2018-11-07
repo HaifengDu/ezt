@@ -64,7 +64,7 @@
                 <span class="title-select-name item-select">
                 <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
                     <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                    <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                 </select>
                 </span>
             </li>
@@ -79,8 +79,12 @@
                 </span>
             </li>
             <li>
-                <span class="title-search-name">单据或物料：</span>
-                <input type="text" class="ezt-middle">
+                <span class="title-search-name">单据：</span>
+                <input type="text" placeholder="请输入单据号" class="ezt-middle">
+            </li>
+            <li>
+                <span class="title-search-name">物料：</span>
+                <input type="text" placeholder="请输入物料名称" class="ezt-middle">
             </li>
             <li>
                 <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -132,6 +136,7 @@ export default class allotment extends Vue{
      * 搜索时的查询条件
      */
     private searchParam:any={
+        warehouse:'',
         startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
         endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
     };

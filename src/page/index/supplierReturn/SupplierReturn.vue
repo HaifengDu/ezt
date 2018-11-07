@@ -88,8 +88,12 @@
           </span>
         </li>
         <li>
-          <span class="title-search-name">单据或物料：</span>
-          <input type="text" class="ezt-middle">
+          <span class="title-search-name">单据：</span>
+          <input type="text" placeholder="请输入单据号" class="ezt-middle">
+        </li>
+        <li>
+            <span class="title-search-name">物料：</span>
+            <input type="text" placeholder="请输入物料名称" class="ezt-middle">
         </li>
         <li>
           <div class="ezt-two-btn" @click="toSearch">查询</div>

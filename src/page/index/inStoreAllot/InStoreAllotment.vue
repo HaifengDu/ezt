@@ -71,9 +71,11 @@
             <li>
                 <span class="title-search-name">调出日期</span>
                 <span>
-                <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+                <ezt-canlendar :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')"
+                    placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
                     <span>至</span>
-                <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+                <ezt-canlendar :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+                    placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
                 </span>
             </li>
             <li>
@@ -129,7 +131,10 @@ export default class allotment extends Vue{
     /**
      * 搜索时的查询条件
      */
-    private searchParam:any={};
+    private searchParam:any={
+        startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+        endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+    };
     private tabList:TabList = new TabList();
 
     /**

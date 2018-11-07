@@ -74,7 +74,7 @@
                     <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
                       :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                     <!-- 正常数量选择 -->
-                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!='spilledSheet'
+                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
                       &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>

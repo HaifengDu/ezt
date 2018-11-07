@@ -205,6 +205,7 @@ export default class Order extends Vue{
     保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
      */
     private addBillInfo:any={
+        orderType:''
     };//store中
     private isShowObj={
         isTemplate:false,//模板导入列表提示框

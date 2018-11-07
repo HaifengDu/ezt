@@ -1,4 +1,4 @@
-  <!--订单模块首页-->
+<!--订单模块首页-->
 <template>
 <div>
    <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
@@ -114,7 +114,7 @@
             <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
           </select>
         </span>
-      </li>
+      </li> 
       <li>   
         <span class="title-search-name">业务日期：</span>
         <span>

@@ -80,11 +80,11 @@
       <li>
         <span class="title-search-name">收货日期：</span>
         <span>
-          <ezt-canlendar :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
-            placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+          <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
+            placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
             <span>至</span>
-          <ezt-canlendar :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
-            placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+            placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
       <li class="select-list">
@@ -205,6 +205,13 @@ export default class ReceiveGood extends Vue{
         item.active = item.name == this.$route.params.purStatus;
       })
     } 
+  }
+  /**
+   * 改变查询的日期
+   */
+  private selectDateChange(val:any){
+    (<any>this.$refs.startDate).setMax(new Date(val));
+    (<any>this.$refs.endDate).setMin(new Date(val));
   }
   //详情页跳转
   private toPage(item:any,info:string){

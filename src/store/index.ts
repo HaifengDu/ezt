@@ -14,7 +14,7 @@ Vue.use(VueX);
 export default new Store<IRootState>({
     state:{   
         user:void 0,
-        InterfaceSysTypeBOH:true,//后台接口是SAAS（false）还是BOH（true） 
+        InterfaceSysTypeBOH:false,//后台接口是SAAS（false）还是BOH（true） 
         systemParamSetting:{},//系统设置参数
         logistics:{//物流设置
             isAnyReturn:true,//是否任意退货

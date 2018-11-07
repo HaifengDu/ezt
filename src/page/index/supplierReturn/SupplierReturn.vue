@@ -193,8 +193,8 @@ export default class ReturnGood extends Vue{
    * 改变查询的日期
    */
   private selectDateChange(val:any){
-      (<any>this.$refs.startDate).setMax(new Date(val));
-      (<any>this.$refs.endDate).setMin(new Date(val));
+    (<any>this.$refs.startDate).setMax(new Date(val));
+    (<any>this.$refs.endDate).setMin(new Date(val));
   }
 
   /**

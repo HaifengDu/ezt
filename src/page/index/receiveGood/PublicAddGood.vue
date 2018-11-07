@@ -13,7 +13,7 @@
     <div class="ezt-main">
       <div class="ezt-add-content">
         <div class="good-type">
-          <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'">
+          <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
           </span>
@@ -51,7 +51,8 @@
                    <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
                  </span>
                  <!-- 库存初始化、退货 收藏图标 -->
-                 <span v-if="materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
+                 <span v-if="materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn'&&!InterfaceSysTypeBOH" 
+                    class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
                  <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
@@ -73,7 +74,7 @@
                     <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
                       :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                     <!-- 正常数量选择 -->
-                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!='spilledSheet'
+                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
                       &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                  </span>
                </div>
@@ -287,6 +288,7 @@ import _ from "lodash";
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',
        'logistics':'logistics',//物流设置
+       InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
      }),
    },
    methods:{
@@ -296,6 +298,7 @@ import _ from "lodash";
    }
 })
 export default class AddGood extends Vue{
+  private InterfaceSysTypeBOH:boolean;
   private addMaskClickListener:(...args:any[])=>void;
   private hideMask:()=>void;
   private showMask:()=>void;

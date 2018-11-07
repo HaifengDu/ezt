@@ -56,7 +56,7 @@
                             <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                         </div>
                     </div>
-                    <div class='good-warehouse'>
+                    <div class='good-warehouse' v-if="!InterfaceSysTypeBOH">
                         <span class="hint-sign ezt-titleColor2">已直拨</span>
                         <div class="warehouse-list">
                             <ul class="warehouse-isDefault ezt-titleColor3" :class="{'active':item.active}" >
@@ -108,7 +108,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      //  'goodList':'receiveGood/goodList'
+      InterfaceSysTypeBOH:"InterfaceSysTypeBOH"
      })
    },
   //  methods:{
@@ -119,6 +119,7 @@ declare var mobiscroll:any;
 })
 //这是调用的文件
 export default class ReceiveGood extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private service: ReceiveGoodService;
     private pager:Pager;

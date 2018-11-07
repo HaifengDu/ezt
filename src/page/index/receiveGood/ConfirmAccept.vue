@@ -52,7 +52,7 @@
         <div class="detail-acount-title">
           物料明细
         </div> 
-        <!-- 可编辑  配送收货、直配收货-->
+        <!-- 可编辑  配送收货、直配收货 【BOH配送收货不允许修改数量】 -->
         <ul v-if="receive_billtype.shou">               
           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
               <div class="ezt-detail-good">
@@ -60,18 +60,22 @@
                       <div>
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
-                          </span>                         
+                          </span> 
+                          <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                          <span class="title-search-name ezt-dense-box">发：{{item.sendNum}}</span>                       
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
                           <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name ezt-dense-box">
-                            收：<input type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
-                            <!-- 收：{{item.num}} -->
+                          <span class="title-search-name ezt-dense-box">   
+                            <!-- SAAS可编辑数量 -->
+                            收：<input v-if="!InterfaceSysTypeBOH&&materialSetting.isModifyActNum" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
+                            <!-- BOH不可编辑数量 SAAS物料参数控制不可编辑数量false为禁止-->
+                            <span v-if="InterfaceSysTypeBOH||(!InterfaceSysTypeBOH&&!materialSetting.isModifyActNum)">{{item.num}}</span>
                           </span>
                       </div>                     
                   </div>
-                  <div class="good-detail-r" v-if="receive_billtype.shou">
+                  <div class="good-detail-r" v-if="receive_billtype.shou&&!InterfaceSysTypeBOH">
                     <span class="icon-dail" @click="handlerDirect(item)">拨</span>
                     <div class="park-input">
                       备注：<input v-model="item.remark" class="ezt-middle" placeholder="请输入备注" type="text"/>
@@ -116,7 +120,7 @@
             </div> 
           </li>                   
         </ul>
-        <!-- 不可编辑    采购入库  允许删除物料-->
+        <!-- 不可编辑    采购入库 允许删除物料-->
         <ul v-if="!receive_billtype.shou&&!receive_billtype.diao">               
           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
               <div class="ezt-detail-good" v-swipeleft="handlerSwipe.bind(this,item,true)" 
@@ -221,6 +225,8 @@ declare var mobiscroll:any;
      ...mapGetters({
       //  'goodList':'receiveGood/goodList'
       selectedGood:"publicAddGood/selectedGood",
+      InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
+      materialSetting:'materialSetting',
      })
    },
    methods:{
@@ -234,6 +240,7 @@ export default class ReceiveGood extends Vue{
     private service: ReceiveGoodService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
+    private InterfaceSysTypeBOH:boolean;
     private hideMask:()=>void;
     private showMask:()=>void;
     // private updateUser:INoop;
@@ -295,6 +302,7 @@ export default class ReceiveGood extends Vue{
             price:'15',
             utilname:'KG',
             num:2,
+            sendNum:5,
             roundValue:{//可直拨的数据
               num: 10,
               numed:0,
@@ -311,6 +319,7 @@ export default class ReceiveGood extends Vue{
               name:'白菜',
               price:'1.5',
               utilname:'KG',
+              sendNum:2,
               num:3,
               roundValue:{//可直拨的数据
                 num: 10,
@@ -532,7 +541,7 @@ export default class ReceiveGood extends Vue{
           let _this = this;
            this.$vux.confirm.show({
             // 组件除show外的属性
-            onCancel () {//审核不通过
+            onCancel () {//入库失败
               _this.addBillInfo.warehouse = _this.addBeforeBillInfo.warehouse;
             },
             content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库。',

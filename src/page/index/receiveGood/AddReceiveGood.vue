@@ -116,6 +116,7 @@ declare var mobiscroll:any;
    computed:{
      ...mapGetters({
         'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+        'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
      })
    },
    methods:{

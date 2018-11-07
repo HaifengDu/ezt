@@ -1,7 +1,8 @@
+import { CachePocily } from "../common/Cache";
+import { cacheKey } from "../config/cacheKey";
+import { ECache } from "../enum/ECache";
+let cache = CachePocily.getInstance(ECache.LocCache);
+let user = cache.getData(cacheKey.USER_MODEL);
 export enum EGoodType{
-    GoodPriceIsEdit="价格不可编辑",//价格是否可以编辑
-    GoodPriceOrAmt="金额",//价格或者金额
-    GoodEditPare="多编辑",//编辑不同
-    GoodCllect="收藏",//是否可收藏
-    GoodShowStock="库存量",//是否显示库存量
+    InterfaceSysTypeBOH=user.interface_systype,//后台接口是SAAS还是BOH
 }

@@ -28,7 +28,8 @@
                             <ezt-canlendar ref="arriveDate" v-model="addBillInfo.arriveDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :min="addBillInfo.orderDate"
                              class="input-canlendar" :defaultValue="addBillInfo.arriveDate" @change="selectArriveChange"></ezt-canlendar>                                                       
                         </span>
-                        <span>
+                        <!--BOH不支持 时分-->
+                        <span v-if="!InterfaceSysTypeBOH">
                             <span class="title-select-name item-select select-time">
                                 <select class="ezt-select" v-model="containTime.newHour" @change="handlerNewHour">
                                     <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
@@ -41,7 +42,8 @@
                            </span>
                         </span>
                     </li>
-                    <li v-if="!isShowObj.isorderType">
+                    <!--SAAS环境 并且不是再来一单-->
+                    <li v-if="!isShowObj.isorderType&&!InterfaceSysTypeBOH">
                         <span class="title-search-name is-required">要货方式：</span>
 
                          <button-tab v-model="addBillInfo.orderType" >
@@ -114,7 +116,9 @@
                                 </div>                 
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="delAction(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="delAction(item)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </div> 
                     </li>
                 </ul>   
             </div>
@@ -176,7 +180,8 @@ import {EGoodType} from '../../enum/EGoodType';
         ...mapGetters({
             'user':'user',
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            'systemParamSetting':"systemParamSetting"
+            'systemParamSetting':"systemParamSetting",//系统设置
+            InterfaceSysTypeBOH:'InterfaceSysTypeBOH',//后台接口是否为BOH
         })
     },
     methods:{
@@ -186,6 +191,7 @@ import {EGoodType} from '../../enum/EGoodType';
     }
 })
 export default class Order extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private user:IUser;
     private service: OrderGoodsService;
@@ -199,6 +205,7 @@ export default class Order extends Vue{
     保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
      */
     private addBillInfo:any={
+        orderType:''
     };//store中
     private isShowObj={
         isTemplate:false,//模板导入列表提示框
@@ -561,11 +568,17 @@ export default class Order extends Vue{
             onConfirm () {//审核通过
                 _this.setSelectedGood([]);
                 _this.$toasted.success("审核成功！");
-                _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+                if(!_this.InterfaceSysTypeBOH){
+                    _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+                }else{
+                     _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                }
+               
             },
             content:'确认审核该单据？',
             confirmText:"审核通过",
             cancelText:"审核不通过",
+            showCancelButton:!_this.InterfaceSysTypeBOH,
             hideOnBlur:true
         })
         
@@ -716,7 +729,6 @@ export default class Order extends Vue{
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
     width: 50px;
     height: 50px;
     text-align: center;

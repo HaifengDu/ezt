@@ -36,8 +36,8 @@
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==1"  @click.stop="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==2 || tabList.getActive().status==3">再来一单>></span>
+                <span class="receive-status" v-if="tabList.getActive().status==0"  @click.stop="toexamine('examine',item)">审核未通过</span>
+                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || tabList.getActive().status==2">再来一单>></span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -106,7 +106,7 @@
           </select>
         </span>
       </li>
-       <li class="select-list">
+       <li class="select-list" v-if="!InterfaceSysTypeBOH">
         <span class="title-search-name ">支付类型：</span> 
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
@@ -166,7 +166,7 @@ import CACHE_KEY from '../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-
+         InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
      })
    },
    methods:{
@@ -177,6 +177,7 @@ import CACHE_KEY from '../../constans/cacheKey'
 })
 export default class OrderGoods extends Vue{
     private cache = CachePocily.getInstance();
+    private InterfaceSysTypeBOH:boolean;
     private pager:Pager;
     private service: OrderGoodsService;
     private tabList:TabList = new TabList();
@@ -206,22 +207,34 @@ export default class OrderGoods extends Vue{
     created() {
       this.tabList.push({
         name:"待审核",
-        status:1,
+        status:0,
         active:true,
-      },{
-        name:"待支付",
-        status:2,
-        active:false
-      },{
-        name:"已完成",
-        status:3,
-        active:false
-      });
+      })
        this.service = OrderGoodsService.getInstance();
        this.pager= new Pager();
        this.pager.setLimit(20);
        this.getList();  
-       this.searchParam = {};    
+       this.searchParam = {};   
+       /**
+        * saas有待支付
+        */
+        if(!this.InterfaceSysTypeBOH){
+          this.tabList.push({
+            name:"待支付",
+            status:1,
+            active:false
+          },{
+            name:"已完成",
+            status:2,
+            active:false
+          })
+        }else{    //BOH没有待支付
+          this.tabList.push({          
+            name:"已完成",
+            status:3,
+            active:false      
+          })
+        } 
     }
     mounted(){      
       this.getList();
@@ -245,7 +258,7 @@ export default class OrderGoods extends Vue{
       (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
-    }
+    }  
     // 点击删除按钮
     private deleteBill(item:any){
       let _this = this;

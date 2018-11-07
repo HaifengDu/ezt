@@ -12,17 +12,24 @@ import publicAddGood from './PublicAddGood';
 import initStock from './initStock'
 Vue.use(VueX);
 export default new Store<IRootState>({
-    state:{
+    state:{   
         user:void 0,
+        InterfaceSysTypeBOH:true,//后台接口是SAAS（false）还是BOH（true） 
         systemParamSetting:{},//系统设置参数
-        logistics:{
+        logistics:{//物流设置
             isAnyReturn:true,//是否任意退货
-        },//物流设置
-    },
+        },
+        materialSetting:{//物料参数设置
+            isModifyActNum:true,//是否允许修改实收数量
+        }  
+       
+    },    
     getters:{
         user:state=>state.user,
         systemParamSetting:state=>state.systemParamSetting,
         logistics:state=>state.logistics,
+        InterfaceSysTypeBOH:state=>state.InterfaceSysTypeBOH,
+        materialSetting:state=>state.materialSetting,
     },
     mutations:{
         [RootType.UPDATE_USER](state,user:IUser){
@@ -36,6 +43,12 @@ export default new Store<IRootState>({
         },
         [RootType.SET_LOGISTICS](state,logistics:{}){
             state.logistics = logistics;
+        },
+        [RootType.SET_INTERFACESYSTYPEBOH](state,InterfaceSysTypeBOH:false){
+            state.InterfaceSysTypeBOH = InterfaceSysTypeBOH;
+        },
+        [RootType.SET_MATERIALSETTING](state,materialSetting:{}){
+            state.materialSetting = materialSetting;
         }
     },
     actions:{

@@ -33,11 +33,8 @@
                           <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
                           <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
                         {{item.bill_no}}</span>   
-                        <span class="" v-if="tabList.getActive().status==0" style="color:#9182E1">暂存</span>
-                        <span class="" v-if="tabList.getActive().status==2 && item.is_stock_valid ==null">待生效</span>
-                        <span v-if="tabList.getActive().status==2 && item.is_stock_valid ==1">已生效</span>
-                        <span class="" v-if="tabList.getActive().status==1" style="color:#FFA32C">待审核</span>
-                        <span class="" v-if="tabList.getActive().status==3" style="color:#FF7563">审核失败</span>
+                        <span class="" v-if="tabList.getActive().status==0" style="color:#9182E1">待审核</span>
+                        <span class="" v-if="tabList.getActive().status==2">已完成</span>
                       </div>   
                       <div class="content">
                           <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
@@ -48,10 +45,7 @@
                     </div>  
                     <div class="footer">
                         <P>业务日期：<span>2017-07-28</span></P>
-                        <div v-if="tabList.getActive().status === 0" class="submit" @click="librarydetails(item,pageType.ConfirmList)">提交</div>
-                        <div v-if="tabList.getActive().status === 1" class="submit" @click="librarydetails(item,pageType.AuditList)">审核</div>
-                        <div  v-if="tabList.getActive().status==2 && item.is_stock_valid ==null"  class="submit">生效</div>
-                        <div v-if="tabList.getActive().status === 3 || tabList.getActive().status==2 && item.is_stock_valid ==1"  class="submit" @click="librarydetails(item,pageType.RealdiscEntry)">实盘录入</div>
+                        <div v-if="tabList.getActive().status === 0" class="submit" @click="librarydetails(item,pageType.AuditList)">审核</div>
                     </div>   
                   </li>
                 </ul>                
@@ -69,7 +63,6 @@
             </span>
           </div>
           <ul>
-            <li @click="datasorting"><i></i>数据整理</li>
             <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist(type,'name')"><i></i>{{type.name}}</li>
           </ul>
       </div>   
@@ -161,21 +154,13 @@ export default class stockTaking extends Vue{
     private pageType = PageType;
     created() {
       this.tabList.push({
-        name:"待提交",
+        name:"待审核",
         status:0,
         active:true,
       },{
-        name:"待/已生效",
+        name:"已审核",
         status:2,
         active:false  
-      },{
-        name:"待审核",
-        status:1,
-        active:false
-      },{
-        name:"审核失败",
-        status:3,
-        active:false
       }
       );   
       this.inventoryType.push({  
@@ -187,7 +172,11 @@ export default class stockTaking extends Vue{
         },{
           name:"月盘",   
           bill_type:'period_inventory'
-      });
+        },{
+          name:"新品盘",
+          bill_type:'new_inventory'
+        }
+      );
 
       this.pager = new Pager().setLimit(20)
       this.service = StockTakingService.getInstance();
@@ -206,16 +195,7 @@ export default class stockTaking extends Vue{
           this.isSearch = false; 
           this.hideMask();
         });  
-        if(this.$route.params.purStatus=="待/已生效"){   
-          this.tabList.TabList.forEach((item,index)=>{
-            if(item.name == this.$route.params.purStatus){
-              item.active = true;
-            }else{
-              item.active = false;
-            }
-          })
-        } 
-        if(this.$route.params.purStatus=="审核失败"){  
+        if(this.$route.params.purStatus=="已审核"){  
           this.tabList.TabList.forEach((item,index)=>{
             if(item.name == this.$route.params.purStatus){
               item.active = true;

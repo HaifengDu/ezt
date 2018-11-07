@@ -243,10 +243,10 @@ export default class leadbackMaterial extends Vue{
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={},
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.cache.clear();
+        _this.addBillInfo={}
+        _this.setSelectedGood([])
+        _this.addBeforeBillInfo={}
+        _this.cache.clear()
         _this.$toasted.success("审核成功！");
         _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料已审'}});
       },
@@ -297,8 +297,9 @@ export default class leadbackMaterial extends Vue{
          * 确定操作
          */
         onConfirm () {
-          _this.setSelectedGood([]);
-          _this.addBillInfo.remark =""
+          _this.setSelectedGood([])
+          _this.addBillInfo ={}
+          _this.addBeforeBillInfo={}
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
         },
         content:title
@@ -323,10 +324,10 @@ export default class leadbackMaterial extends Vue{
           console.log(this) 
         },
         onConfirm () {      
-          _this.addBillInfo={},
-          _this.setSelectedGood([]);
-          _this.addBeforeBillInfo={};
-          _this.cache.clear();
+          _this.addBillInfo={}
+          _this.setSelectedGood([])
+          _this.addBeforeBillInfo={}
+          _this.cache.clear()
           _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"

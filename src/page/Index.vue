@@ -110,6 +110,7 @@ import {mapGetters,mapActions} from "vuex";
 import {maskMixin} from "../helper/maskMixin";
 import ErrorMsg from "../model/ErrorMsg";
 import commonService from '../service/commonService.js';
+import {EGoodType} from '../enum/EGoodType';
 import _ from "lodash";
 declare var mobiscroll:any;//全局定义日历
 @Component({
@@ -130,6 +131,10 @@ declare var mobiscroll:any;//全局定义日历
   }
 })
 export default class Index extends Vue{
+   private EGoodType = EGoodType;//添加物料限制 
+   /**
+    * 库存初始化门店是否是第一次
+    */
    private isFirstStore:boolean;
    private selected = 'index';
    private service:LoginService;

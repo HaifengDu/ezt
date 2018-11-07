@@ -37,7 +37,7 @@
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 
                 <span class="receive-status" v-if="tabList.getActive().status==0"  @click.stop="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || tabList.getActive().status==2">再来一单>></span>
+                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || (tabList.getActive().status==2&&!InterfaceSysTypeBOH)">再来一单>></span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent')">
                 <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
@@ -231,7 +231,7 @@ export default class OrderGoods extends Vue{
         }else{    //BOH没有待支付
           this.tabList.push({          
             name:"已完成",
-            status:3,
+            status:2,
             active:false      
           })
         } 
@@ -354,10 +354,10 @@ export default class OrderGoods extends Vue{
    }
    // 跳转详情页面
     private orderdetails(info:any){
-      if(this.tabList.getActive().status==3){
+      if(this.tabList.getActive().status==2){//已完成，只查看详情
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
       }
-      if(this.tabList.getActive().status ==2 && info == 'payMent'){
+      if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
       }
     }   

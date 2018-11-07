@@ -364,7 +364,7 @@ export default class OrderGoods extends Vue{
     // 审核要货单
     private toexamine(type:any,item:any){   
       let OrderModule = {}; 
-      if(this.tabList.getActive().status==1){
+      if(this.tabList.getActive().status==0){
          OrderModule={
           billno:item.bill_no,
           unit:'供应商1号',
@@ -380,7 +380,7 @@ export default class OrderGoods extends Vue{
     private morelist(type:any,item:any){
       let addInfo = {};
       let _this = this;
-       if(this.tabList.getActive().status==2 || this.tabList.getActive().status==3){
+       if(this.tabList.getActive().status==1 || this.tabList.getActive().status==2){
         addInfo={
           type:type,
           billno:item.bill_no,

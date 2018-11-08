@@ -186,7 +186,7 @@
         </ul>
       </div> 
       <ezt-footer>
-         <div class="ezt-foot-temporary" slot="confirm">
+        <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{Total.num}}</span>，

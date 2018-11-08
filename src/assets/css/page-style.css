@@ -179,7 +179,7 @@ input.ezt-middle{
   margin-left: 10px;
 }
 .ezt-header-goback.none{ /* header并没有返回按钮 */
-  background:none;
+  visibility: hidden;
   margin-left: 10px;
 }
 .ezt-header-title{
@@ -722,5 +722,10 @@ input.ezt-middle{
   top:45px; 
   z-index:10001;
 }
+/*字体图标 与文字对齐方式 */
+.fa{
+  vertical-align: top;
+}
+
 
    

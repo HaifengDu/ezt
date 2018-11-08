@@ -4,32 +4,46 @@
         <ezt-header :back="true" title="系统设置" @goBack="goBack"></ezt-header>
         <div class="ezt-main">
             <ul class="ezt-setting-content">
-                <li>
+                <li @click="handlerActivea">
                     <div class="setting-title-name">订货量与订货周期
                         <!-- <span><i class="fa fa-info-circle title-info" aria-hidden="true"></i></span> -->
                     </div>
-                    <span @click="handlerActivea"><b :class="{'active':activea}"></b></span>
+                    <span><b :class="{'active':activea}"></b></span>
                 </li>
-                <div v-if="activea" class="fold-content">
-                   <span>
-                       <input v-model="model.orderSelected" value="1" id='a' type="radio" name="order" class="radio">
-                        <label name="order" class="radio" for="a">按订货班表订，无班表则按日订</label></span>
-                   <span>
-                       <input v-model="model.orderSelected" value="2" id='b' type="radio" name="order" class="radio">
-                        <label name="order" for="b" class="radio">按订货班表订</label></span>
-                   <span>
-                        <input v-model="model.orderSelected" value="3" id="c" type="radio" name="order" class="radio">
-                        <label name="order" for="c" class="radio">按日订货</label></span>                  
-                   <span>
-                       <input v-model="model.orderSelected" value="4" id="e" type="radio" name="order" class="radio">
-                       <label name="order" for="e" class="radio">一次订
-                           <input type="text" class="ezt-smart" :min="0" :disabled="model.orderSelected!='4'" v-model="model.orderDate" @change="pubChange(model,'orderDate')">天的量
+                <ul v-if="activea" class="fold-content">
+                   <li>
+                        <label for="a">
+                            <span class="opt-text">按订货班表订，无班表则按日订</span>
+                            <input type="radio" name="order" id="a" value="1" v-model="model.orderSelected" />
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
                         </label>
-                   </span> 
-                   <span class="ezt-foot-total">
+                   <li>
+                       <label for="b">
+                            <span class="opt-text">按订货班表订</span>
+                            <input type="radio" name="order" id="b" value="2" v-model="model.orderSelected" />
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                   <li>
+                       <label for="c">
+                            <span class="opt-text">按日订货</span>
+                            <input type="radio" name="order" id="c" value="3" v-model="model.orderSelected" />
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>            
+                   <li>
+                        <label for="e">
+                            <span class="opt-text">
+                                一次订
+                                <input type="text" class="ezt-smart" :class="{'disabled':model.orderSelected!='4'}" :min="0" :disabled="model.orderSelected!='4'"
+                                 v-model="model.orderDate" @change="pubChange(model,'orderDate')">天的量
+                            </span>
+                            <input type="radio" name="order" id="e" value="4" v-model="model.orderSelected" />
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                   </li> 
+                   <li class="ezt-foot-total">
                         注：订货周期改变将影响要货量计算，如订货周期为2天，即每次订货需订2天的量。   
-                    </span>                 
-                </div>
+                    </li>                 
+                </ul>
                 <li class="line-mark">
                     <div>
                         <div class="setting-title-name">预估要货是否计算散装量</div>
@@ -47,39 +61,49 @@
                     </div>
                                       
                 </li>
-                <li>
+                <li @click="handlerActiveb">
                     <div class="setting-title-name">预估要货是否包含到货当天量</div>
-                    <span @click="handlerActiveb"><b :class="{'active':activeb}"></b></span>
+                    <span><b :class="{'active':activeb}"></b></span>
                 </li>
-                <div v-show="activeb" class="fold-content">
-                    <span>
-                        <input v-model="model.isContain" id="a1" value="1" type="radio" name="contaion" class="radio">
-                        <label for="a1" class="radio" name="contaion"> 不包含</label>   
-                    </span>
-                   <span>
-                       <input v-model="model.isContain" id="b1" value="2" type="radio" name="contaion" class="radio">
-                       <label for="b1" class="radio" name="contaion">包含</label>
-                    </span>
-                   <span>
-                       <input v-model="model.isContain" id="c1" value="3" type="radio" name="contaion" class="radio">
-                        <label for="c1" class="radio" name="contaion">到货时间≤
-                            <i class="title-select-name item-select">
-                                <select class="ezt-select" v-model="containTime.newHour" :disabled="model.isContain!='3'">
-                                    <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
-                                </select>
-                           </i>：
-                           <i class="title-select-name item-select">
-                                <select class="ezt-select" v-model="containTime.newMinut" :disabled="model.isContain!='3'">
-                                    <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
-                                </select>
-                           </i>
-                           时，包含当天量
-                        </label>      
-                   </span>
-                    <span class="ezt-foot-total">
+                <ul v-show="activeb" class="fold-content">
+                    <li>
+                        <label for="a1">
+                            <span class="opt-text">不包含</span>
+                            <input type="radio" name="contaion" id="a1" value="1" v-model="model.isContain" />
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                    </li>
+                   <li>
+                       <label for="b1">
+                            <span class="opt-text">包含</span>
+                            <input type="radio" id="b1" name="contaion" value="2" v-model="model.isContain"/>
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                    </li>
+                   <li>
+                        <label for="c1">
+                            <span class="opt-text">
+                                到货时间≤
+                                <i class="title-select-name item-select">
+                                    <select class="ezt-select" :class="{'disabled':model.isContain!='3'}" v-model="containTime.newHour" :disabled="model.isContain!='3'">
+                                        <option :value="item" :key="item" v-for="(item) in hours">{{item}}</option>
+                                    </select>
+                                </i>：
+                                <i class="title-select-name item-select">
+                                    <select class="ezt-select" :class="{'disabled':model.isContain!='3'}" v-model="containTime.newMinut" :disabled="model.isContain!='3'">
+                                        <option :value="item" :key="item" v-for="(item) in minutes">{{item}}</option>
+                                    </select>
+                                </i>
+                                时，包含当天量
+                            </span>
+                            <input type="radio" id="c1" name="contaion" value="3" v-model="model.isContain"/>
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                   </li>
+                    <li class="ezt-foot-total">
                         注：选择包含到货当天量，则引用的预估物料明细中，需包含到货当天的物料量。   
-                    </span>    
-                </div>
+                    </li>    
+                </ul>
             </ul>
             <div class="mine-bot-btn" @click="saveSetting">
              <span class="ezt-lone-btn">确定</span>
@@ -257,9 +281,6 @@ export default class Index extends Vue{
             vertical-align: middle;
         }      
     }
-    li:nth-child(1){
-        border-top: 1px solid #ccc;
-    }
     li.line-mark{
         flex-direction: column;
         div{
@@ -275,27 +296,47 @@ export default class Index extends Vue{
         border-bottom: 1px solid #ccc;
         padding: 8px;
         font-size: 12px;
-        color: #395778;
-        span{
-            margin: 6px 0px;
+        color: #395778;       
+        li{
+            padding: 6px 6px;
+            border-bottom: 1px dotted #ece9e9;
         }
-        input[type='radio']{
-            vertical-align: bottom;
-            display:none;
+        li:last-child{
+            border:none;
         }
-        label{
-            display: inline-block;
-            background: url('../../assets/images/btn_ck_n_checked.png') no-repeat;
-            background-size: 16px;
-            padding-left: 30px;
-        }
-        input[type='radio'].radio:checked + .radio {
-            background:url('../../assets/images/btn_ck_checked.png') no-repeat;
-            background-size: 16px;
+        label {                 /*设置label的样式*/
+            width: 100%;
+            display: block;
+            position: relative;
+            font-weight: normal;
         }
         .ezt-smart{
             border: 1px solid #ccc;
         }
+        input.disabled{
+            background: #ccc;
+        }
+        .option {      /*把优化后的按钮图片设置为该div的背景图片，把该div定位到原生样式的上方，遮盖住原生样式。*/
+            width: 22px;
+            height: 22px;
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            background-size: cover;
+            background: url(../../assets/images/btn_ck_n_checked.png) no-repeat;
+            background-size: cover;
+        }
+        input[type="radio"] {  /*为了保险起见，把原生样式隐藏掉*/
+            display: inline-block ;
+            margin-right: 15px ;
+            opacity: 0 ;
+            height: auto;
+        }
+        input[type="radio"]:checked+div {  /*当radiuo被选中时，把input下边的div标签的背景图片替换掉*/
+            background: url(../../assets/images/btn_ck_checked.png) no-repeat;
+            background-size: cover;
+        }
+
     }
     .vux-button-group > a{
         padding: 0px 10px;
@@ -321,9 +362,12 @@ export default class Index extends Vue{
 }
 .ezt-select{  
     height: 19px;
-   padding: 0px 20px 0px 3px;
+    padding: 0px 20px 0px 3px;
     max-width: 100%;
     width: inherit;
+}
+.ezt-select.disabled{
+    background: #ccc;
 }
 </style>
 

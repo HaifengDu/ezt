@@ -1,56 +1,80 @@
-<!--盘库模块-->
+<!--盘库首页-->
 <template>
 <div>
    <div class="ezt-page-con stocktaking">
     <ezt-header :back="true" title="盘库" :isInfoGoback="true" @goBack="goBack">
-       <div slot="action">
-           <div class="addbtn">
-             <i @click="add" class="fa fa-plus" aria-hidden="true"></i>
-             <i @click="query" class="fa fa-search" aria-hidden="true"></i>
-          </div>   
-       </div>        
+      <div slot="action">
+         <div class="add">
+           <span class='ezt-action-point' @click="add">
+            <i class="fa fa-plus" aria-hidden="true" ></i>
+           </span>
+          <span class='ezt-action-point' @click="query">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </span>          
+         </div>      
+       </div>
     </ezt-header>      
-    <div class="ezt-main ezt-pk">       
-      <tab :line-width=2 active-color='#fc378c'>
-        <tab-item 
-           class="vux-center" 
-           :selected="item.active" 
-           v-for="(item, index) in tabList.TabList" 
-           @on-item-click="tabClick(index)" 
-           :key="index">{{item.name}}</tab-item>
-      </tab>       
-      <div class="ezt-add-content" >
-                <div v-if="!inventoryList" class="done-none">
-                  <div></div>
-                  <span>目前还没有任何订单</span>
-                </div>
-                <ul class="submitted" v-if="inventoryList">
-                  <li :key="index" v-for="(item,index) in inventoryList.list">
-                    <div @click="librarydetails(item,pageType.LibraryDetails)">
-                        <div class="state">   
-                        <span>
-                          <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
-                          <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
-                          <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
-                        {{item.bill_no}}</span>   
-                        <span class="" v-if="tabList.getActive().status==0" style="color:#9182E1">待审核</span>
-                        <span class="" v-if="tabList.getActive().status==2">已完成</span>
-                      </div>   
-                      <div class="content">
-                          <p>盘点仓库：<span>{{item.warehouse_name}}</span></p>
-                          <p>盘点日期：<span>{{item.busi_date}}</span></p>
-                          <p>生成损溢：<span>{{item.is_profit_loss == 1?'是':'否'}}</span></p>
-                          <p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p>
-                      </div>
-                    </div>  
-                    <div class="footer">
-                        <P>业务日期：<span>2017-07-28</span></P>
-                        <div v-if="tabList.getActive().status === 0" class="submit" @click="librarydetails(item,pageType.AuditList)">审核</div>
-                    </div>   
-                  </li>
-                </ul>                
+    <div class="ezt-main">            
+       <tab :line-width=2 active-color='#fc378c'>
+          <tab-item class="vux-center" 
+             :selected="item.active" 
+             v-for="(item, index) in tabList.TabList"
+            @on-item-click="tabClick(index)" 
+          :key="index">{{item.name}}
+        </tab-item>
+      </tab>
+      <div class="ezt-add-content main-menu">
+         <div v-if="!inventoryList" class="done-none">
+            <div></div>
+            <span>目前还没有任何订单</span>
           </div>
-      </div>    
+        <div v-if="inventoryList">
+          <div class="receive-dc-list" v-for="(item,index) in inventoryList.list" :key="index">
+            <div class="ezt-list-show" 
+                v-swipeleft="handlerSwipe.bind(this,item,true)"  
+                v-swiperight="handlerSwipe.bind(this,item,false)" 
+                :class="{'swipe-transform':item.active}"
+                @click="librarydetails(item,pageType.LibraryDetails)">
+              <div class="receive-icon-title">
+                <span class="return-list-title">
+                  <span>
+                      <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
+                      <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
+                      <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
+                      {{item.bill_no}}
+                  </span>
+                </span> 
+                <span class="receive-status" v-if="tabList.getActive().status==0">待审核</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1">已完成</span>  
+              </div>
+              <div class="receive-icon-content">
+                <span class="receive-dc-title">盘点仓库：
+                  <span class="receive-dc-content">{{item.warehouse_name}}</span>  
+                </span>
+                <span class="receive-dc-title">盘点日期：
+                  <span class="receive-dc-content">{{item.busi_date}}</span>
+                </span>
+                <span class="receive-dc-title">生成损溢：
+                  <span class="receive-dc-content">{{item.is_profit_loss == 1?'是':'否'}}</span>
+                </span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">未盘处理：
+                  <span class="receive-dc-content"> {{item.stock_count_mode_name}}</span>
+                </span>
+              </div>
+              <div class="receive-icon-bottom">
+                <div class="glow-1">
+                   <span class="businessDate">业务日期：2018-11-12</span>
+                   <span class="submit" v-if="tabList.getActive().status === 0" @click="librarydetails(item,pageType.AuditList)">审核</span>
+                </div>
+              </div>
+            </div>
+            <div class="ezt-detail-del" @click="delAction(item)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
+        </div>
+      </div>
+      </div>
+    </div>
   </div>
   <!-- 选择盘点类型 -->
   <div>    
@@ -63,12 +87,13 @@
             </span>
           </div>
           <ul>
+            <li @click="datasorting" v-if="!InterfaceSysTypeBOH"><i></i>数据整理</li>
             <li :key="index" v-for="(type,index) in inventoryType" @click="addinventorylist(type,'name')"><i></i>{{type.name}}</li>
           </ul>
       </div>   
     </x-dialog>
   </div>
-  <!-- 查询盘点单 -->
+  <!-- 查询盘库单 -->  
   <div v-show="isSearch" class="search-dialog stocktaking">
       <ul class="ezt-title-search">
        <li>
@@ -77,7 +102,7 @@
        <li class="select-list">
         <span class="title-search-name ">盘点库：</span>
         <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" v-model="searchParam.selectedWarehouse">
+          <select placeholder="请选择" class="ezt-select" ref="selectedWarehouse" v-model="searchParam.selectedWarehouse">
              <option style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
              <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
           </select>
@@ -86,13 +111,17 @@
       <li>
         <span class="title-search-name">开始日期：</span>
         <span>
-          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+         <ezt-canlendar ref="startDate" :max="searchParam.endDate" 
+            :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
+            placeholder="开始日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
         </span>
       </li>
        <li>
         <span class="title-search-name">结束日期：</span>
         <span>
-          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+         <ezt-canlendar ref="endDate" :min="searchParam.startDate" 
+            :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+            placeholder="结束日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
       <li>
@@ -102,7 +131,7 @@
   </div> 
 </div>
 </template>
-<script lang="ts">   
+<script lang="ts">
 import Vue from 'vue'
 import {TabItem,LoadingPlugin} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
@@ -118,31 +147,34 @@ import { CachePocily } from "../../../common/Cache"
 import { PageType } from "../../../enum/EPageType"
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
-   components:{  
-      TabItem,
-   },   
-   mixins:[maskMixin],
-   computed:{       
-     ...mapGetters({
-       
-     }) 
+   components:{
+     TabItem
    },
-   methods:{    
+   mixins:[maskMixin],
+   computed:{
+     ...mapGetters({
+        'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',//接口BOH
+     })
+   },
+   methods:{
      ...mapActions({
-      
-     }),
-         
-   }     
+
+     })
+   }
 })
 export default class stockTaking extends Vue{
     private pager:Pager; 
     private service: StockTakingService;
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();   
     private inventoryList:{list?:any[]} = {};//盘库列表   
     private tabList:TabList = new TabList();
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
-    private searchParam:any={};//搜索时的查询条件
+    private searchParam:any={
+      startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+      endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+    };//搜索时的查询条件
     private warehouseType:any[] = [];  //动态加载仓库
     private selectedWarehouse:any;//选中仓库id
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
@@ -153,13 +185,16 @@ export default class stockTaking extends Vue{
     private type:string; //盘点类型数据
     private pageType = PageType;
     created() {
+      this.pager = new Pager().setLimit(20)
+      this.service = StockTakingService.getInstance();
+      this.searchParam = {};
       this.tabList.push({
         name:"待审核",
         status:0,
         active:true,
       },{
         name:"已审核",
-        status:2,
+        status:1,
         active:false  
       }
       );   
@@ -172,53 +207,85 @@ export default class stockTaking extends Vue{
         },{
           name:"月盘",   
           bill_type:'period_inventory'
-        },{
-          name:"新品盘",
-          bill_type:'new_inventory'
         }
       );
-
-      this.pager = new Pager().setLimit(20)
-      this.service = StockTakingService.getInstance();
-      this.searchParam = {};
+      /**
+       * BOH添加新品盘
+       */
+        if(this.InterfaceSysTypeBOH){
+          this.inventoryType.push({  
+            name:"新品盘",
+            bill_type:'new_inventory'
+          }
+        );
+      }
       /**
        * 动态加载仓库
        */
-      this.getWarehouseType(); 
+      this.getWarehouseType();  
+      
+     
     }
-   
-    mounted(){
-        /**
-         * 点击遮罩层
-         */
-        this.addMaskClickListener(()=>{  
+    mounted(){      
+      this.getpkList();
+      /**
+       * 点击遮罩层
+       */
+      this.addMaskClickListener(()=>{  
           this.isSearch = false; 
           this.hideMask();
-        });  
-        if(this.$route.params.purStatus=="已审核"){  
-          this.tabList.TabList.forEach((item,index)=>{
-            if(item.name == this.$route.params.purStatus){
-              item.active = true;
-            }else{
-              item.active = false;
-            }
-          })
-       } 
-       this.getpkList();
+      });  
+      if(this.$route.params.purStatus=="已审核"){  
+        this.tabList.TabList.forEach((item,index)=>{
+          if(item.name == this.$route.params.purStatus){
+            item.active = true;
+          }else{
+            item.active = false;
+          }
+        })
+      } 
+    } 
+    /**
+     * 查询日期限制
+     */
+     private selectDateChange(val:any){
+      (<any>this.$refs.startDate).setMax(new Date(val));
+      (<any>this.$refs.endDate).setMin(new Date(val));
     }
+    /**
+     * 返回上一页
+     */
     private goBack(){
       this.$router.push("/");
     } 
-    /**
-     * tab切换
-     */
     private tabClick(index:number){
       this.tabList.setActive(index);
       this.pager.resetStart();//分页加载还原pageNum值
       this.getpkList();  
     }
     /**
-     * 获取盘库列表
+     * 点击删除按钮
+     */
+    private delAction(item:any){
+      let _this = this;
+      this.$vux.confirm.show({
+        onCancel () {
+          let newIndex = _this.inventoryList.list.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.inventoryList.list[newIndex].active = false;
+        },
+        onConfirm () {
+          let newIndex = _this.inventoryList.list.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+          })
+          _this.inventoryList.list.splice(newIndex,1);
+        },
+        content:'是否要删除该单据?'
+      })
+    }
+    /**
+     * 获取列表
      */
     private getpkList(){
       const status = this.tabList.getActive().status;
@@ -228,6 +295,7 @@ export default class stockTaking extends Vue{
           text: '加载中...'
         });
         this.inventoryList = res.data.data[0];
+        (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide()
           this.hideMask()
@@ -235,6 +303,15 @@ export default class stockTaking extends Vue{
         },err=>{
           this.$toasted.show(err.message)
       });
+    }
+    /**
+     * 左侧滑动删除
+     */
+    private handlerSwipe(item:any,active:boolean){
+        const status = this.tabList.getActive().status;
+        if(status =="0"){
+          item.active = active;
+        }    
     }
     /**    
      * 盘库详情  审核盘点单  实盘录入  确认盘点单
@@ -253,7 +330,7 @@ export default class stockTaking extends Vue{
      * 新增盘库单
      */
     private add(){
-      this.newlyadded = true
+      this.newlyadded = true   
     }  
     private addinventorylist(type:any,name:any,bill_type:string){
       let InventoryType = {};
@@ -336,129 +413,116 @@ export default class stockTaking extends Vue{
     private getWarehouseType(){
       const inventory_type = "week_inventory";
       this.service.getWarehouse(inventory_type as string).then(res=>{ 
-          this.warehouseType = res.data.data;
+          this.warehouseType = res.data.data
       },err=>{
           this.$toasted.show(err.message)
       })
     }
 }
 </script>
-<style lang="less" scoped> 
+<style lang="less" scoped>
 @padding: 5px 6px;
 @width:100%;  
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
-.input-canlendar .ezt-canlendar{
-  font-size: 16px!important;
-  width: 100px!important;
-}
-.ezt-pk,.ezt-add-content{
-  padding-bottom: 0;
-}
-.stocktaking{
-  background-color: #F1F6FF;
-  .addbtn{
+    .ezt-header{
+      padding: 0;
+      height: 45px;
+      align-items: center;
+    }
+    .ezt-add-content{
+      padding-bottom: 0px;
+    }
+    .main-menu{
+      background-color: #F1F6FF;
+    }
+    .add{
       i{
-        margin-right: 15px;    
+        margin-right: 10px;
       }
     }
-    //待提交
-    .submitted{
-        width: 95%;
-        display: flex;
-        margin: 10px auto;  
-        flex-direction: column;
-        li{
-          width:@width;
-          margin-bottom: 10px;
-          border: 1px solid #DDECFD;
-          box-shadow: 0 0 20px 0 rgba(71,66,227,0.07);
-          border-radius: 6px;
-          background-color:@background-color;
-          .state{
-            border-bottom: 1px solid #D2DFEE;
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            span{
-              font-size: 15px;
-              color: #395778;
-              .day{
-                background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
-              }
-              .week{
-                background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
-              }
-              .year{
-                background: linear-gradient(-134deg, #97DBFF 0%, #7AC0FF 100%);
-              }
-              i{
-                opacity: 0.7;
-                border-radius: 4px;
-                font-size: 12px;
-                color: #fff;
-                width: 20px;
-                height: 20px;
-                line-height: 22px; 
-                text-align: center;
-                font-style: normal;
-                display: block;
-                float: left;
-                margin-right: 5px;
-              }
-            }
-            span:last-child{
-              font-size: 12px;
-              color: #3ABAFF;
-            }
+    .receive-dc-list{
+      position: relative;
+      .return-list-title{
+          display: block;
+          margin-left: 10px;
+          span{
+            font-size: 15px;
+            color: #395778;
+          .day{
+            background: linear-gradient(-139deg, #FFB38F 0%, #FF9FA7 100%);
           }
-          .content p,.footer p{
-              font-size: 12px;
-              color: #5F7B9A;
+          .week{
+            background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
           }
-          .content p span,.footer p span{
-              font-size: 13px;
-              color: #395778;
+          .year{
+            background: linear-gradient(-134deg, #97DBFF 0%, #7AC0FF 100%);
           }
-          .content{
-            display: flex;
-            align-items: flex-start;
-            flex-direction: column;
-            justify-content: start;
-            padding-left: 10px;
-            box-shadow: 0 0 10px 0 rgba(71,66,227,0.07);
-            p{
-              line-height: 30px;
-              
-            }
-          }
-          .footer{
-              height: 40px;
-              display: flex;
-              justify-content: space-between;
-              line-height: 40px;
-              padding: 0 10px;
-              p{
-                line-height: 40px;
-              }
-              .submit{
-                width: 70px;
-                height: 25px;
-                line-height: 25px;
-                font-size: 12px;
-                color: #1188FC;
-                border: 1px solid #1188FC;
-                border-radius: @border-radius;
-                margin-top: 7px;
-                cursor: pointer;
-              }
+          i{
+            opacity: 0.7;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #fff;
+            width: 20px;
+            height: 20px;
+            line-height: 22px; 
+            text-align: center;
+            font-style: normal;
+            display: block;
+            float: left;
+            margin-right: 5px;
           }
         }
+        span:last-child{
+          font-size: 12px;
+        }
+      }
     }
-}
-
-// 查询盘点单
+    .receive-icon-bottom{
+      .businessDate{
+        flex:1;
+      }
+      .submit{
+        width: 70px;
+        height: 25px;
+        line-height: 25px;
+        font-size: 12px;
+        color: #1188FC;
+        border: 1px solid #1188FC;
+        border-radius: @border-radius;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+      }
+   }
+    .ezt-action-point{
+      margin-top: 10px;
+      width: 20px;
+      height: 26px;
+      display: inline-block;
+    } 
+    //左侧滑动删除
+    .ezt-detail-del{
+        position: absolute;
+        right: -11px;
+        width: 50px;
+        height: 214px;
+        font-size: 25px;
+        display: flex;
+        align-items: center;
+        top: 0;
+     }
+    .ezt-list-show{
+      position: relative;
+      transition: transform .5s;
+      background: #fff;
+      z-index: 2;
+    }
+    .swipe-transform{
+      transform: translateX(-50px);
+    }
+    // 查询盘点单
   .search-dialog{
     width: 100%; 
     position:absolute;
@@ -466,7 +530,7 @@ export default class stockTaking extends Vue{
     z-index:10001;
   }
 // 新增盘点单
-.dialog {
+ .dialog {
     height: 350px;
     .newlytype{
        display: flex;
@@ -522,11 +586,13 @@ export default class stockTaking extends Vue{
         li:nth-child(4) i{
             background-image: url("../../../assets/images/intentory_ico_month.png")
         }
+        li:nth-child(5) i{
+            background-image: url("../../../assets/images/intentory_ico_month.png")
+        }
         li:last-child{
           border-bottom:none;
         }
       }
-    }    
-}
+    }   
+  }
 </style>
-

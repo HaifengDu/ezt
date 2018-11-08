@@ -71,7 +71,9 @@
                       </div>                    
                     </div>
                 </div> 
-                <div class="ezt-detail-del" @click="delAction(item)">删除</div>
+                 <div class="ezt-detail-del" @click="delAction(item)">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                 </div>
            </li>
         </ul>   
       </div> 
@@ -297,7 +299,7 @@ export default class SpilledSheet extends Vue{
         onCancel () {
           _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
         },
-        onConfirm () {
+        onConfirm () {   
           _this.setSelectedGood([]);
           _this.addBillInfo={};
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
@@ -429,10 +431,10 @@ input.ezt-smart{
       position: absolute;
       right: 10px;
       top: 30px;
-      background: pink;
       width: 50px;
       height: 50px;
       text-align: center;
       line-height: 50px;
+      font-size: 25px;
     }
 </style>

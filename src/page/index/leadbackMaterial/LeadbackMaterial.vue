@@ -62,7 +62,9 @@
                 <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
               </div>
             </div>
-            <div class="ezt-list-del" @click="deleteBill(item)">删除</div>
+            <div class="ezt-list-del" @click="deleteBill(item)">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
           </div>
         </div>
       </div>
@@ -92,9 +94,13 @@
       <li>
         <span class="title-search-name">单据日期：</span>
         <span>
-          <ezt-canlendar placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+          <ezt-canlendar ref="startDate" :max="searchParam.endDate" 
+            :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
+            placeholder="开始日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
             <span>至</span>
-          <ezt-canlendar placeholder="结束时间" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          <ezt-canlendar ref="endDate" :min="searchParam.startDate" 
+            :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+            placeholder="结束日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
         </span>
       </li>
       <li>
@@ -148,7 +154,10 @@ export default class leadbackMaterial extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     private isSearch:boolean = false; //订货查询
-    private searchParam:any={};//搜索时的查询条件
+    private searchParam:any={
+      startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+      endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+    };//搜索时的查询条件
     private orderType:any=[{
       name:'仓库1',
       id:'01'
@@ -213,6 +222,13 @@ export default class leadbackMaterial extends Vue{
     private goBack(){
       this.$router.push("/");
     } 
+    /**
+     * 查询日期限制
+     */
+     private selectDateChange(val:any){
+      (<any>this.$refs.startDate).setMax(new Date(val));
+      (<any>this.$refs.endDate).setMin(new Date(val));
+    }
     private Material(info:string){
       if(info){
         this.$router.push(info);
@@ -337,7 +353,7 @@ export default class leadbackMaterial extends Vue{
     }   
 }
 </script>   
-<style lang="less" scoped>
+<style lang="less" scoped>  
     .ezt-header{
       padding: 0;
       height: 45px;
@@ -381,15 +397,13 @@ export default class leadbackMaterial extends Vue{
     }
     .ezt-list-del{
         position: absolute;
-        right: 0px;
-        top: 42px;
+        right: -11px;
         width: 50px;
-        height: 85px;
-        background: red;
-        z-index: 1;
-        line-height: 85px;
-        text-align: center;
-        color: #fff;
+        height: 163px;
+        font-size: 25px;
+        display: flex;
+        align-items: center;
+        top: 0;
     }
     .swipe-transform{
       transform: translateX(-50px);

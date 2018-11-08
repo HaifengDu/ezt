@@ -18,7 +18,7 @@
                   <div><p>盘点日期：<span>{{user.auth.busi_date}}</span></p></div>
                   <div><p>盘库方式：<span>{{details.template_name}}</span></p></div>
                   <div><p>盘点类型：{{details.bill_type_name}}</p></div>
-                  <div><p>未盘处理：<span>{{details.stock_count_mode_name}}</span></p></div>
+                  <div v-if="!InterfaceSysTypeBOH"><p>未盘处理：<span>{{details.stock_count_mode_name}}</span></p></div>
                </li>
              </ul>
            </div>
@@ -42,7 +42,8 @@
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                       <p>采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
-                      <p>库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
+                      <p v-if="!InterfaceSysTypeBOH">库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
+                      <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                        <p>消耗单位：<span>{{item.consume_num || '0'}}{{item.bom_name}}</span></p>
@@ -80,7 +81,7 @@
                     <div class="sub" @click="sub">提交1</div>
                 </div>
                 <div class="button" v-if="types== pageType.AuditList">
-                     <div class="storage"  @click="reviewpass">审核不通过</div>
+                     <div class="storage" v-if="!InterfaceSysTypeBOH"  @click="reviewpass">审核不通过</div>
                      <div class="sub" @click="auditfailed">审核通过</div>
                 </div>
                  <div class="button" v-if="types== pageType.InventoryType">    
@@ -112,6 +113,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    computed:{
      ...mapGetters({
        "user":"user",
+       'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',//BOH接口
      }) 
    },
    methods:{ 
@@ -124,6 +126,7 @@ export default class stockTaking extends Vue{
     private user:IUser;   
     private pager:Pager;   
     private service: StockTakingService;
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private details:any={};  //盘库表头信息
     private inventoryDetails:any[]=[];//详情页物品信息

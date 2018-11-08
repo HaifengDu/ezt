@@ -67,7 +67,9 @@
                                 </div>                 
                             </div>
                         </div>
-                        <div class="ezt-detail-del" @click="deleteBill(item)">删除</div> 
+                        <div class="ezt-detail-del" @click="deleteBill(item)">
+                            <i class="fa fa-trash" aria-hidden="true"></i>
+                        </div>
                     </li>
                 </ul>   
             </div>
@@ -113,7 +115,8 @@ import ObjectHelper from '../../common/objectHelper'
     computed:{
         ...mapGetters({    
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
+            'InterfaceSysTypeBOH':'InterfaceSysTypeBOH', //BOH接口
+            'systemParamSetting':"systemParamSetting",//系统设置参数     
         })
     },
     methods:{
@@ -131,7 +134,8 @@ export default class Order extends Vue{
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={};
     private type:string;    
-    created() {     
+    private systemParamSetting:any;
+    created() {          
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
@@ -157,7 +161,7 @@ export default class Order extends Vue{
             })
             _this.selectedGood.splice(newIndex,1);
         },
-        content:'请确认是否删除该物料。'
+        content:'请确认是否删除该物料?'
         })
     }
       /**
@@ -363,11 +367,11 @@ export default class Order extends Vue{
     position: absolute;
     right: 10px;
     top: 30px;
-    background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 25px;
 }
 .orderType-list span.active{
     background: #1674fc;

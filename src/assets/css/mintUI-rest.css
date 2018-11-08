@@ -197,3 +197,6 @@
   padding: 0 0;
   color: #5F7B9A;
 }
+.addinventorylist .weui-cell{
+  border-bottom: 1px solid #D2DFEE;
+}

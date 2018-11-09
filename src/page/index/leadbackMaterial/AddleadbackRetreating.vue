@@ -431,12 +431,14 @@ input.ezt-smart{
     }
     .ezt-detail-del{
       position: absolute;
-      right: 10px;
-      top: 30px;
+      right: -9px;
+      top: 0;
       width: 50px;
-      height: 50px;
+      height: 107px;
       text-align: center;
-      line-height: 50px;
+      line-height: 125px;
       font-size: 25px;
+      display: flex;
+      align-items: center;
     }
 </style>

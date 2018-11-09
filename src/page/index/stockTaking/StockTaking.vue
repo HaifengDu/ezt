@@ -520,7 +520,7 @@ export default class stockTaking extends Vue{
         position: absolute;
         right: -11px;
         width: 50px;
-        height: 214px;
+        height: 190px;
         font-size: 25px;
         display: flex;
         align-items: center;

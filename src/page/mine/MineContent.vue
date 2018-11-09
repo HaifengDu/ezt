@@ -35,7 +35,7 @@
                   <i class="fa fa-angle-right" aria-hidden="true"></i>
                 </span>
              </li>
-             <li class="mine-modify" @click="renderUrl('/systemSetting')">
+             <li class="mine-modify" @click="renderUrl('/systemSetting')" v-if="!InterfaceSysTypeBOH">
                 <span class="title-search-name">系统设置</span>
                 <span class="title-search-right">
                   <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -61,12 +61,13 @@ import LoginService from "../../service/LoginService"
 import {mapGetters} from "vuex";
 declare var mobiscroll:any;
 @Component({
-   components:{
-  
-   },
+  components:{
+    
+  },
   computed:{
     ...mapGetters({
-      "user":"user"
+      "user":"user",
+      InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
     })
   }
 })

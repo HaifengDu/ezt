@@ -1,7 +1,7 @@
 <!--订货单详情-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" :title="paytitle">
+    <ezt-header :back="true" :title="paytitle" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
        </div>    
     </ezt-header>    
@@ -65,16 +65,61 @@
     </div>
     <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
-        <div class="ezt-foot-total">合计：
-            <b>品项</b><span>{{details.length}}</span>，
-            <b>数量</b><span>{{Total.num}}</span>，
-            <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
-        </div>
-        <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
-            <a href="javascript:(0)" class="ezt-foot-sub">支付</a>  
-        </div>  
+            <div class="ezt-foot-total">合计：
+                <b>品项</b><span>{{details.length}}</span>，
+                <b>数量</b><span>{{Total.num}}</span>，
+                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+            </div>
+            <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
+                <a href="javascript:(0)" class="ezt-foot-sub" @click="payMethod=true">支付</a>  
+            </div>  
         </div>
     </ezt-footer> 
+    <!--支付 选择方式-->
+    <div>
+        <x-dialog v-model="payMethod" class="dialog-demo">
+            <div class="ezt-dialog-header ezt-titleColor1 ezt-fontSize3">
+                <span class="header-name">
+                    请选择支付方式
+                </span>
+                <span class="ezt-close" @click="closePayment">
+                    <i class="fa fa-times" aria-hidden="true"></i>
+                </span>
+            </div>
+            <div class="warehouse-list">
+                <ul class="warehouse-isDefault">
+                    <li>
+                        <label>
+                            <span class="opt-text">
+                                <span class="zfb-icon"></span>支付宝
+                            </span>
+                            <input type="radio" name="pay" value="1" v-model="payValue"/>
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <span class="opt-text">
+                                <span class="wx-icon"></span>微信支付
+                            </span>
+                            <input type="radio" name="pay" value="2" v-model="payValue"/>
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                    </li>
+                    <li>
+                        <label>
+                            <span class="opt-text balance">余额支付</span>
+                            <input type="radio" name="pay" value="3" v-model="payValue"/>
+                            <div class="option"></div><!--该div盛放的是优化后的按钮图片-->                            
+                        </label>
+                    </li>                    
+                </ul>
+            </div> 
+            <div class="mine-bot-btn">
+                <span class="ezt-lone-btn" @click="confirmPay">确认支付</span>
+            </div>           
+        </x-dialog>
+    </div> 
   </div>
 </template>
 <script lang="ts">   
@@ -113,6 +158,24 @@ export default class OrderGoods extends Vue{
     private Payment:boolean = false;  //订单支付页面显示已付
     private fold :boolean = true;  //备注超出显示查看更多
     private innerContent:string='';
+    /**
+     * 支付选择方式
+     */
+    private payMethod:boolean = false;
+    /**
+     * 支付类型
+     */
+    private payList:any[]=[
+        {
+            value:'支付宝',
+            key:'1'},
+        {
+            value:'微信支付',
+            key:'2'},
+        {
+            value:'余额支付',
+            key:'3'}];
+    private payValue:any = 1;
     created() {          
        this.service = OrderGoodsService.getInstance();
        this.detailList();
@@ -130,6 +193,29 @@ export default class OrderGoods extends Vue{
             this.Payment = true
         }
         
+    }
+    private closePayment(){
+        this.payMethod = false;
+        let _this = this;
+        this.$vux.confirm.show({
+            onCancel(){
+                _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}})
+            },
+            onConfirm(){
+                _this.payMethod=true;
+            },
+            content:"取消后，可在待付款列表中重新付款。",
+            confirmText:"继续付款",
+            onCancelText:"取消付款",
+            title:"取消付款"
+        })
+    }
+    /**
+     * 确认支付
+     */
+    private confirmPay(){
+        console.log(this.payValue,'998')
+        this.$router.push('/orderPaySuccess');
     }
     // 备注出现查看更多
     private handleFold(item:any) {
@@ -166,10 +252,76 @@ export default class OrderGoods extends Vue{
           this.$toasted.show(err.message);
       });
     }
+    /**
+     * 返回
+     */
+    private goBack(){
+        this.$router.push('/orderGood')
+    }
 }
 </script>
-<style lang="less" scoped>
-     .receive-icon-content{
+<style lang="less" scoped>    
+    .ezt-dialog-header{
+        padding: 8px 0px;
+        background: #F1F6FF;
+        border-radius: 4px 4px 0 0;
+        display:flex;
+        text-align: left;
+        .header-name{
+            padding-left: 12px;
+            flex: 1;
+        }
+        .ezt-close{
+            margin-right: 14px;
+            color: #aebaca;
+            font-size: 16px;
+        }
+    }
+    .warehouse-list{
+        text-align: left;
+    }
+    .warehouse-isDefault{
+        li{
+            padding: 0px 12px;
+            border-bottom:1px solid #f5f5f5;
+        }
+        label {                 /*设置label的样式*/
+            width: 100%;
+            padding: 10px 0px;
+            display: block;
+            line-height: 20px;
+            position: relative;
+            font-weight: normal;
+        }
+        .option {      /*把优化后的按钮图片设置为该div的背景图片，把该div定位到原生样式的上方，遮盖住原生样式。*/
+            width: 22px;
+            height: 22px;
+            position: absolute;
+            top: 10px;
+            right: 0px;
+            background-size: cover;
+            background: url(../../assets/images/btn_ck_n_checked.png) no-repeat;
+            background-size: cover;
+        }
+        input[type="radio"] {  /*为了保险起见，把原生样式隐藏掉*/
+            display: inline-block ;
+            margin-right: 15px ;
+            opacity: 0 ;
+        }
+        input[type="radio"]:checked+div {  /*当radiuo被选中时，把input下边的div标签的背景图片替换掉*/
+            background: url(../../assets/images/btn_ck_checked.png) no-repeat;
+            background-size: cover;
+        }
+    }
+    .ezt-lone-btn{
+        padding: 5px 50px;
+        margin: 5px;
+        display: inline-block;
+        background-image: linear-gradient(90deg, #46A3FF 0%, #4B8BFF 100%);
+        border-radius: 24px;
+        color: #fff;
+    }
+    .receive-icon-content{
          position: relative;
      }
     .ezt-backcolor{
@@ -287,5 +439,23 @@ export default class OrderGoods extends Vue{
     }
     .no-pament{
         margin-bottom: 24px;
-    }  
+    } 
+    .zfb-icon,.wx-icon{
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        vertical-align: middle;
+        margin-right: 6px;
+    }
+    .zfb-icon{
+        background: url(../../assets/images/zfb-icon.png) no-repeat;
+        background-size: 18px 18px;
+    }
+    .wx-icon{
+        background: url(../../assets/images/wx-icon.jpg) no-repeat;
+        background-size: 19px 19px;
+    }
+    .opt-text.balance{
+        padding-left: 26px;
+    }
 </style>

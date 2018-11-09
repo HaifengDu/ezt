@@ -465,11 +465,7 @@ export default class AddGood extends Vue{
   }
   private changeSmallType(item:any){
     this.allType.forEach((bigSort,index)=>{
-      if(bigSort.id == item.id){
-        this.$set(bigSort,'active',true);
-      }else{
-        this.$set(bigSort,'active',false);
-      }
+      this.$set(bigSort,'active',bigSort.id == item.id);
     })    
     this.typeName = item;   
     this.goodSmallType = item.cdata; 

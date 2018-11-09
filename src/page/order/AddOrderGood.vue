@@ -733,6 +733,7 @@ export default class Order extends Vue{
     height: 50px;
     text-align: center;
     line-height: 50px;
+    font-size: 22px;
 }
 .orderType-list span.active{
     background: #1674fc;

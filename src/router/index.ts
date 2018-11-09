@@ -56,6 +56,7 @@ import SearchLeadbackMaterial from '@/page/index/leadbackMaterial/SearchLeadback
 import AddleadbackRetreating from '@/page/index/leadbackMaterial/AddleadbackRetreating.vue';//添加退料单
 import LeadbackMaterialDetails from '@/page/index/leadbackMaterial/LeadbackMaterialDetails.vue';//领料详情页
 import AuditoleadbackMaterial from '@/page/index/leadbackMaterial/AuditoleadbackMaterial.vue';//审核领料单
+import OrderPaySuccess from '@/page/order/OrderPaySuccess.vue';//订货付款成功页面
 Vue.use(Router)
 
 const router = new Router({
@@ -282,6 +283,10 @@ const router = new Router({
       path:'/auditoleadbackMaterial',
       name:'AuditoleadbackMaterial',
       component:AuditoleadbackMaterial
+    },{
+      path: '/orderPaySuccess',
+      name:'OrderPaySuccess',
+      component:OrderPaySuccess
     }
   ]
 });

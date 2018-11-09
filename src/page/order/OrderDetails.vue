@@ -1,7 +1,7 @@
 <!--订货单详情-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" :title="paytitle">
+    <ezt-header :back="true" :title="paytitle" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
        </div>    
     </ezt-header>    
@@ -215,6 +215,7 @@ export default class OrderGoods extends Vue{
      */
     private confirmPay(){
         console.log(this.payValue,'998')
+        this.$router.push('/orderPaySuccess');
     }
     // 备注出现查看更多
     private handleFold(item:any) {
@@ -250,6 +251,12 @@ export default class OrderGoods extends Vue{
         },err=>{
           this.$toasted.show(err.message);
       });
+    }
+    /**
+     * 返回
+     */
+    private goBack(){
+        this.$router.push('/orderGood')
     }
 }
 </script>

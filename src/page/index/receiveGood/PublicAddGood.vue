@@ -2,13 +2,13 @@
 <template>
   <div class="ezt-page-con">
     <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch">
-       <div slot="action">
-         <div class="add">
+      <div slot="action">
+        <div class="add">
           <span class='ezt-action-point' @click="handlerSearchPage">
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
-         </div>
-       </div>
+        </div>
+      </div>
     </ezt-header>        
     <div class="ezt-main">
       <div class="ezt-add-content">
@@ -18,7 +18,7 @@
             <span>收藏</span>
           </span>
           <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
-            <span @click="changeSmallType(item)" :class="[{active:item.id==goodSmallType[0].id}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
+            <span @click="changeSmallType(item)" :class="[{active:item.active}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>
         <div class="good-cont">
@@ -112,7 +112,7 @@
                     </x-dialog>
                   </div>
                 <!-- 编辑价格信息时  -->
-                 <div>
+                <div>
                     <x-dialog v-model="isPrice" class="dialog-demo">
                     <div class="ezt-dialog-header">                                
                         <span class="ezt-close" @click="isPrice=false" >
@@ -182,17 +182,17 @@
           <div class="item-left-good">
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
-               <!--库存初始化-->
-                    <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
-                      <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
-                      <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-                    </span>
-                  <!--默认显示价格 可编辑-->  
-                  <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
-                      价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
-                  </span>
-                    <!--订货手工制单价格 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+              <!--库存初始化-->
+              <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+                <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
+              </span>
+              <!--默认显示价格 可编辑-->  
+              <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
+                  价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
+              </span>
+                <!--订货手工制单价格 不可编辑-->  
+              <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
@@ -213,17 +213,17 @@
     <!-- 搜索所有物品 -->
     <div class="search-item" v-if="isSearch">
        <div class="search-header">
-         <input type="text" placeholder="请输入" @input="handlerSearchData">
-         <div class="search-icon">          
+          <input type="text" placeholder="请输入" @input="handlerSearchData">
+          <div class="search-icon">          
             <i class="fa fa-search" aria-hidden="true"></i>
-        </div>
-        <div class="search-close">
-          <span class='ezt-action-point' @click="isSearch=false">
-            <i class="fa fa-times" aria-hidden="true"></i>
-          </span>  
-        </div>
+          </div>
+          <div class="search-close">
+            <span class='ezt-action-point' @click="isSearch=false">
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </span>  
+          </div>
       </div>
-       <div class="selected-good-content">
+      <div class="selected-good-content">
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
@@ -355,10 +355,10 @@ export default class AddGood extends Vue{
         id:1,
         name:"牛羊肉",
         cdata:[{
-          id:1,
+          id:0,
           name:"全部",
           goodList:[{
-            id:1,
+            id:11,
             name:"草鱼半成品",
             price:12,
             returnNum:2,
@@ -377,10 +377,10 @@ export default class AddGood extends Vue{
         id:2,
         name:"成本类",
         cdata:[{
-          id:2,
+          id:3,
           name:"全部",
           goodList:[{
-            id:2,
+            id:21,
             name:"海参",
             price:9,
             amt:8,
@@ -395,7 +395,7 @@ export default class AddGood extends Vue{
               list:[]
             }
           },{
-            id:3,
+            id:31,
             name:"土豆",
             price:3,
             amt:4,
@@ -414,7 +414,7 @@ export default class AddGood extends Vue{
           id:21,
           name:"速冻类",
           goodList:[{
-            id:21,
+            id:211,
             name:"牛肉",
             price:15,
             amt:22,
@@ -454,7 +454,7 @@ export default class AddGood extends Vue{
         id:3,
         name:"222222222222222222222222",
         cdata:[{
-          id:3,
+          id:2,
           name:"全部"
         }]
     }];
@@ -464,6 +464,13 @@ export default class AddGood extends Vue{
     //TODO:默认加载货品
   }
   private changeSmallType(item:any){
+    this.allType.forEach((bigSort,index)=>{
+      if(bigSort.id == item.id){
+        this.$set(bigSort,'active',true);
+      }else{
+        this.$set(bigSort,'active',false);
+      }
+    })    
     this.typeName = item;   
     this.goodSmallType = item.cdata; 
     (item.cdata).forEach((info:any,index:any)=>{

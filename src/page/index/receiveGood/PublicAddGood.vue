@@ -214,17 +214,6 @@
                   </span>
                     <!--订货手工制单价格 不可编辑-->  
                   <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
-              <!--库存初始化-->
-              <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
-                <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
-                <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-              </span>
-              <!--默认显示价格 可编辑-->  
-              <span v-if="materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
-                  价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
-              </span>
-                <!--订货手工制单价格 不可编辑-->  
-              <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->

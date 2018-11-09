@@ -1,107 +1,149 @@
 <!--新增盘点单-->
 <template>
-   <div class="ezt-page-con addinventorylist">
-    <ezt-header :back="true" title='新增盘点单' @goBack="goBack" :isInfoGoback="true">
-       <div slot="action">
-       </div>   
-    </ezt-header>    
-    <div class="ezt-main">
-      <div class="ezt-add-content">
-         <ul class="ezt-title-search">
-          <li>
-              <span class="title-search-name">门店名称：</span>
-              <input type="text" class="ezt-middle" disabled v-model="user.auth.store_name">
-          </li>
-           <li>
-              <span class="title-search-name">盘点日期：</span>
-              <input type="text" class="ezt-middle" disabled v-model="user.auth.busi_date">
-          </li>
-           <li>
-              <span class="title-search-name">盘点类型：</span>
-              <input type="text" class="ezt-middle" disabled v-model="addinventory.name">
-          </li>
-          <li class="select-list">
-              <span class="title-search-name is-required">仓库：</span>
-              <span class="title-select-name item-select">
-                <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
-                @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
-                  <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
-                </select> 
-              </span>   
-          </li>   
-          <li class="select-list" v-show="!InterfaceSysTypeBOH">
-            <span class="title-search-name is-required">未盘处理：</span>
-            <span class="title-select-name item-select">
-              <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment"
-              @change="handlerStock('treatment')" :class="[{'selectError':LibraryField[1].treatment}]">
-                <option :value="mode.value" :key="index" v-for="(mode,index) in orderType">{{mode.name}}</option>
-              </select>
-            </span>  
-          </li>
-          <li v-if="InterfaceSysTypeBOH">
-            <span class="title-search-name is-required">选择货品：</span>
-            <span class="title-search-right" @click="selectMaterials()">
-              <i class="fa fa-angle-right" aria-hidden="true"></i>
-            </span>
-          </li>
-        </ul>
-        <!----SAAS版本需要的功能---->
-        <div class="method" v-if="!InterfaceSysTypeBOH">
-              <p>盘点方式</p>        
-              <ul>
-                <li @click="manualproduction('manual')">手工制单</li>
-                <li @click="templateimport()">模板导入</li>
-                <li @click="inventorytype(pageType.InventoryType)">盘点类型导入</li>
+    <div>
+      <!-- SAAS版本 -->
+      <div class="ezt-page-con addinventorylist" v-if="!InterfaceSysTypeBOH">
+          <ezt-header :back="true" title='新增盘点单' @goBack="goBack" :isInfoGoback="true">
+            <div slot="action">
+            </div>   
+          </ezt-header>    
+          <div class="ezt-main">
+            <div class="ezt-add-content">
+              <ul class="ezt-title-search">
+                <li>
+                    <span class="title-search-name">门店名称：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="user.auth.store_name">
+                </li>
+                <li>
+                    <span class="title-search-name">盘点日期：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="user.auth.busi_date">
+                </li>
+                <li>
+                    <span class="title-search-name">盘点类型：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="addinventory.name">
+                </li>
+                <li class="select-list">
+                    <span class="title-search-name is-required">仓库：</span>
+                    <span class="title-select-name item-select">
+                      <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
+                      @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
+                        <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
+                      </select> 
+                    </span>   
+                </li>   
+                <li class="select-list" v-show="!InterfaceSysTypeBOH">
+                  <span class="title-search-name is-required">未盘处理：</span>
+                  <span class="title-select-name item-select">
+                    <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment"
+                    @change="handlerStock('treatment')" :class="[{'selectError':LibraryField[1].treatment}]">
+                      <option :value="mode.value" :key="index" v-for="(mode,index) in orderType">{{mode.name}}</option>
+                    </select>
+                  </span>  
+                </li>
+                <li v-if="InterfaceSysTypeBOH">
+                  <span class="title-search-name is-required">选择货品：</span>
+                  <span class="title-search-right" @click="selectMaterials()">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  </span>
+                </li>
               </ul>
+              <div class="method" v-if="!InterfaceSysTypeBOH">
+                    <p>盘点方式</p>        
+                    <ul>
+                      <li @click="manualproduction('manual')">手工制单</li>
+                      <li @click="templateimport()">模板导入</li>
+                      <li @click="inventorytype(pageType.InventoryType)">盘点类型导入</li>
+                    </ul>
+              </div>
+            </div> 
+          </div>      
         </div>
-        <!-----BOH版本需要的功能---->
-        <ul>
-           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
-                <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
-                v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
-                    <div class="good-detail-l">
-                        <div>
-                            <span class="good-detail-name">
-                              <span class="good-detail-break">{{item.name}}</span> 
-                              <span class="good-detail-sort">（{{item.utilname}}）</span>
-                            </span>
-                        </div>
-                        <div class="good-detail-nobreak">
-                              <span class="good-detail-billno ">编码：003222</span>
-                              <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
-                        </div> 
-                        <div>
-                            <span class="title-search-name ezt-dense-box">账面数量：{{item.price}}</span>   
-                            <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.num" style="width:80px;border-radius:0px;border:1px solid #ccc;"></span> 
-                        </div> 
-                    </div>
-                    <div class="good-detail-r">
-                      <div class="park-input"> 
-                        <span class="title-search-name">备注：{{item.remark}}</span>
-                      </div>                    
-                    </div>
-                </div> 
-                <div class="ezt-detail-del" @click="delAction(item)">
-                  <i class="fa fa-trash" aria-hidden="true"></i>
+      <!-- BOH版本 -->
+      <div class="ezt-page-con addinventorylist" v-show="InterfaceSysTypeBOH">
+          <ezt-header :back="true" title='新增盘点单' @goBack="goBack" :isInfoGoback="true">
+            <div slot="action">
+            </div>   
+          </ezt-header>    
+          <div class="ezt-main">
+            <div class="ezt-add-content">
+              <ul class="ezt-title-search">
+                <li>
+                    <span class="title-search-name">门店名称：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="user.auth.store_name">
+                </li>
+                <li>
+                    <span class="title-search-name">盘点日期：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="user.auth.busi_date">
+                </li>
+                <li>
+                    <span class="title-search-name">盘点类型：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="addinventory.name">
+                </li>
+                <li class="select-list">
+                    <span class="title-search-name is-required">仓库：</span>
+                    <span class="title-select-name item-select">
+                      <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
+                      @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
+                        <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
+                      </select> 
+                    </span>   
+                </li>   
+                <li>
+                  <span class="title-search-name is-required">选择货品：</span>
+                  <span class="title-search-right" @click="selectMaterials()">
+                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                  </span>
+                </li>
+              </ul>
+              <!-----BOH版本需要的功能---->
+              <ul>
+                <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
+                      <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
+                      v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
+                          <div class="good-detail-l">
+                              <div>
+                                  <span class="good-detail-name">
+                                    <span class="good-detail-break">{{item.name}}</span> 
+                                    <span class="good-detail-sort">（{{item.utilname}}）</span>
+                                  </span>
+                              </div>
+                              <div class="good-detail-nobreak">
+                                    <span class="good-detail-billno ">编码：003222</span>
+                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                              </div> 
+                              <div>
+                                  <span class="title-search-name ezt-dense-box">账面数量：{{item.price}}</span>   
+                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.num" style="width:80px;border-radius:0px;border:1px solid #ccc;"></span> 
+                              </div> 
+                          </div>
+                          <div class="good-detail-r">
+                            <div class="park-input"> 
+                              <span class="title-search-name">备注：{{item.remark}}</span>
+                            </div>                    
+                          </div>
+                      </div> 
+                      <div class="ezt-detail-del" @click="delAction(item)">
+                        <i class="fa fa-trash" aria-hidden="true"></i>
+                      </div>
+                </li>
+              </ul>   
+            </div> 
+            <ezt-footer>
+              <div class="ezt-foot-temporary" slot="confirm">
+                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
+                  <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                  <b>数量</b><span>{{Total.num}}</span>，
+                  <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
                 </div>
-           </li>
-        </ul>   
-      </div> 
-      <ezt-footer>
-        <div class="ezt-foot-temporary" slot="confirm">
-          <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-            <b>品项</b><span>{{this.selectedGood.length}}</span>，
-            <b>数量</b><span>{{Total.num}}</span>，
-            <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
-          </div>
-          <div class="ezt-foot-button" v-if="InterfaceSysTypeBOH">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-            <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
-          </div>  
+                <div class="ezt-foot-button">
+                  <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
+                  <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
+                </div>  
+              </div>
+            </ezt-footer>
+          </div>      
         </div>
-      </ezt-footer>
-    </div>      
-  </div>
+    </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -353,6 +395,11 @@ export default class StockTaking extends Vue{
             return false;
           }
       }
+      let goodTerm = {};
+      goodTerm={
+        billsPageType: 'stocktaking',
+      }
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
       this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));

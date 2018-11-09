@@ -308,8 +308,6 @@ export default class leadbackMaterial extends Vue{
          * 确定操作
          */
         onConfirm () {
-          _this.addBillInfo={}
-          _this.addBeforeBillInfo={}
           _this.setSelectedGood([])
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
         },

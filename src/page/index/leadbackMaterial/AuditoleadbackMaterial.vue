@@ -192,7 +192,7 @@ export default class leadbackMaterial extends Vue{
     })
   }
   /**
-   *  领料单 提交
+   *  领料单 提交   
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
@@ -216,28 +216,40 @@ export default class leadbackMaterial extends Vue{
       this.$toasted.show("请添加物料！");
       return false;
     }
-    this.$vux.confirm.show({
-      /**
-       * 审核不通过
-       */
-      onCancel () {
-        
-      },
-      /**
-       * 审核通过
-       */
-      onConfirm () {
-        _this.addBillInfo={},
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.$toasted.success("审核成功！");
-        _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料已审'}}); 
-      },
-      content:'确认审核该单据？',
-      confirmText:"审核通过",
-      cancelText:"审核不通过",
-      hideOnBlur:true
-    })
+    if(false){
+       this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {//返回
+            },
+            content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库，或调整物料的仓库分配关系后再操作。。',
+            showConfirmButton: false,
+            cancelText:"返回",
+            title:"入库失败"
+        })
+    }else{
+        this.$vux.confirm.show({
+          /**
+           * 审核不通过
+           */
+          onCancel () {
+            
+          },
+          /**
+           * 审核通过
+           */
+          onConfirm () {
+            _this.addBillInfo={},
+            _this.setSelectedGood([]);
+            _this.addBeforeBillInfo={};
+            _this.$toasted.success("审核成功！");
+            _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'领料已审'}}); 
+          },
+          content:'确认审核该单据？',
+          confirmText:"审核通过",
+          cancelText:"审核不通过",
+          hideOnBlur:true
+        })
+    }
   }   
 
   /**
@@ -264,28 +276,40 @@ private saveReceive01(){
         this.$toasted.show("请添加物料！");
         return false;
       }
-      this.$vux.confirm.show({
-        /**
-         * 审核不通过
-         */
-        onCancel () {
-          
-        },
-        /**
-         * 审核通过
-         */
-        onConfirm () {
-          _this.addBillInfo={},
-          _this.setSelectedGood([]);
-          _this.addBeforeBillInfo={};
-          _this.$toasted.success("审核成功！");
-          _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料已审'}}); 
-        },
-        content:'确认审核该单据？',
-        confirmText:"审核通过",
-        cancelText:"审核不通过",
-        hideOnBlur:true
-      })
+      if(false){
+        this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {//返回
+            },
+            content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库，或调整物料的仓库分配关系后再操作。。',
+            showConfirmButton: false,
+            cancelText:"返回",
+            title:"入库失败"
+        })
+      }else{
+           this.$vux.confirm.show({
+            /**
+             * 审核不通过
+             */
+            onCancel () {
+              
+            },
+            /**
+             * 审核通过
+             */
+            onConfirm () {
+              _this.addBillInfo={},
+              _this.setSelectedGood([]);
+              _this.addBeforeBillInfo={};
+              _this.$toasted.success("审核成功！");
+              _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料已审'}}); 
+            },
+            content:'确认审核该单据？',
+            confirmText:"审核通过",
+            cancelText:"审核不通过",
+            hideOnBlur:true
+          })
+      }
     }  
    /**
     * 选择物料

@@ -178,7 +178,12 @@ export default class Order extends Vue{
         item.active = active;
     }
     //选择物料
-    private renderUrl(info: string) {
+    private renderUrl(info: string) {   
+        let goodTerm = {};
+        goodTerm={
+            billsPageType: 'orderGood',
+        }  
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         // this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         // this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中

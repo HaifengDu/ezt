@@ -339,7 +339,7 @@ export default class OrderGoods extends Vue{
      */
     private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
-      if(status =="1"){
+      if(status =="0"){
          item.active = active;
       }     
     }
@@ -477,20 +477,18 @@ export default class OrderGoods extends Vue{
       z-index: 2;
     }
     .ezt-list-del{
-       position: absolute;
-        right: 12px;
-        top: 42px;
-        // background: pink;
-        width: 50px;
-        height: 50px;
-        text-align: center;
-        line-height: 50px;
-        font-size: 22px;
+      position: absolute;
+      right: 7px;
+      top: 0;
+      width: 50px;
+      height: 206px;
+      text-align: center;
+      line-height: 206px;
+      font-size: 25px;
     }
     .swipe-transform{
       transform: translateX(-50px);
     }
-    //
     .addgoods{
       position: absolute;
       top: 44px;

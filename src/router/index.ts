@@ -14,6 +14,7 @@ import PublicAddGood from '@/page/index/receiveGood/PublicAddGood.vue';//选择�
 import MineContent from '@/page/mine/MineContent.vue';
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue';
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue';
+import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue';//审核盘点单
 import LibraryDetails from '@/page/index/stockTaking/LibraryDetails.vue';
 import QueryResult from '@/page/index/stockTaking/QueryResult.vue';
 import SelecttheTemplate from '@/page/index/stockTaking/SelecttheTemplate.vue';
@@ -108,6 +109,10 @@ const router = new Router({
       path: '/addInventoryList',   //新增盘点单
       name: 'AddinventoryList',
       component: AddinventoryList,
+    },{
+      path: '/auditcheckList',   //添加审核盘点单
+      name: 'AuditcheckList',
+      component: AuditcheckList,
     },{      
       path: '/libraryDetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',

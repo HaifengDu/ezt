@@ -288,7 +288,7 @@ export default class SpilledSheet extends Vue{
       this.cache.save(CACHE_KEY.SPILLED_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
       this.$router.push({name:'PublicAddGood',params:{}});
     }      
-  }
+  }   
   /**
    * 选择单据类型 仓库  损溢原因
    */
@@ -301,7 +301,6 @@ export default class SpilledSheet extends Vue{
         },
         onConfirm () {   
           _this.setSelectedGood([]);
-          _this.addBillInfo={};
           _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
         },
         content:title

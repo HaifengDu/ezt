@@ -167,7 +167,6 @@ export default class leadbackMaterial extends Vue{
     private detailList(){
      this.service.getGoodDetail().then(res=>{
           this.details=res.data.data;
-          console.log(JSON.stringify(this.details))
         },err=>{
           this.$toasted.show(err.message);
       });

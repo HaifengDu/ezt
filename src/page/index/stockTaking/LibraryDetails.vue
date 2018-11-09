@@ -26,7 +26,7 @@
               <p class="title" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">盘点单</p>
               <ul>
                 <li :key="index" v-for="(item,index) in inventoryDetails">
-                    <div>
+                    <div>   
                       <p>
                          <span style="margin-right:10px;">{{item.material_name}}</span>
                          编码：<span>{{item.material_num}}</span>
@@ -36,17 +36,17 @@
                         <p>规格：<span>{{item.material_model}}</span></p>
                         <p>账面数量：<span>{{item.acc_qty}}</span></p>
                     </div>
-                    <div>
+                    <div v-if="!InterfaceSysTypeBOH">
                       <p>理论库存：<span>{{item.thery_qty}}</span></p>
                       <p>理论消耗：<span>{{item.consume_qty || '0'}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
-                      <p>采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
+                      <p v-if="!InterfaceSysTypeBOH">采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
                       <p v-if="!InterfaceSysTypeBOH">库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
                       <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
-                       <p>消耗单位：<span>{{item.consume_num || '0'}}{{item.bom_name}}</span></p>
+                       <p v-if="!InterfaceSysTypeBOH">消耗单位：<span>{{item.consume_num || '0'}}{{item.bom_name}}</span></p>
                     </div>
                     <div class="purchase" v-if="types== pageType.RealdiscEntry">
                         <div>
@@ -175,7 +175,7 @@ export default class stockTaking extends Vue{
       }
     }
     //审核不通过
-    private reviewpass(item:any){  
+    private reviewpass(item:any){         
         const audit_name = this.user.auth.username
         const ids = this.details.id
         const opinion = ""

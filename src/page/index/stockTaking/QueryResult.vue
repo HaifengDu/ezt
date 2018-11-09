@@ -20,7 +20,7 @@
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
                       <div><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
                       <div><p>生成损溢：</p></div>   <!----<span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span>---->
-                      <div><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
+                      <div v-if="!InterfaceSysTypeBOH"><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
                           <p>业务日期：<span>2018-12-13</span></p>
                           <p class="see" @click="see(item,pageType.LibraryDetails)">查看</p>
@@ -46,11 +46,11 @@ import { PageType } from "../../../enum/EPageType"
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({  
    components:{  
-      
+        
    },   
    computed:{
      ...mapGetters({
-
+          'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',//接口BOH
      }) 
    },
    methods:{ 
@@ -62,6 +62,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })  
 export default class stockTaking extends Vue{
     private service: StockTakingService;
+    private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();  
     private pager:Pager;   
     private pageType = PageType;

@@ -34,8 +34,8 @@
                 v-swipeleft="handlerSwipe.bind(this,item,true)"  
                 v-swiperight="handlerSwipe.bind(this,item,false)" 
                 :class="{'swipe-transform':item.active}"
-                @click="librarydetails(item,pageType.LibraryDetails)">
-              <div class="receive-icon-title">
+                >
+              <div class="receive-icon-title" @click="librarydetails(item,pageType.LibraryDetails)">
                 <span class="return-list-title">
                   <span>
                       <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
@@ -47,7 +47,7 @@
                 <span class="receive-status" v-if="tabList.getActive().status==0">待审核</span>
                 <span class="receive-status" v-if="tabList.getActive().status==1">已完成</span>  
               </div>
-              <div class="receive-icon-content">
+              <div class="receive-icon-content" @click="librarydetails(item,pageType.LibraryDetails)">
                 <span class="receive-dc-title">盘点仓库：
                   <span class="receive-dc-content">{{item.warehouse_name}}</span>  
                 </span>
@@ -64,7 +64,8 @@
               <div class="receive-icon-bottom">
                 <div class="glow-1">
                    <span class="businessDate">业务日期：2018-11-12</span>
-                   <span class="submit" v-if="tabList.getActive().status === 0" @click="librarydetails(item,pageType.AuditList)">审核</span>
+                   <span class="submit" v-if="tabList.getActive().status === 0 && !InterfaceSysTypeBOH" @click="librarydetails(item,pageType.AuditList)">审核</span>
+                   <span class="submit" v-if="tabList.getActive().status === 0 && InterfaceSysTypeBOH" @click="auditchecklist(item)">审核</span>
                 </div>
               </div>
             </div>
@@ -100,10 +101,10 @@
          <x-input title="单据号：" v-model="searchParam.djNumber" placeholder="请输入单据号"></x-input>
        </li>
        <li class="select-list">
-        <span class="title-search-name ">盘点库：</span>
+        <span class="title-search-name">盘点库：</span>
         <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" ref="selectedWarehouse" v-model="searchParam.selectedWarehouse">
-             <option style="display:none;" disabled="disabled" selected="selected">请选择盘点库</option>
+          <select placeholder="请选择" class="ezt-select" v-model="searchParam.selectedWarehouse">
+             <option style="display:none;" disabled selected>请选择盘点库</option>
              <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
           </select>
         </span>
@@ -160,7 +161,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
      ...mapActions({
 
      })
-   }
+   }   
 })
 export default class stockTaking extends Vue{
     private pager:Pager; 
@@ -189,14 +190,14 @@ export default class stockTaking extends Vue{
       this.service = StockTakingService.getInstance();
       this.searchParam = {};
       this.tabList.push({
-        name:"待审核",
-        status:0,
-        active:true,
-      },{
-        name:"已审核",
-        status:1,
-        active:false  
-      }
+          name:"待审核",   
+          status:0,
+          active:true,
+        },{
+          name:"已审核",
+          status:1,
+          active:false  
+        }
       );   
       this.inventoryType.push({  
           name:"日盘",
@@ -224,12 +225,11 @@ export default class stockTaking extends Vue{
        */
       this.getWarehouseType();  
       
-     
     }
-    mounted(){      
+    mounted(){   
       this.getpkList();
       /**
-       * 点击遮罩层
+       * 点击遮罩层 
        */
       this.addMaskClickListener(()=>{  
           this.isSearch = false; 
@@ -245,6 +245,18 @@ export default class stockTaking extends Vue{
         })
       } 
     } 
+     /**
+     * 动态加载仓库
+     */
+    private getWarehouseType(){
+      const inventory_type = "week_inventory";
+      this.service.getWarehouse(inventory_type as string).then(res=>{ 
+          this.warehouseType = res.data.data
+          this.searchParam.selectedWarehouse = this.warehouseType[0].text
+      },err=>{
+          this.$toasted.show(err.message)
+      })    
+    }
     /**
      * 查询日期限制
      */
@@ -321,6 +333,18 @@ export default class stockTaking extends Vue{
         this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
         this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    } 
+    /**
+     * 审核盘点单   audit_status单据状态
+     */
+    private auditchecklist(item:any,audit_status:number){
+      this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
+        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.$router.push({name:'AuditcheckList',query:{}});  
       },err=>{
           this.$toasted.show(err.message)
       })
@@ -404,17 +428,6 @@ export default class stockTaking extends Vue{
           this.isSearch = false;
           this.$router.push({name:'QueryResult'});
           this.$toasted.show("请求接口失败！")
-          this.$toasted.show(err.message)
-      })
-    }
-    /**
-     * 动态加载仓库
-     */
-    private getWarehouseType(){
-      const inventory_type = "week_inventory";
-      this.service.getWarehouse(inventory_type as string).then(res=>{ 
-          this.warehouseType = res.data.data
-      },err=>{
           this.$toasted.show(err.message)
       })
     }

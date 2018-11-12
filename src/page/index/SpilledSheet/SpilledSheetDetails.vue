@@ -178,11 +178,15 @@ export default class SpilledSheet extends Vue{
         position: absolute;
         top:0;
         width: 100%;
+        ul{
+            li:last-child{
+                margin-bottom: 35px;
+            }
+        }
     }
     .ezt-main{
         overflow-y: auto;
         overflow-x: hidden;
-        margin-bottom: 68px;
     }
     .receive-dc-content{
         width: 100px;

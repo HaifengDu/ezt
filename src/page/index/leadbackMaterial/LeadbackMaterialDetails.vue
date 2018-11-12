@@ -190,6 +190,11 @@ export default class leadbackMaterial extends Vue{
         position: absolute;
         top:0;
         width: 100%;
+        ul{
+            li{
+                margin-bottom: 35px;
+            }
+        }
     }
     .ezt-main{
         overflow-y: auto;

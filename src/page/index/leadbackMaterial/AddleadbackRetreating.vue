@@ -14,7 +14,7 @@
               <select value class="ezt-select" v-model="addBillInfo.materialwarehouse" 
                 @change="handlerBillType('materialwarehouse','您已维护物料信息，如调整退料仓库，须重新选择退料仓库、主仓库。')" :class="[{'selectError':billFiles[0].materialwarehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择退料仓库</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in Retreating">{{item.name}}</option>
               </select>
             </span>
           </li>
@@ -24,7 +24,7 @@
               <select value class="ezt-select" v-model="addBillInfo.warehouse"
               @change="handlerBillType('warehouse','您已维护物料信息，如调整主仓库，须重新选择退料仓库、主仓库。')" :class="[{'selectError':billFiles[1].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择主仓库</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in Warehouse">{{item.name}}</option>
               </select>
             </span>
           </li>
@@ -122,13 +122,23 @@ export default class leadbackMaterial extends Vue{
     remark:""
   };
   /**
-   * 数据类型
+   * 退料仓库
    */
-  private orderType:any[] = [{ 
+  private Retreating:any[] = [{ 
     name:"退料单01",
     type:"q"
   },{
     name:"退料单02",
+    type:"m"
+  }];
+  /**
+   * 主仓库
+   */
+  private Warehouse:any[] = [{ 
+    name:"仓库01",
+    type:"q"
+  },{
+    name:"仓库02",
     type:"m"
   }];
   /**

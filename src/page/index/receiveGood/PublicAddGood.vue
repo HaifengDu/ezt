@@ -39,16 +39,17 @@
                     </span> 
                   <!--默认显示价格 可编辑 盘库 订货不显示-->  
                   <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'&&materialLimit.billsPageType != 'supplierReturn'&&
-                  materialLimit.billsPageType!='inStoreAllot'" class="good-item-sort edit">
+                  materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType != 'spilledSheet' &&materialLimit.billsPageType !='leadbackMaterial'" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>   
                   <!---盘库显示规格账面数量-->
                   <span v-if="materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
                       规格： <span class="good-item-sort">{{item.utilname}}</span>
                       账面数量：<span class="good-item-sort">{{item.price}}</span>
-                  </span> 
-                  <!--订货手工制单价格、退货价格、店内调拨、 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'|| materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                  </span>
+                  <!--订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料 不可编辑-->  
+                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
+                   materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
                 </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
@@ -196,12 +197,13 @@
                     规格： <span class="good-item-sort">{{item.utilname}}</span>
                     账面数量：<span class="good-item-sort">{{item.price}}</span>
                 </span>
-                 <!--订货手工制单价格 店内调拨、报损单、损溢单  领退料不可编辑-->  
-                <span class="good-item-sort" v-if="materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'orderGood' ||materialLimit.billsPageType == 'supplierReturn'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span> 
+                <!--订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料 不可编辑-->  
+                <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
+                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
 
                 <!--默认显示价格 可编辑-->  
                  <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType!='inStoreAllot'
-                  &&materialLimit.billsPageType != 'supplierReturn'" class="good-item-sort edit">
+                  &&materialLimit.billsPageType != 'supplierReturn'&&materialLimit.billsPageType != 'spilledSheet' &&materialLimit.billsPageType !='leadbackMaterial'" class="good-item-sort edit">
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                 </span>
             </div>

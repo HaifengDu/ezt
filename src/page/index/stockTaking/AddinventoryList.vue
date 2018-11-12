@@ -26,28 +26,30 @@
                     <span class="title-search-name is-required">仓库：</span>
                     <span class="title-select-name item-select">
                       <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
-                      @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
+                      @change="handlerWarehouse('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点仓库</option>
                         <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
                       </select> 
                     </span>   
                 </li>   
-                <li class="select-list" v-show="!InterfaceSysTypeBOH">
+                <li class="select-list">
                   <span class="title-search-name is-required">未盘处理：</span>
                   <span class="title-select-name item-select">
                     <select placeholder="请选择未盘处理方式" class="ezt-select"  v-model="addinventory.treatment"
-                    @change="handlerStock('treatment')" :class="[{'selectError':LibraryField[1].treatment}]">
+                    @change="handlerWarehouse('treatment')" :class="[{'selectError':LibraryField[1].treatment}]">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择未盘处理</option>
                       <option :value="mode.value" :key="index" v-for="(mode,index) in orderType">{{mode.name}}</option>
                     </select>
                   </span>  
                 </li>
-                <li v-if="InterfaceSysTypeBOH">
+                <li>
                   <span class="title-search-name is-required">选择货品：</span>
-                  <span class="title-search-right" @click="selectMaterials()">
+                  <span class="title-search-right" @click="SaasMaterials()">
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
                   </span>
                 </li>
               </ul>
-              <div class="method" v-if="!InterfaceSysTypeBOH">
+              <div class="method">
                     <p>盘点方式</p>        
                     <ul>
                       <li @click="manualproduction('manual')">手工制单</li>
@@ -83,19 +85,19 @@
                     <span class="title-search-name is-required">仓库：</span>
                     <span class="title-select-name item-select">
                       <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
-                      @change="handlerStock('stock')" :class="[{'selectError':LibraryField[0].stock}]"> 
+                      @change="handlerStock('stock')" :class="[{'selectError':TypeField[0].stock}]"> 
+                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点仓库</option>
                         <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
                       </select> 
                     </span>   
                 </li>   
                 <li>
                   <span class="title-search-name is-required">选择货品：</span>
-                  <span class="title-search-right" @click="selectMaterials()">
+                  <span class="title-search-right" @click="BohMaterials()">
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
                   </span>
                 </li>
               </ul>
-              <!-----BOH版本需要的功能---->
               <ul>
                 <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
                       <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
@@ -185,7 +187,10 @@ export default class StockTaking extends Vue{
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
-    private addinventory:any={};//新增盘库单
+    private addinventory:any={
+      stock:'',
+      treatment:'',
+    };//新增盘库单
     private selectedGood:any[];//store中selectedGood的值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
@@ -201,6 +206,9 @@ export default class StockTaking extends Vue{
     private LibraryField=[
         {id:"stock",msg:"请选择仓库！",stock:false},
         {id:"treatment",msg:"请选择未盘处理方式！",treatment:false},
+    ]
+    private TypeField=[
+        {id:"stock",msg:"请选择仓库！",stock:false},
     ];
 
   created() {  
@@ -267,11 +275,21 @@ export default class StockTaking extends Vue{
   private handleSwipe(item:any,active:boolean){ 
     item.active=active;
   }
-  /**
-     * 选择完仓库  未盘处理方式
+   /**
+     * SAAS版本 选择仓库 未盘处理方式
+     */
+    private handlerWarehouse(val:any){
+      this.LibraryField.forEach(item=>{
+        if(item.id == val){
+           item[val]= false;
+        }
+      })      
+    }
+     /**
+     *  BOH版本 选择完仓库 
      */
     private handlerStock(val:any){
-      this.LibraryField.forEach(item=>{
+      this.TypeField.forEach(item=>{
         if(item.id == val){
            item[val]= false;
         }
@@ -364,19 +382,52 @@ export default class StockTaking extends Vue{
     })
   }    
   /**
-   * 选择物料
+   *  SAAS版本选择物料
    */
-  private selectMaterials(newType:any){
+  private SaasMaterials(newType:any){
     let goodTerm = {};
     if(this.addBillInfo){
       goodTerm={
         billsPageType: 'stocktaking',
       }  
+      for(let i=0;i<this.LibraryField.length;i++){
+        let item = this.LibraryField[i];
+        if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
+            this.$toasted.show(item.msg);
+            item[item.id]=true;
+            return false;
+          }
+      }
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
       this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
       this.$router.push({name:'PublicAddGood',query:{newType:newType}})
+    }      
+  }
+
+  /**
+   *  BOH版本选择物料
+   */
+  private BohMaterials(){
+    let goodTerm = {};
+    if(this.addBillInfo){
+      goodTerm={
+        billsPageType: 'stocktaking',
+      }  
+      for(let i=0;i<this.TypeField.length;i++){
+        let item = this.TypeField[i];
+        if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
+            this.$toasted.show(item.msg);
+            item[item.id]=true;
+            return false;
+          }
+      }
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+      this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
+      this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+      this.$router.push({name:'PublicAddGood',query:{}})
     }      
   }
 

@@ -94,35 +94,33 @@
       </div>   
     </x-dialog>
   </div>
-  <!-- 查询盘库单 -->  
+  <!-- 查询盘库单 -->
   <div v-show="isSearch" class="search-dialog stocktaking">
       <ul class="ezt-title-search">
        <li>
-         <x-input title="单据号：" v-model="searchParam.djNumber" placeholder="请输入单据号"></x-input>
+         <x-input title="单据号：" v-model="searchParam.billNumber" placeholder="请输入单据号"></x-input>
        </li>
        <li class="select-list">
         <span class="title-search-name">盘点库：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.selectedWarehouse">
-             <option style="display:none;" disabled selected>请选择盘点库</option>
+             <option value="" style="display:none;" disabled selected>请选择盘点库</option>
              <option :value="type.id" :key="index" v-for="(type,index) in warehouseType">{{type.text}}</option>
           </select>
         </span>
       </li>
       <li>
         <span class="title-search-name">开始日期：</span>
-        <span>
-         <ezt-canlendar ref="startDate" :max="searchParam.endDate" 
-            :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
-            placeholder="开始日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+        <span>    
+          <ezt-canlendar ref="startDate" v-model="searchParam.startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" >
+          </ezt-canlendar>
         </span>
       </li>
        <li>
         <span class="title-search-name">结束日期：</span>
         <span>
-         <ezt-canlendar ref="endDate" :min="searchParam.startDate" 
-            :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
-            placeholder="结束日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+           <ezt-canlendar ref="endDate" v-model="searchParam.endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')" placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar">
+           </ezt-canlendar>
         </span>
       </li>
       <li>
@@ -172,23 +170,22 @@ export default class stockTaking extends Vue{
     private tabList:TabList = new TabList();
     private newlyadded:boolean= false;
     private isSearch:boolean= false; //搜索的条件
-    private searchParam:any={
+    private searchParam:any={    //搜索时的查询条件
+      billNumber:'',
+      selectedWarehouse:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
-      endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
-    };//搜索时的查询条件
-    private warehouseType:any[] = [];  //动态加载仓库
-    private selectedWarehouse:any;//选中仓库id
+      endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd'),
+    };
+    private warehouseType:any[]=[];  //动态加载仓库
     private addMaskClickListener:(...args:any[])=>void; //遮罩层显示隐藏
     private hideMask:()=>void;
     private showMask:()=>void;
-    private djNumber:any; //单据号
     private inventoryType:any[] = [];//盘点类型
     private type:string; //盘点类型数据
     private pageType = PageType;
     created() {
       this.pager = new Pager().setLimit(20)
       this.service = StockTakingService.getInstance();
-      this.searchParam = {};
       this.tabList.push({
           name:"待审核",   
           status:0,
@@ -224,7 +221,6 @@ export default class stockTaking extends Vue{
        * 动态加载仓库
        */
       this.getWarehouseType();  
-      
     }
     mounted(){   
       this.getpkList();
@@ -252,7 +248,7 @@ export default class stockTaking extends Vue{
       const inventory_type = "week_inventory";
       this.service.getWarehouse(inventory_type as string).then(res=>{ 
           this.warehouseType = res.data.data
-          this.searchParam.selectedWarehouse = this.warehouseType[0].text
+          // this.searchParam.selectedWarehouse = this.warehouseType[0].text
       },err=>{
           this.$toasted.show(err.message)
       })    
@@ -410,7 +406,7 @@ export default class stockTaking extends Vue{
      * 查询结果页
      */
     private toSearch(){
-      const bill_no = this.searchParam.djNumber || null;
+      const bill_no = this.searchParam.billNumber || null;
       const end_date =  this.searchParam.endDate || null;      
       const begin_date = this.searchParam.startDate || null;   
       const warehouse_id = this.searchParam.selectedWarehouse || null;
@@ -419,7 +415,6 @@ export default class stockTaking extends Vue{
         this.isSearch = false;
         this.$router.push({name:'QueryResult'});
         this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
-        // this.setQueryResult(res.data.data); 
       },err=>{
           /**
            * 接口请求报错，测试页面看效果

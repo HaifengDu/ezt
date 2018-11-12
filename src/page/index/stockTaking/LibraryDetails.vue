@@ -174,21 +174,26 @@ export default class stockTaking extends Vue{
             this.details.template_name = template_name.templateName
       }
     }
-    //审核不通过
+    /**
+     * 审核不通过
+     */
     private reviewpass(item:any){         
         const audit_name = this.user.auth.username
         const ids = this.details.id
         const opinion = ""
         this.service.getAuditchecklistno(audit_name,ids,opinion).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
-            this.$router.push({name:'StockTaking',params:{'purStatus':'审核失败'}});
+            this.cache.clear()
+            this.$router.push({name:'StockTaking',params:{'purStatus':'审核失败'}})
         },err=>{
             this.$toasted.show(err.message)
         })   
     }
-    // 审核通过
+    /**
+     * 审核通过
+     */
     private auditfailed(item:any){ 
         const whole_num = this.inventoryDetails[0]['whole_num']
         const id = this.inventoryDetails[0].id
@@ -201,15 +206,18 @@ export default class stockTaking extends Vue{
         const stock_count_mode = this.details.stock_count_mode
         const organ_brief_code = this.user.auth.organ_brief_code
         this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
+            this.cache.clear()
             this.$router.push({name:'StockTaking',params:{'purStatus':'待/已生效'}});
         },err=>{   
             this.$toasted.show(err.message)
         })
     }
-     //待提交状态下的提交按钮页面的暂存(实盘录入页面暂存)接口 （接口没问题）
+     /**
+       * 待提交状态下的暂存按钮      实盘录入暂存
+       */
       private storage(item:any){
         const whole_num = this.inventoryDetails[0]['whole_num']
         const id = this.inventoryDetails[0].id
@@ -219,15 +227,18 @@ export default class stockTaking extends Vue{
         const is_stock_report = 0  //0是暂存   1是提交
         const stock_count_mode = this.details.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
+            this.cache.clear()
             this.$router.push('/stocktaking')
         },err=>{
             this.$toasted.show(err.message)
         })
       }
-      //待提交状态下的提交按钮的提交接口（实盘录入页面提交）  (接口没问题)
+      /**
+       * 待提交状态下的提交按钮      实盘录入提交
+       */
       private sub(item:any){  
         const whole_num = this.inventoryDetails[0]['whole_num']
         const id = this.inventoryDetails[0].id
@@ -237,17 +248,19 @@ export default class stockTaking extends Vue{
         const is_stock_report = 1  // 1是提交    
         const stock_count_mode = this.details.stock_count_mode
         this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
+            this.cache.clear() 
             this.$router.push('/stocktaking')
         },err=>{
             this.$toasted.show(err.message)   
         })
     }
 
-
-    // 盘点类型导入之后的暂存提交接口    模板导入
+    /**
+     * 盘点类型导入 模板导入  暂存按钮
+     */
     private temporarystorage(item:any){   
        if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可保存！")
@@ -272,7 +285,9 @@ export default class stockTaking extends Vue{
             this.$toasted.show(err.message)
         })
     }
-
+    /**
+     * 盘点类型导入 模板导入  提交按钮
+     */
     private Submission(item:any){   
         if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可提交！")
@@ -290,8 +305,8 @@ export default class stockTaking extends Vue{
         this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.cache.clear();
             this.$toasted.show("操作成功！")
+            this.cache.clear();
             this.$router.push('/')
         },err=>{
             this.$toasted.show(err.message)

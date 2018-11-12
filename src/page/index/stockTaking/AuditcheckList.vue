@@ -283,9 +283,6 @@ export default class StockTaking extends Vue{
       this.$router.push({name:'PublicAddGood',query:{newType:newType}})
     }      
   }
-
-
-     
 }
 </script>
 <style lang="less" scoped>

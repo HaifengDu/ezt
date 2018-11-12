@@ -37,18 +37,19 @@
                       <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span> 
-                  <!--默认显示价格 可编辑-->  
+                  <!--默认显示价格 可编辑  盘库  订货不显示-->  
                   <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
-                  </span>    
+                  </span>   
                   <!---盘库显示规格账面数量-->
-                  <span v-if="materialLimit.billsPageType == 'stocktaking'" 
-                    class="good-item-sort">
-                      规格： <span class="good-item-sort" style="margin-right:5px;">{{item.utilname}}</span>
+                  <span v-if="materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
+                      规格： <span class="good-item-sort">{{item.utilname}}</span>
                       账面数量：<span class="good-item-sort">{{item.price}}</span>
-                  </span>
-                  <!--订货手工制单价格、退货价格、审核损溢 领退料 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial' ||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                  </span> 
+                </div>
+                <div class="good-item-bot">
+                    <!--订货手工制单价格、退货价格、审核损溢 领退料 不可编辑-->  
+                     <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial' ||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>   
                 </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
@@ -197,11 +198,13 @@
                     账面数量：<span class="good-item-sort">{{item.price}}</span>
                 </span>
                 <!--默认显示价格 可编辑-->  
-                <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
+                <span v-if="materialLimit.billsPageType != 'stocktaking'|| materialLimit.billsPageType != 'orderGood' || materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                 </span>
-                  <!--订货手工制单价格 损溢单  领退料不可编辑-->  
-                <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood' || materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial' ||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+            </div>
+            <div class="good-item-bot">
+              <!--订货手工制单价格 损溢单  领退料不可编辑-->  
+              <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood' || materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial' ||(materialLimit.billsPageType == 'supplierReturn'&&!logistics.isAnyReturn)">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>   
             </div>
             <div class="good-item-bot">
               <!-- 编辑图标 -->
@@ -361,7 +364,7 @@ export default class AddGood extends Vue{
   private materialLimit: any = {};//限制 
   // private userpp:any[]=[];
   created(){ 
-   
+    
   }
   mounted() {  
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
@@ -900,7 +903,6 @@ private changeDirect(item:any){
     display: flex;
     .good-item-name{
       flex:1;
-      margin: 4px 24px 4px 0px;
     }
     .good-item-sort.edit{
       border: 1px solid #ccc;

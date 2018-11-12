@@ -62,17 +62,17 @@
                     class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
                    <i class="fa fa-star-o" aria-hidden="true"></i>
                  </span>
-                 <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
+                <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
                   materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)" 
-                class="good-stock ezt-titleColor2">
+                  class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
-                 </span>
+                </span>
                 <span v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn" 
                 class="good-stock ezt-titleColor2">
                   可退：{{item.returnNum||0}}
-                 </span>
-                 <span class="good-number">
+                </span>
+                <span class="good-number">
                    <!-- 库存数量限制 -->  
                     <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)"
                       :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
@@ -82,7 +82,7 @@
                     <!-- 正常数量选择 -->
                     <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
                       &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
-                 </span>
+                </span>
                </div>
                   <div>
                     <x-dialog v-model="isRemark" class="dialog-demo"> 
@@ -211,12 +211,26 @@
               <span class="good-remark" @click="handlerRemark(item)">
                 <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
               </span>
-              <!-- 领退料显示库存数 -->
-               <span v-if="materialLimit.billsPageType == 'leadbackMaterial' || materialLimit.billsPageType == 'spilledSheet'" class="good-stock ezt-titleColor2">
-                  库存：{{item.stock||0}}
+              <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
+              <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
+                materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)" 
+                class="good-stock ezt-titleColor2">
+                库存：{{item.stock||0}}
               </span>
-              <span class="good-number">                
-                <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+              <span v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn" 
+              class="good-stock ezt-titleColor2">
+                可退：{{item.returnNum||0}}
+              </span>
+              <span class="good-number">
+                <!-- 库存数量限制 -->  
+                <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)"
+                  :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                <!-- 可退数量限制  -->
+                <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
+                  :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                <!-- 正常数量选择 -->
+                <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
+                  &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
               </span>
             </div>
           </div>          

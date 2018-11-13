@@ -344,7 +344,9 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];    
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
-  private logistics:{};
+  private logistics:{
+    isAnyReturn:boolean
+  };
   private isRemark:boolean=false;//编辑备注
   // private useObj:any={
   //   GoodPriceIsEdit:"",
@@ -559,9 +561,34 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
+    let _this = this;
+    //退货数量 限制处理
     if(this.materialLimit.billsPageType == 'supplierReturn'){
-      if(item.num>item.returnNum){
-        item.num = item.num-1;
+      if(!item.isStock&&this.logistics.isAnyReturn){
+        if(item.num == item.stock){
+          this.$set(item,'isStock','true');
+          return false;
+        }
+      }else if(!item.isStock){
+        if(item.num == item.returnNum){
+          this.$set(item,'isStock','true');
+          return false;
+        }
+      }
+     
+      if(item.isStock&&this.logistics.isAnyReturn){//是任意退货 （库存）
+        this.$vux.confirm.show({
+          content:'实退数量不可大于库存数量',
+          showCancelButton:false,
+          hideOnBlur:true
+        })
+        return false;
+      }else if(item.isStock&&!this.logistics.isAnyReturn){//不是任意退货（可退）
+        this.$vux.confirm.show({
+          content:'实退数量不可大于可退数量',
+          showCancelButton:false,
+          hideOnBlur:true
+        })
         return false;
       }
     }

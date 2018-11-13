@@ -204,7 +204,7 @@ export default class OrderGoods extends Vue{
             onConfirm(){
                 _this.payMethod=true;
             },
-            content:"取消后，可在待付款列表中重新付款。",
+            content:"取消后，可在待支付列表中重新付款。",
             confirmText:"继续付款",
             onCancelText:"取消付款",
             title:"取消付款"

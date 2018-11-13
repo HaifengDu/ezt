@@ -53,12 +53,12 @@ export default class OrderGoods extends Vue{
             border-radius: 6px;
         }
         .pay-back{
-            padding: 5px 30px;
+            padding: 8px 30px;
             border: 1px solid #BACAD9;
             margin-right: 10px;
         }
         .pay-detail{
-            padding: 5px 16px;
+            padding: 8px 16px;
             border: 1px solid #1188FC;
             margin-left: 10px;
         }

@@ -563,7 +563,6 @@ export default class AddGood extends Vue{
   private handlerNum(item:any){
     let _this = this;
     //退货数量 限制处理
-    // if(this.materialLimit.billsPageType == 'supplierReturn'||this.materialLimit.billsPageType == ''){
     if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
         this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.logistics.isAnyReturn)){
       if(!item.isStock){

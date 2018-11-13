@@ -334,7 +334,7 @@ export default class StockTaking extends Vue{
     })
   }
   /**
-   *  盘点单 提交
+   *  BOH盘点单 提交
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
@@ -349,7 +349,7 @@ export default class StockTaking extends Vue{
     this.$router.push("/stockTaking");
   }
   /**
-   * 盘点单 审核
+   * BOH盘点单 审核
    */
   private confirmReceive(){
     let _this = this;
@@ -378,6 +378,7 @@ export default class StockTaking extends Vue{
       content:'确认审核该单据？',
       confirmText:"审核通过",
       cancelText:"审核不通过",
+      showCancelButton:!_this.InterfaceSysTypeBOH,
       hideOnBlur:true
     })
   }    

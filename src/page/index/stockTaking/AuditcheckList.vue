@@ -264,6 +264,7 @@ export default class StockTaking extends Vue{
       content:'确认审核该单据？',
       confirmText:"审核通过",
       cancelText:"审核不通过",
+      showCancelButton:!_this.InterfaceSysTypeBOH,
       hideOnBlur:true
     })
   }    

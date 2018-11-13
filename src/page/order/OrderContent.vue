@@ -249,7 +249,19 @@ export default class OrderGoods extends Vue{
         this.isSearch=false; 
         this.hideMask();
       });
-      if(this.$route.params.purStatus=="待支付"){//tab 哪个是选中状态
+      /**
+       * 跳转页面选中状态
+       */
+      if(this.$route.params.purStatus=="待支付"){
+        this.tabList.TabList.forEach((item,index)=>{
+          if(item.name == this.$route.params.purStatus){
+            item.active = true;
+          }else{
+            item.active = false;
+          }
+        })
+      }  
+      if(this.$route.params.purStatus=="已完成"){
         this.tabList.TabList.forEach((item,index)=>{
           if(item.name == this.$route.params.purStatus){
             item.active = true;
@@ -477,7 +489,7 @@ export default class OrderGoods extends Vue{
       z-index: 2;
     }
     .ezt-list-del{
-      position: absolute;
+      position: absolute;   
       right: 7px;
       top: 0;
       width: 50px;

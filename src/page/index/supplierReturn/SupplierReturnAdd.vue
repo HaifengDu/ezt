@@ -337,6 +337,11 @@ export default class ReturnGood extends Vue{
                     this.changeSourceBill(val);
                 }else{
                     this.addBeforeBillInfo[val] = this.addBillInfo[val];
+                    this.billFiles.forEach(item=>{
+                        if(item.id == val){
+                            item[val]= false;
+                        }
+                    }) 
                 }               
             }else{
                 _this.addBeforeBillInfo[val]=_this.addBillInfo[val];

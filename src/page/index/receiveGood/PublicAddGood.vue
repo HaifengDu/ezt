@@ -563,34 +563,39 @@ export default class AddGood extends Vue{
   private handlerNum(item:any){
     let _this = this;
     //退货数量 限制处理
-    if(this.materialLimit.billsPageType == 'supplierReturn'){
-      if(!item.isStock&&this.logistics.isAnyReturn){
+    // if(this.materialLimit.billsPageType == 'supplierReturn'||this.materialLimit.billsPageType == ''){
+    if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
+        this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.logistics.isAnyReturn)){
+      if(!item.isStock){
         if(item.num == item.stock){
           this.$set(item,'isStock','true');
           return false;
         }
-      }else if(!item.isStock){
+      }else{
         if(item.num == item.returnNum){
           this.$set(item,'isStock','true');
           return false;
         }
+      }     
+      let confirmTitle="";
+      if(this.materialLimit.billsPageType == 'supplierReturn'){
+        if(item.isStock&&this.logistics.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
+          confirmTitle = '实退数量不可大于库存数量';
+        }else if(item.isStock&&!this.logistics.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
+          confirmTitle ='实退数量不可大于可退数量';
+        }
+      }else if(item.isStock&&item.num == item.stock){
+          confirmTitle ='添加数量不可大于库存量';
+      }
+      if(confirmTitle){
+        this.$vux.confirm.show({
+          content:confirmTitle,
+          showCancelButton:false,
+          hideOnBlur:true
+        })
+        return false;
       }
      
-      if(item.isStock&&this.logistics.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
-        this.$vux.confirm.show({
-          content:'实退数量不可大于库存数量',
-          showCancelButton:false,
-          hideOnBlur:true
-        })
-        return false;
-      }else if(item.isStock&&!this.logistics.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
-        this.$vux.confirm.show({
-          content:'实退数量不可大于可退数量',
-          showCancelButton:false,
-          hideOnBlur:true
-        })
-        return false;
-      }
     }
     if(item.num>0){
       //新增

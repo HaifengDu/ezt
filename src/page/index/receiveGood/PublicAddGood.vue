@@ -576,14 +576,14 @@ export default class AddGood extends Vue{
         }
       }
      
-      if(item.isStock&&this.logistics.isAnyReturn){//是任意退货 （库存）
+      if(item.isStock&&this.logistics.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
         this.$vux.confirm.show({
           content:'实退数量不可大于库存数量',
           showCancelButton:false,
           hideOnBlur:true
         })
         return false;
-      }else if(item.isStock&&!this.logistics.isAnyReturn){//不是任意退货（可退）
+      }else if(item.isStock&&!this.logistics.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
         this.$vux.confirm.show({
           content:'实退数量不可大于可退数量',
           showCancelButton:false,

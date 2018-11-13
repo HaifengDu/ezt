@@ -1,7 +1,11 @@
 <!--领退料模块-->
 <template>
 <div>
-   <div class="ezt-page-con LeadbackMaterial">
+   <div class="ezt-page-con LeadbackMaterial"  ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title="领/退料" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
@@ -66,6 +70,7 @@
                 <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
           </div>
+          <span v-show="allLoaded">已全部加载</span> 
         </div>
       </div>
     </div>
@@ -150,6 +155,7 @@ export default class leadbackMaterial extends Vue{
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
+    private allLoaded:boolean = false;//领退料是否加载完
     private addgoods:boolean = false;//显示领退料单
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -236,6 +242,8 @@ export default class leadbackMaterial extends Vue{
     }
     private tabClick(index:number){
       this.tabList.setActive(index);
+      this.allLoaded=false;
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
@@ -289,6 +297,30 @@ export default class leadbackMaterial extends Vue{
           this.$toasted.show(err.message);
       });
     } 
+    /**
+     * 下拉加载更多
+     */
+    private loadMore() {
+        if(!this.allLoaded){
+            this.showMask();
+            this.$vux.loading.show({
+                text:'加载中..'
+            });
+            this.pager.setNext();
+            this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+                if(this.pager.getPage().limit>res.data.data.length){
+                     this.allLoaded=true;
+                }
+                this.goodList=this.goodList.concat(res.data.data);
+                setTimeout(()=>{
+                    this.$vux.loading.hide();
+                    this.hideMask();
+                },500); 
+            },err=>{
+                this.$toasted.show(err.message);
+            })
+        }     
+    }
     private addPage(){
       this.addgoods = !this.addgoods
       setTimeout(() => {
@@ -321,7 +353,7 @@ export default class leadbackMaterial extends Vue{
           causeofloss:"提前一天发货",
           remark:item.remark,    
       }  
-      details={
+      details={  
           bill_no:item.bill_no,
           arrive_date:item.arrive_date,
           storehouse:item.storehouse,

@@ -191,7 +191,7 @@ export default class leadbackMaterial extends Vue{
         top:0;
         width: 100%;
         ul{
-            li{
+            li:last-child{
                 margin-bottom: 35px;
             }
         }

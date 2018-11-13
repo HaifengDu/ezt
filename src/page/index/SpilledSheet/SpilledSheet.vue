@@ -1,7 +1,11 @@
 <!--损溢模块首页-->
 <template>
 <div>
-   <div class="ezt-page-con SpilledSheet">
+   <div class="ezt-page-con SpilledSheet" ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title="报损单" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
@@ -11,7 +15,7 @@
           <span class='ezt-action-point' @click="queryPage">
             <i class="fa fa-search" aria-hidden="true"></i>
           </span>          
-         </div>      
+         </div>         
        </div>
     </ezt-header>      
     <div class="ezt-main">            
@@ -54,8 +58,9 @@
                 <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
         </div>
-      </div>
-      </div>
+        <span v-show="allLoaded">已全部加载</span> 
+       </div>
+      </div>  
     </div>
   </div>
   <!-- 查询损溢单 -->  
@@ -132,6 +137,7 @@ export default class SpilledSheet extends Vue{
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
+    private allLoaded:boolean = false;//损溢单是否加载完
     private hideMask:()=>void;
     private showMask:()=>void;
     private isSearch:boolean = false; //订货查询
@@ -189,6 +195,8 @@ export default class SpilledSheet extends Vue{
     } 
     private tabClick(index:number){
       this.tabList.setActive(index);
+      this.allLoaded=false;
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }
@@ -233,6 +241,31 @@ export default class SpilledSheet extends Vue{
           this.$toasted.show(err.message);
       });
     } 
+
+    /**
+     * 下拉加载更多
+     */
+    private loadMore() {
+        if(!this.allLoaded){
+            this.showMask();
+            this.$vux.loading.show({
+                text:'加载中..'
+            });
+            this.pager.setNext();
+            this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+                if(this.pager.getPage().limit>res.data.data.length){
+                     this.allLoaded=true;
+                }
+                this.goodList=this.goodList.concat(res.data.data);
+                setTimeout(()=>{
+                    this.$vux.loading.hide();
+                    this.hideMask();
+                },500); 
+            },err=>{
+                this.$toasted.show(err.message);
+            })
+        }     
+    }
     /**   
      * 左侧滑动删除
      */

@@ -17,9 +17,9 @@ export default new Store<IRootState>({
         InterfaceSysTypeBOH:false,//后台接口是SAAS（false）还是BOH（true） 
         systemParamSetting:{},//系统设置参数
         materialSetting:{//物料参数设置
-            isModifyActNum : 1,//是否允许修改实收数量
+            allow_modify_quantity : 1,//是否允许修改实收数量
             isAnyReturn : true,//是否任意退货
-            show_order_price : true,//订单 是否展示要货价格
+            show_order_price : 0,//订单 是否展示要货价格
             show_db_price : true,//是否显示 平调价格
             show_back_price : true,//配送退货单 是否显示配送价 
             show_sy_price : true,//报损报溢单 是否显示库存均价

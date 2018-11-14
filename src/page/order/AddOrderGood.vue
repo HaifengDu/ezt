@@ -105,7 +105,7 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
+                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price">￥{{item.price}}/{{item.utilname}}
                                     </span>
                                     <span class="good-detail-sort">数量：{{item.num}}</span>
                                 </div>                     
@@ -128,7 +128,7 @@
                 <div class="ezt-foot-total" v-if="this.goodData.length>0">合计：
                     <b>品项</b><span>{{this.goodData.length}}</span>，
                     <b>数量</b><span>{{Total.num}}</span>，
-                    <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+                    <b v-if="materialSetting.show_order_price">￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
                     <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
@@ -136,30 +136,6 @@
                 </div>  
             </div>
         </ezt-footer>
-           <!-- 返回时提示保存信息 -->
-        <!-- <confirm v-model="isSave" @on-confirm="onConfirm">
-            <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-        </confirm> -->
-        <!-- 当有物料 仓库发生变化时校验 -->
-        <!-- <confirm v-model="isStore" @on-cancel="onStoreCancel('storeId')" @on-confirm="onStoreConfirm('storeId')">
-            <p style="text-align:center;">您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。</p>
-        </confirm> -->
-        <!-- 当有物料 要货方式发生变化时校验 -->
-        <!-- <confirm v-model="isOrderType" @on-cancel="onStoreCancel('orderType')" @on-confirm="onStoreConfirm('orderType')">
-            <p style="text-align:center;">您已维护物料信息，如调整要货方式，须重新选择物料。</p>
-        </confirm> -->
-         <!-- 删除物料时 校验 -->
-        <!-- <confirm v-model="isDelGood" @on-confirm="onDelConfirm" @on-cancel="onDelCancel">
-            <p style="text-align:center;"> 请确认是否删除该物料。</p>
-        </confirm> -->
-        <!-- 到货日期修改 校验 -->
-        <!-- <confirm v-model="isArriveDate" @on-confirm="arriveConfirm" @on-cancel="arriveCancel">
-            <p style="text-align:center;"> 您已选择物料，调整到货日期，须重新加载预估单及物料。</p>
-        </confirm> -->
-         <!-- 审核时 校验 -->
-        <!-- <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
-            <p style="text-align:center;"> 请确认是否删除该物料。</p>
-        </confirm> -->
     </div>
 </template>
 <script lang="ts">
@@ -178,10 +154,11 @@ import {EGoodType} from '../../enum/EGoodType';
 @Component({
     computed:{
         ...mapGetters({
-            'user':'user',
-            'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            'systemParamSetting':"systemParamSetting",//系统设置
-            InterfaceSysTypeBOH:'InterfaceSysTypeBOH',//后台接口是否为BOH
+            'user' : 'user',
+            'selectedGood' : 'publicAddGood/selectedGood',//已经选择好的物料
+            'systemParamSetting' : "systemParamSetting",//系统设置
+            InterfaceSysTypeBOH : 'InterfaceSysTypeBOH',//后台接口是否为BOH
+            materialSetting : 'materialSetting',//物流设置
         })
     },
     methods:{
@@ -211,8 +188,6 @@ export default class Order extends Vue{
         isTemplate:false,//模板导入列表提示框
         isorderType:false,//再来一单 跳转的手工制作显示/隐藏
     }
-    // private isStore:boolean=false;
-    // private isTemplate:boolean=false;
     private doneInfo:string="";
     private orderType:any=[{
         name:'配送中心1',
@@ -247,6 +222,7 @@ export default class Order extends Vue{
         }
     ];
     private goodData:any=[];
+    private materialSetting: any;
     private templateList:any=[//可用导入模板
         {
             id:1,
@@ -455,6 +431,7 @@ export default class Order extends Vue{
         }
         goodTerm={
             billsPageType: 'orderGood',
+            showPrice: !this.materialSetting.show_order_price
         }  
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));

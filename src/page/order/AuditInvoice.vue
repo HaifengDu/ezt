@@ -50,13 +50,10 @@
                                     <span class="good-detail-name">{{item.name}}
                                         <span class="good-detail-sort">（规格）</span>
                                     </span>
-                                    <!-- <span @click="editStatus(item)">
-                                        <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
-                                    </span>                                    -->
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}
+                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price">￥{{item.price}}/{{item.utilname}}
                                     </span>
                                     <span class="good-detail-sort">数量：{{item.num}}</span>
                                 </div>                     
@@ -79,7 +76,7 @@
                 <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                     <b>品项</b><span>{{this.selectedGood.length}}</span>，
                     <b>数量</b><span>{{Total.num}}</span>，
-                    <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+                    <b v-if="materialSetting.show_order_price">￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
                     <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  
@@ -87,18 +84,6 @@
                 </div>  
             </div>
         </ezt-footer>
-        <!-- 返回时提示保存信息 -->
-        <!-- <confirm v-model="isSave" @on-confirm="onConfirm">
-            <p style="text-align:center;"> 返回后，本次操作记录将丢失，请确认是否离开？</p>
-        </confirm> -->
-         <!-- 审核时 校验 -->
-        <!-- <confirm v-model="isAudit" confirm-text="审核通过" cancel-text="审核不通过" @on-confirm="onPassAudit" @on-cancel="onUnpassAudit">
-            <p style="text-align:center;"> 请确认是否删除该物料。</p>
-        </confirm> -->
-        <!-- 物料明细删除提示信息 -->
-       <!-- <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
-        <p style="text-align:center;">是否要删除该单据？</p>
-       </confirm> -->
     </div>
 </template>
 <script lang="ts">
@@ -116,7 +101,8 @@ import ObjectHelper from '../../common/objectHelper'
         ...mapGetters({    
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
             'InterfaceSysTypeBOH':'InterfaceSysTypeBOH', //BOH接口
-            'systemParamSetting':"systemParamSetting",//系统设置参数     
+            'systemParamSetting':"systemParamSetting",//系统设置参数   
+            materialSetting : 'materialSetting',//物流参数设置
         })
     },
     methods:{
@@ -135,6 +121,7 @@ export default class Order extends Vue{
     private addBillInfo:any={};
     private type:string;    
     private systemParamSetting:any;
+    private materialSetting:any;
     created() {          
         this.service = OrderGoodsService.getInstance();
         (this.selectedGood||[]).forEach(item=>item.active = false);
@@ -182,6 +169,7 @@ export default class Order extends Vue{
         let goodTerm = {};
         goodTerm={
             billsPageType: 'orderGood',
+            showPrice: !this.materialSetting.show_order_price
         }  
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));

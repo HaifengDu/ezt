@@ -166,7 +166,7 @@
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="good-detail-sort" v-if="materialSetting.show_db_price">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">
                             收：{{item.num}}
                           </span>
@@ -190,7 +190,8 @@
           <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{Total.num}}</span>，
-            <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+            <b v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao">￥</b>
+            <span v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao">{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou">暂存</a>  

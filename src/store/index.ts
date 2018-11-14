@@ -20,7 +20,7 @@ export default new Store<IRootState>({
             allow_modify_quantity : 1,//是否允许修改实收数量
             isAnyReturn : true,//是否任意退货
             show_order_price : 1,//订单 是否展示要货价格
-            show_db_price : true,//是否显示 平调价格
+            show_db_price : 1,//是否显示 平调价格
             show_back_price : true,//配送退货单 是否显示配送价 
             show_sy_price : 1,//报损报溢单 是否显示库存均价
         }  

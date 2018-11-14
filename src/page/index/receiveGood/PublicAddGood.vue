@@ -38,7 +38,7 @@
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span>
                     <!-- 新修改 默认不可以进行编辑 价格  盘库、订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料-->
-                    <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                    <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
                     <!-- 新修改 价格可以进行编辑  收货、平调-->
                     <span v-if="!materialLimit.showPrice && (materialLimit.billsPageType =='receiveGood'|| materialLimit.billsPageType=='storeAllot')" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -196,7 +196,7 @@
                     账面数量：<span class="good-item-sort">{{item.price}}</span>
                 </span>
                 <!-- 新修改 默认不可以进行编辑 价格  盘库、订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料-->
-                <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
                 <!-- 新修改 价格可以进行编辑  收货、平调-->
                 <span v-if="!materialLimit.showPrice && (materialLimit.billsPageType =='receiveGood'|| materialLimit.billsPageType=='storeAllot')" class="good-item-sort edit">
                   价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -264,7 +264,7 @@
                 账面数量：<span class="good-item-sort">{{item.price}}</span>
             </span>
             <!-- 新修改 默认不可以进行编辑 价格  盘库、订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料-->
-            <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <span class="good-item-sort" v-if="!materialLimit.showPrice && (materialLimit.billsPageType != 'initStock' && materialLimit.billsPageType != 'stocktaking' &&materialLimit.billsPageType !='receiveGood'&&materialLimit.billsPageType!='storeAllot')">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
             <!-- 新修改 价格可以进行编辑  收货、平调-->
             <span v-if="!materialLimit.showPrice && (materialLimit.billsPageType =='receiveGood'|| materialLimit.billsPageType=='storeAllot')" class="good-item-sort edit">
               价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">

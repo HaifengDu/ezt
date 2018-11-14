@@ -1,4 +1,4 @@
-<!-- 调拨新增 -->
+<!-- 店内调拨新增 -->
 <template>
     <div class="ezt-page-con">
         <ezt-header :back='true' title="添加调拨出库单" @goBack="goBack" :isInfoGoback="true"></ezt-header>

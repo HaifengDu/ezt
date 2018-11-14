@@ -39,7 +39,7 @@
                         <div class="good-detail-l">
                             <div>
                                 <span class="good-detail-name">{{item.dc_name}}</span>
-                                <span class="good-detail-sort">￥{{item.material_size}}</span>
+                                <span class="good-detail-sort" v-if="materialSetting.show_order_price||isPayMent">￥{{item.material_size}}</span>
                             </div>
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>
@@ -64,7 +64,7 @@
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{details.length}}</span>，
                 <b>数量</b><span>{{Total.num}}</span>，
-                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+                <b v-if="materialSetting.show_order_price||isPayMent">含税金额￥</b><span v-if="materialSetting.show_order_price||isPayMent">{{Total.Amt.toFixed(2)}}</span>
             </div>
             <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
                 <a href="javascript:(0)" class="ezt-foot-sub" @click="payMethod=true">支付</a>  
@@ -136,7 +136,8 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-        InterfaceSysTypeBOH:"InterfaceSysTypeBOH"
+        InterfaceSysTypeBOH:"InterfaceSysTypeBOH",
+        materialSetting : 'materialSetting',//物流设置
      })
     
    },
@@ -158,6 +159,7 @@ export default class OrderGoods extends Vue{
      * 支付选择方式
      */
     private payMethod:boolean = false;
+    private materialSetting: object;
     /**
      * 支付类型
      */

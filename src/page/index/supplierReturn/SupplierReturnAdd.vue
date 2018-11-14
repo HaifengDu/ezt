@@ -118,7 +118,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
     computed:{
         ...mapGetters({
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-            'logistics':'logistics',//物流设置
+            'materialSetting':'materialSetting',//物流设置
         })
     },
     methods:{
@@ -160,7 +160,7 @@ export default class ReturnGood extends Vue{
     private _isRequired:boolean;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise;//store中给selectedGood赋值
-    private logistics:any;
+    private materialSetting:any;
     /**
      * 源单号 picker中value值
      */
@@ -218,7 +218,7 @@ export default class ReturnGood extends Vue{
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         //  this.getGoodList();
         (this.selectedGood||[]).forEach(item=>item.active = false);
-        console.log(this.logistics,'00000');
+        console.log(this.materialSetting,'00000');
     }
       /**
      * 物料总数量、总金额
@@ -235,7 +235,7 @@ export default class ReturnGood extends Vue{
      */
     private get isRequired(){
         return this.addBillInfo.returnType == 'store'||
-        (this.addBillInfo.returnType == 'supplier' && this.logistics.isAnyReturn);
+        (this.addBillInfo.returnType == 'supplier' && this.materialSetting.isAnyReturn);
     }
     private set isRequired(isRequired){
         this._isRequired == isRequired;

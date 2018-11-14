@@ -3,7 +3,6 @@ import { IUser } from "../IUserModel";
 export interface IRootState{
     user?:IUser,
     systemParamSetting?:object,
-    logistics?:object,//物流设置
     InterfaceSysTypeBOH?:Boolean,//区分后台接口为BOH还是SAAS
     materialSetting?:object,//物料参数设置
 }

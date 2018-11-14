@@ -9,9 +9,6 @@ export const updateUser:Action<IRootState,IRootState> = ({commit},user:IUser)=>{
 export const setSystemParam:Action<IRootState,IRootState> = ({commit},systemParamSetting:object)=>{
     commit(RootType.SET_SYSTEMPARAM, systemParamSetting);
 };
-export const setLogistics:Action<IRootState,IRootState> = ({commit},logistics:object) =>{
-    commit(RootType.SET_LOGISTICS,logistics);
-};
 export const setInterfaceSysTypeBOH:Action<IRootState,IRootState> = ({commit},InterfaceSysTypeBOH:Boolean) =>{
     commit(RootType.SET_INTERFACESYSTYPEBOH,InterfaceSysTypeBOH);
 };

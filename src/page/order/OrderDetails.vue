@@ -51,12 +51,8 @@
                     </div>
                     <div class="good-detail-item" v-if="item.remark">
                         <div class="good-detail-sort content">备注：
-                            <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
-                            <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
-                        </div>
-                        <div>
-                            
-                            <!-- <span @click='handleFold' v-show="!fold">←收起</span> -->
+                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                            <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                         </div>
                     </div>
                 </li>
@@ -178,7 +174,6 @@ export default class OrderGoods extends Vue{
     private payValue:any = 1;
     created() {          
        this.service = OrderGoodsService.getInstance();
-       this.detailList();
     }
     
     mounted(){ 
@@ -219,7 +214,6 @@ export default class OrderGoods extends Vue{
     }
     // 备注出现查看更多
     private handleFold(item:any) {
-    //   this.fold = !this.fold;
         this.$set(item,'flod',!item.flod);
     }
     private getData() {
@@ -393,20 +387,31 @@ export default class OrderGoods extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
-        margin-top: 5px;
+        color: #5F7B9A;
+        letter-spacing: 0;
     }
+    /* .good-detail-item{
+        border-bottom: 1px solid #E0EBF9;
+        padding-bottom: 10px;
+    } */
     .good-detail-item .content{       
         word-break: break-all;    
         word-wrap:break-word;
     } 
     .good-detail-item .remark-suitable{
         line-height: 25px;
-        height: 50px;
+        // height: 50px;
         overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        padding-bottom: 10px;
     }
     .good-detail-item .remark-suitable.auto{
         height: auto;
-    }  
+        -webkit-line-clamp: initial;
+    }
     .good-detail-billno,.good-num-t{
         font-size: 10px;
         color: #A3B3C2;

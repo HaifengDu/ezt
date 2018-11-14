@@ -16,18 +16,19 @@ export default new Store<IRootState>({
         user:void 0,
         InterfaceSysTypeBOH:false,//后台接口是SAAS（false）还是BOH（true） 
         systemParamSetting:{},//系统设置参数
-        logistics:{//物流设置
-            isAnyReturn:true,//是否任意退货
-        },
         materialSetting:{//物料参数设置
-            isModifyActNum:true,//是否允许修改实收数量
+            allow_modify_quantity : 1,//是否允许修改实收数量
+            isAnyReturn : true,//是否任意退货
+            show_order_price : 0,//订单 是否展示要货价格
+            show_db_price : true,//是否显示 平调价格
+            show_back_price : true,//配送退货单 是否显示配送价 
+            show_sy_price : true,//报损报溢单 是否显示库存均价
         }  
        
     },    
     getters:{
         user:state=>state.user,
         systemParamSetting:state=>state.systemParamSetting,
-        logistics:state=>state.logistics,
         InterfaceSysTypeBOH:state=>state.InterfaceSysTypeBOH,
         materialSetting:state=>state.materialSetting,
     },
@@ -40,9 +41,6 @@ export default new Store<IRootState>({
         },
         [RootType.SET_SYSTEMPARAM](state,systemParamSetting:{}){
             state.systemParamSetting = systemParamSetting;
-        },
-        [RootType.SET_LOGISTICS](state,logistics:{}){
-            state.logistics = logistics;
         },
         [RootType.SET_INTERFACESYSTYPEBOH](state,InterfaceSysTypeBOH:false){
             state.InterfaceSysTypeBOH = InterfaceSysTypeBOH;

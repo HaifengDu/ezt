@@ -27,10 +27,11 @@ import InitDetail from '@/page/index/initStock/InitDetail.vue';//初始化单详
 import SystemSetting from '@/page/mine/SystemSetting.vue';//系统设置
 import AddOrderGood from '@/page/order/AddOrderGood.vue';//新增订货
 import OrderGood from '@/page/order/OrderContent.vue';//订货列表页
-import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SearchOrderGood from '@/page/order/SearchOrderGood.vue'; //订货查询 
 import OrderDetails from '@/page/order/OrderDetails.vue'; //订货单详情
 import AuditInvoice from '@/page/order/AuditInvoice.vue';  //审核要货单
+import OrderPaySuccess from '@/page/order/OrderPaySuccess.vue';//订货付款成功页面
+import ChartContent from '@/page/chart/ChartContent.vue';//报表
 import SpilledSheet from '@/page/index/spilledSheet/SpilledSheet.vue'; //损溢单
 import SearchSpilledSheet from '@/page/index/spilledSheet/SearchSpilledSheet.vue';//损溢单查询
 import SpilledSheetDetails from '@/page/index/spilledSheet/SpilledSheetDetails.vue'; //损溢详情页
@@ -57,7 +58,7 @@ import SearchLeadbackMaterial from '@/page/index/leadbackMaterial/SearchLeadback
 import AddleadbackRetreating from '@/page/index/leadbackMaterial/AddleadbackRetreating.vue';//添加退料单
 import LeadbackMaterialDetails from '@/page/index/leadbackMaterial/LeadbackMaterialDetails.vue';//领料详情页
 import AuditoleadbackMaterial from '@/page/index/leadbackMaterial/AuditoleadbackMaterial.vue';//审核领料单
-import OrderPaySuccess from '@/page/order/OrderPaySuccess.vue';//订货付款成功页面
+
 Vue.use(Router)
 
 const router = new Router({
@@ -167,11 +168,10 @@ const router = new Router({
       path: '/orderGood',
       name: 'OrderGood',
       component: OrderGood
-    },
-    {   
-      path: '/chartContent',
-      name: 'ChartContent',
-      component: ChartContent
+    },{
+      path: '/orderPaySuccess',
+      name:'OrderPaySuccess',
+      component:OrderPaySuccess
     },{
       path: '/searchOrderGood',
       name:"SearchOrderGood",
@@ -184,6 +184,10 @@ const router = new Router({
       path: '/auditInvoice',
       name:"AuditInvoice",
       component: AuditInvoice
+    },    {   
+      path: '/chartContent',
+      name: 'ChartContent',
+      component: ChartContent
     },{
       path:"/spilledSheet",
       name:"SpilledSheet",
@@ -288,10 +292,6 @@ const router = new Router({
       path:'/auditoleadbackMaterial',
       name:'AuditoleadbackMaterial',
       component:AuditoleadbackMaterial
-    },{
-      path: '/orderPaySuccess',
-      name:'OrderPaySuccess',
-      component:OrderPaySuccess
     }
   ]
 });

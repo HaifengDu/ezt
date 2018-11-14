@@ -33,22 +33,22 @@
                 <div class="good-item-title">
                   <span class="good-item-name">{{item.name}}</span>  
                   <!--库存初始化-->
-                    <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                    <span v-if="!materialLimit.showPrice && materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
                       <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
                       <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                     </span> 
                   <!--默认显示价格 可编辑 盘库 订货不显示-->  
-                  <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'&&materialLimit.billsPageType != 'supplierReturn'&&
+                  <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType != 'orderGood'&&materialLimit.billsPageType != 'supplierReturn'&&
                   materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType != 'spilledSheet' &&materialLimit.billsPageType !='leadbackMaterial'" class="good-item-sort edit">
                       价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                   </span>   
                   <!---盘库显示规格账面数量-->
-                  <span v-if="materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
+                  <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
                       规格： <span class="good-item-sort">{{item.utilname}}</span>
                       账面数量：<span class="good-item-sort">{{item.price}}</span>
                   </span>
                   <!--订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料 不可编辑-->  
-                  <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
+                  <span class="good-item-sort" v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
                    materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
                 </div>
                <div class="good-item-bot">
@@ -63,20 +63,20 @@
                  </span>
                 <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
                 <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
-                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)" 
+                  materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)" 
                   class="good-stock ezt-titleColor2">
                   库存：{{item.stock||0}}
                 </span>
-                <span v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn" 
+                <span v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn" 
                 class="good-stock ezt-titleColor2">
                   可退：{{item.returnNum||0}}
                 </span>
                 <span class="good-number">
                    <!-- 库存数量限制 -->  
-                    <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)"
+                    <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)"
                       :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                     <!-- 可退数量限制  -->
-                    <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
+                    <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                       :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                     <!-- 正常数量选择 -->
                     <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
@@ -188,21 +188,21 @@
             <div class="good-item-title">
               <span class="good-item-name">{{item.name}}</span>
                <!--库存初始化-->
-                <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+                <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
                   <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
                   <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                 </span>
                   <!---盘库显示规格账面数量-->
-                <span v-if="materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
+                <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
                     规格： <span class="good-item-sort">{{item.utilname}}</span>
                     账面数量：<span class="good-item-sort">{{item.price}}</span>
                 </span>
                 <!--订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料 不可编辑-->  
-                <span class="good-item-sort" v-if="materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
+                <span class="good-item-sort" v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
                   materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
 
                 <!--默认显示价格 可编辑-->  
-                 <span v-if="materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType!='inStoreAllot'
+                 <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType != 'stocktaking'&& materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'&&materialLimit.billsPageType!='inStoreAllot'
                   &&materialLimit.billsPageType != 'supplierReturn'&&materialLimit.billsPageType != 'spilledSheet' &&materialLimit.billsPageType !='leadbackMaterial'" class="good-item-sort edit">
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
                 </span>
@@ -214,20 +214,20 @@
               </span>
               <!-- 库存量显示  店内调拨 新增、审核，店间平调 新增、审核，损溢 新增、审核，领退料 新增、审核 -->
               <span v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'||
-                materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)" 
+                materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)" 
                 class="good-stock ezt-titleColor2">
                 库存：{{item.stock||0}}
               </span>
-              <span v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn" 
+              <span v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn" 
               class="good-stock ezt-titleColor2">
                 可退：{{item.returnNum||0}}
               </span>
               <span class="good-number">
                 <!-- 库存数量限制 -->  
-                <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && logistics.isAnyReturn)"
+                <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)"
                   :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 <!-- 可退数量限制  -->
-                <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!logistics.isAnyReturn"
+                <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                   :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 <!-- 正常数量选择 -->
                 <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
@@ -259,17 +259,17 @@
           <div class="good-item-title">
             <span class="good-item-name">{{item.name}}</span>
             <!--库存初始化-->
-            <span v-if="materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
+            <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
               <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
               <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
             </span>
              <!-- 盘库显示规格账面数量 -->
-            <span v-if="materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
+            <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
                 规格： <span class="good-item-sort" style="margin-right:5px;">{{item.utilname}}</span>
                 账面数量：<span class="good-item-sort">{{item.price}}</span>
             </span>
             <!--默认显示价格 可编辑-->  
-            <span v-if="materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&logistics.isAnyReturn)" class="good-item-sort edit">
+            <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'orderGood' && materialLimit.billsPageType!='initStock'||(materialLimit.billsPageType == 'supplierReturn'&&materialSetting.isAnyReturn)" class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
             </span>
           </div>
@@ -323,7 +323,7 @@ import _ from "lodash";
    computed:{
      ...mapGetters({
        'selectedGood':'publicAddGood/selectedGood',
-       'logistics':'logistics',//物流设置
+       'materialSetting':'materialSetting',//物流设置
        InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
      }),
    },
@@ -344,7 +344,9 @@ export default class AddGood extends Vue{
   private selectedGoodList:any[] = [];    
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private selectedGood:any[];//store中selectedGood的值
-  private logistics:{};
+  private materialSetting:{
+    isAnyReturn:boolean
+  };
   private isRemark:boolean=false;//编辑备注
   // private useObj:any={
   //   GoodPriceIsEdit:"",
@@ -559,11 +561,40 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
-    if(this.materialLimit.billsPageType == 'supplierReturn'){
-      if(item.num>item.returnNum){
-        item.num = item.num-1;
+    let _this = this;
+    //退货数量 限制处理
+    if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
+        this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
+      if(!item.isStock){
+        if(item.num == item.stock){
+          this.$set(item,'isStock','true');
+          return false;
+        }
+      }else{
+        if(item.num == item.returnNum){
+          this.$set(item,'isStock','true');
+          return false;
+        }
+      }     
+      let confirmTitle="";
+      if(this.materialLimit.billsPageType == 'supplierReturn'){
+        if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
+          confirmTitle = '实退数量不可大于库存数量';
+        }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
+          confirmTitle ='实退数量不可大于可退数量';
+        }
+      }else if(item.isStock&&item.num == item.stock){
+          confirmTitle ='添加数量不可大于库存量';
+      }
+      if(confirmTitle){
+        this.$vux.confirm.show({
+          content:confirmTitle,
+          showCancelButton:false,
+          hideOnBlur:true
+        })
         return false;
       }
+     
     }
     if(item.num>0){
       //新增

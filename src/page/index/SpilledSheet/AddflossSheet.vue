@@ -219,7 +219,7 @@ export default class SpilledSheet extends Vue{
       this.$toasted.show("请添加物料！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
@@ -253,7 +253,7 @@ export default class SpilledSheet extends Vue{
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={},
+        _this.addBillInfo={};
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.$toasted.success("审核成功！");
@@ -325,7 +325,7 @@ export default class SpilledSheet extends Vue{
           console.log(this) 
         },
         onConfirm () {      
-          _this.addBillInfo={},
+          _this.addBillInfo={};
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
           _this.$router.push('/spilledSheet');

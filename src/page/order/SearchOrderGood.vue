@@ -7,9 +7,13 @@
     </ezt-header>    
     <div class="ezt-main"> 
       <div class="ezt-add-content">
-        <ul>   
+        <div v-if="!details" class="done-none">
+          <div></div>
+          <span>未查到符合条件的记录</span>
+        </div>
+        <ul v-if="details">   
           <li v-for="(item,index) in details" :key="index">
-            <div class="receive-dc-list">
+            <div class="receive-dc-list">   
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName">配</span>
                 <span class="return-list-title">{{item.dc_name}}</span> 

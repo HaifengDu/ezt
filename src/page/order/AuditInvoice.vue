@@ -7,7 +7,7 @@
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
                     <li v-if="this.type == 'examine'">
-                        <span class="title-search-name">单号：</span>
+                        <span class="title-search-name">单号：</span>     
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billno">
                     </li>
                     <li>    
@@ -16,18 +16,20 @@
                     </li>
                     <li v-if="this.type == 'examine'">     
                         <span class="title-search-name">要货日期：</span>
-                        <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate">
+                        <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate" :max="addBillInfo.arriveDate" ref="startDate">
                     </li>
                     <li v-if="this.type == 'add'">
                         <span class="title-search-name is-required">要货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="要货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>             
+                            <ezt-canlendar ref="startDate" v-model="addBillInfo.orderDate" :max="addBillInfo.arriveDate" :defaultValue="addBillInfo.orderDate" placeholder="要货日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar">
+                           </ezt-canlendar>
                         </span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name is-required">到货日期：</span>
                         <span>
-                            <ezt-canlendar placeholder="到货日期" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" :defaultValue="addBillInfo.arriveDate"></ezt-canlendar>     
+                            <ezt-canlendar ref="endDate" v-model="addBillInfo.arriveDate" :min="addBillInfo.orderDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')" placeholder="到货日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar">
+                           </ezt-canlendar>
                         </span>
                     </li>
                     <li>
@@ -132,7 +134,10 @@ export default class Order extends Vue{
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
-    private addBillInfo:any={};
+    private addBillInfo:any={
+        orderDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+        arriveDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd'),
+    };
     private type:string;    
     private systemParamSetting:any;
     created() {          
@@ -164,6 +169,13 @@ export default class Order extends Vue{
         content:'请确认是否删除该物料?'
         })
     }
+    /**
+     * 要货到货日期限制
+     */
+     private selectDateChange(val:any){
+      (<any>this.$refs.startDate).setMax(new Date(val));
+      (<any>this.$refs.endDate).setMin(new Date(val));
+     }
       /**
      * 左滑删除某一项
      */
@@ -247,7 +259,7 @@ export default class Order extends Vue{
             this.$toasted.show("请添加物料！");
             return false;
         } 
-        this.addBillInfo={},
+        this.addBillInfo={};
         this.setSelectedGood([]);
         this.addBeforeBillInfo={};
         this.$toasted.success("保存成功！");

@@ -154,16 +154,13 @@ export default class StockTaking extends Vue{
   /**
    * 返回
    */
-  private goBack() {
+  private goBack() {   
       let _this = this;   
-      if((this.addinventory&&this.addinventory.stock)||this.addinventory.length>0){
+      if(this.addinventory ||this.addinventory.length>0 || this.selectedGood.length>0){
           this.$vux.confirm.show({
               onCancel () {
-                
               },       
               onConfirm () {
-                   _this.addinventory.stock={};
-                   _this.addinventory.treatment={};
                    _this.cache.clear();
                    _this.$router.push('/stocktaking');
               },
@@ -195,7 +192,6 @@ export default class StockTaking extends Vue{
    * 删除物料操作
    */
   private delAction(item:any){
-    
     let _this = this;
     this.$vux.confirm.show({
       /**

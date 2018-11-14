@@ -220,7 +220,7 @@ export default class leadbackMaterial extends Vue{
       this.$toasted.show("请添加物料！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
@@ -249,16 +249,15 @@ export default class leadbackMaterial extends Vue{
        * 审核不通过
        */
       onCancel () {
-
       },
       /**
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={}
-        _this.setSelectedGood([])
-        _this.addBeforeBillInfo={}
-        _this.cache.clear()
+        _this.addBillInfo={};
+        _this.setSelectedGood([]);
+        _this.addBeforeBillInfo={};
+        _this.cache.clear();
         _this.$toasted.success("审核成功！");
         _this.$router.push({name:'LeadbackMaterial',params:{'purStatus':'退料已审'}});
       },
@@ -331,13 +330,12 @@ export default class leadbackMaterial extends Vue{
     if((this.addBillInfo&&this.addBillInfo.materialwarehouse)||this.selectedGood.length>0){
       this.$vux.confirm.show({
         onCancel () {
-          console.log(this) 
         },
         onConfirm () {      
-          _this.addBillInfo={}
-          _this.setSelectedGood([])
-          _this.addBeforeBillInfo={}
-          _this.cache.clear()
+          _this.addBillInfo={};
+          _this.setSelectedGood([]);
+          _this.addBeforeBillInfo={};
+          _this.cache.clear();
           _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"

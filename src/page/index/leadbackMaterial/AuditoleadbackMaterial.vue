@@ -126,13 +126,6 @@ export default class leadbackMaterial extends Vue{
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   private addBillInfo:any={};
-  private orderType:any[] = [{//单据类型下拉数据    
-    name:"领料单",
-    type:"q"
-  },{
-    name:"退料单",
-    type:"m"
-  }];
   
   created() {  
     this.service = LeadbackMaterialService.getInstance();
@@ -199,7 +192,7 @@ export default class leadbackMaterial extends Vue{
       this.$toasted.show("请添加物料！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
@@ -218,8 +211,7 @@ export default class leadbackMaterial extends Vue{
     }
     if(false){
        this.$vux.confirm.show({
-            // 组件除show外的属性
-            onCancel () {//返回
+            onCancel () {
             },
             content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库，或调整物料的仓库分配关系后再操作。。',
             showConfirmButton: false,
@@ -232,13 +224,12 @@ export default class leadbackMaterial extends Vue{
            * 审核不通过
            */
           onCancel () {
-            
           },
           /**
            * 审核通过
            */
           onConfirm () {
-            _this.addBillInfo={},
+            _this.addBillInfo={};
             _this.setSelectedGood([]);
             _this.addBeforeBillInfo={};
             _this.$toasted.success("审核成功！");
@@ -260,7 +251,7 @@ private saveReceive01(){
       this.$toasted.show("请添加物料！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.$toasted.success("提交成功！");
@@ -279,7 +270,7 @@ private saveReceive01(){
       if(false){
         this.$vux.confirm.show({
             // 组件除show外的属性
-            onCancel () {//返回
+            onCancel () {
             },
             content:'物料a、物料b、物料c、物料...的物料关系未分配至仓库**，请重新选择仓库，或调整物料的仓库分配关系后再操作。。',
             showConfirmButton: false,
@@ -298,7 +289,7 @@ private saveReceive01(){
              * 审核通过
              */
             onConfirm () {
-              _this.addBillInfo={},
+              _this.addBillInfo={};
               _this.setSelectedGood([]);
               _this.addBeforeBillInfo={};
               _this.$toasted.success("审核成功！");
@@ -334,13 +325,11 @@ private saveReceive01(){
     if((this.addBillInfo&&this.addBillInfo.billType)||this.selectedGood.length>0){
       this.$vux.confirm.show({
         onCancel () {
-          console.log(this) 
         },
         onConfirm () {
-          _this.addBillInfo={},
+          _this.addBillInfo={};
           _this.setSelectedGood([]);
           _this.addBeforeBillInfo={};
-          // _this.cache.clear()
           _this.$router.push('/leadbackMaterial');
         },
         content:"返回后，本次操作记录将丢失，请确认是否离开？"

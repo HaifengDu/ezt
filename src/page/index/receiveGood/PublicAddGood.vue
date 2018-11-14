@@ -48,8 +48,8 @@
                       账面数量：<span class="good-item-sort">{{item.price}}</span>
                   </span>
                   <!--订货手工制单价格、退货价格、店内调拨、报损单、审核损溢 领退料 不可编辑-->  
-                  <span class="good-item-sort" v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'orderGood'||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
-                   materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
+                  <span class="good-item-sort" v-if="(!materialLimit.showPrice&&materialLimit.billsPageType == 'orderGood')||materialLimit.billsPageType=='inStoreAllot'||materialLimit.billsPageType == 'supplierReturn'||
+                   (!materialLimit.showPrice&& materialLimit.billsPageType == 'spilledSheet') || materialLimit.billsPageType =='leadbackMaterial'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>                  
                 </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->

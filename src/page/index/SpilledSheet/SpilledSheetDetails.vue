@@ -40,11 +40,11 @@
                         <div class="good-detail-l">
                             <div>
                                 <span class="good-detail-name">{{item.dc_name}}【{{item.model}}】</span>
-                                <span class="good-detail-sort">￥{{item.unit}}/KG</span>
+                                <span class="good-detail-sort" v-if="materialSetting.show_sy_price">￥{{item.unit}}/KG</span>
                             </div>
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>
-                                <span class="good-detail-sort">￥{{item.material_size}}</span>
+                                <span class="good-detail-sort" v-if="materialSetting.show_sy_price">￥{{item.material_size}}</span>
                             </div>
                         </div>
                         <div class="good-detail-r">
@@ -68,7 +68,7 @@
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{details.length}}</span>，
                 <b>数量</b><span>{{Total.num}}</span>，
-                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+                <b v-if="materialSetting.show_sy_price">含税金额￥</b><span v-if="materialSetting.show_sy_price">{{Total.Amt.toFixed(2)}}</span>
             </div>
         </div>
     </ezt-footer> 
@@ -93,7 +93,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-
+        materialSetting : 'materialSetting',//物流设置
      })
     
    },
@@ -103,6 +103,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }
 })
 export default class SpilledSheet extends Vue{
+    private materialSetting: object;
     private service: SpilledSheetService;
     private cache = CachePocily.getInstance();
     private spilledDetails:any={};//损溢详情页面表头

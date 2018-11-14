@@ -47,7 +47,7 @@
                         </div>
                         <div class="good-detail-nobreak">
                             <span class="good-detail-billno ">编码：003222</span>
-                            <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
+                            <span class="good-detail-sort" v-if="materialSetting.show_sy_price">￥{{item.price}}/{{item.utilname}}</span>
                             <span class="title-search-name ezt-dense-box">{{item.num}}</span>                         
                         </div>                     
                     </div>
@@ -68,7 +68,7 @@
           <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{Total.num}}</span>，
-            <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+            <b v-if="materialSetting.show_sy_price">￥</b><span v-if="materialSetting.show_sy_price">{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
@@ -98,6 +98,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    computed:{
      ...mapGetters({
         'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+        materialSetting : 'materialSetting',//物流设置
      })
    },
    methods:{
@@ -107,6 +108,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }
 })
 export default class SpilledSheet extends Vue{
+  private materialSetting: any;
   private cache = CachePocily.getInstance();
   private service: SpilledSheetService;
   private selectedGood:any[];//store中selectedGood的值
@@ -227,6 +229,7 @@ export default class SpilledSheet extends Vue{
     if(this.addBillInfo){
       goodTerm={
         billsPageType: 'spilledSheet',
+        showPrice: !this.materialSetting.show_sy_price
       }  
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.SPILLEDSHEET_ADDINFO,JSON.stringify(this.addBillInfo));

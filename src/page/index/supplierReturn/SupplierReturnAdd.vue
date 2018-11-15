@@ -70,7 +70,7 @@
                                 </div>
                                 <div class="good-detail-nobreak">
                                     <span class="good-detail-billno ">编码：003222</span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
+                                    <span class="good-detail-sort" v-if="(addBillInfo.returnType == 'store' && materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥{{item.price}}/{{item.utilname}}</span>
                                     <span class="title-search-name ezt-dense-box">{{item.num}}</span>                         
                                 </div>                     
                             </div>
@@ -91,7 +91,8 @@
                     <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                         <b>品项</b><span>{{this.selectedGood.length}}</span>，
                         <b>数量</b><span>{{Total.num}}</span>，
-                        <b>￥</b><span>{{(Total.Amt).toFixed(2)}}</span>
+                        <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥</b>
+                        <span v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">{{(Total.Amt).toFixed(2)}}</span>
                     </div>
                     <div class="ezt-foot-button">
                         <a href="javascript:(0)" class="ezt-foot-storage" @click="saveAllot">提交</a>  
@@ -468,7 +469,11 @@ export default class ReturnGood extends Vue{
             }
             goodTerm={
                 billsPageType: 'supplierReturn',
-            }  
+            } 
+            if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
+                this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
+            }
+            
             this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
             this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
             this.cache.save(CACHE_KEY.SOURCERBILLLIST,JSON.stringify(this.sourceBillList));

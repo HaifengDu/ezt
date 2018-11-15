@@ -46,7 +46,7 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
+                                    <span class="good-detail-sort" v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥{{item.price}}</span>
                                     <span class="title-search-name ezt-dense-box">
                                         {{item.num}}
                                     </span>
@@ -69,7 +69,8 @@
                 <div class="ezt-foot-total">合计：
                     <b>品项</b><span>{{this.selectedGood.length}}</span>，
                     <b>数量</b><span>{{Total.num}}</span>，
-                    <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+                    <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥</b>
+                    <span v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
                     <a href="javascript:(0)" class="ezt-foot-storage" @click="submitSave">提交</a>
@@ -96,6 +97,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
    computed:{
        ...mapGetters({
            selectedGood:"publicAddGood/selectedGood",
+           'materialSetting':'materialSetting',//物流设置
        })
    },
    methods:{
@@ -114,6 +116,7 @@ export default class ReturnGood extends Vue{
      * 输入数量的时候校验，初始值
      */
     private oldValue = 1;
+    private materialSetting:any;
     mounted() {
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));
@@ -244,7 +247,15 @@ export default class ReturnGood extends Vue{
         })
     }
     //选择物料
-    private renderUrl(info:string){     
+    private renderUrl(info:string){  
+        let goodTerm = {};
+        goodTerm={
+            billsPageType: 'supplierReturn'
+        }  
+        if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
+            this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
+        }
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件   
         this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.$router.push(info);

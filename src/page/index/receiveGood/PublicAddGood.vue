@@ -710,10 +710,6 @@ private changeDirect(item:any){
     this.restBindRemark = item;
     this.bindRemark = ObjectHelper.serialize(this.restBindRemark);//深拷贝
   }
-  //备注，价格弹框取消
-  private remarkCancel(){
-    this.isRemark = false;
-  }
   //备注弹框确定
   private remarkConfirm(){
     alert('备注保存成功');

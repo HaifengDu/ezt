@@ -42,12 +42,6 @@
                     </select>
                   </span>  
                 </li>
-                <li>
-                  <span class="title-search-name is-required">选择货品：</span>
-                  <span class="title-search-right" @click="SaasMaterials()">
-                    <i class="fa fa-angle-right" aria-hidden="true"></i>
-                  </span>
-                </li>
               </ul>
               <div class="method">
                     <p>盘点方式</p>        

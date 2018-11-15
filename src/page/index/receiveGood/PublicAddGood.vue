@@ -37,8 +37,8 @@
                     <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
                     <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
                   </span>
-                  <!-- 默认不可以进行编辑 -->
-                  <span class="good-item-sort" v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+                  <!-- 默认不可以进行编辑  BOH不限制-->
+                  <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
                   <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据选择物料处 editPrice控制 是否可以编辑-->
                   <span v-if="!materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -195,8 +195,8 @@
                 规格： <span class="good-item-sort">{{item.utilname}}</span>
                 账面数量：<span class="good-item-sort">{{item.price}}</span>
               </span>
-              <!-- 默认不可以进行编辑 -->
-              <span class="good-item-sort" v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+              <!-- 默认不可以进行编辑 BOH不限制-->
+              <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
               <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
               <span v-if="!materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -263,8 +263,8 @@
               规格： <span class="good-item-sort" style="margin-right:5px;">{{item.utilname}}</span>
               账面数量：<span class="good-item-sort">{{item.price}}</span>
             </span>
-            <!-- 默认不可以进行编辑 -->
-            <span class="good-item-sort" v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
+            <!-- 默认不可以进行编辑  BOH不限制-->
+            <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}}元/{{item.utilname}}（{{item.unit}}）</span>
             <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
             <span v-if="!materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
               价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">

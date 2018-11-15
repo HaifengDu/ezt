@@ -105,7 +105,7 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price">￥{{item.price}}/{{item.utilname}}
+                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname}}
                                     </span>
                                     <span class="good-detail-sort">数量：{{item.num}}</span>
                                 </div>                     
@@ -128,7 +128,8 @@
                 <div class="ezt-foot-total" v-if="this.goodData.length>0">合计：
                     <b>品项</b><span>{{this.goodData.length}}</span>，
                     <b>数量</b><span>{{Total.num}}</span>，
-                    <b v-if="materialSetting.show_order_price">￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
+                    <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥</b>
+                    <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
                     <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive"> 提交</a>  

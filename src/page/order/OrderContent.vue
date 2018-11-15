@@ -293,8 +293,9 @@ export default class OrderGoods extends Vue{
     })
     private orderSuccessWatch(newVal:any,oldVal:any){
         this.orderType.forEach(item => {
-					if (item.name === newVal) {
-						this.selection = item.supply;
+					if(item.name === newVal) {
+             this.selection = item.supply;
+             this.supplyAgency = this.selection[0].name
 					}
 				})
     }

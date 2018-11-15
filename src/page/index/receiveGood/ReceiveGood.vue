@@ -232,7 +232,7 @@ export default class ReceiveGood extends Vue{
         //BOH只支持配送收货
         this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("配"))
       }else{
-        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("采"))//配、直、调、采
+        this.cache.save(CACHE_KEY.RECEIVE_BILLTYPE,JSON.stringify("调"))//配、直、调、采
       }
      
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));

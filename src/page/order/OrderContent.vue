@@ -109,7 +109,7 @@
        <li class="select-list" v-if="!InterfaceSysTypeBOH">
           <span class="title-search-name ">支付类型：</span> 
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType" ref="paymentType">
               <option value='' style="display:none;" disabled="disabled" selected="selected">请选择支付类型</option>
               <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
             </select>
@@ -196,6 +196,7 @@ export default class OrderGoods extends Vue{
     private supplyAgency:string= '';
     private selection:any=[{}];
     private searchParam:any={
+      paymentType:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
       endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
     };//搜索时的查询条件

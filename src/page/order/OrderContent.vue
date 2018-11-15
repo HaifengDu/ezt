@@ -92,7 +92,7 @@
           <span class="title-search-name ">订货类型：</span>
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="orderSuccess">
-              <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option value='' style="display:none;" disabled="disabled" selected="selected">请选择订货类型</option>
               <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
             </select>
         </span>
@@ -101,7 +101,7 @@
         <span class="title-search-name ">供货机构：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="supplyAgency">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
+            <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
             <option :value="item.name" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
           </select>
         </span>   
@@ -110,7 +110,7 @@
           <span class="title-search-name ">支付类型：</span> 
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
-              <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option value='' style="display:none;" disabled="disabled" selected="selected">请选择支付类型</option>
               <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
             </select>
           </span>

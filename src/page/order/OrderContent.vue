@@ -88,32 +88,32 @@
   <!-- 查询订货 -->  
   <div v-show="isSearch" class="search-dialog orderList">
       <ul class="ezt-title-search">
-       <li class="select-list">
-        <span class="title-search-name ">订货类型：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" v-model="searchParam.orderType">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
+        <li class="select-list">
+          <span class="title-search-name ">订货类型：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select" v-model="orderSuccess">
+              <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
         </span>
       </li>
       <li class="select-list">
         <span class="title-search-name ">供货机构：</span>
         <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" v-model="searchParam.supplyAgency">
+          <select placeholder="请选择" class="ezt-select" v-model="supplyAgency">
             <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            <option :value="item.name" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
           </select>
-        </span>
+        </span>   
       </li>
        <li class="select-list" v-if="!InterfaceSysTypeBOH">
-        <span class="title-search-name ">支付类型：</span> 
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
-          </select>
-        </span>
+          <span class="title-search-name ">支付类型：</span> 
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType">
+              <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
+            </select>
+          </span>
       </li> 
       <li>   
         <span class="title-search-name">业务日期：</span>
@@ -192,16 +192,30 @@ export default class OrderGoods extends Vue{
     private showMask:()=>void;
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
+    private orderSuccess:string= '';
+    private supplyAgency:string= '';
+    private selection:any=[{}];
     private searchParam:any={
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
       endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
     };//搜索时的查询条件
-    private orderType:any=[{
-      name:'仓库1',
-      id:'01'
-    }]
+    private orderType=[{
+        name: '订货01',
+        supply: [
+          {name: '供货01'},
+          {name: '供货02'},
+          {name: "供货03"}
+          ]
+      }, {
+        name: '订货02',
+        supply: [
+          {name: '供货001'}, 
+          {name: '供货002'}, 
+          {name: "供货003"}, 
+          ]
+     }]
     private paymentType:any=[{
-      name:'月结',
+      name:'月结',    
       id:'01',
       },{
       name:'下单即支付',
@@ -216,12 +230,11 @@ export default class OrderGoods extends Vue{
         name:"待审核",
         status:0,
         active:true,
-      })
+       })
        this.service = OrderGoodsService.getInstance();
        this.pager= new Pager();
        this.pager.setLimit(20);
-       this.getList();  
-       this.searchParam = {};   
+       this.getList(); 
        /**
         * saas有待支付
         */
@@ -249,6 +262,7 @@ export default class OrderGoods extends Vue{
         this.isSearch=false; 
         this.hideMask();
       });
+      
       /**
        * 跳转页面选中状态
        */
@@ -270,7 +284,20 @@ export default class OrderGoods extends Vue{
           }
         })
       }  
-    } 
+    }   
+    /**
+     * 供货机构二级联动
+     */
+    @Watch("orderSuccess",{
+      deep:true
+    })
+    private orderSuccessWatch(newVal:any,oldVal:any){
+        this.orderType.forEach(item => {
+					if (item.name === newVal) {
+						this.selection = item.supply;
+					}
+				})
+    }
     /**
      * 查询日期限制
      */

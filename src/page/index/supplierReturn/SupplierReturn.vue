@@ -255,7 +255,8 @@ export default class ReturnGood extends Vue{
         bill_no:item.bill_no,
         billType:'合同采购',
         warehouse:'01',
-        remark:'在途中',         
+        remark:'在途中', 
+        returnType:'supplier'        
       }
       this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
       this.$router.push('/supplierReturnAudit');

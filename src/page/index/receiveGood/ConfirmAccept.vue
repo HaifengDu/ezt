@@ -460,11 +460,16 @@ export default class ReceiveGood extends Vue{
       this.$toasted.success("提交成功！");
       this.$router.push("/receiveGood");
     }
-       //选择物料
-    private renderUrl(info:string){     
-        this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
-        this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.$router.push(info);
+    //选择物料
+    private renderUrl(info:string){    
+      let goodTerm = {};
+      goodTerm={
+        billsPageType: 'receiveGood',
+      }  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm)); 
+      this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
+      this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.$router.push(info);
     } 
     /**
      * 保存并审核

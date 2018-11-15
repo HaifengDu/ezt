@@ -465,6 +465,7 @@ export default class ReceiveGood extends Vue{
       let goodTerm = {};
       goodTerm={
         billsPageType: 'receiveGood',
+        editPrice: true,
       }  
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm)); 
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));

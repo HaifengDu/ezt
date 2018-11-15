@@ -240,6 +240,7 @@ export default class allotment extends Vue{
         let goodTerm = {}
         goodTerm={
             billsPageType: 'storeAllot',
+            editPrice:true,
         }  
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.STOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));

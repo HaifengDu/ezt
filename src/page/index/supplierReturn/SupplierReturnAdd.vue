@@ -236,7 +236,7 @@ export default class ReturnGood extends Vue{
      */
     private get isRequired(){
         return this.addBillInfo.returnType == 'store'||
-        (this.addBillInfo.returnType == 'supplier' && this.materialSetting.isAnyReturn);
+        (this.addBillInfo.returnType == 'supplier' && !this.materialSetting.isAnyReturn);
     }
     private set isRequired(isRequired){
         this._isRequired == isRequired;
@@ -472,6 +472,9 @@ export default class ReturnGood extends Vue{
             } 
             if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
                 this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
+            }
+            if(!this.addBillInfo.sourceBillno&&this.addBillInfo.returnType == 'supplier' && this.materialSetting.isAnyReturn){
+                this.$set(goodTerm,'editPrice',true);//供应商退货（无源单号）并且任意退货， 价格可以编辑
             }
             
             this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件

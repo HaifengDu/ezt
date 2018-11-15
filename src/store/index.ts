@@ -18,10 +18,10 @@ export default new Store<IRootState>({
         systemParamSetting:{},//系统设置参数
         materialSetting:{//物料参数设置
             allow_modify_quantity : 1,//是否允许修改实收数量
-            isAnyReturn : true,//是否任意退货
+            isAnyReturn : 1,//是否任意退货  当选择不支持任意退货时供应商退货单页面需要选择进货单号
             show_order_price : 1,//订单 是否展示要货价格
             show_db_price : 1,//是否显示 平调价格
-            show_back_price : true,//配送退货单 是否显示配送价 
+            show_back_price : 1,//配送退货单 是否显示配送价 
             show_sy_price : 1,//报损报溢单 是否显示库存均价
         }  
        

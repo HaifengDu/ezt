@@ -133,12 +133,12 @@ export default class ReturnGood extends Vue{
                 utilname:'KG',
                 num:3,
             }]
-      }
-      this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-      if(this.selectedGood.length==0&&this.addBillInfo.goodList){
-        this.setSelectedGood(this.addBillInfo.goodList); 
-      }
-      (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
+        }
+        this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
+        if(this.selectedGood.length==0&&this.addBillInfo.goodList){
+            this.setSelectedGood(this.addBillInfo.goodList); 
+        }
+        (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
     /**
      * 提交
@@ -250,10 +250,13 @@ export default class ReturnGood extends Vue{
     private renderUrl(info:string){  
         let goodTerm = {};
         goodTerm={
-            billsPageType: 'supplierReturn'
-        }  
+            billsPageType: 'supplierReturn',
+        } 
         if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
             this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
+        }
+        if(!this.addBillInfo.sourceBillno&&this.addBillInfo.returnType == 'supplier' && this.materialSetting.isAnyReturn){
+            this.$set(goodTerm,'editPrice',true);//供应商退货（无源单号）并且任意退货， 价格可以编辑
         }
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件   
         this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));

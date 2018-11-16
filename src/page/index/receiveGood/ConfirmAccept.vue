@@ -61,12 +61,12 @@
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
                           </span> 
-                          <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                          <span class="good-detail-sort" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname}}</span> 
                           <span class="title-search-name ezt-dense-box">发：{{item.sendNum}}</span>                       
                       </div>
                       <div>
                           <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
+                          <span class="good-detail-sort" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">￥360.001</span>
                           <span class="title-search-name ezt-dense-box">   
                             <!-- SAAS可编辑数量 -->
                             收：<input v-if="!InterfaceSysTypeBOH&&materialSetting.allow_modify_quantity" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
@@ -190,8 +190,8 @@
           <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
             <b>数量</b><span>{{Total.num}}</span>，
-            <b v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao">￥</b>
-            <span v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao">{{Total.Amt.toFixed(2)}}</span>
+            <b v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao||materialSetting.show_dc_price">￥</b>
+            <span v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao||materialSetting.show_dc_price">{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
             <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou">暂存</a>  

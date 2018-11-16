@@ -294,6 +294,9 @@ export default class ReceiveGood extends Vue{
         billsPageType: 'receiveGood',
         editPrice:true,
       }  
+      if(this.addBillInfo.billType == 'q'){//合同采购单 不可编辑
+        this.$set(goodTerm,'editPrice',false);
+      }
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.RECEIVE_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));

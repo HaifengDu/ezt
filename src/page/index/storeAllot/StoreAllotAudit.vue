@@ -44,7 +44,7 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort">￥360.001</span>
+                                    <span class="good-detail-sort" v-if="materialSetting.show_db_price">￥360.001</span>
                                     <span class="title-search-name ezt-dense-box">
                                         {{item.num}}
                                     </span>
@@ -67,7 +67,8 @@
                 <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                     <b>品项</b><span>{{this.selectedGood.length}}</span>，
                     <b>数量</b><span>{{Total.num}}</span>，
-                    <b>￥</b><span>{{(Total.Amt).toFixed(2)}}</span>
+                    <b v-if="materialSetting.show_db_price">￥</b>
+                    <span v-if="materialSetting.show_db_price">{{(Total.Amt).toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
                     <a href="javascript:(0)" class="ezt-foot-storage" @click="saveAllot">提交</a>  
@@ -92,6 +93,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
     computed:{
         ...mapGetters({
             selectedGood:"publicAddGood/selectedGood",
+            materialSetting:'materialSetting',//物流设置
         })
     },
     methods:{
@@ -102,6 +104,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
+    private materialSetting:any;
     private service : StoreAllotService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
@@ -241,6 +244,7 @@ export default class allotment extends Vue{
         goodTerm={
             billsPageType: 'storeAllot',
             editPrice:true,
+            showPrice: !this.materialSetting.show_db_price,
         }  
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.STOREALLOT_ADDINFO,JSON.stringify(this.addBillInfo));

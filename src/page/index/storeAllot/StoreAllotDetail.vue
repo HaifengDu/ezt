@@ -33,11 +33,11 @@
                                     <span class="good-detail-name">{{item.name}}
                                         <span class="good-detail-sort">（{{item.sort}}）</span>
                                     </span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.unitName}}</span>
+                                    <span class="good-detail-sort" v-if="materialSetting.show_db_price">￥{{item.price}}/{{item.unitName}}</span>
                                 </div>
                                 <div class="title">
                                     <span class="good-detail-billno">编号：{{item.billNo}}</span>
-                                    <span class="good-detail-sort">￥{{item.amt}}</span>
+                                    <span class="good-detail-sort" v-if="materialSetting.show_db_price">￥{{item.amt}}</span>
                                 </div>
                             </div>
                             <div class="good-detail-r">
@@ -68,14 +68,20 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator";
+import { mapActions, mapGetters } from 'vuex';
 import { StoreAllotService} from '../../../service/StoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
-
+    computed:{
+        ...mapGetters({
+            materialSetting:'materialSetting',//物流设置
+        })
+    },
 })
 export default class allotment extends Vue{
+    private materialSetting:any;
     private cache = CachePocily.getInstance();
     private service: StoreAllotService;
     private goodList:any[]=[];//详情页物品信息

@@ -240,7 +240,7 @@ export default class StockTaking extends Vue{
                   console.log(this)   // 非当前 vm
               },       
               onConfirm () {
-                   _this.addBillInfo={},
+                   _this.addBillInfo={};
                    _this.setSelectedGood([]);
                    _this.addBeforeBillInfo={};
                    _this.cache.clear();
@@ -335,7 +335,7 @@ export default class StockTaking extends Vue{
       this.$toasted.show("当前货品数量为0，请添加货品！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.cache.clear();
@@ -362,7 +362,7 @@ export default class StockTaking extends Vue{
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={},
+        _this.addBillInfo={};
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.cache.clear();
@@ -377,7 +377,7 @@ export default class StockTaking extends Vue{
     })
   }    
   /**
-   *  SAAS版本选择物料
+   *  SAAS版本   选择物料
    */
   private SaasMaterials(newType:any){
     let goodTerm = {};
@@ -402,7 +402,7 @@ export default class StockTaking extends Vue{
   }
 
   /**
-   *  BOH版本选择物料
+   *  BOH版本   选择物料
    */
   private BohMaterials(){
     let goodTerm = {};
@@ -529,22 +529,10 @@ export default class StockTaking extends Vue{
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
-.ezt-dense-box input{
-  text-align: left;
-}
-.ezt-page-footer{
-  background: none;
-  box-shadow: none;
-}
 .title-select-name .ezt-select {
     max-width: 80%;
 }
 select{
-  color: #888;
-}
-.demo3-slot{
-  text-align: center;
-  padding: 8px 0;
   color: #888;
 }
 .ezt-add-content{
@@ -645,6 +633,9 @@ input.ezt-smart{
     .ezt-dense-box{
       align-items: center;
       flex: 1 !important;
+        input{
+          text-align: left;
+        }
     }
     .good-detail-billno{
         font-size: 10px;
@@ -668,9 +659,6 @@ input.ezt-smart{
     }
     .park-input span{
       flex:2;
-    }
-    .title-search-name.remark{
-      margin-left: 10px;
     }
     .title-search-right{
       flex: 2;

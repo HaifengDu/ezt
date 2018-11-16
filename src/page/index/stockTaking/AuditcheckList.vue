@@ -223,7 +223,7 @@ export default class StockTaking extends Vue{
       this.$toasted.show("当前货品数量为0，请添加货品！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.cache.clear();
@@ -250,7 +250,7 @@ export default class StockTaking extends Vue{
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={},
+        _this.addBillInfo={};
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.cache.clear();

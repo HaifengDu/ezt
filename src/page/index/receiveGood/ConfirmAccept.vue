@@ -57,16 +57,18 @@
           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
               <div class="ezt-detail-good">
                   <div class="good-detail-l">
-                      <div>
+                      <div class="good-detail-t">
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
                           </span> 
-                          <span class="good-detail-sort" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname}}</span> 
-                          <span class="title-search-name ezt-dense-box">发：{{item.sendNum}}</span>                       
+                          <span class="good-detail-billno">编码：003222</span>  
                       </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">￥360.001</span>
+                      <div class="good-detail-price" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">
+                        <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                        <span class="good-detail-sort">￥360.001</span>
+                      </div>
+                      <div class="good-detail-num">                         
+                          <span class="title-search-name ezt-dense-box">发：{{item.sendNum}}</span>   
                           <span class="title-search-name ezt-dense-box">   
                             <!-- SAAS可编辑数量 -->
                             收：<input v-if="!InterfaceSysTypeBOH&&materialSetting.allow_modify_quantity" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
@@ -126,22 +128,24 @@
               <div class="ezt-detail-good" v-swipeleft="handlerSwipe.bind(this,item,true)" 
                 v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                   <div class="good-detail-l">
-                      <div>
+                      <div class="good-detail-t">
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">（规格）</span>
-                          </span>                         
+                          </span>  
+                          <span class="good-detail-billno">编码：003222</span>                       
                       </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort">￥360.001</span>
-                          <span class="title-search-name ezt-dense-box">
-                            <!-- 收：<input type="text" placeholder="10000" v-model="item.num" class="ezt-smart"> -->
-                            收：{{item.num}}
-                          </span>
-                      </div>                     
+                      <div class="good-detail-price">  
+                        <span></span>                        
+                        <span class="good-detail-sort">￥360.001</span>                          
+                      </div> 
+                      <div class="good-detail-num">
+                        <span></span>
+                        <span class="title-search-name ezt-dense-box">                          
+                          收：{{item.num}}
+                        </span>
+                      </div>                    
                   </div>
                   <div class="good-detail-r">
-                    <!-- <span class="icon-dail" @click="handlerDirect(item)">拨</span> -->
                     <div class="park-input">
                       <span class="title-search-name">备注：{{item.remark}}</span>
                     </div>
@@ -159,18 +163,22 @@
           <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
               <div class="ezt-detail-good" :class="{'swipe-transform':item.active}">
                   <div class="good-detail-l">
-                      <div>
+                      <div class="good-detail-t">
                           <span class="good-detail-name">{{item.name}}
                               <span class="good-detail-sort">(/{{item.utilname}})</span>
-                          </span>                         
+                          </span>  
+                          <span class="good-detail-billno">编码：003222</span>                       
                       </div>
-                      <div>
-                          <span class="good-detail-billno">编码：003222</span>
-                          <span class="good-detail-sort" v-if="materialSetting.show_db_price">￥360.001</span>
-                          <span class="title-search-name ezt-dense-box">
-                            收：{{item.num}}
-                          </span>
-                      </div>                     
+                      <div class="good-detail-price" v-if="materialSetting.show_db_price">  
+                        <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>                                               
+                        <span class="good-detail-sort">￥360.001</span>                         
+                      </div>    
+                      <div class="good-detail-num">
+                      <span></span> 
+                       <span class="title-search-name ezt-dense-box">
+                          收：{{item.num}}
+                        </span>
+                      </div>                 
                   </div>
                   <div class="good-detail-r">
                     <div class="park-input">
@@ -653,13 +661,15 @@ export default class ReceiveGood extends Vue{
       flex-direction: column;
   }
   .good-detail-l{
-      display: inline-block;
-      flex:.8;
+    display:flex;
+    flex-direction: row;
+    // display: inline-block;
+    // flex:.8;
   }
   .good-detail-l>div{
-      display:flex;
-      flex-direction: row;
-      align-items: center;
+    // display:flex;
+    // flex-direction: row;
+    // align-items: center;
   }
   .good-detail-l>div>span{
       flex:1;
@@ -668,7 +678,12 @@ export default class ReceiveGood extends Vue{
       display: inline-block;
       display:flex;
   }
-  .good-detail-num{
+  .good-detail-t,.good-detail-price,.good-detail-num{
+    display: flex;
+    flex-direction: column;
+    flex:1;
+  }
+  /* .good-detail-num{
       display: inline-block;
       width: 100%;
       text-align: center;
@@ -676,7 +691,7 @@ export default class ReceiveGood extends Vue{
       color: #FF885E;
       letter-spacing: 0;
       line-height: 3;
-  }
+  } */
   .good-detail-name{
       font-size: 14px;
       color: #395778;

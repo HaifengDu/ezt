@@ -200,10 +200,6 @@ export default class SpilledSheet extends Vue{
        * 审核不通过
        */
       onCancel () {
-        _this.addBillInfo={};
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
       },
       /**
        * 审核通过

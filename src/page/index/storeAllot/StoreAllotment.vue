@@ -365,13 +365,11 @@ export default class allotment extends Vue{
         position: absolute;
         right: 12px;
         top: 42px;
-        // background: pink;
         width: 50px;
         height: 50px;
         text-align: center;
-        line-height: 50px;
+        margin: 25px 0px;
         font-size: 22px;
-        // color: #018BFF;
     }
     //左侧滑动删除
     .ezt-list-show{

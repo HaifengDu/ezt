@@ -21,8 +21,13 @@
         </tab-item>
       </tab>        
       <div class="ezt-add-content">
+        <!--无任何数据时 -->
+        <div v-if="goodList.length==0" class="done-none">
+          <div></div>
+          <span>暂无记录</span>
+        </div>
         <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click.stop="toPage('')">
+          <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click.stop="toPage('')">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)" 
              v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">

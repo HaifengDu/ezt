@@ -29,7 +29,7 @@
           </tab-item>
         </tab>        
         <div class="ezt-add-content">
-          <!-- 收货单列表 无任何数据时 -->
+          <!--无任何数据时 -->
           <div v-if="goodList.length==0" class="done-none">
             <div></div>
             <span>暂无记录</span>

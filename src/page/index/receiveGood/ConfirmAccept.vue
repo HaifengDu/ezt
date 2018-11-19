@@ -13,7 +13,7 @@
           <li class="select-list" v-if="receive_billtype.cai">
             <span class="title-search-name">单据类型：</span>
             <span>
-             {{addBillInfo.billTypeName}}
+              {{addBillInfo.billTypeName}}
             </span>
           </li>
           <li>
@@ -38,7 +38,6 @@
             <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
           </li>  
           <li v-if="receive_billtype.cai">
-            <!-- <span class="title-search-name">选择物料：</span> -->
             <span class="title-search-name">选择物料：</span>
             <span class="title-search-right" @click="renderUrl('/publicAddGood')">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -777,7 +776,7 @@ private changeDirect(item:any){
   width: 50px;
   height: 50px;
   text-align: center;
-  margin: 25px 0px;
+  margin: 10px 0px;
   font-size: 22px;
 }
 </style>

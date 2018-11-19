@@ -34,31 +34,29 @@
             <div class="detail-acount-title">
                物料明细
             </div>      
-            <ul>
+            <ul v-if="details.length>0">
                 <li class="good-detail-content" v-for="(item,index) in details" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>
                                 <span class="good-detail-name">{{item.dc_name}}【{{item.model}}】</span>
-                                <span class="good-detail-sort" v-if="materialSetting.show_sy_price">￥{{item.unit}}/KG</span>
+                                <span class="good-detail-sort" v-if="materialSetting.show_order_price">￥{{item.unit}}/KG</span>
                             </div>
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>
-                                <span class="good-detail-sort" v-if="materialSetting.show_sy_price">￥{{item.material_size}}</span>
+                                <span class="good-detail-sort" v-if="materialSetting.show_order_price">￥{{item.material_size}}</span>
                             </div>
                         </div>
                         <div class="good-detail-r">
                             <span class="good-detail-num">3</span>
                         </div>
                     </div>
-                    <div class="good-detail-item" v-if="item.remark">
-                        <div class="good-detail-sort content" v-model="content">备注：
+                   <div class="good-detail-item" v-if="item.remark">
+                        <div class="good-detail-sort content">备注：
                             <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
                             <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
                         </div>
-                        <div>
-                     </div>
-                    </div>
+                    </div> 
                 </li>
             </ul>             
         </div>  
@@ -68,7 +66,7 @@
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{details.length}}</span>，
                 <b>数量</b><span>{{Total.num}}</span>，
-                <b v-if="materialSetting.show_sy_price">含税金额￥</b><span v-if="materialSetting.show_sy_price">{{Total.Amt.toFixed(2)}}</span>
+                <b v-if="materialSetting.show_order_price">含税金额￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
             </div>
         </div>
     </ezt-footer> 
@@ -76,26 +74,19 @@
 </template>
 <script lang="ts">   
 import Vue from 'vue'
-import ErrorMsg from "../model/ErrorMsg"
-import {Component,Watch} from "vue-property-decorator"
-import {LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex'
-import {maskMixin} from "../../../helper/maskMixin"
-import { INoop, INoopPromise } from '../../../helper/methods'
+import { Component,Watch } from 'vue-property-decorator'
 import { SpilledSheetService } from '../../../service/SpilledSheetService'
 import { CachePocily } from "../../../common/Cache"
-import {ECache} from '../../../enum/ECache'
+import { ECache } from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
 @Component({
    components:{
-
    },
-   mixins:[maskMixin],
    computed:{
      ...mapGetters({
-        materialSetting : 'materialSetting',//物流设置
+          materialSetting : 'materialSetting',//物流设置
      })
-    
    },
    methods:{
      ...mapActions({
@@ -103,33 +94,26 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }
 })
 export default class SpilledSheet extends Vue{
-    private materialSetting: object;
     private service: SpilledSheetService;
+    private materialSetting: object;
     private cache = CachePocily.getInstance();
     private spilledDetails:any={};//损溢详情页面表头
     private details:any[] = [];  //物料明细
-    private fold :boolean = true;  //备注超出显示查看更多
-    private content:string='';
     created() {          
        this.service = SpilledSheetService.getInstance();
        this.detailList();
-        if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS)){
-            this.spilledDetails = JSON.parse(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS));
-        }
+       if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS)){
+            this.spilledDetails = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_DETAILS));
+       }  
     }
-    
     mounted(){ 
         this.detailList();
-        this.getData();   
     }
     /**
      * 备注出现查看更多
      */
     private handleFold(item:any) {
         this.$set(item,'flod',!item.flod);
-    }
-    private getData() {
-        this.content = this.content
     }
     /**
      * computed demo
@@ -241,7 +225,7 @@ export default class SpilledSheet extends Vue{
     }
     .good-detail-sort{
         font-size: 13px;
-    }
+    }   
     .good-detail-item{
         margin-top: 5px;
     }
@@ -251,11 +235,16 @@ export default class SpilledSheet extends Vue{
     } 
     .good-detail-item .remark-suitable{
         line-height: 25px;
-        height: 50px;
         overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        padding-bottom: 10px;
     }
     .good-detail-item .remark-suitable.auto{
-        height: auto;
+         height: auto;
+         -webkit-line-clamp: initial;
     }    
     .good-detail-billno{
         font-size: 10px;

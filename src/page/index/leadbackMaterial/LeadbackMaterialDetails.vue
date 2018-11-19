@@ -40,7 +40,7 @@
             <div class="detail-acount-title">
                物料明细
             </div>      
-            <ul>
+            <ul v-if="details.length>0">
                 <li class="good-detail-content" v-for="(item,index) in details" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
@@ -58,12 +58,10 @@
                         </div>
                     </div>
                     <div class="good-detail-item" v-if="item.remark">
-                        <div class="good-detail-sort content" v-model="content">备注：
+                        <div class="good-detail-sort content">备注：
                             <div class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
                             <span @click='handleFold(item)'>{{item.flod?"收起":"展开"}}</span>
                         </div>
-                        <div>
-                     </div>
                     </div>
                 </li>
             </ul>             
@@ -115,8 +113,6 @@ export default class leadbackMaterial extends Vue{
     private title:string;
     private material:any={};//领退料详情页面表头
     private details:any[] = [];  //物料明细
-    private fold :boolean = true;  //备注超出显示查看更多
-    private content:string='';
     created() {          
        this.service = LeadbackMaterialService.getInstance();
        this.detailList();
@@ -132,16 +128,12 @@ export default class leadbackMaterial extends Vue{
     }
     mounted(){ 
         this.detailList();
-        this.getData();   
     }
     /**
      * 备注出现更多
      */
     private handleFold(item:any) {
         this.$set(item,'flod',!item.flod);
-    }
-    private getData() {
-        this.content = this.content
     }
     /**
      * computed demo
@@ -266,11 +258,16 @@ export default class leadbackMaterial extends Vue{
     } 
     .good-detail-item .remark-suitable{
         line-height: 25px;
-        height: 50px;
         overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        padding-bottom: 10px;
     }
     .good-detail-item .remark-suitable.auto{
-        height: auto;
+         height: auto;
+         -webkit-line-clamp: initial;
     }    
     .good-detail-billno{
         font-size: 10px;

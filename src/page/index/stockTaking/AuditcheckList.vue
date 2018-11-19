@@ -96,7 +96,6 @@ import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
 import CACHE_KEY from '../../../constans/cacheKey'
-import { PageType } from "../../../enum/EPageType"
 import { constants } from 'http2';
 @Component({
    components:{
@@ -122,7 +121,6 @@ export default class StockTaking extends Vue{
     private service:StockTakingService;
     private bill_type:string; //弹层盘点类型
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private pageType = PageType; //页面类型
     private details:any={};  //盘库表头信息
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={};//新增盘库单
@@ -203,9 +201,9 @@ export default class StockTaking extends Vue{
         })
         _this.selectedGood[newIndex].active = false;
       },
-      /**
-       * 确认操作
-       */
+      /**  
+       * 确认操作  
+       */     
       onConfirm () {
         let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
           return item.id == info.id;
@@ -285,7 +283,7 @@ export default class StockTaking extends Vue{
 <style lang="less" scoped>
 @width:100%;
 @height:100%;
-@background-color:#fff;
+@background-color:#fff; 
 @border-radius:3px;
 .ezt-dense-box input{
   text-align: left;

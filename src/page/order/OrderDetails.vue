@@ -39,7 +39,7 @@
                         <div class="good-detail-l">
                             <div>
                                 <span class="good-detail-name">{{item.dc_name}}</span>
-                                <span class="good-detail-sort" v-if="materialSetting.show_order_price||isPayMent">￥{{item.material_size}}</span>
+                                <span class="good-detail-sort"  v-if="materialSetting.show_order_price||isPayMent">￥{{item.material_size}}</span>
                             </div>
                             <div>
                                 <span class="good-detail-billno">编号：{{item.bill_no}}</span>

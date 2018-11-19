@@ -1,118 +1,123 @@
 <!--整体页面的头部布局-->
 <template>
-<div>
-  <div class="ezt-page-con"  ref="listContainer" 
+  <div>
+    <div class="ezt-page-con"  ref="listContainer" 
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
         infinite-scroll-distance="10">
-    <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
-       <div slot="action">   
-         <div>
-           <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')" v-if="!InterfaceSysTypeBOH">
-            <i class="fa fa-plus" aria-hidden="true" ></i>
-           </span>
-          <span class='ezt-action-point' @click="searchTitle">
-            <i class="fa fa-search" aria-hidden="true"></i>
-          </span>          
-         </div>
-       </div>
-    </ezt-header>    
-    <div class="ezt-main">       
-      <tab :line-width=2 active-color='#fc378c'>
-        <tab-item 
-        class="vux-center" 
-        :selected="item.active" 
-        v-for="(item, index) in tabList.TabList"
-        @on-item-click="tabClick(index)" 
-        :key="index">
-          {{item.name}}
-        </tab-item>
-      </tab>        
-      <div class="ezt-add-content">
-        <!-- 收货单列表       -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
-            <div class="receive-icon-title">
-            <span class="receive-icon-dcName"></span>
-            <span class="return-list-title">{{item.dc_name}}</span> 
-            <span class="receive-status">{{billStatus}}</span>
-            </div>
-            <div class="receive-icon-content">
-              <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-              <!-- <div style="display:flex"> -->
-                <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
-              <!-- </div> -->
-              <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-            </div>
-            <div class="receive-icon-bottom">
-              <div class="glow-1">
-                <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
-              </div>
-              <div>
-                <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
-              </div>
-            </div>
+      <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
+        <div slot="action">   
+          <div>
+            <span class='ezt-action-point' @click="toPage(null,'/addReceiveGood')" v-if="!InterfaceSysTypeBOH">
+              <i class="fa fa-plus" aria-hidden="true" ></i>
+              </span>
+            <span class='ezt-action-point' @click="searchTitle">
+              <i class="fa fa-search" aria-hidden="true"></i>
+            </span>          
+          </div>
         </div>
-         <span v-show="allLoaded">已全部加载</span>          
-      </div>
-    </div>         
-  </div>
-  <div v-show="isSearch" class="search-dialog">
+      </ezt-header>    
+      <div class="ezt-main">       
+        <tab :line-width=2 active-color='#fc378c'>
+          <tab-item 
+          class="vux-center" 
+          :selected="item.active" 
+          v-for="(item, index) in tabList.TabList"
+          @on-item-click="tabClick(index)" 
+          :key="index">
+            {{item.name}}
+          </tab-item>
+        </tab>        
+        <div class="ezt-add-content">
+          <!-- 收货单列表 无任何数据时 -->
+          <div v-if="goodList.length==0" class="done-none">
+            <div></div>
+            <span>暂无记录</span>
+          </div>
+          <!-- 收货单列表       -->
+          <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
+              <div class="receive-icon-title">
+              <span class="receive-icon-dcName"></span>
+              <span class="return-list-title">{{item.dc_name}}</span> 
+              <span class="receive-status">{{billStatus}}</span>
+              </div>
+              <div class="receive-icon-content">
+                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <!-- <div style="display:flex"> -->
+                  <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+                  <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+                <!-- </div> -->
+                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+              </div>
+              <div class="receive-icon-bottom">
+                <div class="glow-1">
+                  <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+                </div>
+                <div>
+                  <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
+                </div>
+              </div>
+          </div>
+          <span v-show="allLoaded">已全部加载</span>          
+        </div>
+      </div>         
+    </div>
+    <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
         <li class="select-list">
-        <span class="title-search-name ">收货类型：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
+          <span class="title-search-name ">收货类型：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
+          </span>
+        </li>
         <li class="select-list">
-        <span class="title-search-name ">来货单位：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
-      <li>
-        <span class="title-search-name">收货日期：</span>
-        <span>
-          <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
-            placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
-            <span>至</span>
-          <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
-            placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
-        </span>
-      </li>
-      <li class="select-list">
-        <span class="title-search-name ">仓库：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select">
-            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-          </select>
-        </span>
-      </li>
-      <li>
-        <span class="title-search-name">源单号：</span>
-        <input type="text" class="ezt-middle" placeholder="请输入源单号">
-      </li>
-      <li>
-        <span class="title-search-name">单据：</span>
-        <input type="text" class="ezt-middle" placeholder="请输入单据号">
-      </li>
-      <li>
-        <span class="title-search-name">物料：</span>
-        <input type="text" class="ezt-middle" placeholder="请输入物料名称">
-      </li>
-      <li>
-        <div class="ezt-two-btn" @click="toSearch">查询</div>
-      </li>
-    </ul>
-  </div> 
+          <span class="title-search-name ">来货单位：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="title-search-name">收货日期：</span>
+          <span>
+            <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
+              placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+              <span>至</span>
+            <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+              placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          </span>
+        </li>
+        <li class="select-list">
+          <span class="title-search-name ">仓库：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            </select>
+          </span>
+        </li>
+        <li>
+          <span class="title-search-name">源单号：</span>
+          <input type="text" class="ezt-middle" placeholder="请输入源单号">
+        </li>
+        <li>
+          <span class="title-search-name">单据：</span>
+          <input type="text" class="ezt-middle" placeholder="请输入单据号">
+        </li>
+        <li>
+          <span class="title-search-name">物料：</span>
+          <input type="text" class="ezt-middle" placeholder="请输入物料名称">
+        </li>
+        <li>
+          <div class="ezt-two-btn" @click="toSearch">查询</div>
+        </li>
+      </ul>
+    </div> 
   </div> 
 </template>
 
@@ -148,7 +153,6 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class ReceiveGood extends Vue{
   private InterfaceSysTypeBOH:boolean;
   private cache = CachePocily.getInstance();
-  // private selected:String = 'deliver';
   private service: ReceiveGoodService;
   private pager:Pager;
   private getGoodList:INoopPromise

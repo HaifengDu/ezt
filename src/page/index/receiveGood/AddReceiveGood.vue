@@ -1,13 +1,10 @@
 <!--收货新增页面-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" title='添加采购入库单' @goBack="goBack" :isInfoGoback="true">
-       <div slot="action">
-       </div>
-    </ezt-header>    
+    <ezt-header :back="true" title='添加采购入库单' @goBack="goBack" :isInfoGoback="true"><div slot="action"></div></ezt-header>    
     <div class="ezt-main">
       <div class="ezt-add-content">
-         <ul class="ezt-title-search">
+        <ul class="ezt-title-search">
           <li class="select-list">
             <span class="title-search-name is-required">单据类型：</span>
             <span class="title-select-name item-select">
@@ -52,32 +49,32 @@
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">              
-                <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
-                v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
-                    <div class="good-detail-l">
-                        <div>
-                            <span class="good-detail-name">
-                              <span class="good-detail-break">{{item.name}}</span> 
-                              <span class="good-detail-sort">（规格）</span>
-                            </span>
-                        </div>
-                        <div class="good-detail-nobreak">
-                            <span class="good-detail-billno ">编码：003222</span>
-                            <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
-                            <span class="title-search-name ezt-dense-box">收：{{item.num}}</span>                         
-                        </div>                     
-                    </div>
-                    <div class="good-detail-r">
-                      <div class="park-input"> 
-                        <span class="title-search-name">备注：{{item.remark}}</span>
-                      </div>                    
-                    </div>
-                </div> 
-                <div class="ezt-detail-del" @click="delAction(item)">
-                  <i class="fa fa-trash" aria-hidden="true"></i>
+          <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">              
+            <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
+              v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
+              <div class="good-detail-l">
+                <div>
+                    <span class="good-detail-name">
+                      <span class="good-detail-break">{{item.name}}</span> 
+                      <span class="good-detail-sort">（规格）</span>
+                    </span>
                 </div>
-           </li>
+                <div class="good-detail-nobreak">
+                    <span class="good-detail-billno ">编码：003222</span>
+                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
+                    <span class="title-search-name ezt-dense-box">收：{{item.num}}</span>                         
+                </div>                     
+              </div>
+              <div class="good-detail-r">
+                <div class="park-input"> 
+                  <span class="title-search-name">备注：{{item.remark}}</span>
+                </div>                    
+              </div>
+            </div> 
+            <div class="ezt-detail-del" @click="delAction(item)">
+              <i class="fa fa-trash" aria-hidden="true"></i>
+            </div>
+          </li>
         </ul>   
       </div> 
       <ezt-footer>
@@ -110,20 +107,20 @@ import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 declare var mobiscroll:any;
 @Component({
-   components:{
-   },
-   mixins:[maskMixin],
-   computed:{
-     ...mapGetters({
-        'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
-        'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
-     })
-   },
-   methods:{
+  components:{
+  },
+  mixins:[maskMixin],
+  computed:{
+    ...mapGetters({
+      'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
+      'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
+    })
+  },
+  methods:{
     ...mapActions({
       'setSelectedGood':'publicAddGood/setSelectedGood',
     })    
-   }
+  }
 })
 export default class ReceiveGood extends Vue{
   private cache = CachePocily.getInstance();
@@ -277,7 +274,7 @@ export default class ReceiveGood extends Vue{
       hideOnBlur:true
     })
   }    
-    //选择物料
+  //选择物料
   private renderUrl(info:string){
     let goodTerm = {};
     if(this.addBillInfo){
@@ -488,76 +485,73 @@ input.ezt-smart{
   }
 }
    
-    //物料明细结束 
-    .icon-dail{
-      flex: .1;
-      background: pink;
-      display: inline-block;
-      height: 20px;
-      border: 1px solid #ccc;
-      // width: 20px;
-      text-align: center;
-    }
-    .park-input{
-      display: flex;
+  //物料明细结束 
+  .icon-dail{
+    flex: .1;
+    background: pink;
+    display: inline-block;
+    height: 20px;
+    border: 1px solid #ccc;
+    text-align: center;
+  }
+  .park-input{
+    display: flex;
+    flex:1;
+  }
+  .park-input span{
+    flex:2;
+  }
+  .title-search-name.remark{
+    margin-left: 10px;
+  }
+  //直拨仓库   
+  .warehouse-list{
+    flex: 1;
+    text-align: center;
+    margin-left: 10px;
+    max-height: 240px;
+    overflow-x: auto;
+    .warehouse-isDefault{           
+      display: inline-block; 
+    }   
+  }
+  .warehouse-title-num{
+    display: flex;
+    flex-direction: column;
+    background: #ccc;
+  }
+  .good-warehouse-num{
+    margin-left: 10px;
+    color: #95A7BA;
+    letter-spacing: 0;
+  }
+  .remark-area{
+    flex: .8;
+  }  
+  .title-search-right{
+    flex: 2;
+    text-align: right;
+  }
+  .warehouse-isDefault li{
+    display:flex;
+    flex-direction: row;
+    align-items: center;
+    flex:1;
+    span{
       flex:1;
     }
-    .park-input span{
-      flex:2;
-    }
-    .title-search-name.remark{
-      margin-left: 10px;
-    }
-    //直拨仓库   
-    .warehouse-list{
-        flex: 1;
-        text-align: center;
-        margin-left: 10px;
-        max-height: 240px;
-        overflow-x: auto;
-        .warehouse-isDefault{           
-          display: inline-block;               
-            
-        }   
-    }
-    .warehouse-title-num{
-      display: flex;
-      flex-direction: column;
-      background: #ccc;
-    }
-    .good-warehouse-num{
-      margin-left: 10px;
-      color: #95A7BA;
-      letter-spacing: 0;
-    }
-    .remark-area{
-      flex: .8;
-    }  
-    .title-search-right{
-      flex: 2;
-      text-align: right;
-    }
-    .warehouse-isDefault li{
-      display:flex;
-      flex-direction: row;
-      align-items: center;
-      flex:1;
-      span{
-        flex:1;
-      }
-    }    
-    .swipe-transform{
-      transform: translateX(-50px);
-    }
-    .ezt-detail-del{
-      position: absolute;
-      right: 10px;
-      top: 30px;
-      // background: pink;
-      width: 50px;
-      height: 50px;
-      text-align: center;
-      line-height: 50px;
-      font-size: 22px;
-    }
+  }    
+  .swipe-transform{
+    transform: translateX(-50px);
+  }
+  .ezt-detail-del{
+    position: absolute;
+    right: 10px;
+    top: 30px;
+    width: 50px;
+    height: 50px;
+    text-align: center;
+    line-height: 50px;
+    font-size: 22px;
+  }
 </style>

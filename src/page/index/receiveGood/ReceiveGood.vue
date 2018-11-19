@@ -252,9 +252,9 @@ export default class ReceiveGood extends Vue{
     }
     
   }
-/**
- * computed demo
- */
+  /**
+   * computed demo
+   */
   private get Total(){
     return this.goodList.reduce((ori,item)=>{
       return ori.uprice+item;

@@ -777,7 +777,7 @@ private changeDirect(item:any){
   width: 50px;
   height: 50px;
   text-align: center;
-  line-height: 50px;
+  margin: 25px 0px;
   font-size: 22px;
 }
 </style>

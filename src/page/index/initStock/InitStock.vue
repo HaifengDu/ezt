@@ -2,9 +2,9 @@
 <template>
 <div>
   <div class="ezt-page-con"  ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+    v-infinite-scroll="loadMore"
+    :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+    infinite-scroll-distance="10">
     <ezt-header :back="true" title="库存初始化" @goBack="goBack" :isInfoGoback="true">
        <div slot="action">
          <div class="add">
@@ -60,45 +60,37 @@
       </div>  
     </ezt-footer>    
   </div>
-   <div>
-     <x-dialog v-model="isInit" class="dialog-demo">
-       <div class="confirm-title">                                
-           {{user.auth.store_name}}初始化
-        </div> 
-        <!-- <div > -->
-        <ul class="ezt-dialog-content">
-          <li>
-            <span><span>仓库：</span>消费品仓库1</span>
-            <span><span>总金额：</span>￥991</span>
-          </li>
-          <li>
-            <span><span>仓库：</span>消费品仓库1</span>
-            <span><span>总金额：</span>￥991</span>
-          </li>      
-        </ul>
-        <div class="dialog-msg">
-            <div><span>初始化日期：</span>2018-9-4</div>
-            <div >是否确认该店初始化数据已全部录入完毕？</div>
-        </div>
-        <!-- </div> -->
-       <div class="ezt-dialog-footer">
-          <span @click="isInit=false" class="ezt-cancel-btn">取消</span>
-          <span class="ezt-confirm-btn" @click="handlerInitAll">确定</span>
-        </div> 
-     </x-dialog>
-   </div>
-    <!-- 返回时提示保存信息 -->
-    <confirm v-model="isFinish" @on-confirm="isFinishConfirm"  :show-cancel-button="false">
-      <span class="confirm-title">
-        <i class="fa fa-info-circle confirm-info-icon" aria-hidden="true"></i>库存初始化完成</span>
-        <div class="confirm-content">
-          <p style="text-align:center;">{{confirmTitle}}</p>
-        </div>        
-    </confirm> 
-    <!--待审核状态下的列表数据删除提示 -->
-   <!-- <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
-        <p style="text-align:center;">是否要删除该单据？</p>
-   </confirm> -->
+  <div>
+    <x-dialog v-model="isInit" class="dialog-demo">
+      <div class="confirm-title">{{user.auth.store_name}}初始化</div> 
+      <ul class="ezt-dialog-content">
+        <li>
+          <span><span>仓库：</span>消费品仓库1</span>
+          <span><span>总金额：</span>￥991</span>
+        </li>
+        <li>
+          <span><span>仓库：</span>消费品仓库1</span>
+          <span><span>总金额：</span>￥991</span>
+        </li>      
+      </ul>
+      <div class="dialog-msg">
+        <div><span>初始化日期：</span>2018-9-4</div>
+        <div >是否确认该店初始化数据已全部录入完毕？</div>
+      </div>
+      <div class="ezt-dialog-footer">
+        <span @click="isInit=false" class="ezt-cancel-btn">取消</span>
+        <span class="ezt-confirm-btn" @click="handlerInitAll">确定</span>
+      </div> 
+    </x-dialog>
+  </div>
+  <!-- 返回时提示保存信息 -->
+  <confirm v-model="isFinish" @on-confirm="isFinishConfirm" :show-cancel-button="false">
+    <span class="confirm-title">
+      <i class="fa fa-info-circle confirm-info-icon" aria-hidden="true"></i>库存初始化完成</span>
+    <div class="confirm-content">
+      <p style="text-align:center;">{{confirmTitle}}</p>
+    </div>        
+  </confirm> 
 </div> 
 </template>
 
@@ -146,7 +138,6 @@ export default class InitStock extends Vue {
   private addMaskClickListener: (...args: any[]) => void;
   private hideMask: () => void;
   private showMask: () => void;
-  // private updateUser:INoop;
   private goodList: any[] = []; //列表页list数据
   private allLoaded: boolean = false; //数据是否已经全部加载完
   private tabList: TabList = new TabList();
@@ -180,29 +171,29 @@ export default class InitStock extends Vue {
     } 
     this.getList();
   }
-     // 点击删除按钮
-    private deleteBill(item:any){
-      let _this = this;
-      this.$vux.confirm.show({
-        // 组件除show外的属性
-        onCancel () {
-          let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
-            return item.id == info.id;
-          })
-          _this.goodList[newIndex].active = false;
-        },
-        onConfirm () {
-          let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
-            return item.id == info.id;
-          })
-          _this.goodList.splice(newIndex,1);
-        },
-        content:'是否要删除该单据？'
-      })
-    }
-    /**
-     * 左侧滑动删除
-     */
+  // 点击删除按钮
+  private deleteBill(item:any){
+    let _this = this;
+    this.$vux.confirm.show({
+      // 组件除show外的属性
+      onCancel () {
+        let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
+        })
+        _this.goodList[newIndex].active = false;
+      },
+      onConfirm () {
+        let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+          return item.id == info.id;
+        })
+        _this.goodList.splice(newIndex,1);
+      },
+      content:'是否要删除该单据？'
+    })
+  }
+  /**
+   * 左侧滑动删除
+   */
   private handlerSwipe(item:any,active:boolean){
     const status = this.tabList.getActive().status;
     if(status =="1"){
@@ -320,49 +311,49 @@ export default class InitStock extends Vue {
 
 <style lang="less" scoped>
 .mine-bot-btn{
-    width: 100%;
-    // position: absolute;
-    // bottom: 60px;
-    .ezt-lone-btn{
-      display: inline-block;
-      font-size: 14px;
-      color: #FFFFFF;
-      letter-spacing: 0;
-      padding: 10px 120px;
-      border-radius: 40px;
-      background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-      background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-      -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-      box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-    }
+  width: 100%;
+  // position: absolute;
+  // bottom: 60px;
+  .ezt-lone-btn{
+    display: inline-block;
+    font-size: 14px;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    padding: 10px 120px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+    background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
   }
-  .dialog-demo{
-    // .ezt-dialog-header{
-    //   padding: 6px;
-    //   font-size: 16px;
-    //   font-weight: 550;
-    // }
-    .ezt-dialog-content{
-      max-height: 240px;
-      overflow-x: auto;
-      padding: 20px;
-      text-align: left;
-      li{
-        line-height: 22px;
-        color: #5F7B9A;       
-      }     
-    }
-    .dialog-msg{
-      color: #395778;
-      font-size: 16px;
-      display: inline-block;
-      padding: 10px 20px 20px;
-      text-align: left;
-    }
-    .ezt-dialog-footer{
-      margin-bottom: 20px;
-    }
+}
+.dialog-demo{
+  // .ezt-dialog-header{
+  //   padding: 6px;
+  //   font-size: 16px;
+  //   font-weight: 550;
+  // }
+  .ezt-dialog-content{
+    max-height: 240px;
+    overflow-x: auto;
+    padding: 20px;
+    text-align: left;
+    li{
+      line-height: 22px;
+      color: #5F7B9A;       
+    }     
   }
+  .dialog-msg{
+    color: #395778;
+    font-size: 16px;
+    display: inline-block;
+    padding: 10px 20px 20px;
+    text-align: left;
+  }
+  .ezt-dialog-footer{
+    margin-bottom: 20px;
+  }
+}
   // 左侧滑动删除
 .swipe-transform{
     transform: translateX(-60px);
@@ -371,21 +362,21 @@ export default class InitStock extends Vue {
   position: relative;
 }
 .ezt-list-del{
-    position: absolute;
-    right: 12px;
-    top: 42px;
-    // background: pink;
-    width: 50px;
-    height: 50px;
-    text-align: center;
-    line-height: 50px;
-    font-size: 22px;
+  position: absolute;
+  right: 12px;
+  top: 42px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  // line-height: 50px;
+  margin: 25px 0px;
+  font-size: 22px;
 }
 //左侧滑动删除
-  .ezt-list-show{
-    position: relative;
-    transition: transform .5s;
-    background: #fff;
-    z-index: 2;
-  }
+.ezt-list-show{
+  position: relative;
+  transition: transform .5s;
+  background: #fff;
+  z-index: 2;
+}
 </style>

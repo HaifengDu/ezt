@@ -527,11 +527,11 @@ export default class InitStock extends Vue {
     position: absolute;
     right: 10px;
     top: 30px;
-    // background: pink;
     width: 50px;
     height: 50px;
     text-align: center;
-    line-height: 50px;
+    // line-height: 50px;
+    margin: 10px 0px;
     font-size: 22px;
 }
 </style>

@@ -451,7 +451,7 @@ export default class allotment extends Vue{
     width: 50px;
     height: 50px;
     text-align: center;
-    line-height: 50px;
+    margin: 10px 0px;
     font-size: 22px;
 }
    

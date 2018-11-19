@@ -377,39 +377,10 @@ export default class StockTaking extends Vue{
     })
   }    
   /**
-   *  SAAS版本   选择物料
-   */
-  private SaasMaterials(newType:any){
-    let goodTerm = {};
-    if(this.addBillInfo){
-      goodTerm={
-        billsPageType: 'stocktaking',
-      }  
-      for(let i=0;i<this.LibraryField.length;i++){
-        let item = this.LibraryField[i];
-        if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
-            this.$toasted.show(item.msg);
-            item[item.id]=true;
-            return false;
-          }
-      }
-      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-      this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
-      this.$router.push({name:'PublicAddGood',query:{newType:newType}})
-    }      
-  }
-
-  /**
    *  BOH版本   选择物料
    */
   private BohMaterials(){
-    let goodTerm = {};
     if(this.addBillInfo){
-      goodTerm={
-        billsPageType: 'stocktaking',
-      }  
       for(let i=0;i<this.TypeField.length;i++){
         let item = this.TypeField[i];
         if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
@@ -418,6 +389,10 @@ export default class StockTaking extends Vue{
             return false;
           }
       }
+      let goodTerm = {};
+      goodTerm={
+        billsPageType: 'stocktaking',
+      }  
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
@@ -432,7 +407,6 @@ export default class StockTaking extends Vue{
     */
    manualproduction(newType:any){
     if(this.addinventory){
-      let _this = this;
       for(let i=0;i<this.LibraryField.length;i++){
         let item = this.LibraryField[i];
         if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
@@ -456,7 +430,7 @@ export default class StockTaking extends Vue{
    * SAAS页面 盘点类型导入
    */
   private inventorytype(types:PageType,item:any,type:any){
-        if(this.addinventory){
+     if(this.addinventory){
          let templateName = {};
          let addinventory = {};
          const flag = this.addinventory.bill_type;
@@ -521,7 +495,6 @@ export default class StockTaking extends Vue{
           })
         }
      }
-  
 }
 </script>
 <style lang="less" scoped>

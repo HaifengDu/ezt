@@ -214,16 +214,16 @@ export default class StockTaking extends Vue{
       },
       content:'请确认是否删除该货品?'
     })
-  }
+  } 
   /**
    *  盘点单 提交
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加货品！");
+      this.$toasted.show("当前货品数量为0，请添加货品！");
       return false;
     } 
-    this.addBillInfo={},
+    this.addBillInfo={};
     this.setSelectedGood([]);
     this.addBeforeBillInfo={};
     this.cache.clear();
@@ -236,7 +236,7 @@ export default class StockTaking extends Vue{
   private confirmReceive(){
     let _this = this;
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加货品！");
+      this.$toasted.show("当前货品数量为0，请添加货品！");
       return false;
     }
     this.$vux.confirm.show({
@@ -250,7 +250,7 @@ export default class StockTaking extends Vue{
        * 审核通过
        */
       onConfirm () {
-        _this.addBillInfo={},
+        _this.addBillInfo={};
         _this.setSelectedGood([]);
         _this.addBeforeBillInfo={};
         _this.cache.clear();

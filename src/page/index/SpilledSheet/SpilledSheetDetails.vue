@@ -185,10 +185,6 @@ export default class SpilledSheet extends Vue{
             }
         }
     }
-    .ezt-main{
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
     .receive-dc-content{
         width: 100px;
     }

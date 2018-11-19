@@ -189,7 +189,7 @@ export default class leadbackMaterial extends Vue{
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加物料！");
+      this.$toasted.show("当前物料数量为0，请添加物料！");
       return false;
     } 
     this.addBillInfo={};
@@ -206,7 +206,7 @@ export default class leadbackMaterial extends Vue{
   private confirmReceive(){
     let _this = this;
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加物料！");
+      this.$toasted.show("当前物料数量为0，请添加物料！");
       return false;
     }
     if(false){
@@ -248,7 +248,7 @@ export default class leadbackMaterial extends Vue{
    */
 private saveReceive01(){
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加物料！");
+      this.$toasted.show("当前物料数量为0，请添加物料！");
       return false;
     } 
     this.addBillInfo={};
@@ -264,7 +264,7 @@ private saveReceive01(){
   private confirmReceive01(){
       let _this = this;
       if(!this.selectedGood||this.selectedGood.length<=0){
-        this.$toasted.show("请添加物料！");
+        this.$toasted.show("当前物料数量为0，请添加物料！");
         return false;
       }
       if(false){

@@ -177,7 +177,7 @@ export default class SpilledSheet extends Vue{
    */
   private saveReceive(){
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加物料！");
+      this.$toasted.show("当前物料数量为0，请添加物料！");
       return false;
     } 
     this.addBillInfo={};
@@ -192,7 +192,7 @@ export default class SpilledSheet extends Vue{
   private confirmReceive(){
     let _this = this;
     if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("请添加物料！");
+      this.$toasted.show("当前物料数量为0，请添加物料！");
       return false;
     }
     this.$vux.confirm.show({
@@ -200,10 +200,6 @@ export default class SpilledSheet extends Vue{
        * 审核不通过
        */
       onCancel () {
-        _this.addBillInfo={};
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.$router.push({name:'SpilledSheet',params:{'purStatus':'已完成'}}); 
       },
       /**
        * 审核通过

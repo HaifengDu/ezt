@@ -575,11 +575,4 @@ export default class OrderGoods extends Vue{
         background: linear-gradient(-135deg, #FFBE4E 0%, #FE9E49 100%);
       }
 
-      // 订货查询
-      .search-dialog{
-        width: 100%; 
-        position:absolute;
-        top:45px; 
-        z-index:10001;
-      }
 </style>

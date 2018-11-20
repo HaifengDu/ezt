@@ -727,7 +727,7 @@ input.ezt-middle{
 /*搜索弹框*/
 .search-dialog{
   width: 100%; 
-  position:absolute;
+  position:fixed;
   top:45px; 
   z-index:10001;
 }

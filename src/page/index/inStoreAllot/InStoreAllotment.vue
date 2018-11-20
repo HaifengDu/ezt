@@ -337,13 +337,6 @@ export default class allotment extends Vue{
       height: 26px;
       display: inline-block;
     }
-    //搜索弹框
-    .search-dialog{
-      width: 100%; 
-      position:absolute;
-      top:45px; 
-      z-index:10001;
-    }
     .oo{
       display: inline-block;
       width:10px;

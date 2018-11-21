@@ -174,6 +174,17 @@ export default class ReturnGood extends Vue{
     text-align: left;
     margin-left: 10px;
 }
+.ezt-backcolor{
+    position: relative;
+    height: 136px;
+    background-image: linear-gradient(135deg, #018BFF -9%, #4A39F3 79%);
+    margin-top: -1px;
+}
+.ezt-detail-cot{
+    position: absolute;
+    top:0;
+    width: 100%;
+}
 .ezt-main{
     overflow-y: auto;
     overflow-x: hidden;

@@ -386,11 +386,4 @@ export default class SpilledSheet extends Vue{
     .swipe-transform{
       transform: translateX(-50px);
     }
-    // 损溢单查询
-    .search-dialog{    
-      width: 100%; 
-      position:absolute;
-      top:45px; 
-      z-index:10001;
-    }
 </style>

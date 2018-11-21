@@ -530,13 +530,6 @@ export default class stockTaking extends Vue{
     .swipe-transform{
       transform: translateX(-50px);
     }
-    // 查询盘点单
-  .search-dialog{
-    width: 100%; 
-    position:absolute;
-    top:45px; 
-    z-index:10001;
-  }
 // 新增盘点单
  .dialog {
     height: 350px;

@@ -470,13 +470,6 @@ export default class leadbackMaterial extends Vue{
     .swipe-transform{
       transform: translateX(-50px);
     }
-    // 领退料查询
-    .search-dialog{
-      width: 100%; 
-      position:absolute;
-      top:45px; 
-      z-index:10001;
-    }
     .addgoods{
       position: absolute;
       top: 44px;

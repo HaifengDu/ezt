@@ -33,7 +33,7 @@
                         </span>
                     </li>
                     <li>
-                        <x-input title="备注：" max="100" v-model="addBillInfo.remark"></x-input>
+                        <x-input title="备注：" :max="100" v-model="addBillInfo.remark"></x-input>
                     </li>
                     <li>
                         <span class="title-search-name is-required">物料明细</span>

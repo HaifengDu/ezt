@@ -109,7 +109,7 @@
         </span>
       </li>
       <li>
-        <x-input title="单据或物料：" max="50" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
+        <x-input title="单据或物料：" :max="50" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>

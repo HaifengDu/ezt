@@ -98,7 +98,7 @@
   <div v-show="isSearch" class="search-dialog stocktaking">
       <ul class="ezt-title-search">
        <li>
-         <x-input title="单据号：" v-model="searchParam.billNumber" placeholder="请输入单据号"></x-input>
+         <x-input title="单据号：" max="50" v-model="searchParam.billNumber" placeholder="请输入单据号"></x-input>
        </li>
        <li class="select-list">
         <span class="title-search-name">盘点库：</span>

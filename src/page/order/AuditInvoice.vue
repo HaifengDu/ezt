@@ -33,7 +33,7 @@
                         </span>
                     </li>
                     <li>
-                        <x-input title="备注：" v-model="addBillInfo.remark"></x-input>
+                        <x-input title="备注：" max="100" v-model="addBillInfo.remark"></x-input>
                     </li>
                     <li>
                         <span class="title-search-name is-required">物料明细</span>
@@ -77,8 +77,8 @@
             <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                     <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                    <b>数量</b><span>{{Total.num}}</span>，
-                    <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥</b>
+                    <b>数量</b><span>{{Total.num}}</span>
+                    <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">，￥</b>
                     <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">

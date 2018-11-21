@@ -14,7 +14,7 @@ Vue.use(VueX);
 export default new Store<IRootState>({
     state:{   
         user:void 0,
-        InterfaceSysTypeBOH:false,//后台接口是SAAS（false）还是BOH（true） 
+        InterfaceSysTypeBOH:true,//后台接口是SAAS（false）还是BOH（true） 
         systemParamSetting:{},//系统设置参数
         materialSetting:{//物料参数设置
             allow_modify_quantity : 1,//是否允许修改实收数量

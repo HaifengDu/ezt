@@ -51,7 +51,7 @@
               <div class="jiadan"></div>
               <span>加单</span></li> -->
             <li @click="renderUrl('/receiveGood')">
-              <div class="shouhuo"><span class="ezt-reddot-s"></span></div>
+              <div class="shouhuo"><span v-if='!InterfaceSysTypeBOH' class="ezt-reddot-s"></span></div>
               <span>收货</span></li>
             <li @click="renderUrl('/supplierReturn')">
               <div class="tuihuo"></div>
@@ -60,7 +60,7 @@
               <div class="panku"></div>
               <span>盘库</span></li>
             <li @click="renderUrl()">
-              <div class="kucun"><span class="ezt-reddot-s"></span></div>
+              <div class="kucun"><span v-if='!InterfaceSysTypeBOH' class="ezt-reddot-s"></span></div>
               <span>库存初始化</span></li>
             <li @click="renderUrl('/spilledSheet')">
               <div class="overflowing"></div>
@@ -121,7 +121,8 @@ declare var mobiscroll:any;//全局定义日历
    computed:{
      ...mapGetters({
        "user":"user",
-      'isFirstStore':'initStock/isFirstStore'//是否是新门店未初始化
+      'isFirstStore':'initStock/isFirstStore',//是否是新门店未初始化
+       InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
      })   
    },
   methods:{

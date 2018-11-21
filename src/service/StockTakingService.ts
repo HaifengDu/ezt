@@ -14,7 +14,11 @@ export class StockTakingService extends BaseService{
         super(ERequestType.AppOrder)
         this.loginService = LoginService.getInstance();
     }    
-    // 盘库首页 
+    /**
+     * 盘库列表
+     * @param status 
+     * @param pager 
+     */ 
     getInventoryList(status:string,pager:IPagerData){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{"status":status}],
@@ -26,7 +30,11 @@ export class StockTakingService extends BaseService{
         //const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/`)
     }       
-    //盘库详情  待提交状态下的提交按钮
+    /**
+     * 盘库详情  待提交状态下的提交按钮
+     * @param id 
+     * @param audit_status 
+     */
     getLibraryDetails(id:number,audit_status:number){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{"id":id,"audit_status":0}],   //audit_status单据状态
@@ -36,8 +44,13 @@ export class StockTakingService extends BaseService{
             return Promise.resolve(res);
         });
     }
-
-    //查询盘库单
+    /**
+     * 查询盘库单
+     * @param bill_no 
+     * @param end_date 
+     * @param begin_date 
+     * @param warehouse_id 
+     */
     getEnquiryList(bill_no:string,end_date:string,begin_date:string,warehouse_id:number){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -51,9 +64,12 @@ export class StockTakingService extends BaseService{
         }).then(res=>{           
             return Promise.resolve(res);
         });
+        
     }
-
-    //模板导入
+    /**
+     * 模板导入
+     * @param warehouse_id 
+     */
     getTemplateImport(warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{"warehouse_id":warehouse_id}],
@@ -63,9 +79,12 @@ export class StockTakingService extends BaseService{
             return Promise.resolve(res);
         });
     }
-
-
-    //模板详情
+    /**
+     * 模板详情
+     * @param template_id 
+     * @param flag 
+     * @param warehouse_id 
+     */
     getTemplateDetails(template_id:string,flag:string,warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -79,9 +98,11 @@ export class StockTakingService extends BaseService{
             return Promise.resolve(res);
         });
     }
-
-
-    //盘点批量类型导入（点击盘点类型导入）  新增盘点类型导入
+    /**
+     * 盘点批量类型导入（点击盘点类型导入） 新增盘点类型导入
+     * @param flag 
+     * @param warehouse_id 
+     */
     getInventorytypeImport(flag:string,warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -95,8 +116,19 @@ export class StockTakingService extends BaseService{
         });
     }
 
-
-    //新增盘点   (盘点类型导入暂存提交接口)
+    /**
+     * 新增盘点单   （盘点类型导入暂存提交接口）
+     * @param material_id 
+     * @param entry_name 
+     * @param bill_status 
+     * @param bill_type_name 
+     * @param warehouse_id 
+     * @param bill_type 
+     * @param stock_count_mode_name 
+     * @param busi_date 
+     * @param organ_brief_code 
+     * @param stock_count_mode 
+     */
     getAdditionalcheckList(material_id:string,entry_name:string,bill_status:number,bill_type_name:string,warehouse_id:string,bill_type:string,stock_count_mode_name:string,busi_date:string,organ_brief_code:string,stock_count_mode:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{    
@@ -118,8 +150,12 @@ export class StockTakingService extends BaseService{
         });
     }
 
-
-    //审核盘点单（不通过）
+    /**
+     * 审核盘点单 （不通过）
+     * @param audit_name 
+     * @param ids 
+     * @param opinion 
+     */
     getAuditchecklistno(audit_name:string,ids:string,opinion:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -134,8 +170,19 @@ export class StockTakingService extends BaseService{
         });
     }
 
-
-    //审核盘点单（通过）
+    /**
+     * 审核盘点单（通过）
+     * @param whole_num 
+     * @param id 
+     * @param consume_num 
+     * @param disperse_num 
+     * @param store_name 
+     * @param warehouse_name 
+     * @param audit_name 
+     * @param ids 
+     * @param stock_count_mode 
+     * @param organ_brief_code 
+     */
     getAuditchecklistyes(whole_num:string,id:number,consume_num:string,disperse_num:string,store_name:string,warehouse_name:string,audit_name:string,ids:string,stock_count_mode:string,organ_brief_code:string,){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             data:[{
@@ -159,8 +206,9 @@ export class StockTakingService extends BaseService{
         });
     }
 
-
-    // 数据整理
+    /**
+     * 数据整理
+     */
     getDataSorting(){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[],
@@ -171,7 +219,10 @@ export class StockTakingService extends BaseService{
         });
     }
     
-    //日盘周盘月盘入口
+    /**
+     * 日周月盘入口
+     * @param bill_type 
+     */
     getInventoryType(bill_type:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{"bill_type":bill_type}],
@@ -182,7 +233,10 @@ export class StockTakingService extends BaseService{
         });
     }
 
-    // 动态加载仓库
+    /**
+     * 动态加载仓库
+     * @param inventory_type 
+     */
     getWarehouse(inventory_type:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{"inventory_type":inventory_type}],
@@ -193,7 +247,16 @@ export class StockTakingService extends BaseService{
         });
     }
 
-    // 实盘录入
+    /**
+     * 实盘录入
+     * @param whole_num 
+     * @param id 
+     * @param consume_num 
+     * @param disperse_num 
+     * @param ids 
+     * @param is_stock_report 
+     * @param stock_count_mode 
+     */
     getRealdiscEntry(whole_num:string,id:number,consume_num:string,disperse_num:string,ids:string,is_stock_report:number,stock_count_mode:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -214,7 +277,9 @@ export class StockTakingService extends BaseService{
         });
     }
 
-    //新增手工制单（模糊搜索）
+    /**
+     * 新增手工制单（模糊搜索）
+     */
     getManualProduction(){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
@@ -228,15 +293,11 @@ export class StockTakingService extends BaseService{
             return Promise.resolve(res);
         });
     }
-    
- 
-    
     static createInstance() {
         StockTakingService.getInstance();
     }
     static getInstance() {
         return this._instance || (this._instance = new this());
     }
-
 }
 export default StockTakingService;

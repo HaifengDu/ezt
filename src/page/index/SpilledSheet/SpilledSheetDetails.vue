@@ -23,7 +23,7 @@
                     <span class="receive-dc-title">报损原因：
                         <span class="receive-dc-content">{{spilledDetails.causeofloss}}</span>
                     </span>
-                    <span class="receive-dc-title">盘点单号：
+                    <span class="receive-dc-title" v-if="Inventoryloss">盘点单号：
                         <span class="receive-dc-content">{{spilledDetails.singlenumber}}</span>
                     </span>
                     <div style="display:flex;padding-bottom:20px;">
@@ -65,8 +65,8 @@
         <div class="ezt-foot-temporary" slot="confirm">
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{details.length}}</span>，
-                <b>数量</b><span>{{Total.num}}</span>，
-                <b v-if="materialSetting.show_order_price">含税金额￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
+                <b>数量</b><span>{{Total.num}}</span>
+                <b v-if="materialSetting.show_order_price">，含税金额￥</b><span v-if="materialSetting.show_order_price">{{Total.Amt.toFixed(2)}}</span>
             </div>
         </div>
     </ezt-footer> 

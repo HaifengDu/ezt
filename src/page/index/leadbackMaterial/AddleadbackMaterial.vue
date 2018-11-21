@@ -29,7 +29,7 @@
             </span>
           </li>
           <li>
-            <x-input title="备注：" v-model="addBillInfo.remark" placeholder="请输入备注信息"></x-input>
+            <x-input title="备注：" :max="100" v-model="addBillInfo.remark" placeholder="请输入备注信息"></x-input>
           </li>
           <li>
             <span class="title-search-name is-required">选择物料：</span>

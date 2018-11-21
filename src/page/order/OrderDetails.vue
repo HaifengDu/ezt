@@ -63,8 +63,8 @@
         <div class="ezt-foot-temporary" slot="confirm">
             <div class="ezt-foot-total">合计：
                 <b>品项</b><span>{{details.length}}</span>，
-                <b>数量</b><span>{{Total.num}}</span>，
-                <b v-if="materialSetting.show_order_price||isPayMent">含税金额￥</b><span v-if="materialSetting.show_order_price||isPayMent">{{Total.Amt.toFixed(2)}}</span>
+                <b>数量</b><span>{{Total.num}}</span>
+                <b v-if="materialSetting.show_order_price||isPayMent">，含税金额￥</b><span v-if="materialSetting.show_order_price||isPayMent">{{Total.Amt.toFixed(2)}}</span>
             </div>
             <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
                 <a href="javascript:(0)" class="ezt-foot-sub" @click="payMethod=true">支付</a>  

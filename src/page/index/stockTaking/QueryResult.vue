@@ -19,7 +19,8 @@
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
                       <div><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
-                      <div><p>生成损溢：</p></div>   <!----<span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span>---->
+                      <div><p>生成损溢：</p></div>   
+                      <!-- <span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span> -->
                       <div v-if="!InterfaceSysTypeBOH"><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
                           <p>业务日期：<span>2018-12-13</span></p>
@@ -37,7 +38,6 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import StockTakingService from '../../../service/StockTakingService'
@@ -57,14 +57,12 @@ import CACHE_KEY from '../../../constans/cacheKey'
      ...mapActions({
        
      })
-
    }   
 })  
 export default class stockTaking extends Vue{
     private service: StockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();  
-    private pager:Pager;   
     private pageType = PageType;
     private list:any[] = [];
     private queryResult:any[] = [{

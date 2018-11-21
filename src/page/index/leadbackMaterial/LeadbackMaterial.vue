@@ -78,12 +78,12 @@
   <!-- 查询领退料 -->  
   <div v-show="isSearch" class="search-dialog LeadbackMaterial">
       <ul class="ezt-title-search">
-       <li class="select-list">
+       <li class="select-list"> 
         <span class="title-search-name">单据类型：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.billType">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            <option value='' style="display:none;" disabled="disabled" selected="selected">请选择单据类型</option>
+            <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
           </select>
         </span>
       </li>
@@ -91,8 +91,8 @@
         <span class="title-search-name">领/退料仓库：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.Warehouse">
-            <option style="display:none;" disabled="disabled" selected="selected">请选择</option>
-            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+            <option value='' style="display:none;" disabled="disabled" selected="selected">请选择领/退料仓库</option>
+            <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>    
           </select>
         </span>
       </li>
@@ -109,7 +109,7 @@
         </span>
       </li>
       <li>
-        <x-input title="单据或物料：" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
+        <x-input title="单据或物料：" :max="50" v-model="searchParam.materiel" placeholder="输入单据号和物料名称查询"></x-input>
       </li>
       <li>
         <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -160,14 +160,21 @@ export default class leadbackMaterial extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     private isSearch:boolean = false; //订货查询
+    //搜索时的查询条件
     private searchParam:any={
+      billType:'',
+      Warehouse:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
       endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
-    };//搜索时的查询条件
-    private orderType:any=[{
-      name:'仓库1',
-      id:'01'
-    }]
+    };
+     /**
+      * 单据类型  领退料仓库
+      */
+     private orderType=[{   
+        name: '领料单',
+      }, {
+        name: '退料单',
+      }]
     created() {
       this.tabList.push({
         name:"领料待审",
@@ -190,7 +197,6 @@ export default class leadbackMaterial extends Vue{
       this.pager= new Pager();   
       this.pager.setLimit(20);
       this.getList();  
-      this.searchParam = {};    
     }
     mounted(){   
       /**

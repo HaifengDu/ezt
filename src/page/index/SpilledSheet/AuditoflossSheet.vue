@@ -25,7 +25,7 @@
               <input type="text" class="ezt-middle" disabled v-model="addBillInfo.causeofloss">
           </li>
           <li>
-            <x-input title="备注：" v-model="addBillInfo.remark"></x-input>
+            <x-input title="备注：" :max="100" v-model="addBillInfo.remark"></x-input>
           </li>
           <li>
             <span class="title-search-name is-required">选择物料：</span>

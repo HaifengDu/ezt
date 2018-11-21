@@ -163,7 +163,6 @@ export default class SpilledSheet extends Vue{
       this.pager= new Pager();   
       this.pager.setLimit(20);
       this.getList();  
-      this.searchParam = {};    
     }
     mounted(){      
       this.getList();

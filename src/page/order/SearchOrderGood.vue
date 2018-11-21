@@ -23,19 +23,17 @@
                 <span class="receive-dc-title">单号：
                   <span class="receive-dc-content">{{item.bill_no}}</span>
                 </span>
-                <div style="display:flex">
-                  <span class="receive-dc-title">要货日期：
-                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>
-                  </span>
-                  <span class="receive-dc-title">到货日期：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
-                  </span>
-                </div>
+                <span class="receive-dc-title">要货日期：
+                  <span class="receive-dc-content">{{item.ask_goods_date}}</span>
+                </span>
+                <span class="receive-dc-title">到货日期：
+                  <span class="receive-dc-content">{{item.arrive_date}}</span>
+                </span>
                 <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
               <div class="receive-icon-bottom">
                 <div class="glow-1">
-                  <span>共2件货品<span class="receive-total">合计：￥434</span></span>
+                  <span>共<span>2</span>件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
               </div>
             </div>
@@ -104,6 +102,9 @@ export default class OrderGoods extends Vue{
 }
 </script>
 <style lang="less" scoped>
+.ezt-add-content{
+  padding-bottom: 0;
+}
 .receive-icon-dcName{
   background: none;
 }

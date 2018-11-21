@@ -146,7 +146,6 @@ import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
-import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { StockTakingService } from '../../../service/StockTakingService'
 import ObjectHelper from '../../../common/objectHelper'
@@ -158,7 +157,6 @@ import { PageType } from "../../../enum/EPageType"
 @Component({
    components:{
    },    
-   mixins:[maskMixin],
    computed:{
      ...mapGetters({
         'user':'user',

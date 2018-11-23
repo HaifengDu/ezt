@@ -10,19 +10,16 @@ import { ECache } from "../enum/ECache";
 import store from "../store"
 import RootType from "../store/mutation-types";
 import ObjectHelper from "../common/objectHelper";
-export class LoginService extends BaseService{
+export class BOHLoginService extends BaseService{
 
     private cache = CachePocily.getInstance(ECache.LocCache);
     private user:IUser;
-    private static _instance: LoginService;
+    private static _instance: BOHLoginService;
 
     private constructor() {
-        super(ERequestType.AppOrder)
+        super(ERequestType.Boh)
     }
     private check(user:IUser){
-        if(!user.shopname){
-            return new ErrorMsg(false,"商户名不能为空");
-        }
         if(!user.loginname){
             return new ErrorMsg(false,"用户名不能为空");
         }
@@ -34,27 +31,26 @@ export class LoginService extends BaseService{
 
     public getUser(){
         return this.user;
-    }
-    // 登录 SAAS
+    }  
+    //登录 BOH
     login(user:IUser){
         const checkResult = this.check(user);
         if(!checkResult.success){
             return Promise.reject(checkResult);
         }
-        let hash = crypto.createHash("md5");
-        user.encrypwd = hash.update((<string>user.pwd).trim()).digest('hex');
-        return Axios.post(`${this.reqUrl}login/post`,{
-            data: [{
-                username:user.loginname,
-                password:(<string>user.encrypwd).toString(),
-                push_token:1
-            }],
-            "oper": "SIGN_IN",
-            "pagination": null,
-            "store_id": null,
-            "tenancy_id": user.shopname,
-            "timestamp": 0 
-        }).then(res=>{
+        // let hash = crypto.createHash("md5");
+        let config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        // user.encrypwd = hash.update((<string>user.pwd).trim()).digest('hex');
+        return Axios.post(`${this.reqUrl}login`,{
+            username:user.loginname,
+            password:user.pwd,
+            source:"H5UI" 
+        },config).then(res=>{
             const auth = res.data.data[0];
             if(!auth){
                 return Promise.reject(new ErrorMsg(false,"服务器内部错误"));
@@ -70,24 +66,49 @@ export class LoginService extends BaseService{
         });
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         // return promise;
-    }    
+    }
     autoLogin(){
         let user = this.cache.getData(cacheKey.USER_MODEL);
         if(!user){
             return Promise.reject(new ErrorMsg(false,"未获取用户"));
         }
-        user = ObjectHelper.parseJSON(user);
+        user = ObjectHelper.parseJSON(user);        
         return this.login(user);
+      
     }
     /**
-     * SAAS 退出登录
+     * BOH 自动退出
+     */
+    autoLogout(){
+        let config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+       
+            return Axios.post(`${this.reqUrl}logout`,{
+            source: 'H5UI'
+            },config).then(res=>{
+                setTimeout(()=>{
+                    store.commit(RootType.DELETE_USER);
+                });
+                return res;
+            });
+    }
+    /**
+     * BOH 退出登录
      */
     logout(){
-        return Axios.post(`${this.reqUrl}login/post`,{
-            data: [{}],
-            "oper": "SIGN_OUT",
-            "pagination": null,
-        }).then(res=>{
+        let config = {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}logout`,{
+           source: 'H5UI'
+        },config).then(res=>{
             this.cache.clear();
             setTimeout(()=>{
                 store.commit(RootType.DELETE_USER);
@@ -110,19 +131,19 @@ export class LoginService extends BaseService{
     /**
      * 查询余额
      */
-    checkBalance(){
+    /* checkBalance(){
         return Axios.post(`${this.reqUrl}operateorder/post`,{
             data: [{}],
             "oper": "BALANCE_AMOUNT",
         }).then(res=>{           
             return Promise.resolve(res);
         });
-    }
+    } */
     /**
      * 修改密码
      * @param user 
      */
-    modifyPassword(oldPasswd:string,newPasswd:string){
+  /*   modifyPassword(oldPasswd:string,newPasswd:string){
         let user = this.cache.getData(cacheKey.USER_MODEL);
         let userName = JSON.parse(user);
         let oldhash = crypto.createHash("md5");
@@ -140,10 +161,10 @@ export class LoginService extends BaseService{
         }).then(res=>{
             return this.logout().then(()=>res);
         });
-    }
+    } */
 
     static createInstance() {
-        LoginService.getInstance();
+        BOHLoginService.getInstance();
     }
 
     static getInstance() {
@@ -151,4 +172,4 @@ export class LoginService extends BaseService{
     }
 
 }
-export default LoginService;
+export default BOHLoginService;

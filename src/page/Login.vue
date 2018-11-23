@@ -6,7 +6,7 @@
         </div>    
         <div class="from-main">
             <div class="login-form">
-                <div class="login-from-item">
+                <div class="login-from-item" v-if="!InterfaceSysTypeBOH">
                     <div>
                       <div class="i-index"><img src="../assets/images/merchant.png"/></div>
                       <x-input :max="20" v-model="user.shopname" placeholder="请输入商户"></x-input>
@@ -38,12 +38,23 @@ import {Component} from "vue-property-decorator"
 import IUser from "../interface/IUserModel"
 import ErrorMsg from "../model/ErrorMsg"
 import LoginService from "../service/LoginService"
-@Component
+import BOHLoginService from '../service/BOHLoginService'
+import { mapActions, mapGetters, mapMutations } from 'vuex';
+@Component({
+     computed:{
+     ...mapGetters({
+       InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
+     })
+   }
+})
 export default class Login extends Vue{
+    private InterfaceSysTypeBOH:boolean;
     private user:IUser={};
     private service:LoginService;
+    private BOHservice:BOHLoginService;
     created() {
         this.service = LoginService.getInstance();
+        this.BOHservice = BOHLoginService.getInstance();
     }
 
     private clear(key:string){
@@ -51,12 +62,21 @@ export default class Login extends Vue{
     }
 
     private login(){
-        this.service.login(this.user).then(res=>{
-            console.log("登录成功");
-            this.$router.replace({path:'/'})
-        },err=>{       
-            this.$toasted.show(err.message);
-        });
+        if(!this.InterfaceSysTypeBOH){
+            this.service.login(this.user).then(res=>{//SAAS登录 
+                console.log("登录成功");
+                this.$router.replace({path:'/'})
+            },err=>{       
+                this.$toasted.show(err.message);
+            });
+        }else{
+            this.BOHservice.login(this.user).then(res=>{//BOH登录 
+                console.log("登录成功");
+                this.$router.replace({path:'/'})
+            },err=>{       
+                this.$toasted.show(err.message);
+            });
+        }        
     }
 }
 </script>

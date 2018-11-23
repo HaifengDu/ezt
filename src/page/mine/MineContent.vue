@@ -3,49 +3,49 @@
   <div class="ezt-page-con">
     <ezt-header :back="true" title="我的" @goBack="goBack" :isInfoGoback="true"></ezt-header>  
     <div class="ezt-main">   
-        <!--内容-->
-         <div class="ezt-add-content">
-           <div class="mine-info">
-             <a class="mine-css"></a>
-             <div class="mine-info-r">
-               <span class="mine-title-name">{{user.auth.username||'--'}}</span>
-               <span class="mine-store-name">{{user.auth.store_name||'--'}}</span>
-             </div>
-           </div>
-           <div class="mine-action">
-            <div class="mine-action-title">
-              <span class="mine-funds return-dc-content">资金管理</span>
-              <span class="return-dc-title">余额：<span class="ezt-money-font">￥{{balancAmt}}</span></span>
-            </div>
-            <ul class="mine-action-name">
-              <li>
-                <div class="chongzhi"></div>
-                <span>充值</span>
-              </li>
-              <li>
-                <div class="jyjl"></div>
-                <span>交易记录</span>
-              </li>
-            </ul>
-           </div>
-           <ul class="mine-action-list">
-             <li class="mine-modify" @click="renderUrl('/changePsd')">
-                <span class="title-search-name">修改密码</span>
-                <span class="title-search-right">
-                  <i class="fa fa-angle-right" aria-hidden="true"></i>
-                </span>
-             </li>
-             <li class="mine-modify" @click="renderUrl('/systemSetting')" v-if="!InterfaceSysTypeBOH">
-                <span class="title-search-name">系统设置</span>
-                <span class="title-search-right">
-                  <i class="fa fa-angle-right" aria-hidden="true"></i>
-                </span>
-             </li>
-           </ul>
-           <div class="mine-bot-btn" @click="logout">
-             <span class="ezt-lone-btn">退出</span>
-           </div>
-         </div>
+      <!--内容-->
+      <div class="ezt-add-content">
+        <div class="mine-info">
+          <a class="mine-css"></a>
+          <div class="mine-info-r">
+            <span class="mine-title-name">{{user.auth.username||'--'}}</span>
+            <span class="mine-store-name">{{user.auth.store_name||'--'}}</span>
+          </div>
+        </div>
+        <div class="mine-action" v-if="!this.InterfaceSysTypeBOH">
+          <div class="mine-action-title">
+            <span class="mine-funds return-dc-content">资金管理</span>
+            <span class="return-dc-title">余额：<span class="ezt-money-font">￥{{balancAmt}}</span></span>
+          </div>
+          <ul class="mine-action-name">
+            <li>
+              <div class="chongzhi"></div>
+              <span>充值</span>
+            </li>
+            <li>
+              <div class="jyjl"></div>
+              <span>交易记录</span>
+            </li>
+          </ul>
+        </div>
+        <ul class="mine-action-list" v-if="!InterfaceSysTypeBOH">
+            <li class="mine-modify" @click="renderUrl('/changePsd')">
+              <span class="title-search-name">修改密码</span>
+              <span class="title-search-right">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </span>
+            </li>
+            <li class="mine-modify" @click="renderUrl('/systemSetting')">
+              <span class="title-search-name">系统设置</span>
+              <span class="title-search-right">
+                <i class="fa fa-angle-right" aria-hidden="true"></i>
+              </span>
+            </li>
+        </ul>
+        <div class="mine-bot-btn" :class="[{'bot-top':InterfaceSysTypeBOH}]" @click="logout">
+          <span class="ezt-lone-btn">退出</span>
+        </div>
+      </div>
     </div>
      <!-- 返回时提示保存信息 -->
       <!-- <confirm v-model="isExit" @on-confirm="onConfirm">
@@ -58,6 +58,7 @@ import Vue from 'vue'
 import {Component} from "vue-property-decorator"
 import IUser from "../../interface/IUserModel"
 import LoginService from "../../service/LoginService"
+import BOHLoginService from '../../service/BOHLoginService';
 import {mapGetters} from "vuex";
 declare var mobiscroll:any;
 @Component({
@@ -72,17 +73,20 @@ declare var mobiscroll:any;
   }
 })
 export default class Mine extends Vue{
+  private InterfaceSysTypeBOH:Boolean;
   private users:IUser;
+  private user:any;
   private service:LoginService;
+  private BOHservice:BOHLoginService;
   private balancAmt:number=0;
   // private isExit:boolean=false;
   
   created() {
     this.service = LoginService.getInstance();     
+    this.BOHservice = BOHLoginService.getInstance();
     this.checkBalance();
   }
   mounted(){
-    
   }
   //去修改密码
   private renderUrl(info:string){
@@ -94,25 +98,30 @@ export default class Mine extends Vue{
     this.$vux.confirm.show({
         // 组件除show外的属性
         onConfirm () {
-          _this.service.logout().then(res=>{
-            _this.$router.replace({path:'/login'});
-          });
+          if(!_this.InterfaceSysTypeBOH){
+            _this.service.logout().then(res=>{//SAAS退出
+              _this.$router.replace({path:'/login'});
+            });
+          }else{
+            _this.BOHservice.logout().then(res=>{//BOH退出
+              _this.$router.replace({path:'/login'});
+            })
+          }
+         
         },
         content:'请确认是否退出当前用户？',
     })   
   }
-  // private onConfirm(){
-  //   this.service.logout().then(res=>{
-  //     this.$router.replace({path:'/login'});
-  //   });
-  // }
   /**
    * 查询余额
    */
   private checkBalance(){
-    this.service.checkBalance().then(res=>{
-      this.balancAmt=res.data.data[0].balance_amount
-    })
+    if(!this.InterfaceSysTypeBOH){//SAAS才有余额查询
+      this.service.checkBalance().then(res=>{
+        this.balancAmt=res.data.data[0].balance_amount
+      })
+    }
+   
   }
   //后退
   private goBack(){
@@ -139,6 +148,9 @@ export default class Mine extends Vue{
       -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
       box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
     }
+  }
+  .mine-bot-btn.bot-top{
+    margin-top: 220px;
   }
  
  /* 我的用户头像 */

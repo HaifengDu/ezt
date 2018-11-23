@@ -36,7 +36,7 @@
             <!-- <div>搜索</div> -->
             <mt-index-list>
               <mt-index-section :index="letter" :key="index" v-for="(stores, letter, index) in storeGroupData">
-                <div @click="handlerStore(item)" class="list-line" :key="index" v-for="(item,index) in stores">{{item.storeName}}</div>
+                <div @click="handlerStore(item)" class="list-line" :key="index" v-for="(item,index) in stores">{{item.text}}</div>
               </mt-index-section>
             </mt-index-list>
           </div>
@@ -147,48 +147,11 @@ export default class Index extends Vue{
    private hideMask:()=>void;
    private storeGroupData:{[index:string]:any[]} = {};
    private tabStatus:boolean=true;//门店下拉默认显示全部门店 
-   private testData:any[] = [
-     {
-       id:1,
-       storeName:'供应商1'//G
-     },{
-       id:2,
-       storeName:'河北仓'//H
-     },{
-       id:3,
-       storeName:'牛牛'//N
-     },{
-       id:4,
-       storeName: '工厂1'//G
-     },{
-       id:5,
-       storeName:'薛之谦'//X
-     },{
-       id:6,
-       storeName:'阿卡达'
-     },{
-       id:1,
-       storeName:'供应商2'//G
-     },{
-       id:2,
-       storeName:'河北仓2'//H
-     },{
-       id:3,
-       storeName:'牛牛2'//N
-     },{
-       id:4,
-       storeName: '工厂2'//G
-     },{
-       id:5,
-       storeName:'薛之谦2'//X
-     },{
-       id:6,
-       storeName:'阿卡达2'
-     }
-   ];
+   private testData:any[];
     created() {
-      this.service = LoginService.getInstance();  
-      this.storeGroupData = commonService.sortLetter(this.testData); 
+      this.service = LoginService.getInstance(); 
+      this.testData = this.user.auth.storeAll;
+      this.storeGroupData = commonService.sortLetter(this.user.auth.storeAll||[]); 
     }
     mounted(){     
       //日历

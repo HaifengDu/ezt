@@ -10,6 +10,7 @@ module.exports = {
       appOrder:"/appOrder/",
       extension: "/ecsc-extension-rpc/",
       payment:"/payment/news/post",
+      boh:"/boh/",
     },
     // Paths
     assetsSubDirectory: 'static',
@@ -27,6 +28,10 @@ module.exports = {
       "/payment": {
         target: "http://test.e7e6.net/payment/news/post",
         pathRewrite: {"^/payment" : ""} //后面可以使重写的新路径，一般不做更改
+      },
+      "/boh": {
+        target: "http://192.168.189.214:8080/boh/",
+        pathRewrite: {"^/boh": ""}
       }
     },
 
@@ -59,6 +64,7 @@ module.exports = {
       appOrder: "http://www.e7e6.net/scmapp/appOrder/",
       extension: "http://ecsc.e7e6.net/ecsc-extension-rpc/",
       payment: "http://www.e7e6.net/payment/news/post",
+      boh:"http://192.168.189.214:8080/"
     },
     // Template for index.html
     index: path.resolve(__dirname, '../dist/index.html'),

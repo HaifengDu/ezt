@@ -1,6 +1,7 @@
 export enum ERequestType{
     AppOrder=1,
     Extension,
-    Payment
+    Payment,
+    Boh // 4
 }
 export default ERequestType;

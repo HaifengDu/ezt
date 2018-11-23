@@ -151,7 +151,7 @@ export default class leadbackMaterial extends Vue{
   created() {  
     this.service = LeadbackMaterialService.getInstance();
     if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.LEADBACKSHEET_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     (this.selectedGood||[]).forEach(item=>item.active = false);

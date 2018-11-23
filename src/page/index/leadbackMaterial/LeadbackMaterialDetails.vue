@@ -123,7 +123,7 @@ export default class leadbackMaterial extends Vue{
           this.title = '退料单详情'
        }
        if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_DETAILS)){
-            this.material = JSON.parse(this.cache.getData(CACHE_KEY.LEADBACKSHEET_DETAILS));
+            this.material = JSON.parse(this.cache.getDataOnce(CACHE_KEY.LEADBACKSHEET_DETAILS));
         }
     }
     mounted(){ 

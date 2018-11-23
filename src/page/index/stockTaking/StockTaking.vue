@@ -120,7 +120,7 @@
         <span class="title-search-name">结束日期：</span>
         <span>
            <ezt-canlendar ref="endDate" v-model="searchParam.endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')" placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar">
-           </ezt-canlendar>
+           </ezt-canlendar>     
         </span>
       </li>
       <li>

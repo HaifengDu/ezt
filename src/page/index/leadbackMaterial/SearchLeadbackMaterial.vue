@@ -1,6 +1,11 @@
 <!--领/退料单查询-->
 <template>
-  <div class="ezt-page-con SearchLeadbackMaterial">
+  <div class="ezt-page-con SearchLeadbackMaterial"  
+        ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title='领/退料单查询'>
        <div slot="action">
        </div>   
@@ -8,11 +13,11 @@
     <div class="ezt-main"> 
       <div class="ezt-add-content">
         <ul>  
-          <div v-if="!details" class="done-none">
+          <div v-if="details.length==0" class="done-none">
             <div></div>
             <span>未查到符合条件的记录</span>
           </div> 
-          <li v-for="(item,index) in details" :key="index">
+          <li v-if="details.length>0" v-for="(item,index) in details" :key="index">
             <div class="receive-dc-list">
               <div class="receive-icon-title">
                 <span class="return-list-title">单号：{{item.bill_no}}</span> 
@@ -41,6 +46,7 @@
             </div>
           </li>
         </ul>
+        <span v-show="allLoaded">已全部加载</span> 
       </div>      
     </div>
   </div>
@@ -50,17 +56,16 @@ import Vue from 'vue'
 import ErrorMsg from "../../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
-import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../../helper/methods'
 import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
 import CACHE_KEY from '../../../constans/cacheKey'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
+import Pager from "../../../common/Pager";
 @Component({
    components:{
      
    },
-   mixins:[maskMixin],
    computed:{
      ...mapGetters({
       
@@ -77,28 +82,57 @@ export default class leadbackMaterial extends Vue{
     private service: LeadbackMaterialService;
     private details:any[] = [];  //物料明细
     private searchParam:{}={};
+    private pager:Pager;   
+    private allLoaded:boolean = false; //数据是否全部加载完
     created() {     
-       this.service = LeadbackMaterialService.getInstance();
-       this.detailList();
+      this.service = LeadbackMaterialService.getInstance();
+      this.pager = new Pager().setLimit(20)
     }
     mounted(){   
       this.detailList();
       if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_SEARCH)){
-        this.searchParam = this.cache.getData(CACHE_KEY.LEADBACKSHEET_SEARCH);
-      }
-      console.log(this.searchParam,'00000');   
+        this.searchParam = this.cache.getDataOnce(CACHE_KEY.LEADBACKSHEET_SEARCH);
+      }    
+    }   
+    /**
+     * 物料明细         
+     */  
+    private detailList(){
+      this.service.getGoodResult(this.pager.getPage()).then(res=>{
+          this.$vux.loading.show({
+              text: '加载中...'
+          });
+          this.details = res.data.data;
+          setTimeout(()=>{
+              this.$vux.loading.hide();
+          },400); 
+      },err=>{
+          this.$toasted.show(err.message);
+      });
     }
     /**
-     * 物料明细
+     * 下拉加载更多  
      */
-    private detailList(){
-      this.service.getGoodDetail().then(res=>{
-            this.details=res.data.data;
-            console.log(JSON.stringify(this.details))
-          },err=>{
-            this.$toasted.show(err.message);
-        });
+    private loadMore() {
+        if(!this.allLoaded){
+            this.$vux.loading.show({
+                text:'加载中..'
+            });
+            this.pager.setNext(); 
+            this.service.getGoodResult(this.pager.getPage()).then(res=>{  
+                if(this.pager.getPage().limit>res.data.data.length){
+                     this.allLoaded=true;
+                }
+                this.details=this.details.concat(res.data.data);
+                setTimeout(()=>{
+                    this.$vux.loading.hide();
+                },500); 
+            },err=>{
+                this.$toasted.show(err.message);
+            })
+        }     
     }
+     
 }
 </script>
 <style lang="less" scoped>

@@ -10,6 +10,11 @@ export class SpilledSheetService extends BaseService{
     private constructor() {
         super(ERequestType.AppOrder)
     }
+    /**
+     * 损溢单列表页
+     * @param status 
+     * @param pager 
+     */
     getGoodList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
@@ -19,8 +24,18 @@ export class SpilledSheetService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }    
-
+    /**
+     * 损溢单详情页
+     */
     getGoodDetail(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
+    /**
+     * 损溢单高级查询结果页
+     * @param pager 
+     */
+    getGoodResult(pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }

@@ -99,13 +99,10 @@
       <li>
         <span class="title-search-name">单据日期：</span>
         <span>
-          <ezt-canlendar ref="startDate" :max="searchParam.endDate" 
-            :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
-            placeholder="开始日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
+          <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')"  placeholder="开始日期" @change="selectDateChange" type="text" 
+           :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
             <span>至</span>
-          <ezt-canlendar ref="endDate" :min="searchParam.startDate" 
-            :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
-            placeholder="结束日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
+          <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')" placeholder="结束日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>     
         </span>
       </li>
       <li>

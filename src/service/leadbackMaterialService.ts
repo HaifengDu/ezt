@@ -1,15 +1,18 @@
 
 import { BaseService } from "./BaseService";
 import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg";
 import Axios from "axios";
-import store from "../store"
 import { IPagerData } from "../interface/IPagerData";
 export class LeadbackMaterialService extends BaseService{
     private static _instance: LeadbackMaterialService;
     private constructor() {
         super(ERequestType.AppOrder)
     }
+    /**
+     * 列表页接口
+     * @param status  
+     * @param pager 
+     */
     getGoodList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
@@ -19,8 +22,19 @@ export class LeadbackMaterialService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }    
-
+    /**
+     *详情页
+     * @param pager 
+     */
     getGoodDetail(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
+    /**
+     * 高级查询结果页
+     * @param pager 
+     */
+    getGoodResult(pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }

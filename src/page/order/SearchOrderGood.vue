@@ -1,17 +1,21 @@
 <!--订货单查询-->
 <template>
-  <div class="ezt-page-con">
+  <div class="ezt-page-con"  
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title='订货单查询'>
        <div slot="action">
        </div>
     </ezt-header>    
     <div class="ezt-main"> 
       <div class="ezt-add-content">
-        <div v-if="!details" class="done-none">
+        <div v-if="details.length==0" class="done-none">
           <div></div>
           <span>未查到符合条件的记录</span>
         </div>
-        <ul v-if="details">   
+        <ul v-if="details.length>0">   
           <li v-for="(item,index) in details" :key="index">
             <div class="receive-dc-list">   
               <div class="receive-icon-title">
@@ -39,6 +43,7 @@
             </div>
           </li>
         </ul>
+        <span v-show="allLoaded">已全部加载</span> 
       </div>      
     </div>
   </div>
@@ -47,13 +52,14 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import { mapActions, mapGetters } from 'vuex';
-import {maskMixin} from "../../helper/maskMixin";
-import { INoop, INoopPromise } from '../../../helper/methods';
-import { OrderGoodsService} from '../../service/OrderGoodsService';
+import { mapActions, mapGetters } from 'vuex'
+import {maskMixin} from "../../helper/maskMixin"
+import { INoop, INoopPromise } from '../../../helper/methods'
+import { OrderGoodsService} from '../../service/OrderGoodsService'
 import CACHE_KEY from '../../constans/cacheKey'
-import { CachePocily } from "../../common/Cache";
-import { ECache } from "../../enum/ECache";
+import { CachePocily } from "../../common/Cache"
+import { ECache } from "../../enum/ECache"
+import Pager from "../../common/Pager"
 declare var mobiscroll:any;
 @Component({
    components:{
@@ -62,7 +68,7 @@ declare var mobiscroll:any;
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-      
+          
      })
    },
    methods:{
@@ -76,9 +82,11 @@ export default class OrderGoods extends Vue{
     private service: OrderGoodsService;
     private details:any[] = [];  //物料明细
     private searchParam:{}={};
+    private allLoaded:boolean = false; //分页数据加载更多
+    private pager:Pager;
     created() {     
        this.service = OrderGoodsService.getInstance();
-       this.detailList();
+       this.pager = new Pager().setLimit(20)
     }
 
     mounted(){   
@@ -86,18 +94,44 @@ export default class OrderGoods extends Vue{
       if(this.cache.getData(CACHE_KEY.INITSTOCK_SEARCH)){
         this.searchParam = this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SEARCH);
       }
-      console.log(this.searchParam,'00000');   
     }
     /**
-     * 搜索明细
+     * 物料明细
      */
     private detailList(){
-      this.service.getGoodDetail().then(res=>{
-            this.details=res.data.data;
-            console.log(JSON.stringify(this.details))
-          },err=>{
-            this.$toasted.show(err.message);
-        });
+      this.service.getGoodResult(this.pager.getPage()).then(res=>{
+          this.$vux.loading.show({
+              text: '加载中...'
+          });
+          this.details = res.data.data;
+          setTimeout(()=>{
+              this.$vux.loading.hide();
+          },400); 
+      },err=>{
+          this.$toasted.show(err.message);
+      });
+    }
+    /**
+     * 下拉加载更多
+     */
+    private loadMore() {
+        if(!this.allLoaded){
+            this.$vux.loading.show({
+                text:'加载中..'
+            });
+            this.pager.setNext(); 
+            this.service.getGoodResult(this.pager.getPage()).then(res=>{  
+                if(this.pager.getPage().limit>res.data.data.length){
+                     this.allLoaded=true;
+                }
+                this.details=this.details.concat(res.data.data);
+                setTimeout(()=>{
+                    this.$vux.loading.hide();
+                },500); 
+            },err=>{
+                this.$toasted.show(err.message);
+            })
+        }    
     }
 }
 </script>

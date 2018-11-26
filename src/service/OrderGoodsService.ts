@@ -10,6 +10,11 @@ export class OrderGoodsService extends BaseService{
     private constructor() {
         super(ERequestType.AppOrder)
     }
+    /**
+     * 订货列表
+     * @param status 
+     * @param pager 
+     */
     getGoodList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
@@ -19,11 +24,21 @@ export class OrderGoodsService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }    
-
+    /**
+     * 详情页
+     */
     getGoodDetail(){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
+    /**
+     * 高级查询明细
+     * @param pager 
+     */
+    getGoodResult(pager:IPagerData){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }    
     static createInstance() {
         OrderGoodsService.getInstance();
     }

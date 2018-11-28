@@ -1,7 +1,6 @@
 <!--损溢单查询-->
 <template>
   <div class="ezt-page-con SearchSpilledSheet"
-        ref="listContainer" 
         v-infinite-scroll="loadMore"
         :infinite-scroll-disabled="allLoaded" 
         infinite-scroll-immediate-check="false"

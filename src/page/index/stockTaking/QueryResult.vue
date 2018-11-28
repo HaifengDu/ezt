@@ -1,7 +1,7 @@
 <!--查询结果-->
 <template>
 <div class="ezt-page-con queryresult">
-    <ezt-header :back="true" title="查询结果">
+    <ezt-header :back="true" title="盘库单查询">
        <div slot="action">
           <span></span>
        </div>        
@@ -10,11 +10,11 @@
         <div class="content">
             <div class="pkdetails">
               <div class="librarytype">  
-                <div v-if="!queryResult" class="done-none">
+                <div v-if="queryResult.length==0" class="done-none">
                   <div></div>
                   <span>未查到符合条件的记录</span>
                 </div>
-                <ul v-if="queryResult">   
+                <ul v-if="queryResult.length>0">   
                   <li :key="index" v-for="(item,index) in queryResult" >      
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>

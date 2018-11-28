@@ -226,6 +226,7 @@ export default class Mine extends Vue{
     border-left: 5px solid #0d7dfd;
     padding-left: 4px;   
     flex:5; 
+    line-height: 23px;
   }
   .return-dc-title{
     flex:10;

@@ -107,6 +107,7 @@ input.ezt-smart{
 input.ezt-middle{
   width: 70%;
   max-width: 66%;
+  font-size: 16px;
 }
 /* select选择框的样式 开始*/
 .ezt-select{
@@ -153,6 +154,7 @@ input.ezt-middle{
   direction: ltr;
   width: 70%;
   max-width: 66%;
+  font-size: 16px;
 }
 .select-time .ezt-select{  
   height: 19px;
@@ -193,7 +195,7 @@ input.ezt-middle{
 }
 .ezt-header-title{
   flex:2;
-  font-size: 18px;
+  font-size: 20px;
   color: #FFFFFF;
   letter-spacing: 0;
   text-align: center;
@@ -487,7 +489,7 @@ input.ezt-middle{
   }
   /* 下拉左侧lable字体样式 */
   .title-search-name,.AuditInvoice .weui-label{
-    font-size: 14px;
+    font-size: 17px;
     color: #5F7B9A;
   }
   /* 下拉选项值样式 */
@@ -503,6 +505,7 @@ input.ezt-middle{
   }
   .input-canlendar .ezt-canlendar{
     width: 91px;
+    font-size: 14px;
   }
   .ezt-sanjiao::after{
     position: absolute;
@@ -695,14 +698,17 @@ input.ezt-middle{
 
   /* 字体放大新调整  开始*/
   .receive-dc-title{
-    font-size: 15px;
+    font-size: 16px;
     line-height: 24px;
   }
   .receive-total{
     font-size: 14px;
   }
+  .receive-dc-content{
+    font-size: 15px;
+  }
   .icon-menu span{
-    font-size: 14px !important;
+    font-size: 15px !important;
   }
   .detail-acount-title{
     font-size: 15px !important;
@@ -723,12 +729,14 @@ input.ezt-middle{
   width: 100%; 
   position:fixed;
   top:45px; 
-  z-index:10001;
+  z-index:9999;
 }
 /*字体图标 与文字对齐方式 */
 /* .fa{
   vertical-align: top;
 } */
-
+.vux-tab .vux-tab-item{
+  font-size: 16px !important;
+}
 
    

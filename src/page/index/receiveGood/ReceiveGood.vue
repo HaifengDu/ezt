@@ -65,25 +65,27 @@
     <div v-show="isSearch" class="search-dialog">
       <ul class="ezt-title-search">
         <li class="select-list">
-          <span class="title-search-name ">收货类型：</span>
+          <span class="title-search-name is-required">收货类型：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.receiveType"
+             @change="handlerSearch('receiveType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in receiveType">{{item.name}}</option>
             </select>
           </span>
         </li>
         <li class="select-list">
-          <span class="title-search-name ">来货单位：</span>
+          <span class="title-search-name is-required">来货单位：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select">
+            <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.storeId" 
+             @change="handlerSearch('storeId','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[1].storeId},{'disabled':!searchParam.receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
             </select>
           </span>
         </li>
         <li>
-          <span class="title-search-name">收货日期：</span>
+          <span class="title-search-name is-required">收货日期：</span>
           <span>
             <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
               placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
@@ -95,23 +97,23 @@
         <li class="select-list">
           <span class="title-search-name ">仓库：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
             </select>
           </span>
         </li>
         <li>
           <span class="title-search-name">源单号：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入源单号">
+          <input type="text" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
         </li>
         <li>
-          <span class="title-search-name">单据：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入单据号">
+          <span class="title-search-name">单据号：</span>
+          <input type="text" class="ezt-middle" placeholder="请输入单据号" v-model="searchParam.billNo">
         </li>
         <li>
           <span class="title-search-name">物料：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入物料名称">
+          <input type="text" class="ezt-middle" placeholder="请输入物料名称" v-model="searchParam.material">
         </li>
         <li>
           <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -176,6 +178,8 @@ export default class ReceiveGood extends Vue{
    * 搜索时的查询条件
    */
   private searchParam:any={
+    storeId:'',
+    warehouse:'',
     startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
     endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
   };
@@ -183,7 +187,29 @@ export default class ReceiveGood extends Vue{
   private orderType:any=[{
     name:'仓库1',
     id:'01'
-  }]
+  }];
+  /**
+   * 收货类型
+   */
+  private receiveType:any=[{
+    id:'a',
+    name:'配送收货'
+  },{
+    id:'b',
+    name:'直配收货'
+  },{
+    id:'c',
+    name:'采购收货'
+  },{
+    id:'d',
+    name:'（平调）店间调拨收货'
+  }];
+  /**
+   * 枚举 表单字段
+   */
+  private billFiles=[
+    {id:"receiveType",msg:"请选择收货类型！",receiveType:false},
+    {id:"storeId",msg:"请选择来货单位！",storeId:false}];
   created() {
     this.tabList.push({
       name:"待收货",
@@ -210,6 +236,16 @@ export default class ReceiveGood extends Vue{
       })
     } 
   }
+  /**
+   * 查询 收货类型、来货单位
+   */
+  private handlerSearch(val:any,title:any){
+    this.billFiles.forEach(item=>{
+      if(item.id == val){
+        item[val]= false;
+      }
+    })
+  };
   /**
    * 改变查询的日期
    */
@@ -315,6 +351,14 @@ export default class ReceiveGood extends Vue{
     this.isSearch?this.showMask():this.hideMask();
   }
   private toSearch(){
+    for(let i=0;i<this.billFiles.length;i++){
+      let item = this.billFiles[i];
+      if(!this.searchParam[item.id]||this.searchParam[item.id]==""){
+        this.$toasted.show(item.msg);
+        item[item.id]=true;
+        return false;
+      }
+    }
     this.isSearch = false;
     this.hideMask();
     this.cache.save(CACHE_KEY.RECEIVE_SEARCH,JSON.stringify(this.searchParam));
@@ -323,6 +367,9 @@ export default class ReceiveGood extends Vue{
   private goBack(){
     this.$router.push("/");
   } 
+  private handlerReceiveType(val:any){
+
+  }
 }
 </script>
 
@@ -351,15 +398,18 @@ export default class ReceiveGood extends Vue{
     display: flex;
   } 
   .add{
-      font-size: 20px;
-      i{
-        margin-right: 10px;
-      }
+    font-size: 20px;
+    i{
+      margin-right: 10px;
     }
-    .ezt-action-point{
-      width: 20px;
-      height: 26px;
-      display: inline-block;
-    }
+  }
+  .ezt-action-point{
+    width: 20px;
+    height: 26px;
+    display: inline-block;
+  }
+  .title-select-name .ezt-select.disabled{
+    background: #ccc;
+  }
    
 </style>

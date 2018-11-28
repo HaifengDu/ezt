@@ -34,6 +34,6 @@ export default {
     background: #000;
     opacity: .3;
     display: none;
-    z-index: 10000;
+    z-index: 9998;
 }
 </style>

@@ -10,20 +10,19 @@
         <div class="content">
             <div class="pkdetails">
               <div class="librarytype">  
-                <div v-if="queryResult.length==0" class="done-none">
+                <div v-if="queryResult.list.length==0" class="done-none">
                   <div></div>
                   <span>未查到符合条件的记录</span>
                 </div>
-                <ul v-if="queryResult.length>0">   
-                  <li :key="index" v-for="(item,index) in queryResult" >      
+                <ul v-if="queryResult.list.length>0">   
+                  <li :key="index" v-for="(item,index) in queryResult.list" >      
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
-                      <div><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
-                      <div><p>生成损溢：</p></div>   
-                      <!-- <span v-if="is_profit_loss == 1">是</span><span v-if="is_profit_loss == 0">否</span> -->
+                      <div v-if="!InterfaceSysTypeBOH"><p>盘点日期：<span>{{item.busi_date}}</span></p></div>
+                      <div><p>生成损溢：<span>{{item.is_profit_loss == '1'?'是':'否'}}</span></p></div>   
                       <div v-if="!InterfaceSysTypeBOH"><p>未盘处理：<span>{{item.stock_count_mode_name}}</span></p></div>
                       <div class="business">
-                          <p>业务日期：<span>2018-12-13</span></p>
+                          <p>业务日期：<span>{{item.busi_date}}</span></p>
                           <p class="see" @click="see(item,pageType.LibraryDetails)">查看</p>
                       </div>
                   </li>
@@ -41,6 +40,7 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import StockTakingService from '../../../service/StockTakingService'
+import BohStockTakingService from '../../../service/BohStockTakingService'
 import { CachePocily } from "../../../common/Cache"
 import { PageType } from "../../../enum/EPageType"
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -61,41 +61,47 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })  
 export default class stockTaking extends Vue{
     private service: StockTakingService;
+    private BOHservice:BohStockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();  
     private pageType = PageType;
     private list:any[] = [];
-    private queryResult:any[] = [{
-         bill_type_name:'月',
-         bill_no:'YPCN0007201809240019',
-         warehouse_name:'测试门店8仓库11',
-         busi_date:'2018-10-08',
-         stock_count_mode_name:'按照当前库存量处理'
-      }
-    ];
+    private queryResult:any[] = [];
     created() {
       this.service = StockTakingService.getInstance();
+      this.BOHservice = BohStockTakingService.getInstance();
+      if(this.cache.getData(CACHE_KEY.INVENTORY_RESULT)){
+            this.queryResult = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_RESULT));
+      }
     }
 
     mounted(){
       
     }
-    // 盘库详情
-    // warehouse_name:item.warehouse_name,
-    // warehouse_id:item.warehouse_id,
-    // busi_date:item.busi_date,
-    // bill_type_name:item.bill_type_name,
-    // stock_count_mode_name:item.stock_count_mode_name,
-    // ids:item.id,  
-    // stock_count_mode:item.stock_count_mode,
     private see(item:any,types:PageType,audit_status:number){
-      this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
-        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-        this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-      },err=>{
-          this.$toasted.show(err.message)
-      })
+      /**
+       * SAAS版本  盘库详情
+       */
+       if(!this.InterfaceSysTypeBOH){
+            this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+          },err=>{
+              this.$toasted.show(err.message)
+          })
+       }else{
+         /**
+          * BOH版本  盘库详情
+          */
+          this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+          },err=>{
+              this.$toasted.show(err.message)
+          })    
+       }
     } 
 }
 </script>
@@ -117,7 +123,6 @@ export default class stockTaking extends Vue{
         flex-direction: column;
         justify-content: flex-start;
         width: 95%;
-        background-color:@background-color;
         position: absolute;
         margin-top: 10px;
         .librarytype{
@@ -126,6 +131,8 @@ export default class stockTaking extends Vue{
             li{
               width:@width;
               border-radius: 3px;
+              background-color:@background-color;
+              margin-bottom: 10px;
               >p{
                 height: 45px;
                 line-height: 45px;
@@ -143,6 +150,9 @@ export default class stockTaking extends Vue{
                     line-height: 21px;
                     text-align: center;
                     display: inline-block;
+                    margin-top: 13px;
+                    overflow: hidden;
+                    float: left;
                 }
               }
               div{

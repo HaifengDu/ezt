@@ -75,16 +75,10 @@
                     <span class="title-search-name">盘点类型：</span>
                     <input type="text" class="ezt-middle" disabled v-model="addinventory.name">
                 </li>
-                <li class="select-list">
-                    <span class="title-search-name is-required">仓库：</span>
-                    <span class="title-select-name item-select">
-                      <select placeholder="请选择仓库" class="ezt-select" v-model="addinventory.stock"
-                      @change="handlerStock('stock')" :class="[{'selectError':TypeField[0].stock}]"> 
-                        <option value="" style="display:none;" disabled="disabled" selected="selected">请选择盘点仓库</option>
-                        <option :value="item.id" :key="index" v-for="(item,index) in warehouseType">{{item.text}}</option>
-                      </select> 
-                    </span>   
-                </li>   
+                <li>
+                    <span class="title-search-name">盘点仓库：</span>
+                    <input type="text" class="ezt-middle" disabled v-model="addinventory.stock">
+                </li>
                 <li>
                   <span class="title-search-name is-required">选择货品：</span>
                   <span class="title-search-right" @click="BohMaterials()">
@@ -147,7 +141,8 @@ import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { StockTakingService } from '../../../service/StockTakingService'
+import StockTakingService  from '../../../service/StockTakingService'
+import BohStockTakingService from '../../../service/BohStockTakingService'
 import ObjectHelper from '../../../common/objectHelper'
 import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
@@ -175,6 +170,7 @@ export default class StockTaking extends Vue{
     private cache = CachePocily.getInstance();
     private InterfaceSysTypeBOH:boolean;
     private service:StockTakingService;
+    private BOHservice:BohStockTakingService;
     private bill_type:string; //弹层盘点类型
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private pageType = PageType; //页面类型
@@ -199,12 +195,10 @@ export default class StockTaking extends Vue{
         {id:"stock",msg:"请选择仓库！",stock:false},
         {id:"treatment",msg:"请选择未盘处理方式！",treatment:false},
     ]
-    private TypeField=[
-        {id:"stock",msg:"请选择仓库！",stock:false},
-    ];
 
   created() {  
     this.service = StockTakingService.getInstance();
+    this.BOHservice = BohStockTakingService.getInstance();
     (this.selectedGood||[]).forEach(item=>item.active = false);
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
@@ -220,9 +214,20 @@ export default class StockTaking extends Vue{
     if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
         this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
     }
-     this.getWarehouseType();
+    /**
+     * BOH版本 获取仓库
+     */
+    if(this.cache.getData(CACHE_KEY.WAREHOUSE)){
+        const warehouseName = JSON.parse(this.cache.getData(CACHE_KEY.WAREHOUSE));
+        this.addinventory.stock = warehouseName.warehouseList[0].warehouseName
+    }
+    /**
+     * SAAS版本  动态加载仓库
+     */
+     if(!this.InterfaceSysTypeBOH){
+       this.getWarehouseType();
+     }
   }
-
   mounted(){ 
    
   }
@@ -272,16 +277,6 @@ export default class StockTaking extends Vue{
      */
     private handlerWarehouse(val:any){
       this.LibraryField.forEach(item=>{
-        if(item.id == val){
-           item[val]= false;
-        }
-      })      
-    }
-     /**
-     *  BOH版本 选择完仓库 
-     */
-    private handlerStock(val:any){
-      this.TypeField.forEach(item=>{
         if(item.id == val){
            item[val]= false;
         }
@@ -379,23 +374,17 @@ export default class StockTaking extends Vue{
    */
   private BohMaterials(){
     if(this.addBillInfo){
-      for(let i=0;i<this.TypeField.length;i++){
-        let item = this.TypeField[i];
-        if(!this.addinventory[item.id]||this.addinventory[item.id]==""){
-            this.$toasted.show(item.msg);
-            item[item.id]=true;
-            return false;
-          }
-      }
-      let goodTerm = {};
-      goodTerm={
-        billsPageType: 'stocktaking',
-      }  
-      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-      this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
-      this.$router.push({name:'PublicAddGood',query:{}})
+      this.BOHservice.getBohClassifiedSearch(this.addinventory.bill_type).then(res=>{ 
+          let goodTerm = {};
+          goodTerm={
+            billsPageType: 'stocktaking',
+          }  
+          this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+          this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data)); 
+          this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+          this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+          this.$router.push({name:'PublicAddGood',query:{}})
+      })
     }      
   }
 

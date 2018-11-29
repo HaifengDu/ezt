@@ -16,7 +16,7 @@
                <li>
                   <div><p>盘点仓库：<span>{{details.warehouse_name}}</span></p></div>
                   <div><p>盘点日期：<span>{{user.auth.busi_date}}</span></p></div>
-                  <div><p>盘库方式：<span>{{details.template_name}}</span></p></div>
+                  <div v-if="!InterfaceSysTypeBOH"><p>盘库方式：<span>{{details.template_name}}</span></p></div>
                   <div><p>盘点类型：{{details.bill_type_name}}</p></div>
                   <div v-if="!InterfaceSysTypeBOH"><p>未盘处理：<span>{{details.stock_count_mode_name}}</span></p></div>
                </li>
@@ -25,7 +25,7 @@
            <div class="checklist">
               <p class="title" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">盘点单</p>
               <ul>
-                <li :key="index" v-for="(item,index) in inventoryDetails">
+                <li :key="index" v-for="(item,index) in inventoryDetails.details">
                     <div>   
                       <p>
                          <span style="margin-right:10px;">{{item.material_name}}</span>
@@ -43,7 +43,7 @@
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                       <p v-if="!InterfaceSysTypeBOH">采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
                       <p v-if="!InterfaceSysTypeBOH">库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
-                      <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
+                      <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                        <p v-if="!InterfaceSysTypeBOH">消耗单位：<span>{{item.consume_num || '0'}}{{item.bom_name}}</span></p>

@@ -44,14 +44,14 @@
                       {{item.bill_no}}
                   </span>
                 </span> 
-                <span class="receive-status" v-if="tabList.getActive().status==0">待审核</span>
-                <span class="receive-status" v-if="tabList.getActive().status==1">已完成</span>  
+                <span class="receive-status" v-if="tabList.getActive().status==0 || tabList.getActive().status =='SCM_AUDIT_NO'">待审核</span>
+                <span class="receive-status" v-if="tabList.getActive().status==1 || tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>  
               </div>
               <div class="receive-icon-content" @click="librarydetails(item,pageType.LibraryDetails)">
                 <span class="receive-dc-title">盘点仓库：
                   <span class="receive-dc-content">{{item.warehouse_name}}</span>  
                 </span>
-                <span class="receive-dc-title">盘点日期：
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">盘点日期：
                   <span class="receive-dc-content">{{item.busi_date}}</span>
                 </span>
                 <span class="receive-dc-title">生成损溢：
@@ -63,9 +63,9 @@
               </div>
               <div class="receive-icon-bottom">
                 <div class="glow-1">
-                   <span class="businessDate">业务日期：2018-11-12</span>
+                   <span class="businessDate">业务日期：{{item.busi_date}}</span>
                    <span class="submit" v-if="tabList.getActive().status === 0 && !InterfaceSysTypeBOH" @click="librarydetails(item,pageType.AuditList)">审核</span>
-                   <span class="submit" v-if="tabList.getActive().status === 0 && InterfaceSysTypeBOH" @click="auditchecklist(item)">审核</span>
+                   <span class="submit" v-if="tabList.getActive().status === 'SCM_AUDIT_NO' && InterfaceSysTypeBOH" @click="auditchecklist(item)">审核</span>
                 </div>
               </div>
             </div>
@@ -100,7 +100,10 @@
        <li>
          <x-input title="单据号：" :max="50" v-model="searchParam.billNumber" placeholder="请输入单据号"></x-input>
        </li>
-       <li class="select-list">
+      <li v-if="InterfaceSysTypeBOH">
+         <x-input title="盘点库：" :max="50" disabled v-model="searchParam.bohWarehouse" placeholder="请输入盘点库"></x-input>
+       </li>
+       <li class="select-list" v-if="!InterfaceSysTypeBOH">
         <span class="title-search-name">盘点库：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="searchParam.selectedWarehouse">
@@ -123,7 +126,7 @@
            </ezt-canlendar>     
         </span>
       </li>
-      <li>
+      <li> 
         <div class="ezt-two-btn" @click="toSearch">查询</div>
       </li>
     </ul>
@@ -137,6 +140,7 @@ import ErrorMsg from "../model/ErrorMsg"
 import ResponseError from "../../../exception/ResponseError"
 import {Component,Watch} from "vue-property-decorator"
 import StockTakingService from '../../../service/StockTakingService'
+import BohStockTakingService from '../../../service/BohStockTakingService'
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
@@ -164,6 +168,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class stockTaking extends Vue{
     private pager:Pager; 
     private service: StockTakingService;
+    private BOHservice:BohStockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();   
     private inventoryList:{list?:any[]} = {};//盘库列表   
@@ -181,21 +186,53 @@ export default class stockTaking extends Vue{
     private hideMask:()=>void;
     private showMask:()=>void;
     private inventoryType:any[] = [];//盘点类型
+    private bohWarehouse:any;
     private type:string; //盘点类型数据
     private pageType = PageType;
     created() {
       this.pager = new Pager().setLimit(20)
       this.service = StockTakingService.getInstance();
-      this.tabList.push({
-          name:"待审核",   
-          status:0,
-          active:true,
-        },{
-          name:"已审核",
-          status:1,
-          active:false  
-        }
-      );   
+      this.BOHservice = BohStockTakingService.getInstance();
+      /**
+       * SAAS盘点状态
+       */
+      if(!this.InterfaceSysTypeBOH){
+          this.tabList.push({
+              name:"待审核",   
+              status:0,
+              active:true,
+            },{
+              name:"已审核",
+              status:1,
+              active:false  
+            }
+          ); 
+      }
+      /**
+       * BOH盘点状态  待审核  已审核
+       */
+      if(this.InterfaceSysTypeBOH){
+          this.tabList.push({
+              name:"待审核",   
+              status:'SCM_AUDIT_NO',
+              active:true,
+            },{
+              name:"已审核",
+              status:'SCM_AUDIT_YES',
+              active:false  
+            }
+          ); 
+      }
+       /**
+       * BOH添加新品盘
+       */
+        if(this.InterfaceSysTypeBOH){
+          this.inventoryType.push({  
+            name:"新品盘",
+            bill_type:'new_inventory'
+          }
+        );
+      }
       this.inventoryType.push({  
           name:"日盘",
           bill_type:'daily_inventory'
@@ -207,20 +244,13 @@ export default class stockTaking extends Vue{
           bill_type:'period_inventory'
         }
       );
+     
       /**
-       * BOH添加新品盘
+       * SAAS版本  动态加载仓库
        */
-        if(this.InterfaceSysTypeBOH){
-          this.inventoryType.push({  
-            name:"新品盘",
-            bill_type:'new_inventory'
-          }
-        );
+      if(!this.InterfaceSysTypeBOH){
+          this.getWarehouseType();  
       }
-      /**
-       * 动态加载仓库
-       */
-      this.getWarehouseType();  
     }
     mounted(){   
       this.getpkList();
@@ -296,51 +326,89 @@ export default class stockTaking extends Vue{
      * 获取列表
      */
     private getpkList(){
-      const status = this.tabList.getActive().status;
-      this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
-        this.showMask();
-        this.$vux.loading.show({
-          text: '加载中...'
-        });
-        this.inventoryList = res.data.data[0];
-        (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
-        setTimeout(()=>{
-          this.$vux.loading.hide()
-          this.hideMask()
-        },400)
-        },err=>{
-          this.$toasted.show(err.message)
-      });
+      /**
+       * SAAS 盘库数据
+       */
+      if(!this.InterfaceSysTypeBOH){
+          const status = this.tabList.getActive().status;
+          this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
+            this.showMask();
+            this.$vux.loading.show({
+              text: '加载中...'
+            });
+            this.inventoryList = res.data.data[0];
+            (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
+            setTimeout(()=>{
+              this.$vux.loading.hide()
+              this.hideMask()
+            },400)
+            },err=>{
+              this.$toasted.show(err.message)
+          });
+      }else{
+          const audit_status = this.tabList.getActive().status;
+          this.BOHservice.getBohInventoryList(audit_status as string).then(res=>{
+            this.showMask();
+            this.$vux.loading.show({
+              text: '加载中...'
+            });
+            this.inventoryList = res.data;
+            (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
+            this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
+            setTimeout(()=>{
+              this.$vux.loading.hide()
+              this.hideMask()
+            },400)
+            },err=>{
+              this.$toasted.show(err.message)
+          });
+      }
     }
     /**
      * 左侧滑动删除
      */
     private handlerSwipe(item:any,active:boolean){
         const status = this.tabList.getActive().status;
-        if(status =="0"){
+        if(status =="0" || status == 'SCM_AUDIT_NO'){
           item.active = active;
         }    
     }
     /**    
-     * 盘库详情  审核盘点单  实盘录入  确认盘点单
+     * Saas版本   盘库详情  审核盘点单  实盘录入  确认盘点单
      */
     private librarydetails(item:any,types:PageType,audit_status:number){
-      this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
-        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-        this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-      },err=>{
-          this.$toasted.show(err.message)
-      })
+      /**
+       * SAAS版本   
+       */
+      if(!this.InterfaceSysTypeBOH){
+          this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+        },err=>{
+            this.$toasted.show(err.message)
+        })
+      }else{
+        /**
+         *BOH 版本  盘库详情
+         * */  
+        this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
+          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+        },err=>{
+            this.$toasted.show(err.message)
+        })      
+      }
     } 
     /**
-     * 审核盘点单   audit_status单据状态
+     * BOH版本   审核盘点单   audit_status单据状态
      */
-    private auditchecklist(item:any,audit_status:number){
-      this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
+    private auditchecklist(item:any){
+      this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
         this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-        this.$router.push({name:'AuditcheckList',query:{}});  
+        this.$router.push({name:'AuditcheckList'});  
       },err=>{
           this.$toasted.show(err.message)
       })
@@ -353,35 +421,74 @@ export default class stockTaking extends Vue{
       this.newlyadded = true   
     }  
     private addinventorylist(type:any,name:any,bill_type:string){
-      let InventoryType = {};
-      this.service.getInventoryType(type.bill_type).then(res=>{ 
-        InventoryType={   
-          name:type.name,
-          bill_type:type.bill_type,
-        }   
-        this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
-        this.$router.push({name:'AddinventoryList'});
-      },err=>{
-          if(err instanceof ResponseError){
-            let that = this;
-            let OrderModule = {};
-            if(err.data.errmsg  === 'unreview'){
-                this.newlyadded = false
-                this.$vux.confirm.show({   
-                  // 组件除show外的属性
-                  onConfirm () {
-                     OrderModule={   
+      /**
+       * SAAS 盘库类型
+       */
+      if(!this.InterfaceSysTypeBOH){
+          let InventoryType = {};
+          this.service.getInventoryType(type.bill_type).then(res=>{ 
+            InventoryType={   
+              name:type.name,
+              bill_type:type.bill_type,
+            }   
+            this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
+            this.$router.push({name:'AddinventoryList'});
+          },err=>{
+              if(err instanceof ResponseError){
+                let that = this;
+                let OrderModule = {};
+                if(err.data.errmsg  === 'unreview'){
+                    this.newlyadded = false
+                    this.$vux.confirm.show({   
+                      // 组件除show外的属性
+                      onConfirm () {
+                        OrderModule={   
+                            name:type.name,
+                            bill_type:type.bill_type,
+                          }   
+                        that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+                        that.$router.push({name:'AddinventoryList'});
+                      },
+                      content:'有单据未完成审核，是否进行盘点?'
+                    })
+                }
+              }
+          })
+      }else{
+        /**
+         * BOH 盘点类型
+         */
+          let InventoryType = {};
+          this.BOHservice.getBohInventoryType(type.bill_type).then(res=>{ 
+            InventoryType={   
+              name:type.name,
+              bill_type:type.bill_type,
+            }   
+            this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data)); 
+            this.$router.push({name:'AddinventoryList'});
+          },err=>{
+              let that = this;
+              let OrderModule = {};
+                if(err.data.errmsg  == '存在未审核业务单据，盘点会造成差异过大的情况。'){
+                  this.newlyadded = false
+                  this.$vux.confirm.show({   
+                    onConfirm () {
+                      OrderModule={   
                         name:type.name,
                         bill_type:type.bill_type,
                       }   
-                    that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
-                    that.$router.push({name:'AddinventoryList'});
-                  },
-                  content:'有单据未完成审核，是否进行盘点?'
-                })
-            }
-          }
-      })
+                      that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+                      that.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(err.data)); 
+                      that.$router.push({name:'AddinventoryList'});
+                    },
+                    content:'存在未审核业务单据，盘点会造成差异过大的情况，请确认是否继续?'
+                 })
+              }else if(err.message == '已存在该类型未审核盘点单，不允许盘点。'){
+                  this.$toasted.show("已存在该类型未审核盘点单，不允许盘点。")
+              }
+              
+          })
+      }
     }   
     /**
      * 数据整理
@@ -406,25 +513,42 @@ export default class stockTaking extends Vue{
      * 查询结果页
      */
     private toSearch(){
-      const bill_no = this.searchParam.billNumber || null;
-      const end_date =  this.searchParam.endDate || null;      
-      const begin_date = this.searchParam.startDate || null;   
-      const warehouse_id = this.searchParam.selectedWarehouse || null;
-      this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
-        this.hideMask();     
-        this.isSearch = false;
-        this.$router.push({name:'QueryResult'});
-        this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
-      },err=>{
-          /**
-           * 接口请求报错，测试页面看效果
-           */
-          this.hideMask();     
-          this.isSearch = false;
-          this.$router.push({name:'QueryResult'});
-          this.$toasted.show("请求接口失败！")
-          this.$toasted.show(err.message)
-      })
+      /**
+       * SAAS版本  高级查询
+       */
+      if(!this.InterfaceSysTypeBOH){
+          const bill_no = this.searchParam.billNumber || null;
+          const end_date =  this.searchParam.endDate || null;      
+          const begin_date = this.searchParam.startDate || null;   
+          const warehouse_id = this.searchParam.selectedWarehouse || null;
+          this.service.getEnquiryList(bill_no,end_date,begin_date,warehouse_id).then(res=>{ 
+            this.hideMask();     
+            this.isSearch = false;
+            this.$router.push({name:'QueryResult'});
+            this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
+          },err=>{
+              /**
+               * 接口请求报错，测试页面看效果
+               */
+              this.hideMask();     
+              this.isSearch = false;
+              this.$router.push({name:'QueryResult'});
+              this.$toasted.show("请求接口失败！")
+              this.$toasted.show(err.message)
+          })
+      }else{
+          const begin_date = this.searchParam.startDate || null;   
+          const bill_no = this.searchParam.billNumber || null;
+          const end_date =  this.searchParam.endDate || null;  
+          this.BOHservice.getBohEnquiryList(begin_date,bill_no,end_date,).then(res=>{ 
+            this.hideMask();     
+            this.isSearch = false;
+            this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
+            this.$router.push({name:'QueryResult'});
+          },err=>{
+              this.$toasted.show(err.message)
+          })
+      }
     }
 }
 </script>

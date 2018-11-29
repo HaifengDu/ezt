@@ -36,22 +36,22 @@
           </li>
         </ul>
         <ul>
-           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
+           <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood.details" :key="index">    
                 <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
                 v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                     <div class="good-detail-l">
                         <div>
                             <span class="good-detail-name">    
-                              <span class="good-detail-break">{{item.name}}</span> 
+                              <span class="good-detail-break">{{item.material_name}}</span> 
                               <span class="good-detail-sort">（{{item.utilname}}）</span> 
                             </span>
                         </div>
                         <div class="good-detail-nobreak">
-                              <span class="good-detail-billno">编码：00000001</span><!---material_num---->
+                              <span class="good-detail-billno">编码：00000001</span>
                               <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
                         </div> 
                         <div>
-                            <span class="title-search-name ezt-dense-box">账面数量：{{item.price}}</span>   
+                            <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
                             <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num || 0" style="width:80px;border: 1px solid #ccc;border-radius: 0px;"></span> 
                         </div> 
                     </div>
@@ -90,7 +90,7 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { StockTakingService } from '../../../service/StockTakingService'
+import BohStockTakingService from '../../../service/BohStockTakingService'
 import ObjectHelper from '../../../common/objectHelper'
 import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
@@ -118,19 +118,19 @@ export default class StockTaking extends Vue{
     private user:IUser;
     private cache = CachePocily.getInstance();
     private InterfaceSysTypeBOH:boolean;
-    private service:StockTakingService;
+    private BOHservice:BohStockTakingService;
     private bill_type:string; //弹层盘点类型
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private details:any={};  //盘库表头信息
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={};//新增盘库单
-    private selectedGood:any[];//store中selectedGood的值
+    private selectedGood:any[]=[];//store中selectedGood的值 
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
     }; 
   created() {  
-    this.service = StockTakingService.getInstance();
+    this.BOHservice = BohStockTakingService.getInstance();
     (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false)); 
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
@@ -141,9 +141,10 @@ export default class StockTaking extends Vue{
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
         this.details = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
     }
-    // if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
-    //     this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
-    // }
+    if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
+        this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+        console.log(JSON.stringify(this.selectedGood))
+    }
   }
 
   mounted(){ 
@@ -217,16 +218,28 @@ export default class StockTaking extends Vue{
    *  盘点单 提交
    */
   private saveReceive(){
-    if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("当前货品数量为0，请添加货品！");
-      return false;
-    } 
-    this.addBillInfo={};
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.cache.clear();
-    this.$toasted.success("提交成功！");
-    this.$router.push("/stockTaking");
+      debugger
+      var selectTodo = {};
+      selectTodo={
+          id:this.selectedGood['id'],
+          bill_type:this.selectedGood['bill_type'],
+          bill_type_name:this.details.bill_type_name,
+          warehouse_id:this.selectedGood['warehouse_id'],
+          busi_date:this.selectedGood['busi_date'],
+          bill_status:'SCM_AUDIT_NO'    //SCM_AUDIT_NO提交    SCM_AUDIT_YES提交并审核
+      }
+      // this.BOHservice.getBohRealdiscEntry(selectTodo).then(res=>{ 
+      //   if(!this.selectedGood||this.selectedGood.length<=0){
+      //       this.$toasted.show("当前货品数量为0，请添加货品！");
+      //       return false;
+      //     } 
+      //     this.addBillInfo={};
+      //     this.setSelectedGood([]);
+      //     this.addBeforeBillInfo={};
+      //     this.cache.clear();
+      //     this.$toasted.success("提交成功！");
+      //     this.$router.push("/stockTaking");
+      // })
   }
   /**
    * 盘点单 审核
@@ -265,18 +278,21 @@ export default class StockTaking extends Vue{
   /**
    * 选择货品
    */
-  private selectMaterials(newType:any){
-    let goodTerm = {};
-    if(this.addBillInfo){
-      goodTerm={
-        billsPageType: 'stocktaking',
-      }     
-      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(this.addBillInfo));
-      this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
-      this.$router.push({name:'PublicAddGood',query:{newType:newType}})
-    }      
+  private selectMaterials(newType:any){ 
+    this.BOHservice.getBohClassifiedSearch(this.details.warehouse_id).then(res=>{ 
+        let goodTerm = {};
+        if(this.addBillInfo){
+          goodTerm={
+            billsPageType: 'stocktaking',
+          }     
+          this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+          this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
+          this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+          this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+          this.$router.push({name:'PublicAddGood',query:{newType:newType}})
+        }   
+    })
+       
   }
 }
 </script>

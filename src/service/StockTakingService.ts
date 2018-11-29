@@ -272,7 +272,7 @@ export class StockTakingService extends BaseService{
             }],
             "oper":"ENTRY_STOCK",
             "pagination":null
-        }).then(res=>{           
+        }).then(res=>{            
             return Promise.resolve(res);
         });
     }

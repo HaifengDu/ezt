@@ -119,13 +119,7 @@ export default class allotment extends Vue{
     private user:any;
     private service : StoreAllotService;
     private materialSetting:any;
-    /**
-     * 调出仓库列表
-     *  */
-    private orderType:any[] = [];
-    private addBillInfo:any = {
-        inWarehouse:''
-    };
+    private addBillInfo:any = {};
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -133,7 +127,6 @@ export default class allotment extends Vue{
      * 枚举 表单字段
      */
     private billFiles=[
-        // {id:"outStore",msg:"请选择调出门店",outStore:false},
         {id:"outWarehouse",msg:"请选择调出仓库",outWarehouse:false},
         {id:"inStore",msg:"请选择调入门店",inStore:false},
        
@@ -142,17 +135,20 @@ export default class allotment extends Vue{
      * 存放所有下拉的数据
      */
     private pullList: any = {
-        inStoreList : [],
-        outWareList: [],
+        inStoreList : [],//调入门店 下拉列表
+        outWareList: [],//调出仓库 下拉列表
     };
 
 
     mounted(){
-       this.handlerInStore();//调入门店 下拉列表
-       this.handlerOutWare();//调出仓库 下拉列表
+      
     }
     created(){
         this.service = StoreAllotService.getInstance();
+        this.handlerInStore();//调入门店 下拉列表
+        this.handlerOutWare();//调出仓库 下拉列表
+        this.addBillInfo.inStore = this.pullList.inStoreList[0].type;
+        this.addBillInfo.outWarehouse = this.pullList.outWareList[0].type;
         if(this.cache.getData(CACHE_KEY.STOREALLOT_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.STOREALLOT_ADDINFO));
         }
@@ -183,7 +179,7 @@ export default class allotment extends Vue{
                 type:"2"
             }]
         // }        
-        this.addBillInfo.inStore = this.pullList.inStoreList[0].type;
+       
     }
     /**
      * 查询调出仓库 下拉列表
@@ -195,8 +191,7 @@ export default class allotment extends Vue{
         },{
             name:"调出仓库2",
             type:"2"
-        }]
-        this.addBillInfo.outWarehouse = this.pullList.outWareList[0].type;
+        }]       
     }
     /**
      * 左滑删除

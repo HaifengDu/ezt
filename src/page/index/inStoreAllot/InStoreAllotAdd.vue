@@ -12,7 +12,7 @@
                                 @change="handlerBillType('outWarehouse','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
                                 :class="[{'selectError':billFiles[0].outWarehouse}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <option :value="item.type" :key="index" v-for="(item,index) in pullList.outWareList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -23,7 +23,7 @@
                             @change="handlerBillType('inWarehouse','您已选择物料，调整入库仓库，需重新选择调整物料。')"
                              :class="[{'selectError':billFiles[1].inWarehouse}]">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            <option :value="item.type" :key="index" v-for="(item,index) in pullList.inWareList">{{item.name}}</option>
                         </select>
                         </span>
                     </li>
@@ -110,10 +110,6 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
     private service : InStoreAllotService;
-    /**
-     * 调出仓库列表
-     *  */
-    private orderType:any[] = [];
     private addBillInfo:any = {
         inWarehouse:''
     };
@@ -127,22 +123,23 @@ export default class allotment extends Vue{
         {id:"outWarehouse",msg:"请选择调出仓库",outWarehouse:false},
         {id:"inWarehouse",msg:"请选择调入仓库",inWarehouse:false},
     ];
+    /**
+     * 存放所有下拉的数据
+     */
+    private pullList: any = {
+        outWareList : [],//调出仓库 下拉列表
+        inWareList: [],//调入仓库 下拉列表
+    };
 
 
     mounted(){
        
     }
     created(){
-        this.service = InStoreAllotService.getInstance();
-        this.orderType = [{//单据类型下拉数据    
-            name:"合同采购单",
-            type:"q"
-        },{
-            name:"采购单",
-            type:"m"
-        }]
-        this.addBillInfo.outWarehouse = this.orderType[0].type;
-        //  this.addBillInfo.inWarehouse = this.orderType[0].type;
+        this.service = InStoreAllotService.getInstance();  
+        this.handlerOutWare();//调入门店 下拉列表
+        this.handlerInWare();//调出仓库 下拉列表
+        this.addBillInfo.outWarehouse = this.pullList.outWareList[0].type;
         if(this.cache.getData(CACHE_KEY.INSTOREALLOT_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INSTOREALLOT_ADDINFO));
         }
@@ -160,6 +157,30 @@ export default class allotment extends Vue{
             ori.Amt = ori.Amt + (Number(item.num) * Number(item.price));
             return ori;
         },{num:0,Amt:0});
+    }
+    /**
+     * 调出仓库 下拉列表
+     */
+    private handlerOutWare(){
+        this.pullList.outWareList=[{//单据类型下拉数据    
+            name:"调出仓库1",
+            type:"1"
+        },{
+            name:"调出仓库2",
+            type:"2"
+        }]
+    }
+    /**
+     * 调入仓库 下拉列表
+     */
+    private handlerInWare(){
+        this.pullList.inWareList=[{//单据类型下拉数据    
+            name:"调入仓库1",
+            type:"1"
+        },{
+            name:"调入仓库2",
+            type:"2"
+        }]
     }
     /**
      * 左滑删除
@@ -281,8 +302,8 @@ export default class allotment extends Vue{
                 onConfirm () {
                     if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
                         // _this.addBillInfo.inWarehouse = "";
-                        _this.addBillInfo.inWarehouse = _this.orderType[0].type;
-                        _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
+                        _this.addBillInfo.inWarehouse = '';
+                        _this.addBeforeBillInfo.inWarehouse = '';
                     }
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
@@ -291,9 +312,8 @@ export default class allotment extends Vue{
             })
         }else{
             if(val == "outWarehouse"){//如果调整的出库仓库，需要重新选择入库仓库
-                // _this.addBillInfo.inWarehouse = "";
-                _this.addBillInfo.inWarehouse = _this.orderType[0].type;
-                _this.addBeforeBillInfo.inWarehouse = _this.orderType[0].type;
+                _this.addBillInfo.inWarehouse = _this.pullList.inWareList[0].type;
+                _this.addBeforeBillInfo.inWarehouse = _this.pullList.inWareList[0].type;
             }
             _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
             this.billFiles.forEach(item=>{

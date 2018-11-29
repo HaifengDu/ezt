@@ -20,7 +20,7 @@
                         @change="handleWarehouse('warehouse')"
                         >
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            <option :value="item.id" :key="index" v-for="(item,index) in warehouseList">{{item.name}}</option>
                         </select>
                         </span>
                     </li>
@@ -134,16 +134,10 @@ export default class InitStock extends Vue {
     private setSelectedGood: INoopPromise;
     private selectedGood: any[]; //store中selectedGood的值
     private isFirstStore:boolean;
-    private orderType: any[] = [
-        {
-            //单据类型下拉数据
-            name: "合同采购单",
-            type: "q"
-        },{
-            name:"采购单",
-            type:"m"
-        }
-    ];
+    /**
+     * 仓库 列表
+     */
+    private warehouseList: any[] = [];
     /**
      * 枚举 表单字段
      */
@@ -160,13 +154,27 @@ export default class InitStock extends Vue {
     }
     created() {
         this.service = InitStockService.getInstance();
-        this.addBillInfo.warehouse = this.orderType[0].type;
-        this.addBeforeBillInfo.warehouse = this.orderType[0].type;
+        this.handlerWarehouse();
+        this.addBillInfo.warehouse = this.warehouseList[0].id;
+        this.addBeforeBillInfo.warehouse = this.warehouseList[0].id;
         (this.selectedGood||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.INITSTOCK_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_ADDINFO));
         }
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
+    }
+    /**
+     * 仓库下拉列表
+     */
+    private handlerWarehouse(){
+        this.warehouseList = [{
+            //单据类型下拉数据
+            name: "仓库1",
+            id: "1"
+        },{
+            name:"仓库2",
+            id:"2"
+        }]
     }
     //选择物料
     private renderUrl(info: string) {

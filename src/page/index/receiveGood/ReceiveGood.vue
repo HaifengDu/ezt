@@ -70,7 +70,7 @@
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.receiveType"
              @change="handlerSearch('receiveType')" :class="[{'selectError':billFiles[0].receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.id" :key="index" v-for="(item,index) in receiveType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.receiveType">{{item.name}}</option>
             </select>
           </span>
         </li>
@@ -80,7 +80,7 @@
             <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.storeId"
              @change="handlerSearch('storeId')" :class="[{'selectError':billFiles[1].storeId},{'disabled':!searchParam.receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.storeList">{{item.name}}</option>
             </select>
           </span>
         </li>
@@ -99,7 +99,7 @@
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.warehouseList">{{item.name}}</option>
             </select>
           </span>
         </li>
@@ -178,32 +178,53 @@ export default class ReceiveGood extends Vue{
    * 搜索时的查询条件
    */
   private searchParam:any={
+    receiveType: '',
     storeId:'',
     warehouse:'',
     startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
     endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
   };
   private tabList:TabList = new TabList();
-  private orderType:any=[{
-    name:'仓库1',
-    id:'01'
-  }];
+  // private orderType:any=[{
+  //   name:'仓库1',
+  //   id:'01'
+  // }];
   /**
    * 收货类型
    */
-  private receiveType:any=[{
-    id:'a',
-    name:'配送收货'
-  },{
-    id:'b',
-    name:'直配收货'
-  },{
-    id:'c',
-    name:'采购收货'
-  },{
-    id:'d',
-    name:'（平调）店间调拨收货'
-  }];
+  // private receiveType:any=[{
+  //   id:'a',
+  //   name:'配送收货'
+  // },{
+  //   id:'b',
+  //   name:'直配收货'
+  // },{
+  //   id:'c',
+  //   name:'采购收货'
+  // },{
+  //   id:'d',
+  //   name:'（平调）店间调拨收货'
+  // }];
+  /**
+   * 下拉 列表
+   */
+  private pullList:any = {
+    receiveType:[{//收货类型 下拉列表
+      id:'a',
+      name:'配送收货'
+    },{
+      id:'b',
+      name:'直配收货'
+    },{
+      id:'c',
+      name:'采购收货'
+    },{
+      id:'d',
+      name:'（平调）店间调拨收货'
+    }],
+    storeList:[],//来货单位 下拉列表
+    warehouseList:[]//仓库 下拉列表
+  };
   /**
    * 枚举 表单字段
    */
@@ -222,6 +243,7 @@ export default class ReceiveGood extends Vue{
     });
     this.pager = new Pager().setLimit(20)
     this.service = ReceiveGoodService.getInstance();
+    this.getWarehouseList(); //仓库下拉列表
   }
 
   mounted(){      
@@ -242,6 +264,7 @@ export default class ReceiveGood extends Vue{
   private handlerSearch(val:any){
     if(val == 'receiveType'){
       //TODO: 重新加载收货类型下面的来货单位列表
+      this.getStoreList();
     }
     this.billFiles.forEach(item=>{
       if(item.id == val){
@@ -249,6 +272,27 @@ export default class ReceiveGood extends Vue{
       }
     })
   };
+  /**
+   * 获取  来货单位列表
+   */
+  private getStoreList(){
+    this.pullList.storeList = [{
+      name: '供应商1',
+      id: 1
+    },{
+      name: '供应商2',
+      id: 2
+    }]
+  }
+  private getWarehouseList(){
+    this.pullList.warehouseList = [{
+      name: '仓库01',
+      id: 1
+    },{
+      name: '仓库02',
+      id: 2
+    }]
+  }
   /**
    * 改变查询的日期
    */

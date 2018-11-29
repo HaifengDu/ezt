@@ -69,7 +69,7 @@
                 <span class="title-select-name item-select">
                 <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
                     <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                    <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    <option :value="item.id" :key="index" v-for="(item,index) in outWareList">{{item.name}}</option>
                 </select>
                 </span>
             </li>
@@ -150,10 +150,7 @@ export default class allotment extends Vue{
     /**
      * 仓库下拉列表
      */
-    private orderType:any=[{
-        name:'仓库1',
-        id:'01'
-    }]
+    private outWareList:any=[]
     created() {
         this.tabList.push({
             name:"待审核",
@@ -166,6 +163,7 @@ export default class allotment extends Vue{
         });
        this.pager = new Pager().setLimit(20)
        this.service = InStoreAllotService.getInstance();
+       this.handlerOutWare();
     }
     mounted(){      
         this.getList();
@@ -178,6 +176,18 @@ export default class allotment extends Vue{
                 item.active = item.name == this.$route.params.purStatus;
             })
         } 
+    }
+    /**
+     * 调出仓库 下拉列表
+     */
+    private handlerOutWare(){
+        this.outWareList = [{
+            name: "调出仓库1",
+            id: '1'
+        },{
+            name: "调出仓库2",
+            id: '2' 
+        }]
     }
     /**
      * 改变查询的日期

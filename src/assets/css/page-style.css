@@ -195,7 +195,7 @@ input.ezt-middle{
 }
 .ezt-header-title{
   flex:2;
-  font-size: 20px;
+  font-size: 19px;
   color: #FFFFFF;
   letter-spacing: 0;
   text-align: center;
@@ -682,7 +682,7 @@ input.ezt-middle{
     color: #fa5555;
     margin-right: 4px;
     position: absolute;
-    /* line-height: 35px; */
+    line-height: 26px;
     /* height: 32px; */
     margin-left: -10px;
     display: inline-block;

@@ -69,7 +69,7 @@
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.returnType">{{item.typeName}}</option>
             </select>
           </span>
         </li>
@@ -78,7 +78,7 @@
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
             </select>
           </span>
         </li>
@@ -167,10 +167,19 @@ export default class ReturnGood extends Vue{
     endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
   };
   private tabList:TabList = new TabList();
-  private orderType:any=[{
-    name:'仓库1',
-    id:'01'
-  }]
+  /**
+   * 下拉列表
+   */
+  private pullList : any= {
+    returnType: [{     //退货类型
+        id:'store',
+        typeName:'配送退货'
+    },{
+        id:'supplier',
+        typeName:'供应商退货'
+    }],
+    supplierList: []
+  }
 
   created() {
     this.tabList.push({
@@ -184,6 +193,7 @@ export default class ReturnGood extends Vue{
     });
     this.pager = new Pager().setLimit(20)
     this.service = SupplierReturnService.getInstance();
+    this.getSupplierList();// 供货机构列表
   }
 
   mounted(){
@@ -214,6 +224,18 @@ export default class ReturnGood extends Vue{
   })
   private listWatch(newValue:any[],oldValue:any[]){
 
+  }
+  /**
+   * 获取 供货机构 
+   */
+  private getSupplierList(){
+    this.pullList.supplierList = [{
+      name: '退货机构1',
+      id:1
+    },{
+      name: '退货机构2',
+      id: 2
+    }]
   }
   /**
    * 左侧滑动删除

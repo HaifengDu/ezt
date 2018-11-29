@@ -139,13 +139,6 @@ export default class ReceiveGood extends Vue{
     remark: "",
     editPrice:false//添加物料时 区分价格是否可以编辑
   };//store中
-  // private orderType:any[] = [{//单据类型下拉数据    
-  //   name:"合同采购单",
-  //   type:"q"
-  // },{
-  //   name:"采购单",
-  //   type:"m"
-  // }];
   /**
    * 下拉列表
    */

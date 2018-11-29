@@ -185,26 +185,6 @@ export default class ReceiveGood extends Vue{
     endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
   };
   private tabList:TabList = new TabList();
-  // private orderType:any=[{
-  //   name:'仓库1',
-  //   id:'01'
-  // }];
-  /**
-   * 收货类型
-   */
-  // private receiveType:any=[{
-  //   id:'a',
-  //   name:'配送收货'
-  // },{
-  //   id:'b',
-  //   name:'直配收货'
-  // },{
-  //   id:'c',
-  //   name:'采购收货'
-  // },{
-  //   id:'d',
-  //   name:'（平调）店间调拨收货'
-  // }];
   /**
    * 下拉 列表
    */

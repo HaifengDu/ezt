@@ -11,7 +11,7 @@
               <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.billType" 
                 @change="handlerBillType('billType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].billType}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                <option :value="item.type" :key="index" v-for="(item,index) in pullList.orderType">{{item.name}}</option>
               </select>
             </span>
           </li>
@@ -21,7 +21,7 @@
               <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplier"
               @change="handlerBillType('supplier','您已维护物料信息，如调整供应商，须重新选择物料。')" :class="[{'selectError':billFiles[1].supplier}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
               </select>
             </span>
           </li>
@@ -31,7 +31,7 @@
               <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.warehouse"
               @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择物料。')" :class="[{'selectError':billFiles[2].warehouse}]">
                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                <option :value="item.id" :key="index" v-for="(item,index) in pullList.warehouseList">{{item.name}}</option>
               </select>
             </span>
           </li>
@@ -139,13 +139,20 @@ export default class ReceiveGood extends Vue{
     remark: "",
     editPrice:false//添加物料时 区分价格是否可以编辑
   };//store中
-  private orderType:any[] = [{//单据类型下拉数据    
-    name:"合同采购单",
-    type:"q"
-  },{
-    name:"采购单",
-    type:"m"
-  }];
+  /**
+   * 下拉列表
+   */
+  private pullList :any = {
+    orderType: [{//单据类型下拉数据    
+      name:"合同采购单",
+      type:"q"
+    },{
+      name:"采购单",
+      type:"m"
+    }],
+    supplierList: [],
+    warehouseList: []
+  }
   /**
    * 枚举 表单字段
    */
@@ -154,7 +161,9 @@ export default class ReceiveGood extends Vue{
     {id:"supplier",msg:"请选择供应商！",supplier:false},
     {id:"warehouse",msg:"请选择仓库！",warehouse:false}];
   created() {  
-      this.service = ReceiveGoodService.getInstance();
+    this.service = ReceiveGoodService.getInstance();
+    this.getSupplierList();  //供应商下拉列表
+    this.getWarehouseList(); //仓库下拉列表
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
     }
@@ -169,6 +178,30 @@ export default class ReceiveGood extends Vue{
     //   this.addBillInfo.supplier="";
     //   this.addBillInfo.warehouse="";
     // }
+  }
+  /**
+   * 获取 供应商下拉列表
+   */
+  private getSupplierList(){
+    this.pullList.supplierList = [{
+      name: '供应商1',
+      id: 1
+    },{
+      name: '供应商2',
+      id: 2
+    }]
+  }
+  /**
+   * 获取 仓库下拉列表
+   */
+  private getWarehouseList(){
+    this.pullList.warehouseList = [{
+      name: '仓库1',
+      id: 1
+    },{
+      name: '仓库2',
+      id: 2
+    }]
   }
   /**
    * 左侧滑动

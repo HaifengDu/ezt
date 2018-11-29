@@ -69,7 +69,7 @@
                     <span class="title-select-name item-select">
                     <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
                         <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                        <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                        <option :value="item.id" :key="index" v-for="(item,index) in outWareList">{{item.name}}</option>
                     </select>
                     </span>
                 </li>
@@ -78,7 +78,7 @@
                     <span class="title-select-name item-select">
                     <select placeholder="请选择" class="ezt-select" v-model="searchParam.inStore">
                         <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                        <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                        <option :value="item.id" :key="index" v-for="(item,index) in inStoreList">{{item.name}}</option>
                     </select>
                     </span>
                 </li>
@@ -156,14 +156,14 @@ export default class allotment extends Vue{
         endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
     };
     private tabList:TabList = new TabList();
-
     /**
-     * 仓库下拉列表
+     * 调出仓库下拉列表
      */
-    private orderType:any=[{
-        name:'仓库1',
-        id:'01'
-    }]
+    private outWareList: any=[];
+    /**
+     * 调入门店下拉列表
+     */
+    private inStoreList: any=[];
     created() {
         this.tabList.push({
             name:"待审核",
@@ -176,6 +176,8 @@ export default class allotment extends Vue{
         });
        this.pager = new Pager().setLimit(20)
        this.service = StoreAllotService.getInstance();
+       this.handlerOutWare(); //调出仓库 下拉列表
+       this.handlerInStore(); //调入门店  下拉列表
     }
     mounted(){      
         this.getList();
@@ -188,6 +190,30 @@ export default class allotment extends Vue{
                 item.active = item.name == this.$route.params.purStatus;
             })
         } 
+    }
+    /**
+     * 查询调出仓库 下拉列表
+     */
+    private handlerOutWare(){
+        this.outWareList = [{
+            name: '调出仓库1',
+            id: '1'
+        },{
+            name: '调出仓库2',
+            id: '2'
+        }]
+    }
+    /**
+     * 查询调入门店  下拉列表
+     */
+    private handlerInStore(){
+        this.inStoreList = [{
+            name: '调入门店1',
+            id: '1'
+        },{
+            name: '调入门店2',
+            id: '2'
+        }]
     }
     /**
      * 改变查询的日期

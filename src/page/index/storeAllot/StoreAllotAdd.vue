@@ -6,24 +6,17 @@
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
                     <li class="select-list">
-                        <span class="title-search-name is-required">调出门店：</span>
-                        <span class="title-select-name item-select">
-                            <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outStore" 
-                                @change="handlerBillType('outStore','您已选择物料，调整出库仓库，需重新选择调入仓库及物料。')"
-                                :class="[{'selectError':billFiles[0].outStore}]">
-                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                            </select>
-                        </span>
+                        <span class="title-search-name">调出门店：</span>
+                        <span>{{user.auth.store_name}}</span>
                     </li>
                     <li class="select-list">
                         <span class="title-search-name is-required">调出仓库：</span>
                         <span class="title-select-name item-select">
                         <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.outWarehouse" 
                             @change="handlerBillType('outWarehouse','您已选择物料，调整入库仓库，需重新选择调整物料。')"
-                             :class="[{'selectError':billFiles[1].outWarehouse}]">
+                             :class="[{'selectError':billFiles[0].outWarehouse}]">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            <option :value="item.type" :key="index" v-for="(item,index) in pullList.outWareList">{{item.name}}</option>
                         </select>
                         </span>
                     </li>
@@ -32,9 +25,9 @@
                         <span class="title-select-name item-select">
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.inStore" 
                                 @change="handlerBillType('inStore','您已选择物料，调整出库仓库，需重新选择物料。')"
-                                :class="[{'selectError':billFiles[2].inStore}]">
+                                :class="[{'selectError':billFiles[1].inStore}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <option :value="item.type" :key="index" v-for="(item,index) in pullList.inStoreList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -111,6 +104,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
         ...mapGetters({
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
             materialSetting:'materialSetting',//物流设置
+            user:'user'
         })
     },
     methods:{
@@ -122,15 +116,10 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
+    private user:any;
     private service : StoreAllotService;
     private materialSetting:any;
-    /**
-     * 调出仓库列表
-     *  */
-    private orderType:any[] = [];
-    private addBillInfo:any = {
-        inWarehouse:''
-    };
+    private addBillInfo:any = {};
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any = {};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -138,32 +127,32 @@ export default class allotment extends Vue{
      * 枚举 表单字段
      */
     private billFiles=[
-        {id:"outStore",msg:"请选择调出门店",outStore:false},
         {id:"outWarehouse",msg:"请选择调出仓库",outWarehouse:false},
         {id:"inStore",msg:"请选择调入门店",inStore:false},
        
     ];
+    /**
+     * 存放所有下拉的数据
+     */
+    private pullList: any = {
+        inStoreList : [],//调入门店 下拉列表
+        outWareList: [],//调出仓库 下拉列表
+    };
 
 
     mounted(){
-       
+      
     }
     created(){
         this.service = StoreAllotService.getInstance();
-        this.orderType = [{//单据类型下拉数据    
-            name:"合同采购单",
-            type:"q"
-        },{
-            name:"采购单",
-            type:"m"
-        }]
-        this.addBillInfo.outWarehouse = this.orderType[0].type;
-         this.addBillInfo.inWarehouse = this.orderType[0].type;
+        this.handlerInStore();//调入门店 下拉列表
+        this.handlerOutWare();//调出仓库 下拉列表
+        this.addBillInfo.inStore = this.pullList.inStoreList[0].type;
+        this.addBillInfo.outWarehouse = this.pullList.outWareList[0].type;
         if(this.cache.getData(CACHE_KEY.STOREALLOT_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.STOREALLOT_ADDINFO));
         }
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-        //  this.getGoodList();
         (this.selectedGood||[]).forEach(item=>item.active = false);
         console.log(this.selectedGood,'00000');
     }
@@ -176,6 +165,33 @@ export default class allotment extends Vue{
             ori.Amt = ori.Amt + (Number(item.num) * Number(item.price));
             return ori;
         },{num:0,Amt:0});
+    }
+    /**
+     * 查询调入门店 下拉列表
+     */
+    private handlerInStore(){
+        // if(this.materialSetting.fr_store_db){
+            this.pullList.inStoreList=[{//单据类型下拉数据    
+                name:"调入门店1",
+                type:"1"
+            },{
+                name:"调入门店2",
+                type:"2"
+            }]
+        // }        
+       
+    }
+    /**
+     * 查询调出仓库 下拉列表
+     */
+    private handlerOutWare(){
+        this.pullList.outWareList=[{//单据类型下拉数据    
+            name:"调出仓库1",
+            type:"1"
+        },{
+            name:"调出仓库2",
+            type:"2"
+        }]       
     }
     /**
      * 左滑删除

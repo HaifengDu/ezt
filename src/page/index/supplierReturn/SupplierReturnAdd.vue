@@ -11,7 +11,7 @@
                                 @change="handlerBillType('warehouse','您已维护物料信息，如调整仓库，须重新选择退货类型、供货机构、源单号、物料信息。')"
                                 :class="[{'selectError':billFiles[0].warehouse}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <option :value="item.id" :key="index" v-for="(item,index) in pullList.warehouseList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -22,7 +22,7 @@
                                 @change="handlerBillType('returnType','您已维护物料信息，如调整退货类型，须重新选择供货机构、源单号、物料信息。')"
                                 :class="[{'selectError':billFiles[1].returnType}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.id" :key="index" v-for="(item,index) in returnType">{{item.typeName}}</option>
+                                <option :value="item.id" :key="index" v-for="(item,index) in pullList.returnType">{{item.typeName}}</option>
                             </select>
                         </span>
                     </li>
@@ -33,7 +33,7 @@
                                 @change="handlerBillType('supplier','您已维护物料信息，如调整供货机构，须重新选择源单号及物料。')"
                                 :class="[{'selectError':billFiles[2].supplier}]">
                                 <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.type" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                                <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -129,9 +129,6 @@ import CACHE_KEY from '../../../constans/cacheKey'
     }
 })
 export default class ReturnGood extends Vue{
-    // $refs:{
-    //     picker1: HTMLSelectElement
-    // }
     private cache = CachePocily.getInstance();
     private service : SupplierReturnService;
     /**
@@ -145,15 +142,20 @@ export default class ReturnGood extends Vue{
         sourceBillno:''
     };
     /**
-     * 退货类型
+     * 下拉列表 
      */
-    private returnType:any[] = [{
-        id:'store',
-        typeName:'配送退货'
-    },{
-        id:'supplier',
-        typeName:'供应商退货'
-    }];
+    private pullList: any = {
+        warehouseList: [],  //仓库 列表
+        returnType: [{     //退货类型
+            id:'store',
+            typeName:'配送退货'
+        },{
+            id:'supplier',
+            typeName:'供应商退货'
+        }],
+        supplierList: [],  //供应商列表
+        sourceBillList: [] //源单号 列表
+    };
     /**
      * 源单号列表
      */
@@ -194,7 +196,9 @@ export default class ReturnGood extends Vue{
     }  
     created(){
         this.service = SupplierReturnService.getInstance();
-          if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){
+        this.getSupplierList(); //供应商下拉列表
+        this.getWarehouseList(); //仓库下拉列表
+        if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){
             this.sourceBillList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SOURCERBILLLIST));
 
             this.sourceBillList.forEach((item,index)=>{
@@ -204,14 +208,7 @@ export default class ReturnGood extends Vue{
         }else{
             this.getSourceBillList();
         } 
-        this.orderType = [{//单据类型下拉数据    
-            name:"合同采购单",
-            type:"q"
-        },{
-            name:"采购单",
-            type:"m"
-        }]
-        this.addBillInfo.warehouse = this.orderType[0].type;
+        this.addBillInfo.warehouse = this.pullList.warehouseList[0].id;
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));
         }
@@ -251,6 +248,30 @@ export default class ReturnGood extends Vue{
             }
         ]
         return dateSlots
+    }
+    /**
+     * 获取  仓库列表
+     */
+    private getWarehouseList(){
+        this.pullList.warehouseList = [{
+            name: '仓库1',
+            id: 1
+        },{
+            name: '仓库2',
+            id: 2
+        }]
+    }
+    /**
+     * 获取 供应商列表
+     */
+    private getSupplierList(){
+        this.pullList.supplierList = [{
+            name: '供应商1',
+            id: 1
+        },{
+            name: '供应商2',
+            id: 2
+        }]
     }
     /**
      * 获取 源单号列表

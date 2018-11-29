@@ -24,6 +24,7 @@ export default new Store<IRootState>({
             show_dc_price : 1,//是否显示 配送单价 控制收货模块 修改页 配送收货、直配收货
             show_back_price : 1,//配送退货单 是否显示配送价 
             show_sy_price : 1,//报损报溢单 是否显示库存均价
+            fr_store_db : 1,//不同法人是否允许平调
         }
     },    
     getters:{

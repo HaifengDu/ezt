@@ -68,7 +68,7 @@
           <span class="title-search-name is-required">收货类型：</span>
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.receiveType"
-             @change="handlerSearch('receiveType','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[0].receiveType}]">
+             @change="handlerSearch('receiveType')" :class="[{'selectError':billFiles[0].receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in receiveType">{{item.name}}</option>
             </select>
@@ -77,8 +77,8 @@
         <li class="select-list">
           <span class="title-search-name is-required">来货单位：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.storeId" 
-             @change="handlerSearch('storeId','您已维护物料信息，如调整单据类型，须重新选择物料。')" :class="[{'selectError':billFiles[1].storeId},{'disabled':!searchParam.receiveType}]">
+            <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.storeId"
+             @change="handlerSearch('storeId')" :class="[{'selectError':billFiles[1].storeId},{'disabled':!searchParam.receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
             </select>
@@ -239,7 +239,10 @@ export default class ReceiveGood extends Vue{
   /**
    * 查询 收货类型、来货单位
    */
-  private handlerSearch(val:any,title:any){
+  private handlerSearch(val:any){
+    if(val == 'receiveType'){
+      //TODO: 重新加载收货类型下面的来货单位列表
+    }
     this.billFiles.forEach(item=>{
       if(item.id == val){
         item[val]= false;

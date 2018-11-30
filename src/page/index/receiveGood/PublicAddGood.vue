@@ -184,7 +184,7 @@
         <div class="good-item delete" v-swipeleft="showDelete.bind(this,item)" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="item-left-good">
             <div class="good-item-title">
-              <span class="good-item-name">{{item.name}}</span>
+              <span class="good-item-name">{{item.name || item.material_name}}</span>
               <!--库存初始化-->
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
                 <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
@@ -192,8 +192,8 @@
               </span>
                 <!---盘库显示规格账面数量-->
               <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
-                规格： <span class="good-item-sort">{{item.utilname}}</span>
-                账面数量：<span class="good-item-sort">{{item.price}}</span>
+                规格： <span class="good-item-sort">{{item.material_model}}</span>
+                账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
               </span>
               <!-- 默认不可以进行编辑 BOH不限制-->
               <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.utilname}}</span>
@@ -512,7 +512,7 @@ export default class AddGood extends Vue{
     if(!this.InterfaceSysTypeBOH){
        this.goodBigType = this.allType;
        this.changeSmallType(this.allType[0]);
-    }else{
+    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
       /**
        * BOH版本  选择货品
        */
@@ -533,7 +533,7 @@ export default class AddGood extends Vue{
         })
         this.loadGood(item.cdata[0]);
         //TODO:加载货品this.goodSmallType[0]
-    }else{
+    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
         /**
          * BOH版本  盘库选择货品
          */

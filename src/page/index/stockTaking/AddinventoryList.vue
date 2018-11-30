@@ -93,17 +93,17 @@
                           <div class="good-detail-l">
                               <div>
                                   <span class="good-detail-name">
-                                    <span class="good-detail-break">{{item.name}}</span> 
+                                    <span class="good-detail-break">{{item.material_name}}</span> 
                                     <span class="good-detail-sort">（{{item.utilname}}）</span>
                                   </span>
                               </div>
                               <div class="good-detail-nobreak">
-                                    <span class="good-detail-billno ">编码：003222</span>
+                                    <span class="good-detail-billno ">编码：{{item.material_num}}</span>
                                     <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
                               </div> 
                               <div>
-                                  <span class="title-search-name ezt-dense-box">账面数量：{{item.price}}</span>   
-                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.num" style="width:80px;border-radius:0px;border:1px solid #ccc;"></span> 
+                                  <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
+                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num || 0" style="width:80px;border-radius:0px;border:1px solid #ccc;"></span> 
                               </div> 
                           </div>
                           <div class="good-detail-r">

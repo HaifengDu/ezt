@@ -469,21 +469,22 @@ export default class stockTaking extends Vue{
           },err=>{
               let that = this;
               let OrderModule = {};
-                if(err.data.errmsg  == '存在未审核业务单据，盘点会造成差异过大的情况。'){
+              if(err.data.errcode  == 37){
+                this.newlyadded = false
+                this.$vux.confirm.show({   
+                  onConfirm () {
+                    OrderModule={   
+                      name:type.name,
+                      bill_type:type.bill_type,
+                    }   
+                    that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+                    that.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(err.data)); 
+                    that.$router.push({name:'AddinventoryList'});
+                  },
+                  content:'存在未审核业务单据，盘点会造成差异过大的情况，请确认是否继续?'
+                })
+             }else if(err.data.errcode == 39){
                   this.newlyadded = false
-                  this.$vux.confirm.show({   
-                    onConfirm () {
-                      OrderModule={   
-                        name:type.name,
-                        bill_type:type.bill_type,
-                      }   
-                      that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
-                      that.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(err.data)); 
-                      that.$router.push({name:'AddinventoryList'});
-                    },
-                    content:'存在未审核业务单据，盘点会造成差异过大的情况，请确认是否继续?'
-                 })
-              }else if(err.message == '已存在该类型未审核盘点单，不允许盘点。'){
                   this.$toasted.show("已存在该类型未审核盘点单，不允许盘点。")
               }
               

@@ -94,11 +94,11 @@
                 </li>
                 <li>
                     <span class="title-search-name">单据：</span>
-                    <input type="text" placeholder="请输入单据号" class="ezt-middle">
+                    <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" v-model="searchParam.billNo">
                 </li>
                 <li>
                     <span class="title-search-name">物料：</span>
-                    <input type="text" placeholder="请输入物料名称" class="ezt-middle">
+                    <input type="text" placeholder="请输入物料名称" class="ezt-middle" v-model="searchParam.material">
                 </li>
                 <li>
                     <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -357,6 +357,24 @@ export default class allotment extends Vue{
      *  */
     private goBack(){
         this.$router.push('/');
+    }
+    /**
+     * 单号输入限制
+     */
+    private handlerChangeNo(item:any){
+        let val = this.searchParam[item];
+        if(val){
+            if(val!=""&& val.length>=20 ){
+                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+                val = val.replace(/[^\w\d\_]/g, "");
+                val = val.substr(0, 20);
+                this.searchParam[item] = val;
+            }else{
+                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+                val = val.replace(/[^\w\d\_]/g, "");
+                this.searchParam[item] = val;
+            }
+        }    
     }
     
 }

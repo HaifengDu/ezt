@@ -105,11 +105,11 @@
         </li>
         <li>
           <span class="title-search-name">源单号：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
+          <input type="text" ref="sourceBillNo" v-on:input="handlerChangeNo('sourceNo')" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
         </li>
         <li>
           <span class="title-search-name">单据号：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入单据号" v-model="searchParam.billNo">
+          <input type="text" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" placeholder="请输入单据号" v-model="searchParam.billNo">
         </li>
         <li>
           <span class="title-search-name">物料：</span>
@@ -136,6 +136,7 @@ import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
+import commonService from '../../../service/commonService.js';
 @Component({
    components:{
      TabItem
@@ -239,6 +240,25 @@ export default class ReceiveGood extends Vue{
     } 
   }
   /**
+   * 单号输入限制
+   */
+  private handlerChangeNo(item:any){
+    let val = this.searchParam[item];
+    if(val){
+      if(val!=""&& val.length>=20 ){
+        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+        val = val.replace(/[^\w\d\_]/g, "");
+        val = val.substr(0, 20);
+        this.searchParam[item] = val;
+      }else{
+        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+        val = val.replace(/[^\w\d\_]/g, "");
+        this.searchParam[item] = val;
+      }
+    } 
+    // this.searchParam[item] = commonService.handlerChangeNo(this.searchParam,item);  
+  }
+  /**
    * 查询 收货类型、来货单位
    */
   private handlerSearch(val:any){
@@ -285,8 +305,8 @@ export default class ReceiveGood extends Vue{
     let confirmGoodInfo = {};
     let detailList = {};
     if(info){
-        this.$router.push(info);
-        return false;
+      this.$router.push(info);
+      return false;
     }
     if(this.tabList.getActive().status==1){
       confirmGoodInfo={
@@ -394,9 +414,15 @@ export default class ReceiveGood extends Vue{
   private goBack(){
     this.$router.push("/");
   } 
-  private handlerReceiveType(val:any){
-
-  }
+  /**
+   * watch 监听单号
+   */
+ /*  @Watch("searchParam.sourceNo",{
+    deep:true
+  })
+  private sourceNoWatch(newValue:any[],oldValue:any[]){
+    this.searchParam.sourceBillNo = this.searchParam.sourceBillNo.replace(/[\w]/g,'')
+  } */
 }
 </script>
 

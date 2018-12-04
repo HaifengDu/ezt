@@ -67,7 +67,7 @@
         <li class="select-list">
           <span class="title-search-name ">退货类型：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.returnType">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in pullList.returnType">{{item.typeName}}</option>
             </select>
@@ -76,7 +76,7 @@
         <li class="select-list">
           <span class="title-search-name ">供货机构：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.supplier">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
             </select>
@@ -94,11 +94,11 @@
         </li>
         <li>
           <span class="title-search-name">单据：</span>
-          <input type="text" placeholder="请输入单据号" class="ezt-middle">
+          <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" v-model="searchParam.billNo">
         </li>
         <li>
             <span class="title-search-name">物料：</span>
-            <input type="text" placeholder="请输入物料名称" class="ezt-middle">
+            <input type="text" placeholder="请输入物料名称" class="ezt-middle" v-model="searchParam.material">
         </li>
         <li>
           <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -164,7 +164,9 @@ export default class ReturnGood extends Vue{
    */
   private searchParam:any={
     startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
-    endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+    endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd'),
+    returnType:"",
+    supplier:""
   };
   private tabList:TabList = new TabList();
   /**
@@ -358,6 +360,24 @@ export default class ReturnGood extends Vue{
   private goBack(){
     this.$router.push("/");
   } 
+   /**
+   * 单号输入限制
+   */
+  private handlerChangeNo(item:any){
+    let val = this.searchParam[item];
+    if(val){
+      if(val!=""&& val.length>=20 ){
+        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+        val = val.replace(/[^\w\d\_]/g, "");
+        val = val.substr(0, 20);
+        this.searchParam[item] = val;
+      }else{
+        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
+        val = val.replace(/[^\w\d\_]/g, "");
+        this.searchParam[item] = val;
+      }
+    }    
+  }
    
 }
 </script>

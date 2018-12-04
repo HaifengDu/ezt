@@ -485,7 +485,7 @@ export default class stockTaking extends Vue{
                 })
              }else if(err.data.errcode == 39){
                   this.newlyadded = false
-                  this.$toasted.show("已存在该类型未审核盘点单，不允许盘点。")
+                  this.$toasted.show(err.data.errmsg)
               }
               
           })

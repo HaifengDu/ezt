@@ -126,8 +126,7 @@
                   <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
-                  <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive">提交</a>  
-                  <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive"> 提交并审核</a>   
+                  <a href="javascript:(0)" class="ezt-foot-sub" style="width:100%" @click="saveReceive">保存并提交</a>  
                 </div>  
               </div>
             </ezt-footer>
@@ -219,7 +218,12 @@ export default class StockTaking extends Vue{
      */
     if(this.cache.getData(CACHE_KEY.WAREHOUSE)){
         const warehouseName = JSON.parse(this.cache.getData(CACHE_KEY.WAREHOUSE));
+        this.addinventory.id = warehouseName.warehouseList[0].id
         this.addinventory.stock = warehouseName.warehouseList[0].warehouseName
+    }
+    if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
+        this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+        console.log(JSON.stringify(this.selectedGood))
     }
     /**
      * SAAS版本  动态加载仓库
@@ -321,54 +325,38 @@ export default class StockTaking extends Vue{
     })
   }
   /**
-   *  BOH盘点单 提交
+   *  BOH盘点单 保存并提交
    */
   private saveReceive(){
-    if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("当前货品数量为0，请添加货品！");
-      return false;
-    } 
-    this.addBillInfo={};
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.cache.clear();
-    this.$toasted.success("提交成功！");
-    this.$router.push("/stockTaking");
-  }
-  /**
-   * BOH盘点单 审核
-   */
-  private confirmReceive(){
-    let _this = this;
-    if(!this.selectedGood||this.selectedGood.length<=0){
-      this.$toasted.show("当前货品数量为0，请添加货品！");
-      return false;
-    }
-    this.$vux.confirm.show({
-      /**
-       * 审核不通过
-       */
-      onCancel () {
-        
-      },
-      /**
-       * 审核通过
-       */
-      onConfirm () {
-        _this.addBillInfo={};
-        _this.setSelectedGood([]);
-        _this.addBeforeBillInfo={};
-        _this.cache.clear();
-        _this.$toasted.success("审核成功！");
-        _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
-      },
-      content:'确认审核该单据？',
-      confirmText:"审核通过",
-      cancelText:"审核不通过",
-      showCancelButton:!_this.InterfaceSysTypeBOH,
-      hideOnBlur:true
-    })
-  }    
+        const bill_type = this.addinventory.bill_type
+        const bill_type_name = this.addinventory.name
+        const warehouse_id = this.addinventory.id
+        const busi_date = this.user.auth.busi_date 
+        const unit_name = this.selectedGood[0].unit_name 
+        const unit_id = this.selectedGood[0].unit_id
+        const consume_qty = this.selectedGood[0].consume_qty 
+        const thery_qty = this.selectedGood[0].thery_qty 
+        const acc_amt = this.selectedGood[0].acc_amt 
+        const stockChecked = 'PLATFORM_YES'
+        const acc_qty = this.selectedGood[0].acc_qty 
+        const material_num = this.selectedGood[0].material_num 
+        const stockMode = 'SCM_STOCK_HANDLE_MODE_NO'
+        const material_id = this.selectedGood[0].material_id
+        const material_name = this.selectedGood[0].material_name
+        const distributePrice1 = this.selectedGood[0].distributePrice1  
+         this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,unit_name,unit_id,consume_qty,thery_qty,acc_amt,stockChecked,acc_qty,material_num,stockMode,material_id,material_name,distributePrice1).then(res=>{ 
+               if(!this.selectedGood||this.selectedGood.length<=0){
+                  this.$toasted.show("当前货品数量为0，请添加货品！");
+                  return false;
+                } 
+                this.addBillInfo={};
+                this.setSelectedGood([]);
+                this.addBeforeBillInfo={};
+                this.cache.clear();
+                this.$toasted.success("提交成功！");
+                this.$router.push("/stockTaking");
+           })
+      }
   /**
    *  BOH版本   选择物料
    */

@@ -252,7 +252,7 @@
       <div class="selected-good-content">
         <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
           <div class="good-item-title">
-            <span class="good-item-name">{{item.name}}</span>
+            <span class="good-item-name">{{item.name || item.material_name}}</span>
             <!--库存初始化-->
             <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
               <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
@@ -260,8 +260,8 @@
             </span>
              <!-- 盘库显示规格账面数量 -->
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-              规格： <span class="good-item-sort" style="margin-right:5px;">{{item.utilname}}</span>
-              账面数量：<span class="good-item-sort">{{item.price}}</span>
+               规格： <span class="good-item-sort">{{item.material_model}}</span>
+               账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
             </span>
             <!-- 默认不可以进行编辑  BOH不限制-->
             <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.utilname}}</span>
@@ -538,14 +538,20 @@ export default class AddGood extends Vue{
          * BOH版本  盘库选择货品
          */
         this.BOHservice.getBohItemCategory(this.InventoryType.bill_type,item.id).then(res=>{ 
+            this.allType['sortList'].forEach((bigSort:any,index:any)=>{
+              this.$set(bigSort,'active',bigSort.id == item.id);
+            })    
             this.typeName = item;   
-            this.goodSmallType = item.cdata; 
-            const goodsList = res.data
-            this.goodList = goodsList.goodsList
+            this.goodSmallType = item.cdata;
+            (item.cdata).forEach((info:any,index:any)=>{
+              this.loadGood(info)
+            })
+            this.loadGood(item.cdata[0]);
         })
     }
   }
   private loadGood(item:any){
+    if(!this.InterfaceSysTypeBOH){
        if(!item.addList){
           this.$set(item,'addList',[]);
         }else{
@@ -562,7 +568,26 @@ export default class AddGood extends Vue{
           }
         });
         this.goodList = item.goodList;
-        this.typeName=item;   
+        this.typeName=item;  
+    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+        if(!item.addList){
+          this.$set(item,'addList',[]);
+        }else{
+          item.addList = [];
+        }
+        //TODO:item.id加载货品
+        _.forEach(item.goodsList,good=>{
+          this.$set(good,'active',false);
+          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+          if(index>=0){
+            ObjectHelper.merge(good,this.selectedGoodList[index],true);
+            this.selectedGoodList[index] = good;
+            item.addList.push(good);
+          }
+        });
+        this.goodList = item.goodsList;
+        this.typeName=item;  
+    }
   }
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
@@ -592,65 +617,92 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
-    let _this = this;
-    //退货数量 限制处理
-    if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
-        this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
-      if(!item.isStock){
-        if(item.num == item.stock){
-          this.$set(item,'isStock','true');
-          return false;
+    if(!this.InterfaceSysTypeBOH){
+        let _this = this;
+        //退货数量 限制处理
+        if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
+            this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
+          if(!item.isStock){
+            if(item.num == item.stock){
+              this.$set(item,'isStock','true');
+              return false;
+            }
+          }else{
+            if(item.num == item.returnNum){
+              this.$set(item,'isStock','true');
+              return false;
+            }
+          }     
+          let confirmTitle="";
+          if(this.materialLimit.billsPageType == 'supplierReturn'){
+            if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
+              confirmTitle = '实退数量不可大于库存数量';
+            }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
+              confirmTitle ='实退数量不可大于可退数量';
+            }
+          }else if(item.isStock&&item.num == item.stock){
+              confirmTitle ='添加数量不可大于库存量';
+          }
+          if(confirmTitle){
+            this.$vux.confirm.show({
+              content:confirmTitle,
+              showCancelButton:false,
+              hideOnBlur:true
+            })
+            return false;
+          }
         }
-      }else{
-        if(item.num == item.returnNum){
-          this.$set(item,'isStock','true');
-          return false;
+        if(item.num>0){
+          //新增
+          var ret = this.selectedGoodList.find((value:any)=>{
+            return item.id == value.id;
+          });
+          if(!ret){
+            this.selectedGoodList.push(item);
+          }
+          var smallRet = this.typeName.addList.find((value:any)=>{
+            return item.id == value.id;
+          })
+          if(!smallRet){       
+            this.typeName.addList.push(item);
+          }
+        }else{
+          //删除
+          const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+          if(index>=0){
+            this.selectedGoodList.splice(index,1);
+          }
+          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+          if(smallIndex>=0){
+            this.typeName.addList.splice(smallIndex,1);
+          }
         }
-      }     
-      let confirmTitle="";
-      if(this.materialLimit.billsPageType == 'supplierReturn'){
-        if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
-          confirmTitle = '实退数量不可大于库存数量';
-        }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
-          confirmTitle ='实退数量不可大于可退数量';
+    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+      if(item.num>0){
+          //新增
+          var ret = this.selectedGoodList.find((value:any)=>{
+            return item.material_id == value.material_id;
+          });
+          if(!ret){
+            this.selectedGoodList.push(item);
+          }
+          var smallRet = this.typeName.addList.find((value:any)=>{
+            return item.material_id == value.material_id;
+          })
+          if(!smallRet){       
+            this.typeName.addList.push(item);
+          }
+        }else{
+          //删除
+          const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+          if(index>=0){
+            this.selectedGoodList.splice(index,1);
+          }
+          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+          if(smallIndex>=0){
+            this.typeName.addList.splice(smallIndex,1);
+          }
         }
-      }else if(item.isStock&&item.num == item.stock){
-          confirmTitle ='添加数量不可大于库存量';
-      }
-      if(confirmTitle){
-        this.$vux.confirm.show({
-          content:confirmTitle,
-          showCancelButton:false,
-          hideOnBlur:true
-        })
-        return false;
-      }
-     
-    }
-    if(item.num>0){
-      //新增
-      var ret = this.selectedGoodList.find((value:any)=>{
-        return item.id == value.id;
-      });
-      if(!ret){
-        this.selectedGoodList.push(item);
-      }
-      var smallRet = this.typeName.addList.find((value:any)=>{
-        return item.id == value.id;
-      })
-      if(!smallRet){       
-        this.typeName.addList.push(item);
-      }
-    }else{
-      //删除
-      const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-      if(index>=0){
-        this.selectedGoodList.splice(index,1);
-      }
-      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
-      if(smallIndex>=0){
-        this.typeName.addList.splice(smallIndex,1);
-      }
     }
   }
   /**
@@ -670,15 +722,14 @@ export default class AddGood extends Vue{
    * 删除已选择货品
    */
   private selectedDelGood(item:any){
-    const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-    this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
-    this.selectedGoodList.splice(index,1);
-    
-    if(this.typeName.addList.length>0){
-      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
-      this.typeName.addList[smallIndex].num=0;
-      this.typeName.addList.splice(smallIndex,1);
-    }
+      const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+      this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
+      this.selectedGoodList.splice(index,1);
+      if(this.typeName.addList.length>0){
+        const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+        this.typeName.addList[smallIndex].num=0;
+        this.typeName.addList.splice(smallIndex,1);
+      }
   }
   /**
    * 搜索所有物品 显示/隐藏
@@ -923,7 +974,7 @@ private changeDirect(item:any){
   }
   //已选 货品//搜索所有物品
   .selected-item,.search-item{
-    height: 90%;
+    height: 120%;
     transition: height 2s;
     position: absolute;
     background: #F1F6FF;

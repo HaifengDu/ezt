@@ -1,4 +1,3 @@
-import LoginService from "./LoginService";
 import mixins from "../common/Mixin";
 import { IUser } from "../interface/IUserModel";
 import { BaseService } from "./BaseService";
@@ -10,10 +9,8 @@ import { IPagerData } from "../interface/IPagerData";
 export class ReceiveGoodService extends BaseService{
 
     private static _instance: ReceiveGoodService;
-    private loginService:LoginService;
     private constructor() {
         super(ERequestType.AppOrder)
-        this.loginService = LoginService.getInstance();
     }
     /**
      * 列表页接口

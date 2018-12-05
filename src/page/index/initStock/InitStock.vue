@@ -110,7 +110,7 @@ import { mapActions, mapGetters } from "vuex";
 import { maskMixin } from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
-import { InitStockService } from "../../../service/InitStockService";
+import { InitStockService } from "../../../service/initStock/InitStockService";
 import { CachePocily } from "../../../common/Cache";
 import {ECache} from '../../../enum/ECache';
 import CACHE_KEY from '../../../constans/cacheKey'

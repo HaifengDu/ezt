@@ -170,6 +170,7 @@ declare module 'vue/types/vue' {
         onCancel:(...args:any[])=>void,
         onConfirm:(...args:any[])=>void
       }
-    }
+    },
+    fireEvent:(element:HTMLElement,event:string) => boolean
   }
 }

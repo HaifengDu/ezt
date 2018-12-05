@@ -1,15 +1,12 @@
 import Axios from 'axios';
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import { IPagerData } from "../interface/IPagerData";
-import LoginService from "./LoginService";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
+import { IPagerData } from "../../interface/IPagerData";
 export class InitStockService extends BaseService{
 
     private static _instance: InitStockService;
-    private loginService:LoginService;
     private constructor() {
         super(ERequestType.AppOrder)
-        this.loginService = LoginService.getInstance();
     }
     /**
      * 列表页接口

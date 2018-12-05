@@ -85,6 +85,19 @@ import 'mint-ui/lib/cell-swipe/style.css';
 Vue.prototype.$message = MessageBox;
 Button.install(Vue);
 Vue.use(Toasted, { duration: 1000, position: "top-center" });
+Vue.prototype.fireEvent = function(element:HTMLElement,event:string){ 
+    if ((document as any).createEventObject){ 
+        // IE浏览器支持fireEvent方法 
+        let evt = (document as any).createEventObject(); 
+        return (document as any).fireEvent('on'+event,evt) 
+    } 
+    else{ 
+        // 其他标准浏览器使用dispatchEvent方法 
+        let evt = document.createEvent( 'HTMLEvents' ); 
+        evt.initEvent(event, true, true); 
+        return !element.dispatchEvent(evt); 
+    } 
+}; 
 // Vue.prototype.$notify = Notification;
 // DatePicker.install(Vue);
 // TimePicker.install(Vue);

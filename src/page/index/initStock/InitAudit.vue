@@ -94,7 +94,7 @@ import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
 import {mapActions,mapGetters} from 'vuex';
 import { INoop, INoopPromise } from "../../../helper/methods";
-import { InitStockService } from "../../../service/InitStockService";
+import { InitStockService } from "../../../service/initStock/InitStockService";
 import { CachePocily } from "../../../common/Cache";
 import ObjectHelper from '../../../common/objectHelper'
 import { ECache } from "../../../enum/ECache";

@@ -85,7 +85,7 @@
             </li>
             <li>
                 <span class="title-search-name">单据：</span>
-                <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" v-model="searchParam.billNo">
+                <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo($event)" v-model="searchParam.billNo">
             </li>
             <li>
                 <span class="title-search-name">物料：</span>
@@ -335,7 +335,7 @@ export default class allotment extends Vue{
     /**
      * 单号输入限制
      */
-    private handlerChangeNo(item:any){
+    /* private handlerChangeNo(item:any){
         let val = this.searchParam[item];
         if(val){
             if(val!=""&& val.length>=20 ){
@@ -349,7 +349,7 @@ export default class allotment extends Vue{
                 this.searchParam[item] = val;
             }
         }    
-    }
+    } */
     
 }
 </script>

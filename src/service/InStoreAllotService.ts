@@ -1,14 +1,12 @@
-import LoginService from "./LoginService";
 import { BaseService } from "./BaseService";
 import { ERequestType } from "../enum/ERequestType";
 import Axios from 'axios';
 import { IPagerData } from "../interface/IPagerData";
 export class InStoreAllotService extends BaseService{
     private static _instance:InStoreAllotService;
-    private loginService : LoginService;
     private constructor(){
         super(ERequestType.AppOrder)
-        this.loginService = LoginService.getInstance();
+        // this.loginService = LoginService.getInstance();
     }
 
      /**

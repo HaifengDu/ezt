@@ -1,4 +1,3 @@
-import LoginService from "./LoginService";
 import mixins from "../common/Mixin";
 import { IUser } from "../interface/IUserModel";
 import { BaseService } from "./BaseService";
@@ -9,10 +8,8 @@ import store from "../store"
 import { IPagerData } from "../interface/IPagerData";
 export class StockTakingService extends BaseService{   
     private static _instance: StockTakingService;
-    private loginService:LoginService;  
     private constructor() {      
         super(ERequestType.AppOrder)
-        this.loginService = LoginService.getInstance();
     }    
     /**
      * 盘库列表

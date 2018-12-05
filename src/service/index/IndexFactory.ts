@@ -3,25 +3,25 @@ import BOHIndexService from "./BOHIndexService";
 import IndexService from "./IndexService";
 import { IIndexService } from "../../interface/service/IIndexService";
 export class IndexFactory {
-         private static _instance: IndexFactory;
+  private static _instance: IndexFactory;
 
-         private constructor() {}
+  private constructor() {}
 
-         public createService(): IIndexService {
-           const isBOH = store.getters.InterfaceSysTypeBOH;
-           if (isBOH) {
-             return BOHLoginService.getInstance();
-           }
-           return LoginService.getInstance();
-         }
+  public createService(): IIndexService {
+    const isBOH = store.getters.InterfaceSysTypeBOH;
+    if (isBOH) {
+      return BOHIndexService.getInstance();
+    }
+    return IndexService.getInstance();
+  }
 
-         static createInstance() {
-           IndexFactory.getInstance();
-         }
+  static createInstance() {
+    IndexFactory.getInstance();
+  }
 
-         static getInstance() {
-           return this._instance || (this._instance = new this());
-         }
-       }
+  static getInstance() {
+    return this._instance || (this._instance = new this());
+  }
+}
 
 export default IndexFactory;

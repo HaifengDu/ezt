@@ -25,7 +25,7 @@
            <div class="checklist">
               <p class="title" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">盘点单</p>
               <ul>
-                <li :key="index" v-for="(item,index) in inventoryDetails.details">
+                <li :key="index" v-for="(item,index) in inventoryDetails">
                     <div>   
                       <p>
                          <span style="margin-right:10px;">{{item.material_name}}</span>
@@ -194,18 +194,24 @@ export default class stockTaking extends Vue{
     /**
      * 审核通过
      */
-    private auditfailed(item:any){ 
-        const whole_num = this.inventoryDetails[0]['whole_num']
-        const id = this.inventoryDetails[0].id
-        const consume_num = this.inventoryDetails[0]['consume_num']
-        const disperse_num = this.inventoryDetails[0]['disperse_num']
+    private auditfailed(item:any,list:Array<any>){
+       this.inventoryDetails.forEach((item:any) => {
+            let obj = {
+                whole_num:item.whole_num,   
+                id:item.id,
+                consume_num:item.consume_num,
+                disperse_num:item.disperse_num
+              };
+            let list = [];
+            list.push(obj);
+        });
         const store_name = this.user.auth.store_name
         const warehouse_name = this.details.warehouse_id
         const audit_name = this.user.auth.username
         const ids = this.details.id  
         const stock_count_mode = this.details.stock_count_mode
         const organ_brief_code = this.user.auth.organ_brief_code
-        this.service.getAuditchecklistyes(whole_num,id,consume_num,disperse_num,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
+        this.service.getAuditchecklistyes(list,store_name,warehouse_name,audit_name,ids,stock_count_mode,organ_brief_code).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
@@ -218,15 +224,20 @@ export default class stockTaking extends Vue{
      /**
        * 待提交状态下的暂存按钮      实盘录入暂存
        */
-      private storage(item:any){
-        const whole_num = this.inventoryDetails[0]['whole_num']
-        const id = this.inventoryDetails[0].id
-        const consume_num = this.inventoryDetails[0]['consume_num']
-        const disperse_num = this.inventoryDetails[0]['disperse_num']
+      private storage(item:any,list:Array<any>){
+        this.inventoryDetails['details'].forEach((item:any) => {
+            let obj = {
+                whole_num:item.whole_num,   
+                id:item.id,
+                consume_num:item.consume_num,
+                disperse_num:item.disperse_num
+              };
+            list.push(obj);
+        });
         const ids = this.details.id 
         const is_stock_report = 0  //0是暂存   1是提交
         const stock_count_mode = this.details.stock_count_mode
-        this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+        this.service.getRealdiscEntry(list,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
@@ -239,15 +250,20 @@ export default class stockTaking extends Vue{
       /**
        * 待提交状态下的提交按钮      实盘录入提交
        */
-      private sub(item:any){  
-        const whole_num = this.inventoryDetails[0]['whole_num']
-        const id = this.inventoryDetails[0].id
-        const consume_num = this.inventoryDetails[0]['consume_num']
-        const disperse_num = this.inventoryDetails[0]['disperse_num']
+      private sub(item:any,list:Array<any>){  
+        this.inventoryDetails['details'].forEach((item:any) => {
+            let obj = {
+                whole_num:item.whole_num,   
+                id:item.id,
+                consume_num:item.consume_num,
+                disperse_num:item.disperse_num
+              };
+            list.push(obj);
+        });
         const ids = this.details.id 
         const is_stock_report = 1  // 1是提交    
         const stock_count_mode = this.details.stock_count_mode
-        this.service.getRealdiscEntry(whole_num,id,consume_num,disperse_num,ids,is_stock_report,stock_count_mode).then(res=>{  
+        this.service.getRealdiscEntry(list,ids,is_stock_report,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
@@ -261,11 +277,16 @@ export default class stockTaking extends Vue{
     /**
      * 盘点类型导入 模板导入  暂存按钮
      */
-    private temporarystorage(item:any){   
+    private temporarystorage(item:any,rows:Array<any>){   
        if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可保存！")
         }
-        const material_id = this.inventoryDetails[0]['material_id']
+        this.inventoryDetails.forEach((item:any) => {
+            let obj = {
+                material_id:item.material_id,   
+              };
+            rows.push(obj);
+        });
         const entry_name = this.user.auth.username
         const bill_status = 0   //暂存
         const bill_type_name = this.details.bill_type_name
@@ -275,7 +296,7 @@ export default class stockTaking extends Vue{
         const busi_date = this.user.auth.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
         const stock_count_mode = this.details.treatment
-        this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
+        this.service.getAdditionalcheckList(rows,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.cache.clear();
@@ -288,11 +309,16 @@ export default class stockTaking extends Vue{
     /**
      * 盘点类型导入 模板导入  提交按钮
      */
-    private Submission(item:any){   
+    private Submission(item:any,rows:Array<any>){   
         if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可提交！")
         }
-        const material_id = this.inventoryDetails[0]['material_id']
+        this.inventoryDetails.forEach((item:any) => {
+            let obj = {
+                material_id:item.material_id,   
+              };
+            rows.push(obj);
+        });
         const entry_name = this.user.auth.username
         const bill_status = 1   //提交
         const bill_type_name = this.details.bill_type_name
@@ -302,7 +328,7 @@ export default class stockTaking extends Vue{
         const busi_date = this.user.auth.busi_date
         const organ_brief_code = this.user.auth.organ_brief_code
         const stock_count_mode = this.details.treatment
-        this.service.getAdditionalcheckList(material_id,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
+        this.service.getAdditionalcheckList(rows,entry_name,bill_status,bill_type_name,warehouse_id,bill_type,stock_count_mode_name,busi_date,organ_brief_code,stock_count_mode).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.$toasted.show("操作成功！")

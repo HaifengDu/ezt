@@ -129,10 +129,10 @@ export class StockTakingService extends BaseService{
      * @param organ_brief_code 
      * @param stock_count_mode 
      */
-    getAdditionalcheckList(material_id:string,entry_name:string,bill_status:number,bill_type_name:string,warehouse_id:string,bill_type:string,stock_count_mode_name:string,busi_date:string,organ_brief_code:string,stock_count_mode:string){
+    getAdditionalcheckList(row:Array<any>,entry_name:string,bill_status:number,bill_type_name:string,warehouse_id:string,bill_type:string,stock_count_mode_name:string,busi_date:string,organ_brief_code:string,stock_count_mode:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{    
-                "rows":[{"material_id":material_id}],//物料id
+                "rows":row,//物料id
                 "entry_name":entry_name,    //制单人姓名
                 "bill_status":bill_status,       //单据状态   0是暂存   1是提交
                 "bill_type_name":bill_type_name,   //单据盘点类型名称
@@ -183,15 +183,16 @@ export class StockTakingService extends BaseService{
      * @param stock_count_mode 
      * @param organ_brief_code 
      */
-    getAuditchecklistyes(whole_num:string,id:number,consume_num:string,disperse_num:string,store_name:string,warehouse_name:string,audit_name:string,ids:string,stock_count_mode:string,organ_brief_code:string,){
+    getAuditchecklistyes(list:Array<any>,store_name:string,warehouse_name:string,audit_name:string,ids:string,stock_count_mode:string,organ_brief_code:string,){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             data:[{
-                "list":[{
-                    "whole_num":whole_num,   //单据包含总量
-                    "id":id,     //物料id
-                    "consume_num":consume_num,
-                    "disperse_num":disperse_num
-                }],
+                // "list":[{
+                //     "whole_num":whole_num,   //单据包含总量
+                //     "id":id,     //物料id
+                //     "consume_num":consume_num,
+                //     "disperse_num":disperse_num
+                // }],
+                "list":list,
                 "store_name":store_name,
                 "warehouse_name":warehouse_name,
                 "audit_name":audit_name,
@@ -257,15 +258,16 @@ export class StockTakingService extends BaseService{
      * @param is_stock_report 
      * @param stock_count_mode 
      */
-    getRealdiscEntry(whole_num:string,id:number,consume_num:string,disperse_num:string,ids:string,is_stock_report:number,stock_count_mode:string){
+    getRealdiscEntry(list:Array<any>,ids:string,is_stock_report:number,stock_count_mode:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
-                "list":[{
-                    "whole_num":whole_num,  //采购单位
-                    "id":id,        //物料id
-                    "consume_num":consume_num,  //消耗单位
-                    "disperse_num":disperse_num,  //库存主单位
-                  }],
+                // "list":[{
+                //     "whole_num":whole_num,  //采购单位
+                //     "id":id,        //物料id
+                //     "consume_num":consume_num,  //消耗单位
+                //     "disperse_num":disperse_num,  //库存主单位
+                //   }],
+                "list":list,
                 "id":ids,           //单据id
                 "is_stock_report":is_stock_report,   //是否实盘录入
                 "stock_count_mode":stock_count_mode  //未盘处理方式
@@ -273,7 +275,7 @@ export class StockTakingService extends BaseService{
             "oper":"ENTRY_STOCK",
             "pagination":null
         }).then(res=>{            
-            return Promise.resolve(res);
+            return Promise.resolve(res);    
         });
     }
 

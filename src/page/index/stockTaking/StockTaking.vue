@@ -376,12 +376,12 @@ export default class stockTaking extends Vue{
     /**    
      * Saas版本   盘库详情  审核盘点单  实盘录入  确认盘点单
      */
-    private librarydetails(item:any,types:PageType,audit_status:number){
+    private librarydetails(item:any,types:PageType){
       /**
        * SAAS版本   
        */
       if(!this.InterfaceSysTypeBOH){
-          this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+          this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
           this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
           this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
           this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  

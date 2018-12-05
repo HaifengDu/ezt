@@ -327,35 +327,42 @@ export default class StockTaking extends Vue{
   /**
    *  BOH盘点单 保存并提交
    */
-  private saveReceive(){
+  private saveReceive(details:Array<any>){
         const bill_type = this.addinventory.bill_type
-        const bill_type_name = this.addinventory.name
-        const warehouse_id = this.addinventory.id
-        const busi_date = this.user.auth.busi_date 
-        const unit_name = this.selectedGood[0].unit_name 
-        const unit_id = this.selectedGood[0].unit_id
-        const consume_qty = this.selectedGood[0].consume_qty 
-        const thery_qty = this.selectedGood[0].thery_qty 
-        const acc_amt = this.selectedGood[0].acc_amt 
-        const stockChecked = 'PLATFORM_YES'
-        const acc_qty = this.selectedGood[0].acc_qty 
-        const material_num = this.selectedGood[0].material_num 
-        const stockMode = 'SCM_STOCK_HANDLE_MODE_NO'
-        const material_id = this.selectedGood[0].material_id
-        const material_name = this.selectedGood[0].material_name
-        const distributePrice1 = this.selectedGood[0].distributePrice1  
-         this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,unit_name,unit_id,consume_qty,thery_qty,acc_amt,stockChecked,acc_qty,material_num,stockMode,material_id,material_name,distributePrice1).then(res=>{ 
-               if(!this.selectedGood||this.selectedGood.length<=0){
-                  this.$toasted.show("当前货品数量为0，请添加货品！");
-                  return false;
-                } 
-                this.addBillInfo={};
-                this.setSelectedGood([]);
-                this.addBeforeBillInfo={};
-                this.cache.clear();
-                this.$toasted.success("提交成功！");
-                this.$router.push("/stockTaking");
-           })
+				const bill_type_name = this.addinventory.name
+				const warehouse_id = this.addinventory.id
+				const busi_date = this.user.auth.busi_date
+				this.selectedGood.forEach(item => {
+					let obj = {
+              "unit_name": item.unit_name,
+              "unit_id":item.unit_id,
+              "consume_qty":item.consume_qty,
+              "thery_qty":item.thery_qty,
+              "acc_amt":item.acc_amt,
+              "stockChecked":item.stockChecked,
+              "acc_qty":item.acc_qty,
+              "material_num":item.material_num,
+              "stockMode":item.stockMode,
+              "material_id":item.material_id,
+              "material_name":item.material_name,
+              "distributePrice1":item.distributePrice1
+            };
+					details.push(obj);
+        });
+				this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,details).then(res=>{
+					if(!this.selectedGood||this.selectedGood.length<=0){
+						this.$toasted.show("当前货品数量为0，请添加货品！");
+						return false;
+					}
+					this.addBillInfo={};
+					this.setSelectedGood([]);
+					this.addBeforeBillInfo={};
+					this.cache.clear();
+					this.$toasted.success("提交成功！");
+					this.$router.push("/stockTaking");
+				},err=>{
+          this.$toasted.show(err.message)
+        })
       }
   /**
    *  BOH版本   选择物料
@@ -372,6 +379,8 @@ export default class StockTaking extends Vue{
           this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
           this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
           this.$router.push({name:'PublicAddGood',query:{}})
+      },err=>{
+          this.$toasted.show(err.message)
       })
     }      
   }

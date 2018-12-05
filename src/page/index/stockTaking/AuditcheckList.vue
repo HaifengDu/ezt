@@ -215,9 +215,9 @@ export default class StockTaking extends Vue{
     })
   } 
   /**
-   *  盘点单 提交
+   *  审核盘点单 提交
    */
-  private saveReceive(){
+  private saveReceive(details:Array<any>){
      if(!this.InterfaceSysTypeBOH){
         if(!this.selectedGood||this.selectedGood.length<=0){
           this.$toasted.show("当前货品数量为0，请添加货品！");
@@ -232,25 +232,30 @@ export default class StockTaking extends Vue{
      }else{
         const id = this.selectedGood['id']
         const bill_type = this.selectedGood['bill_type']
-        const bill_type_name = this.selectedGood['bill_type_name']
+        const bill_type_name = this.details.bill_type_name
         const warehouse_id = this.selectedGood['warehouse_id']
         const busi_date = this.user.auth.busi_date 
-        const bill_status = 'SCM_AUDIT_NO' // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-        const ids = this.selectedGood['details'][0].id 
-        const stockChecked = this.selectedGood['details'][0].stockChecked
-        const acc_amt = this.selectedGood['details'][0].acc_amt 
-        const consume_qty = this.selectedGood['details'][0].consume_qty 
-        const stockMode = this.selectedGood['details'][0].stockMode
-        const material_num = this.selectedGood['details'][0].material_num 
-        const material_id = this.selectedGood['details'][0].material_id 
-        const unit_id = this.selectedGood['details'][0].unit_id
-        const thery_qty = this.selectedGood['details'][0].thery_qty 
-        const unit_name = this.selectedGood['details'][0].unit_name 
-        const material_name = this.selectedGood['details'][0].material_name
-        const acc_qty = this.selectedGood['details'][0].acc_qty 
-        const distributePrice1 = this.selectedGood['details'][0].distributePrice1 
-        const disperse_num = this.selectedGood['details'][0].disperse_num
-      this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,ids,stockChecked,acc_amt,consume_qty,stockMode,material_num,material_id,unit_id,thery_qty,unit_name,material_name,acc_qty,distributePrice1,disperse_num).then(res=>{ 
+        const bill_status = 'SCM_AUDIT_NO'    // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+        this.selectedGood['details'].forEach((item:any) => {
+					let obj = {
+              ids: item.id,
+              stockChecked: item.stockChecked,
+              acc_amt: item.acc_amt,
+              consume_qty: item.consume_qty,
+              stockMode: item.stockMode,
+              material_num: item.material_num,
+              material_id: item.material_id,
+              unit_id: item.unit_id,
+              thery_qty: item.thery_qty,
+              unit_name: item.unit_name,
+              material_name: item.material_name,
+              acc_qty:item.acc_qty,
+              distributePrice1:item.distributePrice1,
+              disperse_num:item.disperse_num
+            };
+					details.push(obj);    //details报undefined
+        });    
+      this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("当前货品数量为0，请添加货品！");
             return false;
@@ -261,11 +266,13 @@ export default class StockTaking extends Vue{
           this.cache.clear();
           this.$toasted.success("提交成功！");
           this.$router.push("/stockTaking");
+      },err=>{
+          this.$toasted.show(err.message)
       })
      }
   }
   /**
-   * 盘点单 审核
+   * 审核盘点单 提交并审核
    */
   private confirmReceive(index:any){
     let _this = this;
@@ -283,7 +290,7 @@ export default class StockTaking extends Vue{
       /**
        * 审核通过
        */
-      onConfirm () {
+      onConfirm (details:Array<any>) {
          if(!_this.InterfaceSysTypeBOH){
            if(!_this.selectedGood||_this.selectedGood.length<=0){
                 _this.$toasted.show("当前货品数量为0，请添加货品！");
@@ -298,25 +305,30 @@ export default class StockTaking extends Vue{
          }else if(_this.InterfaceSysTypeBOH){
             const id = _this.selectedGood['id']
             const bill_type = _this.selectedGood['bill_type']
-            const bill_type_name = _this.selectedGood['bill_type_name']
+            const bill_type_name = _this.details.bill_type_name
             const warehouse_id = _this.selectedGood['warehouse_id']
             const busi_date = _this.user.auth.busi_date 
             const bill_status = 'SCM_AUDIT_YES' // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-            const ids = _this.selectedGood['details'][0].id 
-            const stockChecked = _this.selectedGood['details'][0].stockChecked
-            const acc_amt = _this.selectedGood['details'][0].acc_amt 
-            const consume_qty = _this.selectedGood['details'][0].consume_qty 
-            const stockMode = _this.selectedGood['details'][0].stockMode
-            const material_num = _this.selectedGood['details'][0].material_num 
-            const material_id = _this.selectedGood['details'][0].material_id 
-            const unit_id = _this.selectedGood['details'][0].unit_id
-            const thery_qty = _this.selectedGood['details'][0].thery_qty 
-            const unit_name = _this.selectedGood['details'][0].unit_name 
-            const material_name = _this.selectedGood['details'][0].material_name
-            const acc_qty = _this.selectedGood['details'][0].acc_qty 
-            const distributePrice1 = _this.selectedGood['details'][0].distributePrice1 
-            const disperse_num = _this.selectedGood['details'][0].disperse_num
-            _this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,ids,stockChecked,acc_amt,consume_qty,stockMode,material_num,material_id,unit_id,thery_qty,unit_name,material_name,acc_qty,distributePrice1,disperse_num).then(res=>{ 
+           	_this.selectedGood['details'].forEach((item:any) => {
+              let obj = {
+                  ids: item.id,
+                  stockChecked: item.stockChecked,
+                  acc_amt: item.acc_amt,
+                  consume_qty: item.consume_qty,
+                  stockMode: item.stockMode,
+                  material_num: item.material_num,
+                  material_id: item.material_id,
+                  unit_id: item.unit_id,
+                  thery_qty: item.thery_qty,
+                  unit_name: item.unit_name,
+                  material_name: item.material_name,
+                  acc_qty:item.acc_qty,
+                  distributePrice1:item.distributePrice1,
+                  disperse_num:item.disperse_num
+                };
+              details.push(obj);
+            });
+            _this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
             if(!_this.selectedGood||_this.selectedGood.length<=0){
                 _this.$toasted.show("当前货品数量为0，请添加货品！");
                 return false;
@@ -328,7 +340,8 @@ export default class StockTaking extends Vue{
                 _this.$toasted.success("审核成功！");
                 _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
             },err=>{
-              _this.$toasted.success(err.data.errmsg);
+              // _this.$toasted.success(err.data.errmsg);
+              _this.$toasted.show(err.message)
             })
          }
       },
@@ -355,8 +368,9 @@ export default class StockTaking extends Vue{
           this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
           this.$router.push({name:'PublicAddGood',query:{newType:newType}})
         }   
+    },err=>{
+      this.$toasted.show(err.message)
     })
-       
   }
 }
 </script>

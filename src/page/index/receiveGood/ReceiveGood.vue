@@ -105,11 +105,11 @@
         </li>
         <li>
           <span class="title-search-name">源单号：</span>
-          <input type="text" ref="sourceBillNo" v-on:input="handlerChangeNo('sourceNo')" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
+          <input type="text" ref="sourceBillNo" v-on:input="handlerChangeNo($event)" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
         </li>
         <li>
           <span class="title-search-name">单据号：</span>
-          <input type="text" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" placeholder="请输入单据号" v-model="searchParam.billNo">
+          <input type="text" class="ezt-middle" v-on:input="handlerChangeNo($event)" placeholder="请输入单据号" v-model="searchParam.billNo">
         </li>
         <li>
           <span class="title-search-name">物料：</span>
@@ -130,6 +130,7 @@ import Pager from '../../../common/Pager';
 import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
+import noInput from '../../../mixin/noInput';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
 import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
@@ -141,7 +142,7 @@ import commonService from '../../../service/commonService.js';
    components:{
      TabItem
    },
-   mixins:[maskMixin],
+   mixins:[maskMixin,noInput],
    computed:{
      ...mapGetters({
        'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',
@@ -238,25 +239,6 @@ export default class ReceiveGood extends Vue{
         item.active = item.name == this.$route.params.purStatus;
       })
     } 
-  }
-  /**
-   * 单号输入限制
-   */
-  private handlerChangeNo(item:any){
-    let val = this.searchParam[item];
-    if(val){
-      if(val!=""&& val.length>=20 ){
-        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-        val = val.replace(/[^\w\d\_]/g, "");
-        val = val.substr(0, 20);
-        this.searchParam[item] = val;
-      }else{
-        // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-        val = val.replace(/[^\w\d\_]/g, "");
-        this.searchParam[item] = val;
-      }
-    } 
-    // this.searchParam[item] = commonService.handlerChangeNo(this.searchParam,item);  
   }
   /**
    * 查询 收货类型、来货单位

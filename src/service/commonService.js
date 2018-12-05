@@ -89,23 +89,6 @@ const commonService ={
             0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59
         ];
         return minutes;
-    },
-    handlerChangeNo(searchParam,item){
-        let val = searchParam[item];
-        if(val){
-            if(val!=""&& val.length>=20 ){
-                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-                val = val.replace(/[^\w\d\_]/g, "");
-                val = val.substr(0, 20);
-                // this.searchParam[item] = val;
-            }else{
-                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-                val = val.replace(/[^\w\d\_]/g, "");
-                // this.searchParam[item] = val;
-            }
-            return val;
-        }   
     }
-    
 }
 export default commonService;

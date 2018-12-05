@@ -94,7 +94,7 @@
                 </li>
                 <li>
                     <span class="title-search-name">单据：</span>
-                    <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo('billNo')" v-model="searchParam.billNo">
+                    <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo($event)" v-model="searchParam.billNo">
                 </li>
                 <li>
                     <span class="title-search-name">物料：</span>
@@ -115,6 +115,7 @@ import Pager from "../../../common/Pager";
 import { TabItem, LoadingPlugin } from "vux";
 import { mapActions, mapGetters } from "vuex";
 import { maskMixin } from "../../../helper/maskMixin";
+import noInput from '../../../mixin/noInput';
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
 import { StoreAllotService} from '../../../service/StoreAllotService';
@@ -125,7 +126,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
     components: {
         TabItem
     },
-    mixins: [maskMixin],
+    mixins: [maskMixin,noInput],
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
@@ -358,25 +359,6 @@ export default class allotment extends Vue{
     private goBack(){
         this.$router.push('/');
     }
-    /**
-     * 单号输入限制
-     */
-    private handlerChangeNo(item:any){
-        let val = this.searchParam[item];
-        if(val){
-            if(val!=""&& val.length>=20 ){
-                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-                val = val.replace(/[^\w\d\_]/g, "");
-                val = val.substr(0, 20);
-                this.searchParam[item] = val;
-            }else{
-                // val = val.replace(new RegExp("[`~!@#$%^&*()+=|{}':;',\\[\\].<>/?~！@#￥%……&*（）+|{}【】‘；：”“’。，、？]+", "gm"), "");
-                val = val.replace(/[^\w\d\_]/g, "");
-                this.searchParam[item] = val;
-            }
-        }    
-    }
-    
 }
 </script>
 <style lang="less" scoped>

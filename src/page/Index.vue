@@ -105,7 +105,8 @@
 import Vue from 'vue'
 import {Component} from "vue-property-decorator"
 import IUser from "../interface/IUserModel"
-import LoginService from "../service/LoginService"
+import { FactoryService } from "../factory/FactoryService";
+import { IIndexService } from '../interface/service/IIndexService';
 import {mapGetters,mapActions} from "vuex";
 import {maskMixin} from "../helper/maskMixin";
 import ErrorMsg from "../model/ErrorMsg";
@@ -138,7 +139,7 @@ export default class Index extends Vue{
     */
    private isFirstStore:boolean;
    private selected = 'index';
-   private service:LoginService;
+   private service:IIndexService;
    private user:IUser;
    private titleSelect:boolean=false;
    private newEle:any={};
@@ -149,7 +150,8 @@ export default class Index extends Vue{
    private tabStatus:boolean=true;//门店下拉默认显示全部门店 
    private testData:any[];
     created() {
-      this.service = LoginService.getInstance(); 
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createIndex();
       this.testData = this.user.auth.storeAll;
       this.storeGroupData = commonService.sortLetter(this.user.auth.storeAll||[]); 
     }

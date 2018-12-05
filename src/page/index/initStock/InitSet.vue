@@ -60,7 +60,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
-import LoginService from "../../../service/LoginService";
+import { FactoryService } from "../../../factory/FactoryService";
+import { IIndexService } from '../../../interface/service/IIndexService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import ObjectHelper from '../../../common/objectHelper'
@@ -73,7 +74,7 @@ declare var mobiscroll:any;//全局定义日历
 export default class InitStock extends Vue{
     private cache = CachePocily.getInstance();
     private isCheckDay:boolean=false;
-    private service:LoginService;
+    private service:IIndexService;
     private setObj:any={
             accountCheckDate:"12-31",//财务结算日期
             stockMonthDate:'A',//库存月结日
@@ -86,7 +87,8 @@ export default class InitStock extends Vue{
         if(this.cache.getData(CACHE_KEY.INITSTOCK_SETTING)){//要货日期 的时间（）
             this.setObj = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SETTING));
         }      
-        this.service = LoginService.getInstance(); 
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createIndex();
     }
     mounted(){   
            

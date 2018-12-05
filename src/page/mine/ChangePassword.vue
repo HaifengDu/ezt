@@ -30,11 +30,12 @@
 import Vue from 'vue'
 import {Component} from "vue-property-decorator"
 import ErrorMsg from "../../model/ErrorMsg"
-import LoginService from "../../service/LoginService"
 import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
 import { cacheKey } from "../../config/cacheKey";
 import { setTimeout } from 'timers';
+import { ILoginService } from '../../interface/service/ILoginService';
+import { FactoryService } from '../../factory/FactoryService';
 @Component({
    components:{
   
@@ -42,11 +43,12 @@ import { setTimeout } from 'timers';
 })
 export default class Index extends Vue{
     private password:any={};
-    private service:LoginService;
+    private service:ILoginService;
     private cache = CachePocily.getInstance();
   
     created() {
-      this.service = LoginService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createLogin();
     }
     mounted(){
       

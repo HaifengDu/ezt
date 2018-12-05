@@ -1,4 +1,3 @@
-import LoginService from "./LoginService";
 import mixins from "../common/Mixin";
 import { IUser } from "../interface/IUserModel";
 import { BaseService } from "./BaseService";
@@ -10,10 +9,8 @@ import { IPagerData } from "../interface/IPagerData";
 export class NeedGoodService extends BaseService{   
 
     private static _instance: NeedGoodService;
-    private loginService:LoginService;
     private constructor() {   
         super(ERequestType.AppOrder)
-        this.loginService = LoginService.getInstance();
     } 
     getPsList(pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}homepage/post`,{

@@ -26,6 +26,7 @@
                 </div>
             </div>           
         </div>
+        <!-- <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo($event)" v-model="user.billNo"> -->
         <div class="login-btn">
             <p @click="login">登录</p>
         </div>
@@ -37,46 +38,58 @@ import Vue from 'vue'
 import {Component} from "vue-property-decorator"
 import IUser from "../interface/IUserModel"
 import ErrorMsg from "../model/ErrorMsg"
-import LoginService from "../service/LoginService"
-import BOHLoginService from '../service/BOHLoginService'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { FactoryService } from "../factory/FactoryService";
+import { ILoginService } from "../interface/service/ILoginService";
+import noInput from "../mixin/noInput";
+
 @Component({
-     computed:{
-     ...mapGetters({
-       InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
-     })
-   }
+    computed:{
+    ...mapGetters({
+        InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
+    }),
+   },
+    mixins:[noInput]
 })
 export default class Login extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private user:IUser={};
-    private service:LoginService;
-    private BOHservice:BOHLoginService;
+    private service:ILoginService;
     created() {
-        this.service = LoginService.getInstance();
-        this.BOHservice = BOHLoginService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createLogin();
     }
 
     private clear(key:string){
         this.user[key] = '';
     }
 
+    mounted() {
+        // this.$toasted.show("asjdfkjaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglh");   
+    }
+
     private login(){
-        if(!this.InterfaceSysTypeBOH){
-            this.service.login(this.user).then(res=>{//SAAS登录 
-                console.log("登录成功");
-                this.$router.replace({path:'/'})
-            },err=>{       
-                this.$toasted.show(err.message);
-            });
-        }else{
-            this.BOHservice.login(this.user).then(res=>{//BOH登录 
-                console.log("登录成功");
-                this.$router.replace({path:'/'})
-            },err=>{       
-                this.$toasted.show(err.message);
-            });
-        }        
+        this.service.login(this.user).then(res=>{//SAAS登录 
+            console.log("登录成功");
+            this.$router.replace({path:'/'})
+        },err=>{       
+            this.$toasted.show(err.message);
+        });
+        // if(!this.InterfaceSysTypeBOH){
+        //     this.service.login(this.user).then(res=>{//SAAS登录 
+        //         console.log("登录成功");
+        //         this.$router.replace({path:'/'})
+        //     },err=>{       
+        //         this.$toasted.show(err.message);
+        //     });
+        // }else{
+        //     this.BOHservice.login(this.user).then(res=>{//BOH登录 
+        //         console.log("登录成功");
+        //         this.$router.replace({path:'/'})
+        //     },err=>{       
+        //         this.$toasted.show(err.message);
+        //     });
+        // }        
     }
 }
 </script>

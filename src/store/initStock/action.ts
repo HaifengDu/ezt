@@ -1,9 +1,6 @@
 import { Action } from "vuex";
 import initStockType from "./mutation-types";
 import IRootState from "../../interface/store/IRootState";
-import { InitStockService } from "../../service/InitStockService";
-import Pager from "../../common/Pager";
-const initStockService = InitStockService.getInstance();
 // export const updateGoodList:Action<any,IRootState> = ({commit},goodList:[])=>{
 //     commit(ReceiveGoodType.UPDATE_GOODLIST, goodList);
 // };

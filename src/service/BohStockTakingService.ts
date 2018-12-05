@@ -1,13 +1,10 @@
-import BOHLoginService from "./BOHLoginService";
 import { BaseService } from "./BaseService";   
 import { ERequestType } from "../enum/ERequestType";
 import Axios from "axios";
 export class BohStockTakingService extends BaseService{   
     private static _instance: BohStockTakingService;
-    private BOHLoginService:BOHLoginService;  
     private constructor() {
         super(ERequestType.Boh)
-        this.BOHLoginService = BOHLoginService.getInstance();
     }
     /**
      * BOH版本  盘库列表页

@@ -56,9 +56,9 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component} from "vue-property-decorator"
+import { FactoryService } from "../../factory/FactoryService";
+import { ILoginService } from '../../interface/service/ILoginService';
 import IUser from "../../interface/IUserModel"
-import LoginService from "../../service/LoginService"
-import BOHLoginService from '../../service/BOHLoginService';
 import {mapGetters} from "vuex";
 declare var mobiscroll:any;
 @Component({
@@ -76,14 +76,13 @@ export default class Mine extends Vue{
   private InterfaceSysTypeBOH:Boolean;
   private users:IUser;
   private user:any;
-  private service:LoginService;
-  private BOHservice:BOHLoginService;
+  private service:ILoginService;
   private balancAmt:number=0;
   // private isExit:boolean=false;
   
   created() {
-    this.service = LoginService.getInstance();     
-    this.BOHservice = BOHLoginService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createLogin();
     this.checkBalance();
   }
   mounted(){
@@ -98,16 +97,9 @@ export default class Mine extends Vue{
     this.$vux.confirm.show({
         // 组件除show外的属性
         onConfirm () {
-          if(!_this.InterfaceSysTypeBOH){
             _this.service.logout().then(res=>{//SAAS退出
               _this.$router.replace({path:'/login'});
-            });
-          }else{
-            _this.BOHservice.logout().then(res=>{//BOH退出
-              _this.$router.replace({path:'/login'});
-            })
-          }
-         
+            });         
         },
         content:'请确认是否退出当前用户？',
     })   
@@ -116,11 +108,9 @@ export default class Mine extends Vue{
    * 查询余额
    */
   private checkBalance(){
-    if(!this.InterfaceSysTypeBOH){//SAAS才有余额查询
-      this.service.checkBalance().then(res=>{
-        this.balancAmt=res.data.data[0].balance_amount
-      })
-    }
+    // this.service.checkBalance().then(res=>{
+    //   this.balancAmt=res.data.data[0].balance_amount
+    // })
    
   }
   //后退

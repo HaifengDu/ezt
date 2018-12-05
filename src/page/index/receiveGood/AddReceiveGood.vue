@@ -165,7 +165,7 @@ export default class ReceiveGood extends Vue{
     this.getSupplierList();  //供应商下拉列表
     this.getWarehouseList(); //仓库下拉列表
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
+      this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     //  this.getGoodList();

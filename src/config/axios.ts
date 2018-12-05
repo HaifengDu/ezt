@@ -101,7 +101,7 @@ _.extend(Axios.defaults,{
         if (respData.errcode == 0) {
             return respData
         }
-        if(respData.errcode==1 || respData.errcode==37 || respData.errcode==39){
+        if("errcode" in respData){
             (<any>window).ResponseError = ResponseError;
            throw new (<any>ResponseError)(respData.errmsg||errorResMsg,respData);
         }

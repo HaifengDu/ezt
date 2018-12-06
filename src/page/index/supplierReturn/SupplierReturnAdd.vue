@@ -107,7 +107,8 @@
 import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
 import {mapActions,mapGetters} from "vuex";
-import {SupplierReturnService} from '../../../service/SupplierReturnService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { ISupplierReturnService } from '../../../interface/service/ISupplierReturnService';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -130,7 +131,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class ReturnGood extends Vue{
     private cache = CachePocily.getInstance();
-    private service : SupplierReturnService;
+    private service : ISupplierReturnService;
     /**
      * 调出仓库列表
      *  */
@@ -195,7 +196,8 @@ export default class ReturnGood extends Vue{
       
     }  
     created(){
-        this.service = SupplierReturnService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createSupplierReturn();
         this.getSupplierList(); //供应商下拉列表
         this.getWarehouseList(); //仓库下拉列表
         if(this.cache.getData(CACHE_KEY.SOURCERBILLLIST)){

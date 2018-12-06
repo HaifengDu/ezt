@@ -93,7 +93,8 @@
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
-import { StoreAllotService} from '../../../service/StoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IStoreAllotService } from '../../../interface/service/IStoreAllotService';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -117,7 +118,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
     private user:any;
-    private service : StoreAllotService;
+    private service : IStoreAllotService;
     private materialSetting:any;
     private addBillInfo:any = {};
     private selectedGood:any[];//store中selectedGood的值
@@ -144,7 +145,8 @@ export default class allotment extends Vue{
       
     }
     created(){
-        this.service = StoreAllotService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createStoreAllot();
         this.handlerInStore();//调入门店 下拉列表
         this.handlerOutWare();//调出仓库 下拉列表
         this.addBillInfo.inStore = this.pullList.inStoreList[0].type;

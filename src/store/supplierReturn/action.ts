@@ -1,9 +1,6 @@
 import { Action } from "vuex";
 import RootType from "./mutation-types";
 import IRootState from "../../interface/store/IRootState";
-import { SupplierReturnService } from "../../service/SupplierReturnService";
-import Pager from "../../common/Pager";
-const supplierReturnService = SupplierReturnService.getInstance();
 export const updateGoodList:Action<any,IRootState> = ({commit},goodList:[])=>{
     commit(RootType.UPDATE_GOODLIST, goodList);
 };

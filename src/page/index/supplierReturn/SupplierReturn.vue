@@ -112,7 +112,8 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
-import {SupplierReturnService} from '../../../service/SupplierReturnService'
+import { FactoryService } from '../../../factory/FactoryService'
+import { ISupplierReturnService } from '../../../interface/service/ISupplierReturnService';
 import Pager from '../../../common/Pager';
 import {TabItem,LoadingPlugin} from 'vux'
 import { TabList } from '../../../common/ITab';
@@ -142,7 +143,7 @@ declare var mobiscroll:any;
 })
 export default class ReturnGood extends Vue{
   private cache = CachePocily.getInstance();
-  private service: SupplierReturnService;
+  private service: ISupplierReturnService;
   private pager:Pager;
   private getGoodList:INoopPromise
   private addMaskClickListener:(...args:any[])=>void;
@@ -195,7 +196,8 @@ export default class ReturnGood extends Vue{
       active:false
     });
     this.pager = new Pager().setLimit(20)
-    this.service = SupplierReturnService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createSupplierReturn();
     this.getSupplierList();// 供货机构列表
   }
 

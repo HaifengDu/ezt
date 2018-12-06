@@ -9,27 +9,39 @@ import { IInStoreAllotService } from "../interface/service/IInStoreAllotService"
 import InStoreAllotService from "../service/inStoreAllot/InStoreAllotService";
 import { IReceiveGoodService } from "../interface/service/IReceiveGoodService";
 import ReceiveGoodService from "../service/receiveGood/ReceiveGoodService";
+import { ISupplierReturnService } from "../interface/service/ISupplierReturnService";
+import SupplierReturnService from "../service/supplierReturn/SupplierReturnService";
+import { IStoreAllotService } from "../interface/service/IStoreAllotService";
+import StoreAllotService from "../service/storeAllot/StoreAllotService";
 
 export class SaasFactroyService implements IFactory { 
 
-    public createLogin(): ILoginService{
+    public createLogin(): ILoginService{//saas登录
         return LoginService.getInstance();
     }
 
-    public createIndex(): IIndexService{
+    public createIndex(): IIndexService{//saas首页操作
         return IndexService.getInstance();
     }
 
-    public createInitStock(): IInitStockService{
+    public createInitStock(): IInitStockService{//saas库存初始化
         return InitStockService.getInstance();
     }
 
-    public createInStoreAllot(): IInStoreAllotService{
+    public createInStoreAllot(): IInStoreAllotService{//saas店内调拨
         return InStoreAllotService.getInstance();
     }
 
-    public createReceiveGood(): IReceiveGoodService{
+    public createReceiveGood(): IReceiveGoodService{//saas收货
         return ReceiveGoodService.getInstance();
+    }
+
+    public createSupplierReturn(): ISupplierReturnService{//saas退货
+        return SupplierReturnService.getInstance();
+    }
+
+    public createStoreAllot(): IStoreAllotService{//saas店间平调
+        return StoreAllotService.getInstance();
     }
 
     private static _instance: SaasFactroyService;

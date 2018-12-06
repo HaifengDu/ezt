@@ -5,7 +5,6 @@ import { RootType } from "./mutation-types";
 import { IUser } from "../interface/IUserModel";
 import * as actions from "./action"
 import supplierReturn from "./supplierReturn";
-import needGood from "./needGood";
 import stockTaking from "./stockTaking"
 import receiveGood from './receiveGood'
 import publicAddGood from './PublicAddGood';
@@ -55,7 +54,6 @@ export default new Store<IRootState>({
     },
     modules:{
         supplierReturn,//退货
-        needGood,//要货
         stockTaking,//盘库
         receiveGood,//收货
         publicAddGood,//选择货品

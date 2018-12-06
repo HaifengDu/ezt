@@ -42,12 +42,7 @@
           </div>
         </div>
         <ul class="icon-menu"  v-if="!titleSelect"><!--主页内容菜单-->
-            <!-- <li @click="renderUrl('/needGood')">
-              <div class="yaohuo">
-                  <span class="ezt-reddot-s"></span>
-              </div>
-              <span>要货</span></li>
-            <li @click="noAction()">
+            <!--<li @click="noAction()">
               <div class="jiadan"></div>
               <span>加单</span></li> -->
             <li @click="renderUrl('/receiveGood')">

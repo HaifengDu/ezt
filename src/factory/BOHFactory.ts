@@ -9,28 +9,40 @@ import { IInStoreAllotService } from "../interface/service/IInStoreAllotService"
 import BOHInStoreAllotService from "../service/inStoreAllot/BOHInStoreAllotService";
 import { IReceiveGoodService } from "../interface/service/IReceiveGoodService";
 import BOHReceiveGoodService from "../service/receiveGood/BOHReceiveGoodService";
+import { ISupplierReturnService } from "../interface/service/ISupplierReturnService";
+import BOHSupplierReturnService from "../service/supplierReturn/BOHSupplierReturnService";
+import { IStoreAllotService } from "../interface/service/IStoreAllotService";
+import BOHStoreAllotService from "../service/storeAllot/BOHStoreAllotService";
 
 
 export class BOHFactroyService implements IFactory {   
 
-    public createLogin(): ILoginService{
+    public createLogin(): ILoginService{ //BOH登录
         return BOHLoginService.getInstance();
     }
 
-    public createIndex(): IIndexService{
+    public createIndex(): IIndexService{ //boh首页操作功能
         return BOHIndexService.getInstance();
     }
 
-    public createInitStock(): IInitStockService{
+    public createInitStock(): IInitStockService{ //boh库存初始化
         return BOHInitStockService.getInstance();
     }
 
-    public createInStoreAllot(): IInStoreAllotService{
+    public createInStoreAllot(): IInStoreAllotService{//boh店内调拨
         return BOHInStoreAllotService.getInstance();
     }
 
-    public createReceiveGood(): IReceiveGoodService{
+    public createReceiveGood(): IReceiveGoodService{ //boh收货
         return BOHReceiveGoodService.getInstance();
+    }
+
+    public createSupplierReturn(): ISupplierReturnService{ //boh退货
+        return BOHSupplierReturnService.getInstance();
+    }
+
+    public createStoreAllot(): IStoreAllotService{ //boh 店间平调
+        return BOHStoreAllotService.getInstance();
     }
 
     private static _instance: BOHFactroyService;

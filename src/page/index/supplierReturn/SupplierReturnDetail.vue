@@ -69,7 +69,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import {Component,Watch} from 'vue-property-decorator';
-import {SupplierReturnService} from '../../../service/SupplierReturnService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { ISupplierReturnService } from '../../../interface/service/ISupplierReturnService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -79,7 +80,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class ReturnGood extends Vue{
     private cache = CachePocily.getInstance();
-    private service: SupplierReturnService;
+    private service: ISupplierReturnService;
     /**
      * 详情页物品信息
      */
@@ -88,8 +89,9 @@ export default class ReturnGood extends Vue{
      * 详情页信息
      */
     private detailList:any = {};
-    created() {     
-        this.service = SupplierReturnService.getInstance(); 
+    created() {   
+        const factory = FactoryService.getInstance().createFactory();  
+        this.service = factory.createSupplierReturn();
     }
     mounted() {        
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_DETAILLIST)){

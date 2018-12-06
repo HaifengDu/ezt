@@ -3,8 +3,6 @@ import Router from 'vue-router';
 import {interceptRouter} from "./intercept";
 import Index from "@/page/Index.vue";
 import Login from "@/page/Login.vue";
-import NeedGood from '@/page/index/needGood/NeedGood.vue';
-import SelectTemplate from '@/page/index/needGood/SelectTemplate.vue';
 import ReceiveGood from '@/page/index/receiveGood/ReceiveGood.vue';//收货页
 import ComfirmAccept from '@/page/index/receiveGood/ConfirmAccept.vue';//收货修改页
 import AddReceiveGood from '@/page/index/receiveGood/AddReceiveGood.vue';//新增收货
@@ -71,14 +69,6 @@ const router = new Router({
       path:"/",
       name:"Home",
       component:Index
-    },{
-      path:"/needGood",
-      name:"NeedGood",
-      component:NeedGood
-    },{
-      path:"/selectTemplate",
-      name:"SelectTemplate",
-      component:SelectTemplate
     },{
       path:"/receiveGood",
       name:"ReceiveGood",

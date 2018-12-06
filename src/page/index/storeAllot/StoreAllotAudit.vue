@@ -85,7 +85,8 @@ import {Component, Watch} from "vue-property-decorator";
 import ObjectHelper from '../../../common/objectHelper'
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { mapActions, mapGetters } from 'vuex';
-import { StoreAllotService } from '../../../service/StoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IStoreAllotService } from '../../../interface/service/IStoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -105,7 +106,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
     private materialSetting:any;
-    private service : StoreAllotService;
+    private service : IStoreAllotService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
     private addBillInfo: any = {};
@@ -134,7 +135,8 @@ export default class allotment extends Vue{
         (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
     }
     created(){
-        this.service =  StoreAllotService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service =  factory.createStoreAllot();
     }
      /**
      * 提交并审核 调拨单

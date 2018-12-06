@@ -118,7 +118,8 @@ import { maskMixin } from "../../../helper/maskMixin";
 import noInput from '../../../mixin/noInput';
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
-import { StoreAllotService} from '../../../service/StoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IStoreAllotService } from '../../../interface/service/IStoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -130,7 +131,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service: StoreAllotService;
+    private service: IStoreAllotService;
     private pager:Pager;
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
@@ -176,7 +177,8 @@ export default class allotment extends Vue{
             active:false
         });
        this.pager = new Pager().setLimit(20)
-       this.service = StoreAllotService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createStoreAllot();
        this.handlerOutWare(); //调出仓库 下拉列表
        this.handlerInStore(); //调入门店  下拉列表
     }

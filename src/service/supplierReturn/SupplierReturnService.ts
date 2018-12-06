@@ -1,12 +1,9 @@
-import mixins from "../common/Mixin";
-import { IUser } from "../interface/IUserModel";
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import store from "../store"
-import { IPagerData } from "../interface/IPagerData";
-export class SupplierReturnService extends BaseService{
+import { ISupplierReturnService } from "../../interface/service/ISupplierReturnService";
+import { IPagerData } from "../../interface/IPagerData";
+export class SupplierReturnService extends BaseService implements ISupplierReturnService{
 
     private static _instance: SupplierReturnService;
     private constructor() {

@@ -69,7 +69,8 @@
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator";
 import { mapActions, mapGetters } from 'vuex';
-import { StoreAllotService} from '../../../service/StoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IStoreAllotService } from '../../../interface/service/IStoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -83,7 +84,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class allotment extends Vue{
     private materialSetting:any;
     private cache = CachePocily.getInstance();
-    private service: StoreAllotService;
+    private service: IStoreAllotService;
     private goodList:any[]=[];//详情页物品信息
     private detailList:any={};//详情页信息
     mounted(){
@@ -112,7 +113,8 @@ export default class allotment extends Vue{
         }
     }
     created(){
-        this.service = StoreAllotService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createStoreAllot();
     }
     /**
      * computed demo

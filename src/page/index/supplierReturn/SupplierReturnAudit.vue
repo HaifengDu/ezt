@@ -86,11 +86,13 @@ import Vue from 'vue'
 import {mapActions,mapGetters} from 'vuex';
 import {Component,Watch} from 'vue-property-decorator';
 import { INoop, INoopPromise } from '../../../helper/methods';
-import {SupplierReturnService} from '../../../service/SupplierReturnService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { ISupplierReturn } from '../../../interface/service/ISupplierReturn';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
+import { ISupplierReturnService } from '../../../interface/service/ISupplierReturnService';
 @Component({
    components:{
    },
@@ -108,6 +110,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class ReturnGood extends Vue{
     private cache = CachePocily.getInstance();
+    private service: ISupplierReturnService;
     private selectedGood: any[];
     private setSelectedGood: INoopPromise;
     private addBillInfo:any={};
@@ -139,6 +142,10 @@ export default class ReturnGood extends Vue{
             this.setSelectedGood(this.addBillInfo.goodList); 
         }
         (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
+    }
+    created(){
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createSupplierReturn();
     }
     /**
      * 提交

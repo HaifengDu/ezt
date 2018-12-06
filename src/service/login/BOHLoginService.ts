@@ -63,7 +63,7 @@ export class BOHLoginService extends BaseService implements ILoginService{
         // return promise;
     }
     autoLogin(){
-        let user = this.cache.getData(cacheKey.USER_MODEL);
+        let user = this.cache.getDataOnce(cacheKey.USER_MODEL);
         if(!user){
             return Promise.reject(new ErrorMsg(false,"未获取用户"));
         }

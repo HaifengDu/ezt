@@ -356,21 +356,21 @@ export default class StockTaking extends Vue{
    * 选择货品
    */
   private selectMaterials(newType:any){ 
-    this.BOHservice.getBohClassifiedSearch(this.details.warehouse_id).then(res=>{ 
+    // this.BOHservice.getBohClassifiedSearch(this.details.warehouse_id).then(res=>{ 
         let goodTerm = {};
         if(this.addBillInfo){
           goodTerm={
             billsPageType: 'stocktaking',
           }     
           this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-          this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
+          // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
           this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
           this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
           this.$router.push({name:'PublicAddGood',query:{newType:newType}})
         }   
-    },err=>{
-      this.$toasted.show(err.message)
-    })
+    // },err=>{
+      // this.$toasted.show(err.message)
+    // })
   }
 }
 </script>

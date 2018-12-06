@@ -309,11 +309,12 @@ import { mapActions, mapGetters, mapMutations } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import ObjectHelper from '../../../common/objectHelper';
-import BohStockTakingService from '../../../service/BohStockTakingService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
 import { PageType } from "../../../enum/EPageType";
+import { FactoryService } from '../../../factory/FactoryService';
+import { IPublicAddGoodService } from '../../../interface/service/IPublicAddGoodService';
 import _ from "lodash";
 
 @Component({
@@ -332,7 +333,7 @@ import _ from "lodash";
    }
 })
 export default class AddGood extends Vue{
-  private BOHservice:BohStockTakingService;
+  private service:IPublicAddGoodService;
   private InterfaceSysTypeBOH:boolean;
   private addMaskClickListener:(...args:any[])=>void;
   private hideMask:()=>void;
@@ -367,7 +368,7 @@ export default class AddGood extends Vue{
   private goodBigType:any[] = [];
   private goodSmallType:any[] = [];
   private goodList:any[]=[];
-  private allType:any[] = [];
+  private allType:any[];
   private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
   private bindRemark:any={};//深拷贝存储的值 
   private restBindRemark:any={};//编辑备注时绑定的值
@@ -379,11 +380,20 @@ export default class AddGood extends Vue{
   private InventoryType:any;
   // private userpp:any[]=[];
   created(){ 
-     this.BOHservice = BohStockTakingService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createPublicGood();
+    /**
+     * 获取 类 物品列表
+     */
+    this.service.getGoodList().then(res=>{
+      this.allType = res.data;
+      this.goodBigType = this.allType;
+      this.changeSmallType(this.allType[0]);
+    })
   }
   mounted() {  
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
-      this.materialLimit = JSON.parse(this.cache.getDataOnce(CACHE_KEY.MATERIAL_LIMIT));
+      this.materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
     }
     this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
@@ -398,131 +408,24 @@ export default class AddGood extends Vue{
       }  
     }
    
-    if(!this.InterfaceSysTypeBOH){
-       this.allType = [{
-        id:1,
-        name:"牛羊肉",
-        cdata:[{
-          id:0,
-          name:"全部",
-          goodList:[{
-            id:11,
-            name:"草鱼半成品",
-            price:12,
-            returnNum:2,
-            stock:3,
-            amt:10,
-            utilname:"KG",
-            unit:"箱",
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:3,
-              list:[]
-            }
-          }]
-        }]
-      },{
-        id:2,
-        name:"成本类",
-        cdata:[{
-          id:3,
-          name:"全部",
-          goodList:[{
-            id:21,
-            name:"海参",
-            price:9,
-            amt:8,
-            returnNum:0,
-            stock:2,
-            num:0,
-            utilname:"KG",
-            unit:"箱",
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:3,
-              list:[]
-            }
-          },{
-            id:31,
-            name:"土豆",
-            price:3,
-            amt:4,
-            num:0,
-            returnNum:8,
-            stock:5,
-            utilname:"KG",
-            unit:"斤",
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:3,
-              list:[]
-            }
-          }]
-        },{
-          id:21,
-          name:"速冻类",
-          goodList:[{
-            id:211,
-            name:"牛肉",
-            price:15,
-            amt:22,
-            returnNum:2,
-            stock:8,
-            utilname:"KG",
-            unit:"斤",
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:3,
-              list:[{
-                name:"仓库一号",
-                num:0
-              },{
-                name:"仓库二号",
-                num:0
-              },{
-                name:"仓库三号",
-                num:0
-              },{
-                name:"仓库四号",
-                num:0
-              },{
-                name:"仓库五号",
-                num:0
-              },{
-                name:"仓库六号",
-                num:0
-              }]
-            }
-          }]
-        },{
-          id:22,
-          name:"演示品项",
-        }]
-      },{
-        id:3,
-        name:"222222222222222222222222",
-        cdata:[{
-          id:2,
-          name:"全部"
-        }]
-    }];
-    }
+    // if(!this.InterfaceSysTypeBOH){
+     
+    // }
     //TODO:把收藏从货品类别里抽出来
     
-    if(!this.InterfaceSysTypeBOH){
-       this.goodBigType = this.allType;
-       this.changeSmallType(this.allType[0]);
-    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-      /**
-       * BOH版本  选择货品
-       */
-      this.goodBigType = this.allType['sortList'];
-      this.changeSmallType(this.allType['sortList'][0]);
+    // if(!this.InterfaceSysTypeBOH){
+      
+    // }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+    //   /**
+    //    * BOH版本  选择货品
+    //    */
+    //   this.goodBigType = this.allType['sortList'];
+    //   this.changeSmallType(this.allType['sortList'][0]);
     }
     //TODO:默认加载货品
-  }
+  // }
   private changeSmallType(item:any){
-    if(!this.InterfaceSysTypeBOH){
+    // if(!this.InterfaceSysTypeBOH){
         this.allType.forEach((bigSort,index)=>{
           this.$set(bigSort,'active',bigSort.id == item.id);
         })    
@@ -533,25 +436,25 @@ export default class AddGood extends Vue{
         })
         this.loadGood(item.cdata[0]);
         //TODO:加载货品this.goodSmallType[0]
-    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-        /**
-         * BOH版本  盘库选择货品
-         */
-        this.BOHservice.getBohItemCategory(this.InventoryType.bill_type,item.id).then(res=>{ 
-            this.allType['sortList'].forEach((bigSort:any,index:any)=>{
-              this.$set(bigSort,'active',bigSort.id == item.id);
-            })    
-            this.typeName = item;   
-            this.goodSmallType = item.cdata;
-            (item.cdata).forEach((info:any,index:any)=>{
-              this.loadGood(info)
-            })
-            this.loadGood(item.cdata[0]);
-        })
-    }
+  //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+  //       /**
+  //        * BOH版本  盘库选择货品
+  //        */
+  //       this.BOHservice.getBohItemCategory(this.InventoryType.bill_type,item.id).then(res=>{ 
+  //           this.allType['sortList'].forEach((bigSort:any,index:any)=>{
+  //             this.$set(bigSort,'active',bigSort.id == item.id);
+  //           })    
+  //           this.typeName = item;   
+  //           this.goodSmallType = item.cdata;
+  //           (item.cdata).forEach((info:any,index:any)=>{
+  //             this.loadGood(info)
+  //           })
+  //           this.loadGood(item.cdata[0]);
+  //       })
+  //   }
   }
   private loadGood(item:any){
-    if(!this.InterfaceSysTypeBOH){
+    // if(!this.InterfaceSysTypeBOH){
        if(!item.addList){
           this.$set(item,'addList',[]);
         }else{
@@ -560,7 +463,7 @@ export default class AddGood extends Vue{
         //TODO:item.id加载货品
         _.forEach(item.goodList,good=>{
           this.$set(good,'active',false);
-          const index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
+          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
           if(index>=0){
             ObjectHelper.merge(good,this.selectedGoodList[index],true);
             this.selectedGoodList[index] = good;
@@ -569,25 +472,25 @@ export default class AddGood extends Vue{
         });
         this.goodList = item.goodList;
         this.typeName=item;  
-    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-        if(!item.addList){
-          this.$set(item,'addList',[]);
-        }else{
-          item.addList = [];
-        }
-        //TODO:item.id加载货品
-        _.forEach(item.goodsList,good=>{
-          this.$set(good,'active',false);
-          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-          if(index>=0){
-            ObjectHelper.merge(good,this.selectedGoodList[index],true);
-            this.selectedGoodList[index] = good;
-            item.addList.push(good);
-          }
-        });
-        this.goodList = item.goodsList;
-        this.typeName=item;  
-    }
+  //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+  //       if(!item.addList){
+  //         this.$set(item,'addList',[]);
+  //       }else{
+  //         item.addList = [];
+  //       }
+  //       //TODO:item.id加载货品
+  //       _.forEach(item.goodsList,good=>{
+  //         this.$set(good,'active',false);
+  //         const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+  //         if(index>=0){
+  //           ObjectHelper.merge(good,this.selectedGoodList[index],true);
+  //           this.selectedGoodList[index] = good;
+  //           item.addList.push(good);
+  //         }
+  //       });
+  //       this.goodList = item.goodsList;
+  //       this.typeName=item;  
+  //   }
   }
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
@@ -617,7 +520,7 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
-    if(!this.InterfaceSysTypeBOH){
+    // if(!this.InterfaceSysTypeBOH){
         let _this = this;
         //退货数量 限制处理
         if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
@@ -668,32 +571,6 @@ export default class AddGood extends Vue{
           }
         }else{
           //删除
-          const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-          if(index>=0){
-            this.selectedGoodList.splice(index,1);
-          }
-          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
-          if(smallIndex>=0){
-            this.typeName.addList.splice(smallIndex,1);
-          }
-        }
-    }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-      if(item.num>0){
-          //新增
-          var ret = this.selectedGoodList.find((value:any)=>{
-            return item.material_id == value.material_id;
-          });
-          if(!ret){
-            this.selectedGoodList.push(item);
-          }
-          var smallRet = this.typeName.addList.find((value:any)=>{
-            return item.material_id == value.material_id;
-          })
-          if(!smallRet){       
-            this.typeName.addList.push(item);
-          }
-        }else{
-          //删除
           const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
           if(index>=0){
             this.selectedGoodList.splice(index,1);
@@ -703,7 +580,33 @@ export default class AddGood extends Vue{
             this.typeName.addList.splice(smallIndex,1);
           }
         }
-    }
+    // }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+    //   if(item.num>0){
+    //       //新增
+    //       var ret = this.selectedGoodList.find((value:any)=>{
+    //         return item.material_id == value.material_id;
+    //       });
+    //       if(!ret){
+    //         this.selectedGoodList.push(item);
+    //       }
+    //       var smallRet = this.typeName.addList.find((value:any)=>{
+    //         return item.material_id == value.material_id;
+    //       })
+    //       if(!smallRet){       
+    //         this.typeName.addList.push(item);
+    //       }
+    //     }else{
+    //       //删除
+    //       const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+    //       if(index>=0){
+    //         this.selectedGoodList.splice(index,1);
+    //       }
+    //       const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+    //       if(smallIndex>=0){
+    //         this.typeName.addList.splice(smallIndex,1);
+    //       }
+    //     }
+    // }
   }
   /**
    * 查看已选择货品 显示/隐藏
@@ -722,11 +625,11 @@ export default class AddGood extends Vue{
    * 删除已选择货品
    */
   private selectedDelGood(item:any){
-      const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+      const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
       this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
       this.selectedGoodList.splice(index,1);
       if(this.typeName.addList.length>0){
-        const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+        const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
         this.typeName.addList[smallIndex].num=0;
         this.typeName.addList.splice(smallIndex,1);
       }

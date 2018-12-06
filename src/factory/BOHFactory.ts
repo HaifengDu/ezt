@@ -15,6 +15,8 @@ import { IStoreAllotService } from "../interface/service/IStoreAllotService";
 import BOHStoreAllotService from "../service/storeAllot/BOHStoreAllotService";
 import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
 import BOHOrderGoodsService from "../service/orderGood/BOHOrderGoodsService";
+import { IPublicAddGoodService } from "../interface/service/IPublicAddGoodService";
+import BOHPublicAddGoodService from "../service/publicAddGood/BOHPublicAddGoodService";
 
 
 export class BOHFactroyService implements IFactory {   
@@ -49,6 +51,10 @@ export class BOHFactroyService implements IFactory {
 
     public createOrderGood(): IOrderGoodsService{ //订货
         return BOHOrderGoodsService.getInstance();
+    }
+
+    public createPublicGood(): IPublicAddGoodService{//boh选择物料
+        return BOHPublicAddGoodService.getInstance();
     }
 
     private static _instance: BOHFactroyService;

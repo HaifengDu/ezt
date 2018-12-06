@@ -15,6 +15,8 @@ import { IStoreAllotService } from "../interface/service/IStoreAllotService";
 import StoreAllotService from "../service/storeAllot/StoreAllotService";
 import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
 import OrderGoodsService from "../service/orderGood/OrderGoodsService";
+import { IPublicAddGoodService } from "../interface/service/IPublicAddGoodService";
+import PublicAddGoodService from "../service/publicAddGood/PublicAddGoodService";
 
 export class SaasFactroyService implements IFactory { 
 
@@ -48,6 +50,10 @@ export class SaasFactroyService implements IFactory {
 
     public createOrderGood(): IOrderGoodsService{//订货
         return OrderGoodsService.getInstance();
+    }
+
+    public createPublicGood(): IPublicAddGoodService{//saas选择物料
+        return PublicAddGoodService.getInstance();
     }
 
     private static _instance: SaasFactroyService;

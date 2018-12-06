@@ -194,11 +194,11 @@ export class BohStockTakingService extends BaseService{
         });
     }
     
-    /**
+  /*   *
      * BOH版本   编制盘点单新增物品  （按分类检索）
      * @param bill_type 
      */
-    getBohClassifiedSearch(bill_type:string){
+   /*  getBohClassifiedSearch(bill_type:string){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -216,14 +216,14 @@ export class BohStockTakingService extends BaseService{
         },config).then(res=>{              
             return Promise.resolve(res);
         });
-    }
+    } */
 
-    /**
+   /*  *
      * BOH版本  盘点选择货品（切换物品类别）
      * @param bill_type 
      * @param goodsSortId 
      */
-    getBohItemCategory(bill_type:string,goodsSortId:number){
+   /*  getBohItemCategory(bill_type:string,goodsSortId:number){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -242,7 +242,7 @@ export class BohStockTakingService extends BaseService{
         },config).then(res=>{              
             return Promise.resolve(res);
         });
-    }
+    } */
 
     
      

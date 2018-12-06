@@ -25,8 +25,7 @@
                     </div>
                 </div>
             </div>           
-        </div>
-        <!-- <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo($event)" v-model="user.billNo"> -->
+        </div>        
         <div class="login-btn">
             <p @click="login">登录</p>
         </div>
@@ -62,10 +61,6 @@ export default class Login extends Vue{
 
     private clear(key:string){
         this.user[key] = '';
-    }
-
-    mounted() {
-        // this.$toasted.show("asjdfkjaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglhaslkfjkadsljfkladsjklfjkasldjklhahfgjhdaskjhflkadsjlvkjasdsfhjadhfgdsladjflasjdljadslfjlkadsjfhglsadjfldasjglh");   
     }
 
     private login(){

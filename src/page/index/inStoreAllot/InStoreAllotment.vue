@@ -109,7 +109,8 @@ import { maskMixin } from "../../../helper/maskMixin";
 import noInput from "../../../mixin/noInput";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
-import { InStoreAllotService} from '../../../service/InStoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IInStoreAllotService } from '../../../interface/service/IInStoreAllotService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -121,7 +122,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service: InStoreAllotService;
+    private service: IInStoreAllotService;
     private pager:Pager;
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
@@ -163,7 +164,8 @@ export default class allotment extends Vue{
             active:false
         });
        this.pager = new Pager().setLimit(20)
-       this.service = InStoreAllotService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createInStoreAllot();
        this.handlerOutWare();
     }
     mounted(){      

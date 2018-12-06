@@ -3,12 +3,13 @@ import BOHIndexService from '../service/index/BOHIndexService';
 import BOHLoginService from '../service/login/BOHLoginService';
 import { ILoginService } from "../interface/service/ILoginService";
 import { IIndexService } from "../interface/service/IIndexService";
+import { IInitStockService } from "../interface/service/IInitStockService";
+import BOHInitStockService from "../service/initStock/BOHInitStockService";
+import { IInStoreAllotService } from "../interface/service/IInStoreAllotService";
+import BOHInStoreAllotService from "../service/inStoreAllot/BOHInStoreAllotService";
 
 
-export class BOHFactroyService implements IFactory {
-    createInitStock(): import("f:/wamp/www/ezt-h5web/ezt/src/interface/service/IInitStockService").IInitStockService {
-        throw new Error("Method not implemented.");
-    }
+export class BOHFactroyService implements IFactory {   
 
     public createLogin(): ILoginService{
         return BOHLoginService.getInstance();
@@ -16,6 +17,14 @@ export class BOHFactroyService implements IFactory {
 
     public createIndex(): IIndexService{
         return BOHIndexService.getInstance();
+    }
+
+    public createInitStock(): IInitStockService{
+        return BOHInitStockService.getInstance();
+    }
+
+    public createInStoreAllot(): IInStoreAllotService{
+        return BOHInStoreAllotService.getInstance();
     }
 
     private static _instance: BOHFactroyService;

@@ -1,8 +1,9 @@
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from 'axios';
-import { IPagerData } from "../interface/IPagerData";
-export class InStoreAllotService extends BaseService{
+import { IInStoreAllotService } from "../../interface/service/IInStoreAllotService";
+import { IPagerData } from "../../interface/IPagerData";
+export class InStoreAllotService extends BaseService implements IInStoreAllotService{
     private static _instance:InStoreAllotService;
     private constructor(){
         super(ERequestType.AppOrder)

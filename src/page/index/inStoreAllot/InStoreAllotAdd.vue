@@ -88,7 +88,8 @@
 import Vue from 'vue'
 import {Component, Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
-import { InStoreAllotService} from '../../../service/InStoreAllotService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IInStoreAllotService } from '../../../interface/service/IInStoreAllotService';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
@@ -109,7 +110,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class allotment extends Vue{
     private cache = CachePocily.getInstance();
-    private service : InStoreAllotService;
+    private service : IInStoreAllotService;
     private addBillInfo:any = {
         inWarehouse:''
     };
@@ -136,7 +137,8 @@ export default class allotment extends Vue{
        
     }
     created(){
-        this.service = InStoreAllotService.getInstance();  
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createInStoreAllot(); 
         this.handlerOutWare();//调入门店 下拉列表
         this.handlerInWare();//调出仓库 下拉列表
         this.addBillInfo.outWarehouse = this.pullList.outWareList[0].type;

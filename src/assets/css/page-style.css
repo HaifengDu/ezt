@@ -732,11 +732,12 @@ input.ezt-middle{
   z-index:9999;
 }
 /*字体图标 与文字对齐方式 */
-/* .fa{
-  vertical-align: top;
-} */
 .vux-tab .vux-tab-item{
   font-size: 16px !important;
+}
+/*toasted 换行*/
+.toasted-container .toasted{
+  word-break: break-all;
 }
 
    

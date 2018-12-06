@@ -110,7 +110,8 @@ import { mapActions, mapGetters } from "vuex";
 import { maskMixin } from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from "../../../helper/methods";
 import { TabList } from "../../../common/ITab";
-import { InitStockService } from "../../../service/initStock/InitStockService";
+import { IInitStockService } from '../../../interface/service/IInitStockService'
+import { FactoryService } from '../../../factory/FactoryService';
 import { CachePocily } from "../../../common/Cache";
 import {ECache} from '../../../enum/ECache';
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -137,7 +138,7 @@ export default class InitStock extends Vue {
   private user:IUser;
   private isInit:boolean=false;//列表页初始化按钮弹出框
   private isFinish:boolean=false;//是否初始化完成提示
-  private service: InitStockService;
+  private service: IInitStockService;
   private pager: Pager;
   private getGoodList: INoopPromise;
   private addMaskClickListener: (...args: any[]) => void;
@@ -163,7 +164,8 @@ export default class InitStock extends Vue {
       active: false
     });
     this.pager = new Pager();
-    this.service = InitStockService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createInitStock();
     this.pager = new Pager().setLimit(20)
     //  this.getGoodList();
   }

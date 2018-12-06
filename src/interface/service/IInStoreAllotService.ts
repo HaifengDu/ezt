@@ -1,6 +1,6 @@
 import { AxiosPromise } from 'Axios';
-import { IPagerData } from "../IPagerData";
+import { IPagerData } from '../IPagerData';
 
-export interface IInitStockService{
+export interface IInStoreAllotService{
     getGoodList(status:string,pager:IPagerData):AxiosPromise<any>
 }

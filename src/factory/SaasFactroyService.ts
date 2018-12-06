@@ -3,11 +3,12 @@ import { ILoginService } from "../interface/service/ILoginService";
 import LoginService from "../service/login/LoginService";
 import { IIndexService } from "../interface/service/IIndexService";
 import IndexService from "../service/index/IndexService";
+import { IInitStockService } from "../interface/service/IInitStockService";
+import InitStockService from "../service/initStock/InitStockService";
+import { IInStoreAllotService } from "../interface/service/IInStoreAllotService";
+import InStoreAllotService from "../service/inStoreAllot/InStoreAllotService";
 
-export class SaasFactroyService implements IFactory {
-    createInitStock(): import("f:/wamp/www/ezt-h5web/ezt/src/interface/service/IInitStockService").IInitStockService {
-        throw new Error("Method not implemented.");
-    }
+export class SaasFactroyService implements IFactory { 
 
     public createLogin(): ILoginService{
         return LoginService.getInstance();
@@ -15,6 +16,14 @@ export class SaasFactroyService implements IFactory {
 
     public createIndex(): IIndexService{
         return IndexService.getInstance();
+    }
+
+    public createInitStock(): IInitStockService{
+        return InitStockService.getInstance();
+    }
+
+    public createInStoreAllot(): IInStoreAllotService{
+        return InStoreAllotService.getInstance();
     }
 
     private static _instance: SaasFactroyService;

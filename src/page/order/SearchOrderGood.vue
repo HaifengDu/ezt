@@ -55,7 +55,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { OrderGoodsService} from '../../service/OrderGoodsService'
+import { FactoryService } from '../../factory/FactoryService';
+import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
 import CACHE_KEY from '../../constans/cacheKey'
 import { CachePocily } from "../../common/Cache"
 import { ECache } from "../../enum/ECache"
@@ -79,14 +80,15 @@ declare var mobiscroll:any;
 })
 export default class OrderGoods extends Vue{
     private cache = CachePocily.getInstance();
-    private service: OrderGoodsService;
+    private service: IOrderGoodsService;
     private details:any[] = [];  //物料明细
     private searchParam:{}={};
     private allLoaded:boolean = false; //分页数据加载更多
     private pager:Pager;
-    created() {     
-       this.service = OrderGoodsService.getInstance();
-       this.pager = new Pager().setLimit(20)
+    created() { 
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createOrderGood();
+      this.pager = new Pager().setLimit(20)
     }
 
     mounted(){   

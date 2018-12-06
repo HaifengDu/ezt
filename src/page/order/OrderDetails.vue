@@ -126,7 +126,8 @@ import {LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
-import { OrderGoodsService} from '../../service/OrderGoodsService';
+import { FactoryService } from '../../factory/FactoryService';
+import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
 import { strictEqual } from 'assert';
 declare var mobiscroll:any;
 @Component({
@@ -148,7 +149,7 @@ declare var mobiscroll:any;
 })
 export default class OrderGoods extends Vue{
     private InterfaceSysTypeBOH:boolean;
-    private service: OrderGoodsService;
+    private service: IOrderGoodsService;
     private details:any[] = [];  //物料明细
     private isPayMent:boolean=false; //是否有支付按钮
     private paytitle:string="";
@@ -174,8 +175,9 @@ export default class OrderGoods extends Vue{
             value:'余额支付',
             key:'3'}];
     private payValue:any = 1;
-    created() {          
-       this.service = OrderGoodsService.getInstance();
+    created() {  
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createOrderGood();
     }
     
     mounted(){ 

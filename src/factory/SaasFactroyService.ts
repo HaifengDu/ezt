@@ -13,6 +13,8 @@ import { ISupplierReturnService } from "../interface/service/ISupplierReturnServ
 import SupplierReturnService from "../service/supplierReturn/SupplierReturnService";
 import { IStoreAllotService } from "../interface/service/IStoreAllotService";
 import StoreAllotService from "../service/storeAllot/StoreAllotService";
+import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
+import OrderGoodsService from "../service/orderGood/OrderGoodsService";
 
 export class SaasFactroyService implements IFactory { 
 
@@ -42,6 +44,10 @@ export class SaasFactroyService implements IFactory {
 
     public createStoreAllot(): IStoreAllotService{//saas店间平调
         return StoreAllotService.getInstance();
+    }
+
+    public createOrderGood(): IOrderGoodsService{//订货
+        return OrderGoodsService.getInstance();
     }
 
     private static _instance: SaasFactroyService;

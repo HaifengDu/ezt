@@ -159,7 +159,8 @@ import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
 import { TabList } from '../../common/ITab';
-import {OrderGoodsService} from '../../service/OrderGoodsService';
+import { FactoryService } from '../../factory/FactoryService';
+import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
 import { CachePocily } from "../../common/Cache";
 import {ECache} from '../../enum/ECache';
 import CACHE_KEY from '../../constans/cacheKey'
@@ -183,7 +184,7 @@ export default class OrderGoods extends Vue{
     private cache = CachePocily.getInstance();
     private InterfaceSysTypeBOH:boolean;
     private pager:Pager;
-    private service: OrderGoodsService;
+    private service: IOrderGoodsService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private allLoaded:boolean= false;//数据是否已经全部加载完
@@ -232,7 +233,8 @@ export default class OrderGoods extends Vue{
         status:0,
         active:true,
        })
-       this.service = OrderGoodsService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createOrderGood();
        this.pager= new Pager();
        this.pager.setLimit(20);
        this.getList(); 

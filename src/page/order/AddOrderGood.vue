@@ -145,7 +145,8 @@ import {Component} from "vue-property-decorator"
 import IUser from "../../interface/IUserModel"
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../helper/methods';
-import {OrderGoodsService} from '../../service/OrderGoodsService';
+import { FactoryService } from '../../factory/FactoryService';
+import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
 import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
 import ObjectHelper from '../../common/objectHelper'
@@ -172,7 +173,7 @@ export default class Order extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private user:IUser;
-    private service: OrderGoodsService;
+    private service: IOrderGoodsService;
     private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private systemParamSetting:any;
@@ -259,7 +260,8 @@ export default class Order extends Vue{
         this.minutes = commonService.getMinutes();
     }   
     created() {
-        this.service = OrderGoodsService.getInstance();
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createOrderGood();
        
         //默认值
             this.addBillInfo.storeId = this.orderType[0].id;

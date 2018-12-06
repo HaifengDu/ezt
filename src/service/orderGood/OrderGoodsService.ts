@@ -1,11 +1,10 @@
 
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import store from "../store"
-import { IPagerData } from "../interface/IPagerData";
-export class OrderGoodsService extends BaseService{
+import { IPagerData } from "../../interface/IPagerData";
+import { IOrderGoodsService } from "../../interface/service/IOrderGoodsService";
+export class OrderGoodsService extends BaseService implements IOrderGoodsService{
     private static _instance: OrderGoodsService;
     private constructor() {
         super(ERequestType.AppOrder)

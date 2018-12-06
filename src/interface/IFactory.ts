@@ -5,6 +5,7 @@ import { IInStoreAllotService } from './service/IInStoreAllotService';
 import { IReceiveGoodService } from './service/IReceiveGoodService';
 import { ISupplierReturnService } from './service/ISupplierReturnService';
 import { IStoreAllotService } from './service/IStoreAllotService';
+import { IOrderGoodsService } from './service/IOrderGoodsService';
 
 
 export interface IFactory{
@@ -15,4 +16,5 @@ export interface IFactory{
     createReceiveGood(): IReceiveGoodService;//收货
     createSupplierReturn(): ISupplierReturnService;//退货
     createStoreAllot(): IStoreAllotService;//店间平调
+    createOrderGood(): IOrderGoodsService; //订货
 }

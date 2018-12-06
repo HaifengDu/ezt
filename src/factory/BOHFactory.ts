@@ -13,6 +13,8 @@ import { ISupplierReturnService } from "../interface/service/ISupplierReturnServ
 import BOHSupplierReturnService from "../service/supplierReturn/BOHSupplierReturnService";
 import { IStoreAllotService } from "../interface/service/IStoreAllotService";
 import BOHStoreAllotService from "../service/storeAllot/BOHStoreAllotService";
+import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
+import BOHOrderGoodsService from "../service/orderGood/BOHOrderGoodsService";
 
 
 export class BOHFactroyService implements IFactory {   
@@ -43,6 +45,10 @@ export class BOHFactroyService implements IFactory {
 
     public createStoreAllot(): IStoreAllotService{ //boh 店间平调
         return BOHStoreAllotService.getInstance();
+    }
+
+    public createOrderGood(): IOrderGoodsService{ //订货
+        return BOHOrderGoodsService.getInstance();
     }
 
     private static _instance: BOHFactroyService;

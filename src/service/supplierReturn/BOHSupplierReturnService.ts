@@ -35,6 +35,14 @@ export class BOHSupplierReturnService extends BaseService implements ISupplierRe
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }
+    /**
+     * 获取源单号
+     * @param id 单据id
+     */
+    getSourceBillList(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    }
 
     static createInstance(){
         BOHSupplierReturnService.getInstance();

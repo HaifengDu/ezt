@@ -44,7 +44,8 @@ import {TabItem} from 'vux'
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IReceiveGoodService } from '../../../interface/service/IReceiveGoodService';
 import CACHE_KEY from '../../../constans/cacheKey'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
@@ -67,14 +68,15 @@ declare var mobiscroll:any;
 })
 export default class ReceiveGood extends Vue{
     private cache = CachePocily.getInstance();
-    private service: ReceiveGoodService;
+    private service: IReceiveGoodService;
     private pager:Pager;
     private hideMask:()=>void;
     private showMask:()=>void;
     private searchParam:{}={};
     created() {     
-       this.pager = new Pager()
-       this.service = ReceiveGoodService.getInstance();
+      this.pager = new Pager()
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createReceiveGood();
     }
 
     mounted(){  

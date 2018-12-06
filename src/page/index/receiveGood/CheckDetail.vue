@@ -96,7 +96,8 @@ import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { IReceiveGoodService } from '../../../interface/service/IReceiveGoodService';
+import { FactoryService } from '../../../factory/FactoryService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey';
@@ -121,7 +122,7 @@ declare var mobiscroll:any;
 export default class ReceiveGood extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
-    private service: ReceiveGoodService;
+    private service: IReceiveGoodService;
     private pager:Pager;
     private tabList:TabList = new TabList();
     private showOther: boolean=false;
@@ -129,7 +130,8 @@ export default class ReceiveGood extends Vue{
     private detailList:any={};//详情页信息
     private domEles: {};
     created() {     
-        this.service = ReceiveGoodService.getInstance(); 
+        const factory = FactoryService.getInstance().createFactory();
+        this.service = factory.createReceiveGood(); 
     }
     mounted(){ 
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){

@@ -216,7 +216,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IReceiveGoodService } from '../../../interface/service/IReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
@@ -242,7 +243,7 @@ declare var mobiscroll:any;
 })
 export default class ReceiveGood extends Vue{
   private cache = CachePocily.getInstance();
-  private service: ReceiveGoodService;
+  private service: IReceiveGoodService;
   private selectedGood: any[];
   private setSelectedGood: INoopPromise;
   private InterfaceSysTypeBOH:boolean;
@@ -269,8 +270,9 @@ export default class ReceiveGood extends Vue{
   private addBeforeBillInfo:any={};
   private oldValue = 1;
   created() { 
-      this.service = ReceiveGoodService.getInstance();
-      this.selectedGood.forEach(item=> this.$set(item,'active',false));
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createReceiveGood();
+    this.selectedGood.forEach(item=> this.$set(item,'active',false));
   }
   mounted(){     
     

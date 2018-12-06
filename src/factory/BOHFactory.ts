@@ -7,6 +7,8 @@ import { IInitStockService } from "../interface/service/IInitStockService";
 import BOHInitStockService from "../service/initStock/BOHInitStockService";
 import { IInStoreAllotService } from "../interface/service/IInStoreAllotService";
 import BOHInStoreAllotService from "../service/inStoreAllot/BOHInStoreAllotService";
+import { IReceiveGoodService } from "../interface/service/IReceiveGoodService";
+import BOHReceiveGoodService from "../service/receiveGood/BOHReceiveGoodService";
 
 
 export class BOHFactroyService implements IFactory {   
@@ -25,6 +27,10 @@ export class BOHFactroyService implements IFactory {
 
     public createInStoreAllot(): IInStoreAllotService{
         return BOHInStoreAllotService.getInstance();
+    }
+
+    public createReceiveGood(): IReceiveGoodService{
+        return BOHReceiveGoodService.getInstance();
     }
 
     private static _instance: BOHFactroyService;

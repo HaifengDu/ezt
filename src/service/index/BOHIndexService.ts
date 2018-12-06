@@ -33,18 +33,6 @@ export class BOHIndexService extends BaseService implements IIndexService{
         });
         return promise; */
     }
-    /**
-     * 查询余额
-     */
-    checkBalance(){
-        return Promise.resolve({} as any);
-       /*  return Axios.post(`${this.reqUrl}operateorder/post`,{
-            data: [{}],
-            "oper": "BALANCE_AMOUNT",
-        }).then(res=>{           
-            return Promise.resolve(res);
-        }); */
-    }
     static createInstance() {
         BOHIndexService.getInstance();
     }

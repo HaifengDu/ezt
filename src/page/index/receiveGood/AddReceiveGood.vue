@@ -100,7 +100,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IReceiveGoodService } from '../../../interface/service/IReceiveGoodService';
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
@@ -124,7 +125,7 @@ declare var mobiscroll:any;
 })
 export default class ReceiveGood extends Vue{
   private cache = CachePocily.getInstance();
-  private service: ReceiveGoodService;
+  private service: IReceiveGoodService;
   // private getGoodList:INoopPromise //调用store中的请求接口
   private hideMask:()=>void;
   private showMask:()=>void;
@@ -161,7 +162,8 @@ export default class ReceiveGood extends Vue{
     {id:"supplier",msg:"请选择供应商！",supplier:false},
     {id:"warehouse",msg:"请选择仓库！",warehouse:false}];
   created() {  
-    this.service = ReceiveGoodService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createReceiveGood();
     this.getSupplierList();  //供应商下拉列表
     this.getWarehouseList(); //仓库下拉列表
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){

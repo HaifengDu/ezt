@@ -1,7 +1,7 @@
 import { Action } from "vuex";
 import ReceiveGoodType from "./mutation-types";
 import IRootState from "../../interface/store/IRootState";
-import { ReceiveGoodService } from "../../service/ReceiveGoodService";
+import { ReceiveGoodService } from "../../service/receiveGood/ReceiveGoodService";
 import Pager from "../../common/Pager";
 const receiveGoodService = ReceiveGoodService.getInstance();
 // export const updateGoodList:Action<any,IRootState> = ({commit},goodList:[])=>{

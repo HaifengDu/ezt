@@ -2,6 +2,7 @@ import { IIndexService } from './service/IIndexService';
 import { ILoginService } from "./service/ILoginService";
 import { IInitStockService } from "./service/IInitStockService";
 import { IInStoreAllotService } from './service/IInStoreAllotService';
+import { IReceiveGoodService } from './service/IReceiveGoodService';
 
 
 export interface IFactory{
@@ -9,4 +10,5 @@ export interface IFactory{
     createInitStock():IInitStockService;//库存初始化
     createIndex():IIndexService;//首页操作
     createInStoreAllot():IInStoreAllotService;//店内调拨
+    createReceiveGood():IReceiveGoodService;//收货
 }

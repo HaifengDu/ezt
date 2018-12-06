@@ -133,7 +133,8 @@ import {maskMixin} from "../../../helper/maskMixin";
 import noInput from '../../../mixin/noInput';
 import { INoop, INoopPromise } from '../../../helper/methods';
 import { TabList } from '../../../common/ITab';
-import { ReceiveGoodService} from '../../../service/ReceiveGoodService';
+import { FactoryService } from '../../../factory/FactoryService';
+import { IReceiveGoodService } from '../../../interface/service/IReceiveGoodService';
 import { CachePocily } from "../../../common/Cache";
 import { ECache } from "../../../enum/ECache";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -157,7 +158,7 @@ import commonService from '../../../service/commonService.js';
 export default class ReceiveGood extends Vue{
   private InterfaceSysTypeBOH:boolean;
   private cache = CachePocily.getInstance();
-  private service: ReceiveGoodService;
+  private service: IReceiveGoodService;
   private pager:Pager;
   private getGoodList:INoopPromise
   private addMaskClickListener:(...args:any[])=>void;
@@ -224,7 +225,8 @@ export default class ReceiveGood extends Vue{
       active:false
     });
     this.pager = new Pager().setLimit(20)
-    this.service = ReceiveGoodService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createReceiveGood();
     this.getWarehouseList(); //仓库下拉列表
   }
 

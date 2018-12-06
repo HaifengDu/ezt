@@ -7,6 +7,8 @@ import { IInitStockService } from "../interface/service/IInitStockService";
 import InitStockService from "../service/initStock/InitStockService";
 import { IInStoreAllotService } from "../interface/service/IInStoreAllotService";
 import InStoreAllotService from "../service/inStoreAllot/InStoreAllotService";
+import { IReceiveGoodService } from "../interface/service/IReceiveGoodService";
+import ReceiveGoodService from "../service/receiveGood/ReceiveGoodService";
 
 export class SaasFactroyService implements IFactory { 
 
@@ -24,6 +26,10 @@ export class SaasFactroyService implements IFactory {
 
     public createInStoreAllot(): IInStoreAllotService{
         return InStoreAllotService.getInstance();
+    }
+
+    public createReceiveGood(): IReceiveGoodService{
+        return ReceiveGoodService.getInstance();
     }
 
     private static _instance: SaasFactroyService;

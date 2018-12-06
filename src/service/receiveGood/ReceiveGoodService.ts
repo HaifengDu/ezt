@@ -1,12 +1,9 @@
-import mixins from "../common/Mixin";
-import { IUser } from "../interface/IUserModel";
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import store from "../store"
-import { IPagerData } from "../interface/IPagerData";
-export class ReceiveGoodService extends BaseService{
+import { IPagerData } from "../../interface/IPagerData";
+import { IReceiveGoodService } from "../../interface/service/IReceiveGoodService";
+export class ReceiveGoodService extends BaseService implements IReceiveGoodService{
 
     private static _instance: ReceiveGoodService;
     private constructor() {

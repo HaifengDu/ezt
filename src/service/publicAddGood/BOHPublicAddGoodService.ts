@@ -78,9 +78,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             return Promise.reject(new ErrorMsg(false,"没有物品"));
         }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
-        if(materialLimit && materialLimit.billsPageType == 'stocktaking'){
-            // return this.getBohClassifiedSearch().then(() => this.login(user)); 
-            return this.getBohClassifiedSearch("2").then(res=>{
+        if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询分类
+            return this.getBohClassifiedSearch("2").then(res=>{//TODO:参数现在是写死的，需要自己传过来????
                 return Promise.resolve({data:res.data.sortList} as any);
             })
         }      

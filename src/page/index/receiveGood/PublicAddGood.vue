@@ -376,17 +376,23 @@ export default class AddGood extends Vue{
   private countFlag = 0;
   private oldValue = 0;
   private pageType = PageType; //页面类型
-  private materialLimit: any = {};//限制 
-  private InventoryType:any;
+  private materialLimit: any = {};//限制
+  /**
+   * 各个模块查询分类时传的参数，自己存在缓存里，统一的一个参数
+   *  */ 
+  private InventoryType:any; 
   // private userpp:any[]=[];
   created(){ 
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createPublicGood();
+    if(this.cache.getData(CACHE_KEY.MATERIAL_PARAM)){
+      this.InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_PARAM));
+    } 
     /**
      * 获取 类 物品列表
      */
-    this.service.getGoodList().then(res=>{
-      this.allType = res.data;
+    this.service.getGoodClass(this.InventoryType).then(res=>{
+      this.allType = res.data.sortList;
       this.goodBigType = this.allType;
       this.changeSmallType(this.allType[0]);
     })
@@ -399,14 +405,14 @@ export default class AddGood extends Vue{
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });  
-    if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
+   /*  if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
       if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
           this.allType = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
       }  
       if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
           this.InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
       }  
-    }
+    } */
    
     // if(!this.InterfaceSysTypeBOH){
      
@@ -425,8 +431,8 @@ export default class AddGood extends Vue{
     //TODO:默认加载货品
   // }
   private changeSmallType(item:any){
-    // if(!this.InterfaceSysTypeBOH){
-        this.allType.forEach((bigSort,index)=>{
+    // if(!this.InterfaceSysTypeBOH){ 
+         this.allType.forEach((bigSort,index)=>{
           this.$set(bigSort,'active',bigSort.id == item.id);
         })    
         this.typeName = item;   
@@ -435,7 +441,7 @@ export default class AddGood extends Vue{
           this.loadGood(info)
         })
         this.loadGood(item.cdata[0]);
-        //TODO:加载货品this.goodSmallType[0]
+        // TODO:加载货品this.goodSmallType[0]      
   //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
   //       /**
   //        * BOH版本  盘库选择货品
@@ -454,24 +460,28 @@ export default class AddGood extends Vue{
   //   }
   }
   private loadGood(item:any){
+    let _this_ = this;
     // if(!this.InterfaceSysTypeBOH){
        if(!item.addList){
           this.$set(item,'addList',[]);
         }else{
           item.addList = [];
         }
-        //TODO:item.id加载货品
-        _.forEach(item.goodList,good=>{
-          this.$set(good,'active',false);
-          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-          if(index>=0){
-            ObjectHelper.merge(good,this.selectedGoodList[index],true);
-            this.selectedGoodList[index] = good;
-            item.addList.push(good);
-          }
-        });
-        this.goodList = item.goodList;
-        this.typeName=item;  
+        _this_.service.getGoodList({goodsSortId:item.id,...this.InventoryType}).then(res=>{
+          let goodsList = res.data.goodsList;
+           //TODO:item.id加载货品
+          _.forEach(goodsList,good=>{
+            this.$set(good,'active',false);
+            const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+            if(index>=0){
+              ObjectHelper.merge(good,this.selectedGoodList[index],true);
+              this.selectedGoodList[index] = good;
+              item.addList.push(good);
+            }
+          });
+          this.goodList = goodsList;
+        })
+        _this_.typeName=item;  
   //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
   //       if(!item.addList){
   //         this.$set(item,'addList',[]);

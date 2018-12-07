@@ -377,7 +377,7 @@ export default class StockTaking extends Vue{
           this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
           // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data)); 
           this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-          this.cache.save(CACHE_KEY.ADDINVENTORY,JSON.stringify(this.addinventory));
+          this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
           this.$router.push({name:'PublicAddGood',query:{}})
       // },err=>{
           // this.$toasted.show(err.message)

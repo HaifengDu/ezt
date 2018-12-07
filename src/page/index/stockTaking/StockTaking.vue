@@ -459,13 +459,12 @@ export default class stockTaking extends Vue{
         this.service.getEnquiryList(datails).then(res=>{ 
           this.hideMask();     
           this.isSearch = false;
-          this.$router.push({name:'QueryResult'});
           if(!this.InterfaceSysTypeBOH){
               this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
           }else{
             this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
-            this.$router.push({name:'QueryResult'});
           }
+          this.$router.push({name:'QueryResult'});
         },err=>{
             this.$toasted.show(err.message)
         })

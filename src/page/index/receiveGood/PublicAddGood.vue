@@ -392,9 +392,11 @@ export default class AddGood extends Vue{
      * 获取 类 物品列表
      */
     this.service.getGoodClass(this.InventoryType).then(res=>{
-      this.allType = res.data.sortList;
-      this.goodBigType = this.allType;
-      this.changeSmallType(this.allType[0]);
+      if(res){
+        this.allType = res.data.sortList;
+        this.goodBigType = this.allType;
+        this.changeSmallType(this.allType[0]);
+      }     
     })
   }
   mounted() {  
@@ -437,9 +439,9 @@ export default class AddGood extends Vue{
         })    
         this.typeName = item;   
         this.goodSmallType = item.cdata; 
-        (item.cdata).forEach((info:any,index:any)=>{
-          this.loadGood(info)
-        })
+        // (item.cdata).forEach((info:any,index:any)=>{
+        //   this.loadGood(info)
+        // })
         this.loadGood(item.cdata[0]);
         // TODO:加载货品this.goodSmallType[0]      
   //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
@@ -460,6 +462,7 @@ export default class AddGood extends Vue{
   //   }
   }
   private loadGood(item:any){
+    debugger
     let _this_ = this;
     // if(!this.InterfaceSysTypeBOH){
        if(!item.addList){

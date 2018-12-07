@@ -1,13 +1,12 @@
 import { BaseService } from "../BaseService";
 import ERequestType from "../../enum/ERequestType";
 import { CachePocily } from "../../common/Cache";
-import { ECache } from "../../enum/ECache";
 import CACHE_KEY from '../../constans/cacheKey'
 import Axios from 'axios';
 import { IPublicAddGoodService } from "../../interface/service/IPublicAddGoodService";
 import ErrorMsg from "../../model/ErrorMsg";
 import ObjectHelper from "../../common/objectHelper";
-const _this = this;
+import { AxiosPromise } from 'axios';
 export class BOHPublicAddGoodService extends BaseService implements IPublicAddGoodService{
 
     private cache = CachePocily.getInstance();
@@ -72,39 +71,41 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     /**
      * 获取分类
      */
-    getGoodClass(param:any){
+    getGoodClass(param:any):AxiosPromise<any>{
         let materialLimit = { billsPageType:'' };
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
         }
-        if(!materialLimit){
-            return Promise.reject(new ErrorMsg(false,"没有物品"));
-        }
+        // if(!materialLimit){
+        //     return Promise.reject(new ErrorMsg(false,"没有物品"));
+        // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
         if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询分类
-            debugger
             return this.getBohClassifiedSearch(param).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
                 return Promise.resolve(res);
             })
+        }else{//默认查询不到为空
+            return Promise.resolve(null);
         }      
     }
     /**
      * 获取分类对应的物品
      */
-    getGoodList(param:any){
+    getGoodList(param:any):AxiosPromise<any>{
         let materialLimit = { billsPageType:'' };
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
         }
-        if(!materialLimit){
-            return Promise.reject(new ErrorMsg(false,"没有物品"));
-        }
+        // if(!materialLimit){
+        //     return Promise.reject(new ErrorMsg(false,"没有物品"));
+        // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
-        if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询分类
-            debugger
+        if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询物品
             return this.getBohItemCategory(param).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
                 return Promise.resolve(res);
             })
+        }else{//默认查询不到为空
+            return Promise.resolve(null);
         }     
     }
     

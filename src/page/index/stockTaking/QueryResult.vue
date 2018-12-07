@@ -78,26 +78,13 @@ export default class stockTaking extends Vue{
       
     }
     private see(item:any,types:PageType,audit_status:number){
-      /**
-       * SAAS版本  盘库详情
-       */
-          this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-          },err=>{
-              this.$toasted.show(err.message)
-          })
-         /**
-          * BOH版本  盘库详情
-          */
-          // this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
-          //   this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-          //   this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-          //   this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-          // },err=>{
-          //     this.$toasted.show(err.message)
-          // })    
+        this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+        },err=>{
+            this.$toasted.show(err.message)
+        })
     } 
 }
 </script>

@@ -326,11 +326,13 @@ export default class StockTaking extends Vue{
   /**
    *  BOH盘点单 保存并提交
    */
-  private saveReceive(details:Array<any>){
-        const bill_type = this.addinventory.bill_type
-				const bill_type_name = this.addinventory.name
-				const warehouse_id = this.addinventory.id
-				const busi_date = this.user.auth.busi_date
+  private saveReceive(rows:Array<any>){
+        let details={
+          "bill_type" : this.addinventory.bill_type,
+          "bill_type_name" : this.addinventory.name,
+          "warehouse_id" : this.addinventory.id,
+          "busi_date" : this.user.auth.busi_date,
+        }
 				this.selectedGood.forEach(item => {
 					let obj = {
               "unit_name": item.unit_name,
@@ -346,41 +348,37 @@ export default class StockTaking extends Vue{
               "material_name":item.material_name,
               "distributePrice1":item.distributePrice1
             };
-					details.push(obj);
+					rows.push(obj);
         });
-				// this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,details).then(res=>{
-				// 	if(!this.selectedGood||this.selectedGood.length<=0){
-				// 		this.$toasted.show("当前货品数量为0，请添加货品！");
-				// 		return false;
-				// 	}
-				// 	this.addBillInfo={};
-				// 	this.setSelectedGood([]);
-				// 	this.addBeforeBillInfo={};
-				// 	this.cache.clear();
-				// 	this.$toasted.success("提交成功！");
-				// 	this.$router.push("/stockTaking");
-				// },err=>{
-        //   this.$toasted.show(err.message)
-        // })
+				this.service.getAdditionalcheckList(rows,details).then(res=>{
+					if(!this.selectedGood||this.selectedGood.length<=0){
+						this.$toasted.show("当前货品数量为0，请添加货品！");
+						return false;
+					}
+					this.addBillInfo={};
+					this.setSelectedGood([]);
+					this.addBeforeBillInfo={};
+					this.cache.clear();
+					this.$toasted.success("提交成功！");
+					this.$router.push("/stockTaking");
+				},err=>{
+          this.$toasted.show(err.message)
+        })
       }
   /**
    *  BOH版本   选择物料
    */
   private BohMaterials(){
     if(this.addBillInfo){
-      // this.BOHservice.getBohClassifiedSearch(this.addinventory.bill_type).then(res=>{ 
-          let goodTerm = {};
-          goodTerm={
-            billsPageType: 'stocktaking',
-          }  
-          this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-          // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data)); 
-          this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-          this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
-          this.$router.push({name:'PublicAddGood',query:{}})
-      // },err=>{
-          // this.$toasted.show(err.message)
-      // })
+        let goodTerm = {};
+        goodTerm={
+          billsPageType: 'stocktaking',
+        }  
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+        // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data)); 
+        this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
+        this.$router.push({name:'PublicAddGood',query:{}})
     }      
   }
 

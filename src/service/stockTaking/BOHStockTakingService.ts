@@ -1,6 +1,7 @@
 import { BaseService } from "../BaseService";
 import { IStockTakingService } from "../../interface/service/IStockTakingService";
 import ERequestType from "../../enum/ERequestType";
+import { IPagerData } from "../../interface/IPagerData";
 import Axios from 'axios';
 export class BOHStockTakingService extends BaseService implements IStockTakingService{   
     
@@ -18,13 +19,13 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
         }).then(res=>{           
             return Promise.resolve(res);
         });
-    }
-
+    }  
+    
     /**
      * BOH版本  盘库列表页
-     * @param audit_status 
+     * @param audit_status   
      */
-    getBohInventoryList(audit_status:string){
+    getInventoryList(audit_status:string,pager:IPagerData){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -50,16 +51,14 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param bill_no 
      * @param end_date 
      */
-    getBohEnquiryList(begin_date:string,bill_no:string,end_date:string){
+    getEnquiryList(datails:object){
         let config = {
-            headers: {
+            headers: { 
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/findStockTakings`,{
-            "begin_date":begin_date,  //高级查询参数 busi_date 开始时间
-            "bill_no":bill_no,       //高级查询参数  单据号
-            "end_date":end_date,    //高级查询参数busi_date 结束时间
+            "details":datails,
             "pagination":{
                 orderby:null,
                 asc:false,
@@ -76,7 +75,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * BOH版本  按状态查询盘点单   盘点类型
      * @param bill_type 
      */
-    getBohInventoryType(bill_type:string){
+    getInventoryType(bill_type:string){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -114,18 +113,19 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param busi_date 
      * @param details 
      */
-    getBohInventoryKeeping(bill_type:string,bill_type_name:string,warehouse_id:number,busi_date:string,details:Array<any>){
+    getAdditionalcheckList(rows:Array<any>,details:object){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        }
+        } 
         return Axios.post(`${this.reqUrl}mobile/stock/taking/addStockTaking`,{
-            "bill_type":bill_type,
-            "bill_type_name" :bill_type_name,
-            "warehouse_id": warehouse_id,
-            "busi_date": busi_date,
-            "details" : details,
+            // "bill_type":bill_type,
+            // "bill_type_name" :bill_type_name,
+            // "warehouse_id": warehouse_id,
+            // "busi_date": busi_date,
+            "rows":rows,
+            "details":details,
             /*[{
                 "unit_name": unit_name,
                 "unit_id":unit_id,
@@ -148,7 +148,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
     * BOH版本  实盘  审核   查看详情 页面返回的数据
     * @param id 
     */
-    getBohLibraryDetails(id:number){
+   getLibraryDetails(id:number){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -171,20 +171,21 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param bill_status 
      * @param details 
      */
-    getBohRealdiscEntry(id:number,bill_type:string,bill_type_name:string,warehouse_id:string,busi_date:string,bill_status:string,details:Array<any>){
+    getAuditchecklistyes(details:Array<any>,data:object){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/updateStockTaking`,{
-                "id":id,
-                "bill_type":bill_type,
-                "bill_type_name" :bill_type_name,
-                "warehouse_id":warehouse_id,
-                "busi_date":busi_date,
-                "bill_status" : bill_status,     //SCM_AUDIT_YES  审核       SCM_AUDIT_NO 只是修改
-                "details" :details 
+                // "id":id,
+                // "bill_type":bill_type,
+                // "bill_type_name" :bill_type_name,
+                // "warehouse_id":warehouse_id,
+                // "busi_date":busi_date,
+                // "bill_status" : bill_status,     //SCM_AUDIT_YES  审核       SCM_AUDIT_NO 只是修改
+                "details" :details, 
+                "data":data,
                 //[
                 //     {    
                 //         "id" :ids,

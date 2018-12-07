@@ -15,17 +15,28 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
      /**
      * 订货列表
      * @param status 
-     * @param pager 
+     * @param pager    
      */
-    getGoodList(status:string,pager:IPagerData){
-        // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
-        //     data: [{"bill_type":"dc_order"}],
-        //     "oper": "UNDER_RECEIVING_LIST",
-        //     "pagination": pager
-        // });
-        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
-        return promise;
-    }    
+    getGoodList(audit_status:string,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/getOrders`,{
+            "audit_status":audit_status,
+            "pagination": {
+                "orderby": null, 
+                "asc": false, 
+                "pageno": 1, 
+                "pagesize": 20, 
+                "totalcount": 0
+            }
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
+
     /**
      * 详情页
      */

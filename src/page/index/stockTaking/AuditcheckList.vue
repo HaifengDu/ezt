@@ -220,27 +220,18 @@ export default class StockTaking extends Vue{
    *  审核盘点单 提交
    */
   private saveReceive(details:Array<any>){
-     if(!this.InterfaceSysTypeBOH){
-        if(!this.selectedGood||this.selectedGood.length<=0){
-          this.$toasted.show("当前货品数量为0，请添加货品！");
-          return false;
-        } 
-        this.addBillInfo={};
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.cache.clear();
-        this.$toasted.success("提交成功！");
-        this.$router.push("/stockTaking");
-     }else{
-        const id = this.selectedGood['id']
-        const bill_type = this.selectedGood['bill_type']
-        const bill_type_name = this.details.bill_type_name
-        const warehouse_id = this.selectedGood['warehouse_id']
-        const busi_date = this.user.auth.busi_date 
-        const bill_status = 'SCM_AUDIT_NO'    // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+        let data={
+          "id": this.selectedGood['id'],
+          "bill_type":this.selectedGood['bill_type'],
+          "bill_type_name":this.details.bill_type_name,
+          "warehouse_id":this.selectedGood['warehouse_id'],
+          "busi_date":this.user.auth.busi_date, 
+          "bill_status":'SCM_AUDIT_NO', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+        }
+        var details =[];
         this.selectedGood['details'].forEach((item:any) => {
 					let obj = {
-              ids: item.id,
+              id: item.id,
               stockChecked: item.stockChecked,
               acc_amt: item.acc_amt,
               consume_qty: item.consume_qty,
@@ -255,24 +246,23 @@ export default class StockTaking extends Vue{
               distributePrice1:item.distributePrice1,
               disperse_num:item.disperse_num
             };
-					details.push(obj);    //details报undefined
+					details.push(obj);    
         });    
-      // this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
-      //   if(!this.selectedGood||this.selectedGood.length<=0){
-      //       this.$toasted.show("当前货品数量为0，请添加货品！");
-      //       return false;
-      //     } 
-      //     this.addBillInfo={};
-      //     this.setSelectedGood([]);
-      //     this.addBeforeBillInfo={};
-      //     this.cache.clear();
-      //     this.$toasted.success("提交成功！");
-      //     this.$router.push("/stockTaking");
-      // },err=>{
-      //     this.$toasted.show(err.message)
-      // })
+      this.service.getAuditchecklistyes(details,data).then(res=>{ 
+        if(!this.selectedGood||this.selectedGood.length<=0){
+            this.$toasted.show("当前货品数量为0，请添加货品！");
+            return false;
+          } 
+          this.addBillInfo={};
+          this.setSelectedGood([]);
+          this.addBeforeBillInfo={};
+          this.cache.clear();
+          this.$toasted.success("提交成功！");
+          this.$router.push("/stockTaking");
+      },err=>{
+          this.$toasted.show(err.message)
+      })
      }
-  }
   /**
    * 审核盘点单 提交并审核
    */
@@ -293,56 +283,49 @@ export default class StockTaking extends Vue{
        * 审核通过
        */
       onConfirm (details:Array<any>) {
-           if(!_this.selectedGood||_this.selectedGood.length<=0){
+            let data={
+              "id": _this.selectedGood['id'],
+              "bill_type":_this.selectedGood['bill_type'],
+              "bill_type_name":_this.details.bill_type_name,
+              "warehouse_id":_this.selectedGood['warehouse_id'],
+              "busi_date":_this.user.auth.busi_date, 
+              "bill_status":'SCM_AUDIT_YES', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+            }
+            var details=[];
+           	_this.selectedGood['details'].forEach((item:any) => {
+              let obj = {
+                  ids: item.id,
+                  stockChecked: item.stockChecked,
+                  acc_amt: item.acc_amt,
+                  consume_qty: item.consume_qty,
+                  stockMode: item.stockMode,
+                  material_num: item.material_num,
+                  material_id: item.material_id,
+                  unit_id: item.unit_id,
+                  thery_qty: item.thery_qty,
+                  unit_name: item.unit_name,
+                  material_name: item.material_name,
+                  acc_qty:item.acc_qty,
+                  distributePrice1:item.distributePrice1,
+                  disperse_num:item.disperse_num
+                };
+              details.push(obj);
+            });
+            _this.service.getAuditchecklistyes(details,data).then(res=>{ 
+            if(!_this.selectedGood||_this.selectedGood.length<=0){
                 _this.$toasted.show("当前货品数量为0，请添加货品！");
                 return false;
               } 
-            _this.addBillInfo={};
-            _this.setSelectedGood([]);
-            _this.addBeforeBillInfo={};
-            _this.cache.clear();
-            _this.$toasted.success("审核成功！");
-            _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
-            // const id = _this.selectedGood['id']
-            // const bill_type = _this.selectedGood['bill_type']
-            // const bill_type_name = _this.details.bill_type_name
-            // const warehouse_id = _this.selectedGood['warehouse_id']
-            // const busi_date = _this.user.auth.busi_date 
-            // const bill_status = 'SCM_AUDIT_YES' // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-           	// _this.selectedGood['details'].forEach((item:any) => {
-            //   let obj = {
-            //       ids: item.id,
-            //       stockChecked: item.stockChecked,
-            //       acc_amt: item.acc_amt,
-            //       consume_qty: item.consume_qty,
-            //       stockMode: item.stockMode,
-            //       material_num: item.material_num,
-            //       material_id: item.material_id,
-            //       unit_id: item.unit_id,
-            //       thery_qty: item.thery_qty,
-            //       unit_name: item.unit_name,
-            //       material_name: item.material_name,
-            //       acc_qty:item.acc_qty,
-            //       distributePrice1:item.distributePrice1,
-            //       disperse_num:item.disperse_num
-            //     };
-            //   details.push(obj);
-            // });
-            // _this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
-            // if(!_this.selectedGood||_this.selectedGood.length<=0){
-            //     _this.$toasted.show("当前货品数量为0，请添加货品！");
-            //     return false;
-            //   } 
-            //     _this.addBillInfo={};
-            //     _this.setSelectedGood([]);
-            //     _this.addBeforeBillInfo={};
-            //     _this.cache.clear();
-            //     _this.$toasted.success("审核成功！");
-            //     _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
-            // },err=>{
-            //   // _this.$toasted.success(err.data.errmsg);
-            //   _this.$toasted.show(err.message)
-            // })
+                _this.addBillInfo={};
+                _this.setSelectedGood([]);
+                _this.addBeforeBillInfo={};
+                _this.cache.clear();
+                _this.$toasted.success("审核成功！");
+                _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
+            },err=>{
+              // _this.$toasted.success(err.data.errmsg);
+              _this.$toasted.show(err.message)
+            })
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",
@@ -355,23 +338,19 @@ export default class StockTaking extends Vue{
    * 选择货品
    */
   private selectMaterials(newType:any){ 
-    // this.BOHservice.getBohClassifiedSearch(this.details.warehouse_id).then(res=>{ 
-        let goodTerm = {};
-        if(this.addBillInfo){
-          goodTerm={
-            billsPageType: 'stocktaking',
-          }     
-          this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-          // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
-          this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-          this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
-          this.$router.push({name:'PublicAddGood',query:{newType:newType}})
-        }   
-    // },err=>{
-      // this.$toasted.show(err.message)
-    // })
+      let goodTerm = {};
+      if(this.addBillInfo){
+        goodTerm={
+          billsPageType: 'stocktaking',
+        }     
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+        // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
+        this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
+        this.$router.push({name:'PublicAddGood',query:{newType:newType}})
+      }   
+    }
   }
-}
 </script>
 <style lang="less" scoped>
 @width:100%;

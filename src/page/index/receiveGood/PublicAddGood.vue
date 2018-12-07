@@ -753,14 +753,18 @@ private changeDirect(item:any){
   }
   .good-type{
     height: 45px;
-    top: 0;
+    top: 40px;
     z-index: 2;
-    position: absolute;
+    line-height: 45px;
+    padding-left: 8px;
+    // position: absolute;
+    position: fixed;
     display:flex;
     flex-direction: row;
     align-items: baseline;
     text-align: left;
     width: 100%;
+    background: #fff;
   }
   .good-type-list{
     // width: calc(100vw - 70px);
@@ -787,7 +791,7 @@ private changeDirect(item:any){
     height: 44px;
     float: left;
     font-size: 14px;
-    padding: 12px 8px;
+    padding-left: 8px;
     max-width: 70px;
     // text-align: center;
     border-bottom-width: 1.5px;
@@ -804,12 +808,13 @@ private changeDirect(item:any){
   .good-category-list{
     padding: 0;
     margin-top: 44px;
+    position: fixed;
   }
   .good-content-list{
     margin-top: 44px;
     padding: 0;
     padding-left: 1px;
-    margin-left: 3%;
+    margin-left: 20%;
     width: 78%;
   }
   .good-item{

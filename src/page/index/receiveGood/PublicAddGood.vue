@@ -392,9 +392,11 @@ export default class AddGood extends Vue{
      * 获取 类 物品列表
      */
     this.service.getGoodClass(this.InventoryType).then(res=>{
-      this.allType = res.data.sortList;
-      this.goodBigType = this.allType;
-      this.changeSmallType(this.allType[0]);
+      if(res){
+        this.allType = res.data.sortList;
+        this.goodBigType = this.allType;
+        this.changeSmallType(this.allType[0]);
+      }     
     })
   }
   mounted() {  

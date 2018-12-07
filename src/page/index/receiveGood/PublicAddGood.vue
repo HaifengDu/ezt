@@ -755,8 +755,7 @@ private changeDirect(item:any){
     height: 45px;
     top: 40px;
     z-index: 2;
-    line-height: 45px;
-    padding-left: 8px;
+    line-height: 45px;   
     // position: absolute;
     position: fixed;
     display:flex;
@@ -773,6 +772,7 @@ private changeDirect(item:any){
     overflow-x:scroll;
     display:flex;
     white-space: nowrap;
+    padding-left: 8px;
     span{
       margin-right: 10px;
       max-width: 82px;

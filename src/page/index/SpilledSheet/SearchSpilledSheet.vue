@@ -54,7 +54,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../../helper/methods'
-import { SpilledSheetService} from '../../../service/SpilledSheetService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ISpilledSheetService } from "../../../interface/service/ISpilledSheetService"
 import CACHE_KEY from '../../../constans/cacheKey'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -77,13 +78,14 @@ import Pager from "../../../common/Pager"
 })
 export default class SpilledSheet extends Vue{
     private cache = CachePocily.getInstance();
-    private service: SpilledSheetService;
+    private service: ISpilledSheetService;
     private searchParam:{}={};
     private details:any[] = [];  //物料明细
     private allLoaded:boolean = false; //分页数据加载更多
     private pager:Pager;
     created() {     
-       this.service = SpilledSheetService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createSpilledSheet();
        this.pager = new Pager().setLimit(20)
     }
 

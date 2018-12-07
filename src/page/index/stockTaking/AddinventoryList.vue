@@ -140,8 +140,8 @@ import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import StockTakingService  from '../../../service/StockTakingService'
-import BohStockTakingService from '../../../service/BohStockTakingService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import ObjectHelper from '../../../common/objectHelper'
 import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
@@ -168,8 +168,7 @@ export default class StockTaking extends Vue{
     private user:IUser;
     private cache = CachePocily.getInstance();
     private InterfaceSysTypeBOH:boolean;
-    private service:StockTakingService;
-    private BOHservice:BohStockTakingService;
+    private service:IStockTakingService;
     private bill_type:string; //弹层盘点类型
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private pageType = PageType; //页面类型
@@ -196,8 +195,8 @@ export default class StockTaking extends Vue{
     ]
 
   created() {  
-    this.service = StockTakingService.getInstance();
-    this.BOHservice = BohStockTakingService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createStockTaking();
     (this.selectedGood||[]).forEach(item=>item.active = false);
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
@@ -349,20 +348,20 @@ export default class StockTaking extends Vue{
             };
 					details.push(obj);
         });
-				this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,details).then(res=>{
-					if(!this.selectedGood||this.selectedGood.length<=0){
-						this.$toasted.show("当前货品数量为0，请添加货品！");
-						return false;
-					}
-					this.addBillInfo={};
-					this.setSelectedGood([]);
-					this.addBeforeBillInfo={};
-					this.cache.clear();
-					this.$toasted.success("提交成功！");
-					this.$router.push("/stockTaking");
-				},err=>{
-          this.$toasted.show(err.message)
-        })
+				// this.BOHservice.getBohInventoryKeeping(bill_type,bill_type_name,warehouse_id,busi_date,details).then(res=>{
+				// 	if(!this.selectedGood||this.selectedGood.length<=0){
+				// 		this.$toasted.show("当前货品数量为0，请添加货品！");
+				// 		return false;
+				// 	}
+				// 	this.addBillInfo={};
+				// 	this.setSelectedGood([]);
+				// 	this.addBeforeBillInfo={};
+				// 	this.cache.clear();
+				// 	this.$toasted.success("提交成功！");
+				// 	this.$router.push("/stockTaking");
+				// },err=>{
+        //   this.$toasted.show(err.message)
+        // })
       }
   /**
    *  BOH版本   选择物料

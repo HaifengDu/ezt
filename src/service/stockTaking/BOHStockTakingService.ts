@@ -1,11 +1,25 @@
-import { BaseService } from "./BaseService";   
-import { ERequestType } from "../enum/ERequestType";
-import Axios from "axios";
-export class BohStockTakingService extends BaseService{   
-    private static _instance: BohStockTakingService;
-    private constructor() {
+import { BaseService } from "../BaseService";
+import { IStockTakingService } from "../../interface/service/IStockTakingService";
+import ERequestType from "../../enum/ERequestType";
+import Axios from 'axios';
+export class BOHStockTakingService extends BaseService implements IStockTakingService{   
+    
+    private static _instance: BOHStockTakingService;
+
+    private constructor(){
         super(ERequestType.Boh)
     }
+    
+    getDataSorting(){
+        return Axios.post(`${this.reqUrl}inventory/post`,{
+            "data":[],
+            "oper":"ORGANIZE_DATA",
+            "pagination":null
+        }).then(res=>{           
+            return Promise.resolve(res);
+        });
+    }
+
     /**
      * BOH版本  盘库列表页
      * @param audit_status 
@@ -244,18 +258,17 @@ export class BohStockTakingService extends BaseService{
         });
     } */
 
-    
-     
 
 
 
 
-
-    static createInstance() {
-        BohStockTakingService.getInstance();
+    static createInstance(){
+        BOHStockTakingService.getInstance();
     }
-    static getInstance() {
-        return this._instance || (this._instance = new this());
+    
+    static getInstance(){
+        return this._instance || ( this._instance = new this() );
     }
 }
-export default BohStockTakingService;
+
+export default BOHStockTakingService;

@@ -1,6 +1,6 @@
 import VueX, { Store, Module } from "vuex";
 import Vue from "vue";
-import { RootType } from "./mutation-types";
+import { InventoryType } from "./mutation-types";
 import * as actions from "./action"
 import { IRootState } from "../../interface/store/IRootState";
 Vue.use(VueX);
@@ -25,26 +25,26 @@ const stockTaking:Module<any,IRootState> = {
         // pktemplateimport:state=>state.pktemplateimport,
     },    
     mutations:{
-        [RootType.PK_AddInventory](state,addinventory:{}){
+        [InventoryType.PK_AddInventory](state,addinventory:{}){
             state.addinventory = addinventory;
         },
-        // [RootType.PK_GOODLIST](state,inventoryList:any[]){
+        // [InventoryType.PK_GOODLIST](state,inventoryList:any[]){
         //     state.inventoryList = inventoryList;
         // },
-        // [RootType.PK_Details](state,inventoryDetails:any[]){
+        // [InventoryType.PK_Details](state,inventoryDetails:any[]){
         //     state.inventoryDetails = inventoryDetails;
         // },
-        // [RootType.PK_QueryResult](state,queryResult:any[]){
+        // [InventoryType.PK_QueryResult](state,queryResult:any[]){
         //     state.queryResult = queryResult;
         // },
        
-        // [RootType.PK_AddBeforeInventory](state,addBeforeInventory:{}){
+        // [InventoryType.PK_AddBeforeInventory](state,addBeforeInventory:{}){
         //     state.addBeforeInventory = addBeforeInventory;
         // },
-        // [RootType.PK_InventoryType](state,pkinventory:{}){
+        // [InventoryType.PK_InventoryType](state,pkinventory:{}){
         //     state.pkinventory = pkinventory;
         // },
-        // [RootType.PK_TemplateImport](state,pktemplateimport:any[]){
+        // [InventoryType.PK_TemplateImport](state,pktemplateimport:any[]){
         //     state.pktemplateimport = pktemplateimport;
         // },
         

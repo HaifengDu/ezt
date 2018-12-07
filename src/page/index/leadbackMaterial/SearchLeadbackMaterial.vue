@@ -57,7 +57,8 @@ import ErrorMsg from "../../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../../helper/methods'
-import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ILeadbackMaterialService } from "../../../interface/service/ILeadbackMaterialService"
 import CACHE_KEY from '../../../constans/cacheKey'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -79,13 +80,14 @@ import Pager from "../../../common/Pager";
 })
 export default class leadbackMaterial extends Vue{
     private cache = CachePocily.getInstance();
-    private service: LeadbackMaterialService;
+    private service: ILeadbackMaterialService;
     private details:any[] = [];  //物料明细
     private searchParam:{}={};
     private pager:Pager;   
     private allLoaded:boolean = false; //数据是否全部加载完
     created() {     
-      this.service = LeadbackMaterialService.getInstance();
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createLeadbackMaterial();
       this.pager = new Pager().setLimit(20)
     }
     mounted(){   

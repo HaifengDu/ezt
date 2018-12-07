@@ -1,13 +1,14 @@
-
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import { IPagerData } from "../interface/IPagerData";
-export class LeadbackMaterialService extends BaseService{
+import { IPagerData } from "../../interface/IPagerData";
+import { ILeadbackMaterialService } from "../../interface/service/ILeadbackMaterialService";
+export class LeadbackMaterialService extends BaseService implements ILeadbackMaterialService{
     private static _instance: LeadbackMaterialService;
     private constructor() {
         super(ERequestType.AppOrder)
     }
+     
     /**
      * 列表页接口
      * @param status  
@@ -39,6 +40,9 @@ export class LeadbackMaterialService extends BaseService{
         return promise;
     }
     
+
+
+
     static createInstance() {
         LeadbackMaterialService.getInstance();
     }

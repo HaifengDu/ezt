@@ -90,7 +90,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import BohStockTakingService from '../../../service/BohStockTakingService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import ObjectHelper from '../../../common/objectHelper'
 import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
@@ -118,7 +119,7 @@ export default class StockTaking extends Vue{
     private user:IUser;
     private cache = CachePocily.getInstance();
     private InterfaceSysTypeBOH:boolean;
-    private BOHservice:BohStockTakingService;
+    private service:IStockTakingService;
     private bill_type:string; //弹层盘点类型
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private details:any={};  //盘库表头信息
@@ -130,7 +131,8 @@ export default class StockTaking extends Vue{
        editPrice:false
     }; 
   created() {  
-    this.BOHservice = BohStockTakingService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createStockTaking();
     (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false)); 
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
@@ -255,20 +257,20 @@ export default class StockTaking extends Vue{
             };
 					details.push(obj);    //details报undefined
         });    
-      this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
-        if(!this.selectedGood||this.selectedGood.length<=0){
-            this.$toasted.show("当前货品数量为0，请添加货品！");
-            return false;
-          } 
-          this.addBillInfo={};
-          this.setSelectedGood([]);
-          this.addBeforeBillInfo={};
-          this.cache.clear();
-          this.$toasted.success("提交成功！");
-          this.$router.push("/stockTaking");
-      },err=>{
-          this.$toasted.show(err.message)
-      })
+      // this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
+      //   if(!this.selectedGood||this.selectedGood.length<=0){
+      //       this.$toasted.show("当前货品数量为0，请添加货品！");
+      //       return false;
+      //     } 
+      //     this.addBillInfo={};
+      //     this.setSelectedGood([]);
+      //     this.addBeforeBillInfo={};
+      //     this.cache.clear();
+      //     this.$toasted.success("提交成功！");
+      //     this.$router.push("/stockTaking");
+      // },err=>{
+      //     this.$toasted.show(err.message)
+      // })
      }
   }
   /**
@@ -291,59 +293,56 @@ export default class StockTaking extends Vue{
        * 审核通过
        */
       onConfirm (details:Array<any>) {
-         if(!_this.InterfaceSysTypeBOH){
            if(!_this.selectedGood||_this.selectedGood.length<=0){
                 _this.$toasted.show("当前货品数量为0，请添加货品！");
                 return false;
               } 
-                _this.addBillInfo={};
-                _this.setSelectedGood([]);
-                _this.addBeforeBillInfo={};
-                _this.cache.clear();
-                _this.$toasted.success("审核成功！");
-                _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
-         }else if(_this.InterfaceSysTypeBOH){
-            const id = _this.selectedGood['id']
-            const bill_type = _this.selectedGood['bill_type']
-            const bill_type_name = _this.details.bill_type_name
-            const warehouse_id = _this.selectedGood['warehouse_id']
-            const busi_date = _this.user.auth.busi_date 
-            const bill_status = 'SCM_AUDIT_YES' // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-           	_this.selectedGood['details'].forEach((item:any) => {
-              let obj = {
-                  ids: item.id,
-                  stockChecked: item.stockChecked,
-                  acc_amt: item.acc_amt,
-                  consume_qty: item.consume_qty,
-                  stockMode: item.stockMode,
-                  material_num: item.material_num,
-                  material_id: item.material_id,
-                  unit_id: item.unit_id,
-                  thery_qty: item.thery_qty,
-                  unit_name: item.unit_name,
-                  material_name: item.material_name,
-                  acc_qty:item.acc_qty,
-                  distributePrice1:item.distributePrice1,
-                  disperse_num:item.disperse_num
-                };
-              details.push(obj);
-            });
-            _this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
-            if(!_this.selectedGood||_this.selectedGood.length<=0){
-                _this.$toasted.show("当前货品数量为0，请添加货品！");
-                return false;
-              } 
-                _this.addBillInfo={};
-                _this.setSelectedGood([]);
-                _this.addBeforeBillInfo={};
-                _this.cache.clear();
-                _this.$toasted.success("审核成功！");
-                _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
-            },err=>{
-              // _this.$toasted.success(err.data.errmsg);
-              _this.$toasted.show(err.message)
-            })
-         }
+            _this.addBillInfo={};
+            _this.setSelectedGood([]);
+            _this.addBeforeBillInfo={};
+            _this.cache.clear();
+            _this.$toasted.success("审核成功！");
+            _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
+            // const id = _this.selectedGood['id']
+            // const bill_type = _this.selectedGood['bill_type']
+            // const bill_type_name = _this.details.bill_type_name
+            // const warehouse_id = _this.selectedGood['warehouse_id']
+            // const busi_date = _this.user.auth.busi_date 
+            // const bill_status = 'SCM_AUDIT_YES' // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+           	// _this.selectedGood['details'].forEach((item:any) => {
+            //   let obj = {
+            //       ids: item.id,
+            //       stockChecked: item.stockChecked,
+            //       acc_amt: item.acc_amt,
+            //       consume_qty: item.consume_qty,
+            //       stockMode: item.stockMode,
+            //       material_num: item.material_num,
+            //       material_id: item.material_id,
+            //       unit_id: item.unit_id,
+            //       thery_qty: item.thery_qty,
+            //       unit_name: item.unit_name,
+            //       material_name: item.material_name,
+            //       acc_qty:item.acc_qty,
+            //       distributePrice1:item.distributePrice1,
+            //       disperse_num:item.disperse_num
+            //     };
+            //   details.push(obj);
+            // });
+            // _this.BOHservice.getBohRealdiscEntry(id,bill_type,bill_type_name,warehouse_id,busi_date,bill_status,details).then(res=>{ 
+            // if(!_this.selectedGood||_this.selectedGood.length<=0){
+            //     _this.$toasted.show("当前货品数量为0，请添加货品！");
+            //     return false;
+            //   } 
+            //     _this.addBillInfo={};
+            //     _this.setSelectedGood([]);
+            //     _this.addBeforeBillInfo={};
+            //     _this.cache.clear();
+            //     _this.$toasted.success("审核成功！");
+            //     _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
+            // },err=>{
+            //   // _this.$toasted.success(err.data.errmsg);
+            //   _this.$toasted.show(err.message)
+            // })
       },
       content:'确认审核该单据？',
       confirmText:"审核通过",

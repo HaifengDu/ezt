@@ -17,12 +17,18 @@ import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
 import OrderGoodsService from "../service/orderGood/OrderGoodsService";
 import { IPublicAddGoodService } from "../interface/service/IPublicAddGoodService";
 import PublicAddGoodService from "../service/publicAddGood/PublicAddGoodService";
+import { IStockTakingService } from "../interface/service/IStockTakingService";
+import StockTakingService from "../service/stockTaking/StockTakingService";
+import { ILeadbackMaterialService } from "../interface/service/ILeadbackMaterialService";
+import LeadbackMaterialService from "../service/leadbackMaterial/LeadbackMaterialService";
+import { ISpilledSheetService } from "../interface/service/ISpilledSheetService";
+import SpilledSheetService from "../service/spilledSheet/SpilledSheetService";
 
 export class SaasFactroyService implements IFactory { 
 
     public createLogin(): ILoginService{//saas登录
         return LoginService.getInstance();
-    }
+    }   
 
     public createIndex(): IIndexService{//saas首页操作
         return IndexService.getInstance();
@@ -56,6 +62,18 @@ export class SaasFactroyService implements IFactory {
         return PublicAddGoodService.getInstance();
     }
 
+    public createStockTaking(): IStockTakingService{  //盘库
+        return StockTakingService.getInstance();
+    }
+
+    public createLeadbackMaterial(): ILeadbackMaterialService{  //领退料
+        return LeadbackMaterialService.getInstance();
+    }
+
+    public createSpilledSheet(): ISpilledSheetService{  //损溢单
+        return SpilledSheetService.getInstance();
+    }
+    
     private static _instance: SaasFactroyService;
 
     private constructor() {

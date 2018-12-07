@@ -27,7 +27,8 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import IUser from "../../../interface/IUserModel"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import StockTakingService from "../../../service/StockTakingService"
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -50,7 +51,7 @@ import { PageType } from "../../../enum/EPageType"
 export default class stockTaking extends Vue{
     private pager:Pager;   
     private user:IUser;
-    private service:StockTakingService;
+    private service:IStockTakingService;
     private cache = CachePocily.getInstance();
     private templateimport:any; 
     private labelPosition= 'left';
@@ -59,7 +60,8 @@ export default class stockTaking extends Vue{
     private pageType = PageType; //页面类型
     private addinventory:any;//store中
     created() {   
-       this.service = StockTakingService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createStockTaking();
        if(this.cache.getData(CACHE_KEY.TEMPLATEIMPORT)){
           const templateList = JSON.parse(this.cache.getData(CACHE_KEY.TEMPLATEIMPORT));
           this.templateimport = templateList

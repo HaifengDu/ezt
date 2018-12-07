@@ -1,19 +1,19 @@
 import { BaseService } from "../BaseService";
-import { IOrderGoodsService } from "../../interface/service/IOrderGoodsService";
+import { ILeadbackMaterialService } from "../../interface/service/ILeadbackMaterialService";
 import ERequestType from "../../enum/ERequestType";
 import { IPagerData } from "../../interface/IPagerData";
 import Axios from 'axios';
 
-export class BOHOrderGoodsService extends BaseService implements IOrderGoodsService{   
+export class BOHLeadbackMaterialService extends BaseService implements ILeadbackMaterialService{   
     
-    private static _instance: BOHOrderGoodsService;
+    private static _instance: BOHLeadbackMaterialService;
 
     private constructor(){
         super(ERequestType.Boh)
     }
 
      /**
-     * 订货列表
+     * 列表
      * @param status 
      * @param pager 
      */
@@ -35,7 +35,7 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
     }
 
     static createInstance(){
-        BOHOrderGoodsService.getInstance();
+        BOHLeadbackMaterialService.getInstance();
     }
     
     static getInstance(){
@@ -43,4 +43,4 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
     }
 }
 
-export default BOHOrderGoodsService;
+export default BOHLeadbackMaterialService;

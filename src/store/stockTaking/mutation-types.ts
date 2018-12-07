@@ -1,4 +1,4 @@
-export const RootType = {
+export const InventoryType = {
     PK_AddInventory:'PK_AddInventory',
     // PK_GOODLIST:"PK_GOODLIST",
     // PK_Details:"PK_Details",
@@ -7,4 +7,4 @@ export const RootType = {
     // PK_InventoryType:'PK_InventoryType',
     // PK_TemplateImport:'PK_TemplateImport',
 };  
-export default RootType;
+export default InventoryType;

@@ -1,16 +1,14 @@
-import mixins from "../common/Mixin";
-import { IUser } from "../interface/IUserModel";
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg"; 
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import store from "../store"  
-import { IPagerData } from "../interface/IPagerData";
-export class StockTakingService extends BaseService{   
+import { IPagerData } from "../../interface/IPagerData";
+import { IStockTakingService } from "../../interface/service/IStockTakingService";
+export class StockTakingService extends BaseService implements IStockTakingService{
     private static _instance: StockTakingService;
-    private constructor() {      
+    private constructor() {
         super(ERequestType.AppOrder)
-    }    
+    }
+     
     /**
      * 盘库列表
      * @param status 
@@ -292,11 +290,18 @@ export class StockTakingService extends BaseService{
             return Promise.resolve(res);
         });
     }
+    
+
+
+
     static createInstance() {
         StockTakingService.getInstance();
     }
+
     static getInstance() {
         return this._instance || (this._instance = new this());
     }
+
 }
+
 export default StockTakingService;

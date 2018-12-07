@@ -139,8 +139,8 @@ import {TabItem,LoadingPlugin} from 'vux'
 import ErrorMsg from "../model/ErrorMsg"
 import ResponseError from "../../../exception/ResponseError"
 import {Component,Watch} from "vue-property-decorator"
-import StockTakingService from '../../../service/StockTakingService'
-import BohStockTakingService from '../../../service/BohStockTakingService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
@@ -167,8 +167,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class stockTaking extends Vue{
     private pager:Pager; 
-    private service: StockTakingService;
-    private BOHservice:BohStockTakingService;
+    private service:IStockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();   
     private inventoryList:{list?:any[]} = {};//盘库列表   
@@ -190,9 +189,9 @@ export default class stockTaking extends Vue{
     private type:string; //盘点类型数据
     private pageType = PageType;
     created() {
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createStockTaking();
       this.pager = new Pager().setLimit(20)
-      this.service = StockTakingService.getInstance();
-      this.BOHservice = BohStockTakingService.getInstance();
       /**
        * SAAS盘点状态
        */
@@ -277,11 +276,10 @@ export default class stockTaking extends Vue{
     private getWarehouseType(){
       const inventory_type = "week_inventory";
       this.service.getWarehouse(inventory_type as string).then(res=>{ 
-          this.warehouseType = res.data.data
-          // this.searchParam.selectedWarehouse = this.warehouseType[0].text
-      },err=>{
-          this.$toasted.show(err.message)
-      })    
+            this.warehouseType = res.data.data
+      },err=>{       
+          this.$toasted.show(err.message);
+      });
     }
     /**
      * 查询日期限制
@@ -329,40 +327,37 @@ export default class stockTaking extends Vue{
       /**
        * SAAS 盘库数据
        */
-      if(!this.InterfaceSysTypeBOH){
-          const status = this.tabList.getActive().status;
-          this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
-            this.showMask();
-            this.$vux.loading.show({
-              text: '加载中...'
-            });
-            this.inventoryList = res.data.data[0];
-            (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
-            setTimeout(()=>{
-              this.$vux.loading.hide()
-              this.hideMask()
-            },400)
-            },err=>{
-              this.$toasted.show(err.message)
-          });
-      }else{
-          const audit_status = this.tabList.getActive().status;
-          this.BOHservice.getBohInventoryList(audit_status as string).then(res=>{
-            this.showMask();
-            this.$vux.loading.show({
-              text: '加载中...'
-            });
-            this.inventoryList = res.data;
-            (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
-            this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
-            setTimeout(()=>{
-              this.$vux.loading.hide()
-              this.hideMask()
-            },400)
-            },err=>{
-              this.$toasted.show(err.message)
-          });
-      }
+      const status = this.tabList.getActive().status;
+      this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{
+        this.showMask();
+        this.$vux.loading.show({
+          text: '加载中...'
+        });
+        this.inventoryList = res.data.data[0];
+        (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
+        setTimeout(()=>{
+          this.$vux.loading.hide()
+          this.hideMask()
+        },400)
+        },err=>{
+          this.$toasted.show(err.message)
+      });
+      // const audit_status = this.tabList.getActive().status;
+      // this.service.getBohInventoryList(audit_status as string).then(res=>{
+      //   this.showMask();
+      //   this.$vux.loading.show({
+      //     text: '加载中...'
+      //   });
+      //   this.inventoryList = res.data;
+      //   (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
+      //   this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
+      //   setTimeout(()=>{
+      //     this.$vux.loading.hide()
+      //     this.hideMask()
+      //   },400)
+      //   },err=>{
+      //     this.$toasted.show(err.message)
+      // });
     }
     /**
      * 左侧滑动删除
@@ -380,38 +375,35 @@ export default class stockTaking extends Vue{
       /**
        * SAAS版本   
        */
-      if(!this.InterfaceSysTypeBOH){
-          this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
-          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-        },err=>{
-            this.$toasted.show(err.message)
-        })
-      }else{
-        /**
-         *BOH 版本  盘库详情
-         * */  
-        this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
-          this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-          this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-        },err=>{
-            this.$toasted.show(err.message)
-        })      
-      }
+      this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
+        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+      /**
+       *BOH 版本  盘库详情
+        * */  
+      // this.service.getBohLibraryDetails(item.id).then(res=>{    
+      //   this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+      //   this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+      //   this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+      // },err=>{
+      //     this.$toasted.show(err.message)
+      // })      
     } 
     /**
      * BOH版本   审核盘点单   audit_status单据状态
      */
     private auditchecklist(item:any){
-      this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
-        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-        this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-        this.$router.push({name:'AuditcheckList'});  
-      },err=>{
-          this.$toasted.show(err.message)
-      })
+      // this.service.getBohLibraryDetails(item.id).then(res=>{    
+      //   this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+      //   this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+      //   this.$router.push({name:'AuditcheckList'});  
+      // },err=>{
+      //     this.$toasted.show(err.message)
+      // })
     } 
     
     /**
@@ -424,7 +416,6 @@ export default class stockTaking extends Vue{
       /**
        * SAAS 盘库类型
        */
-      if(!this.InterfaceSysTypeBOH){
           let InventoryType = {};
           this.service.getInventoryType(type.bill_type).then(res=>{ 
             InventoryType={   
@@ -454,42 +445,40 @@ export default class stockTaking extends Vue{
                 }
               }
           })
-      }else{
         /**
          * BOH 盘点类型
          */
-          let InventoryType = {};
-          this.BOHservice.getBohInventoryType(type.bill_type).then(res=>{ 
-            InventoryType={   
-              name:type.name,
-              bill_type:type.bill_type,
-            }   
-            this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data)); 
-            this.$router.push({name:'AddinventoryList'});
-          },err=>{
-              let that = this;
-              let OrderModule = {};
-              if(err.data.errcode  == 37){
-                this.newlyadded = false
-                this.$vux.confirm.show({   
-                  onConfirm () {
-                    OrderModule={   
-                      name:type.name,
-                      bill_type:type.bill_type,
-                    }   
-                    that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
-                    that.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(err.data)); 
-                    that.$router.push({name:'AddinventoryList'});
-                  },
-                  content:'存在未审核业务单据，盘点会造成差异过大的情况，请确认是否继续?'
-                })
-             }else if(err.data.errcode == 39){
-                  this.newlyadded = false
-                  this.$toasted.show(err.data.errmsg)
-              }
+          // let InventoryType = {};
+          // this.service.getBohInventoryType(type.bill_type).then(res=>{ 
+          //   InventoryType={   
+          //     name:type.name,
+          //     bill_type:type.bill_type,
+          //   }   
+          //   this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data)); 
+          //   this.$router.push({name:'AddinventoryList'});
+          // },err=>{
+          //     let that = this;
+          //     let OrderModule = {};
+          //     if(err.data.errcode  == 37){
+          //       this.newlyadded = false
+          //       this.$vux.confirm.show({   
+          //         onConfirm () {
+          //           OrderModule={   
+          //             name:type.name,
+          //             bill_type:type.bill_type,
+          //           }   
+          //           that.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+          //           that.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(err.data)); 
+          //           that.$router.push({name:'AddinventoryList'});
+          //         },
+          //         content:'存在未审核业务单据，盘点会造成差异过大的情况，请确认是否继续?'
+          //       })
+          //    }else if(err.data.errcode == 39){
+          //         this.newlyadded = false
+          //         this.$toasted.show(err.data.errmsg)
+          //     }
               
-          })
-      }
+          // })
     }   
     /**
      * 数据整理
@@ -517,7 +506,6 @@ export default class stockTaking extends Vue{
       /**
        * SAAS版本  高级查询
        */
-      if(!this.InterfaceSysTypeBOH){
           const bill_no = this.searchParam.billNumber || null;
           const end_date =  this.searchParam.endDate || null;      
           const begin_date = this.searchParam.startDate || null;   
@@ -537,19 +525,17 @@ export default class stockTaking extends Vue{
               this.$toasted.show("请求接口失败！")
               this.$toasted.show(err.message)
           })
-      }else{
-          const begin_date = this.searchParam.startDate || null;   
-          const bill_no = this.searchParam.billNumber || null;
-          const end_date =  this.searchParam.endDate || null;  
-          this.BOHservice.getBohEnquiryList(begin_date,bill_no,end_date,).then(res=>{ 
-            this.hideMask();     
-            this.isSearch = false;
-            this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
-            this.$router.push({name:'QueryResult'});
-          },err=>{
-              this.$toasted.show(err.message)
-          })
-      }
+          // const begin_date = this.searchParam.startDate || null;   
+          // const bill_no = this.searchParam.billNumber || null;
+          // const end_date =  this.searchParam.endDate || null;  
+          // this.service.getBohEnquiryList(begin_date,bill_no,end_date,).then(res=>{ 
+          //   this.hideMask();     
+          //   this.isSearch = false;
+          //   this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
+          //   this.$router.push({name:'QueryResult'});
+          // },err=>{
+          //     this.$toasted.show(err.message)
+          // })
     }
 }
 </script>

@@ -39,8 +39,8 @@ import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
-import StockTakingService from '../../../service/StockTakingService'
-import BohStockTakingService from '../../../service/BohStockTakingService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import { CachePocily } from "../../../common/Cache"
 import { PageType } from "../../../enum/EPageType"
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -60,16 +60,15 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }   
 })  
 export default class stockTaking extends Vue{
-    private service: StockTakingService;
-    private BOHservice:BohStockTakingService;
+    private service: IStockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();  
     private pageType = PageType;
     private list:any[] = [];
     private queryResult:any[] = [];
     created() {
-      this.service = StockTakingService.getInstance();
-      this.BOHservice = BohStockTakingService.getInstance();
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createStockTaking();
       if(this.cache.getData(CACHE_KEY.INVENTORY_RESULT)){
             this.queryResult = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_RESULT));
       }
@@ -82,26 +81,23 @@ export default class stockTaking extends Vue{
       /**
        * SAAS版本  盘库详情
        */
-       if(!this.InterfaceSysTypeBOH){
-            this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
+          this.service.getLibraryDetails(item.id,audit_status).then(res=>{ 
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
           },err=>{
               this.$toasted.show(err.message)
           })
-       }else{
          /**
           * BOH版本  盘库详情
           */
-          this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-          },err=>{
-              this.$toasted.show(err.message)
-          })    
-       }
+          // this.BOHservice.getBohLibraryDetails(item.id).then(res=>{    
+          //   this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+          //   this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+          //   this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+          // },err=>{
+          //     this.$toasted.show(err.message)
+          // })    
     } 
 }
 </script>

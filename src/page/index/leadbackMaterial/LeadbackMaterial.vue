@@ -125,7 +125,8 @@ import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { TabList } from '../../../common/ITab'
-import {LeadbackMaterialService} from '../../../service/LeadbackMaterialService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ILeadbackMaterialService } from "../../../interface/service/ILeadbackMaterialService"
 import { CachePocily } from "../../../common/Cache"
 import {ECache} from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -148,7 +149,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class leadbackMaterial extends Vue{
     private cache = CachePocily.getInstance();
     private pager:Pager;
-    private service: LeadbackMaterialService;
+    private service: ILeadbackMaterialService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
@@ -190,7 +191,8 @@ export default class leadbackMaterial extends Vue{
         status:4,
         active:false
       });
-      this.service = LeadbackMaterialService.getInstance();
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createLeadbackMaterial();
       this.pager= new Pager();   
       this.pager.setLimit(20);
       this.getList();  

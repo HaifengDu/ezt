@@ -110,7 +110,8 @@ import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
 import { TabList } from '../../../common/ITab'
-import {SpilledSheetService} from '../../../service/SpilledSheetService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ISpilledSheetService } from "../../../interface/service/ISpilledSheetService"
 import { CachePocily } from "../../../common/Cache"
 import {ECache} from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -133,7 +134,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class SpilledSheet extends Vue{
     private cache = CachePocily.getInstance();
     private pager:Pager;
-    private service: SpilledSheetService;
+    private service: ISpilledSheetService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
@@ -159,7 +160,8 @@ export default class SpilledSheet extends Vue{
         status:2,
         active:false
       });
-      this.service = SpilledSheetService.getInstance();
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createSpilledSheet();
       this.pager= new Pager();   
       this.pager.setLimit(20);
       this.getList();  

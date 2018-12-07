@@ -102,7 +102,8 @@ import Pager from '../../../common/Pager'
 import { mapActions, mapGetters } from 'vuex'
 import { INoop, INoopPromise } from '../../../helper/methods'
 import IUser from "../../../interface/IUserModel"
-import StockTakingService from '../../../service/StockTakingService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { IStockTakingService } from "../../../interface/service/IStockTakingService"
 import { CachePocily } from "../../../common/Cache";
 import { PageType } from "../../../enum/EPageType";
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -125,7 +126,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class stockTaking extends Vue{
     private user:IUser;   
     private pager:Pager;   
-    private service: StockTakingService;
+    private service: IStockTakingService;
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private details:any={};  //盘库表头信息
@@ -134,7 +135,8 @@ export default class stockTaking extends Vue{
     private title:string = '';//页面表头
     private pageType = PageType;
     created() {
-      this.service = StockTakingService.getInstance();
+      const factory = FactoryService.getInstance().createFactory();
+      this.service = factory.createStockTaking();
       this.types = this.$route.query.types
       if(this.types == '0'){
          this.title = "盘库详情";

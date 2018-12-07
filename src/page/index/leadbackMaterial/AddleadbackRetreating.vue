@@ -90,7 +90,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ILeadbackMaterialService } from "../../../interface/service/ILeadbackMaterialService"
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -112,7 +113,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 })
 export default class leadbackMaterial extends Vue{
   private cache = CachePocily.getInstance();
-  private service: LeadbackMaterialService;
+  private service: ILeadbackMaterialService;
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
@@ -149,7 +150,8 @@ export default class leadbackMaterial extends Vue{
     {id:"warehouse",msg:"请选择主仓库！",warehouse:false},
     ];
   created() {  
-    this.service = LeadbackMaterialService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createLeadbackMaterial();
     if(this.cache.getData(CACHE_KEY.LEADBACKSHEET_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.LEADBACKSHEET_ADDINFO));
     }

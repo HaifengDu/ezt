@@ -76,7 +76,8 @@
 import Vue from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import { Component,Watch } from 'vue-property-decorator'
-import { SpilledSheetService } from '../../../service/SpilledSheetService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ISpilledSheetService } from "../../../interface/service/ISpilledSheetService"
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -94,13 +95,14 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }
 })
 export default class SpilledSheet extends Vue{
-    private service: SpilledSheetService;
+    private service: ISpilledSheetService;
     private materialSetting: object;
     private cache = CachePocily.getInstance();
     private spilledDetails:any={};//损溢详情页面表头
     private details:any[] = [];  //物料明细
     created() {          
-       this.service = SpilledSheetService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createSpilledSheet();
        this.detailList();
        if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_DETAILS)){
             this.spilledDetails = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_DETAILS));

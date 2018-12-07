@@ -1,15 +1,14 @@
-
-import { BaseService } from "./BaseService";
-import { ERequestType } from "../enum/ERequestType";
-import ErrorMsg from "../model/ErrorMsg";
+import { BaseService } from "../BaseService";
+import { ERequestType } from "../../enum/ERequestType";
 import Axios from "axios";
-import store from "../store"
-import { IPagerData } from "../interface/IPagerData";
-export class SpilledSheetService extends BaseService{
+import { IPagerData } from "../../interface/IPagerData";
+import { ISpilledSheetService } from "../../interface/service/ISpilledSheetService";
+export class SpilledSheetService extends BaseService implements ISpilledSheetService{
     private static _instance: SpilledSheetService;
     private constructor() {
         super(ERequestType.AppOrder)
     }
+     
     /**
      * 损溢单列表页
      * @param status 
@@ -39,6 +38,10 @@ export class SpilledSheetService extends BaseService{
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
+    
+
+
+
     static createInstance() {
         SpilledSheetService.getInstance();
     }

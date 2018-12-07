@@ -86,7 +86,8 @@ import {Component,Watch} from "vue-property-decorator"
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { SpilledSheetService } from '../../../service/SpilledSheetService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ISpilledSheetService } from "../../../interface/service/ISpilledSheetService"
 import ObjectHelper from '../../../common/objectHelper'
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
@@ -110,14 +111,15 @@ import CACHE_KEY from '../../../constans/cacheKey'
 export default class SpilledSheet extends Vue{
   private materialSetting: any;
   private cache = CachePocily.getInstance();
-  private service: SpilledSheetService;
+  private service: ISpilledSheetService;
   private selectedGood:any[];//store中selectedGood的值
   private setSelectedGood:INoopPromise//store中给selectedGood赋值
   private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
   private addBillInfo:any={};
   
   created() {  
-    this.service = SpilledSheetService.getInstance();
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createSpilledSheet();
     if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_ADDINFO));
     }

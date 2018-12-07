@@ -86,7 +86,8 @@ import {LoadingPlugin} from 'vux'
 import { mapActions, mapGetters } from 'vuex'
 import {maskMixin} from "../../../helper/maskMixin"
 import { INoop, INoopPromise } from '../../../helper/methods'
-import { LeadbackMaterialService } from '../../../service/LeadbackMaterialService'
+import { FactoryService } from "../../../factory/FactoryService"
+import { ILeadbackMaterialService } from "../../../interface/service/ILeadbackMaterialService"
 import { CachePocily } from "../../../common/Cache"
 import {ECache} from '../../../enum/ECache'
 import CACHE_KEY from '../../../constans/cacheKey'
@@ -108,13 +109,14 @@ import CACHE_KEY from '../../../constans/cacheKey'
    }
 })
 export default class leadbackMaterial extends Vue{
-    private service: LeadbackMaterialService;
+    private service: ILeadbackMaterialService;
     private cache = CachePocily.getInstance();
     private title:string;
     private material:any={};//领退料详情页面表头
     private details:any[] = [];  //物料明细
     created() {          
-       this.service = LeadbackMaterialService.getInstance();
+       const factory = FactoryService.getInstance().createFactory();
+       this.service = factory.createLeadbackMaterial();
        this.detailList();
        if(this.$route.query.pageType == 'requisition'){
           this.title = '领料单详情'

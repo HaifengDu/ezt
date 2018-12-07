@@ -17,6 +17,12 @@ import { IOrderGoodsService } from "../interface/service/IOrderGoodsService";
 import BOHOrderGoodsService from "../service/orderGood/BOHOrderGoodsService";
 import { IPublicAddGoodService } from "../interface/service/IPublicAddGoodService";
 import BOHPublicAddGoodService from "../service/publicAddGood/BOHPublicAddGoodService";
+import { IStockTakingService } from "../interface/service/IStockTakingService";
+import BOHStockTakingService from "../service/stockTaking/BOHStockTakingService";
+import { ILeadbackMaterialService } from "../interface/service/ILeadbackMaterialService";
+import BOHLeadbackMaterialService from "../service/leadbackMaterial/BOHLeadbackMaterialService";
+import { ISpilledSheetService } from "../interface/service/ISpilledSheetService";
+import BOHSpilledSheetService from "../service/spilledSheet/BOHSpilledSheetService";
 
 
 export class BOHFactroyService implements IFactory {   
@@ -48,7 +54,7 @@ export class BOHFactroyService implements IFactory {
     public createStoreAllot(): IStoreAllotService{ //boh 店间平调
         return BOHStoreAllotService.getInstance();
     }
-
+    
     public createOrderGood(): IOrderGoodsService{ //订货
         return BOHOrderGoodsService.getInstance();
     }
@@ -57,6 +63,23 @@ export class BOHFactroyService implements IFactory {
         return BOHPublicAddGoodService.getInstance();
     }
 
+    public createStockTaking(): IStockTakingService{  //盘库
+        return BOHStockTakingService.getInstance();
+    }
+
+    public createLeadbackMaterial(): ILeadbackMaterialService{  //领退料
+        return BOHLeadbackMaterialService.getInstance();
+    }
+
+    public createSpilledSheet(): ISpilledSheetService{  //损溢单
+        return BOHSpilledSheetService.getInstance();
+    }
+
+
+
+
+
+
     private static _instance: BOHFactroyService;
 
     private constructor() {
@@ -64,7 +87,7 @@ export class BOHFactroyService implements IFactory {
 
     static createInstance() {
         BOHFactroyService.getInstance();
-    }
+    }     
 
     static getInstance() {
         return this._instance || (this._instance = new this());

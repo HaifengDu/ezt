@@ -1,12 +1,11 @@
 import { Action } from "vuex";
-import RootType from "./mutation-types";
+import InventoryType from "./mutation-types";
 import IRootState from "../../interface/store/IRootState";
-import { StockTakingService } from "../../service/StockTakingService";
-import Pager from "../../common/Pager";
+import { StockTakingService } from "../../service/stockTaking/StockTakingService";
 const stockTakingService = StockTakingService.getInstance();
 export const setAddinventory:Action<any,IRootState> = ({commit},addinventory:{})=>{
-    commit(RootType.PK_AddInventory, addinventory);
-};
+    commit(InventoryType.PK_AddInventory, addinventory);
+};  
 // export const setGoodList:Action<any,IRootState> = ({commit},inventoryList:[])=>{
 //     commit(RootType.PK_GOODLIST, inventoryList);
 // };   
@@ -25,6 +24,4 @@ export const setAddinventory:Action<any,IRootState> = ({commit},addinventory:{})
 // export const setPktemplateimport:Action<any,IRootState> = ({commit},pktemplateimport:[])=>{
 //     commit(RootType.PK_TemplateImport, pktemplateimport);
 // };   
-
-
- 
+    

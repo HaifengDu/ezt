@@ -24,7 +24,7 @@
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" :class="[{active:typeName.smallActive}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
+             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
                {{item.name}}   
                <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
               </li>
@@ -411,10 +411,7 @@ export default class AddGood extends Vue{
       this.$set(bigSort,'active',bigSort.id == item.id);
     })    
     this.typeName = item;   
-    this.goodSmallType = item.cdata; 
-    if(this.typeName.id == item.id){//小类中哪一个是激活的active
-      this.$set(item,'smallActive',true);
-    }
+    this.goodSmallType = item.cdata;
     // (item.cdata).forEach((info:any,index:any)=>{
     //   this.loadGood(info)
     // })
@@ -423,6 +420,7 @@ export default class AddGood extends Vue{
     // TODO:加载货品this.goodSmallType[0]   
   }
   private loadGood(item:any){
+    // let item = newItem.cdata[0];
     let _this_ = this;
     if(!item.addList){
       this.$set(item,'addList',[]);
@@ -433,7 +431,7 @@ export default class AddGood extends Vue{
       this.goodList = item.goodsList;
       return false;
     }   
-    _this_.service.getGoodList({goodsSortId:item.id,...this.materialParam}).then(res=>{
+    _this_.service.getGoodList({stockGoodsSortId:item.id,...this.materialParam}).then(res=>{
       let goodsList = res.data.goodsList;
         //TODO:item.id加载货品
       _.forEach(goodsList,good=>{

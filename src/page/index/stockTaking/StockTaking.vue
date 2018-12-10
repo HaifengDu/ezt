@@ -202,7 +202,7 @@ export default class stockTaking extends Vue{
             },{
               name:"已审核",
               status:1,
-              active:false  
+              active:false       
             }
           ); 
       }

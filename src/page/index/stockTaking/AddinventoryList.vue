@@ -88,22 +88,22 @@
               </ul>
               <ul>
                 <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
-                      <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
+                      <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)"   
                       v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                           <div class="good-detail-l">
                               <div>
                                   <span class="good-detail-name">
                                     <span class="good-detail-break">{{item.material_name}}</span> 
-                                    <span class="good-detail-sort">（{{item.utilname}}）</span>
+                                     <span class="good-detail-sort" v-if="item.material_model || ''">（{{item.material_model}}）</span> 
                                   </span>
                               </div>
                               <div class="good-detail-nobreak">
                                     <span class="good-detail-billno ">编码：{{item.material_num}}</span>
-                                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                                    <span class="good-detail-sort">单位：{{item.unit_name}}</span> 
                               </div> 
                               <div>
                                   <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
-                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num || 0" style="width:80px;border-radius:0px;border:1px solid #ccc;"></span> 
+                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num" style="width:50px;border-radius:0px;border:1px solid #ccc;"></span> 
                               </div> 
                           </div>
                           <div class="good-detail-r">
@@ -327,12 +327,7 @@ export default class StockTaking extends Vue{
    *  BOH盘点单 保存并提交
    */
   private saveReceive(rows:Array<any>){
-        let details={
-          "bill_type" : this.addinventory.bill_type,
-          "bill_type_name" : this.addinventory.name,
-          "warehouse_id" : this.addinventory.id,
-          "busi_date" : this.user.auth.busi_date,
-        }
+        var rows=[]; 
 				this.selectedGood.forEach(item => {
 					let obj = {
               "unit_name": item.unit_name,
@@ -344,20 +339,28 @@ export default class StockTaking extends Vue{
               "acc_qty":item.acc_qty,
               "material_num":item.material_num,
               "stockMode":item.stockMode,
-              "material_id":item.material_id,
+              "material_id":item.material_id, 
               "material_name":item.material_name,
               "distributePrice1":item.distributePrice1
             };
 					rows.push(obj);
         });
-				this.service.getAdditionalcheckList(rows,details).then(res=>{
+        let billInfo={
+          "bill_type" : this.addinventory.bill_type,
+          "bill_type_name" : this.addinventory.name,
+          "warehouse_id" : this.addinventory.id,
+          "busi_date" : this.user.auth.busi_date,
+          "details":rows
+        }
+				this.service.getAdditionalcheckList(billInfo).then(res=>{
 					if(!this.selectedGood||this.selectedGood.length<=0){
 						this.$toasted.show("当前货品数量为0，请添加货品！");
 						return false;
 					}
 					this.addBillInfo={};
 					this.setSelectedGood([]);
-					this.addBeforeBillInfo={};
+          this.addBeforeBillInfo={};
+          this.selectedGood=[];
 					this.cache.clear();
 					this.$toasted.success("提交成功！");
 					this.$router.push("/stockTaking");
@@ -369,13 +372,12 @@ export default class StockTaking extends Vue{
    *  BOH版本   选择物料
    */
   private BohMaterials(){
-    if(this.addBillInfo){
+    if(this.addBillInfo){       
         let goodTerm = {};
         goodTerm={
-          billsPageType: 'stocktaking',
+          billsPageType: 'stocktaking',   
         }  
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-        // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data)); 
         this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
         this.$router.push({name:'PublicAddGood',query:{}})

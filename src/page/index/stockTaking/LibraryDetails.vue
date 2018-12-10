@@ -34,7 +34,7 @@
                     </div>
                     <div>
                         <p>规格：<span>{{item.material_model}}</span></p>
-                        <p>账面数量：<span>{{item.acc_qty}}</span></p>
+                        <p>单位：<span>{{item.unit_name}}</span></p>
                     </div>
                     <div v-if="!InterfaceSysTypeBOH">
                       <p>理论库存：<span>{{item.thery_qty}}</span></p>
@@ -43,6 +43,7 @@
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                       <p v-if="!InterfaceSysTypeBOH">采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
                       <p v-if="!InterfaceSysTypeBOH">库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
+                      <p>账面数量：<span>{{item.acc_qty}}</span></p>
                       <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
@@ -199,7 +200,8 @@ export default class stockTaking extends Vue{
     /**
      * 审核通过
      */
-    private auditfailed(item:any,details:Array<any>){
+    private auditfailed(item:any,rows:Array<any>){
+       var rows=[];
        this.inventoryDetails.forEach((item:any) => {
             let obj = {
                 whole_num:item.whole_num,   
@@ -207,17 +209,18 @@ export default class stockTaking extends Vue{
                 consume_num:item.consume_num,
                 disperse_num:item.disperse_num
               };
-            details.push(obj);
+            rows.push(obj);
         });
-        let data={
+        let billInfo={
           "store_name": this.user.auth.store_name,
           "warehouse_name":this.details.warehouse_id,
           "audit_name":this.user.auth.username,
           "ids":this.details.id,
           "stock_count_mode":this.details.stock_count_mode,
           "organ_brief_code":this.user.auth.organ_brief_code,
+          "details":rows
         }
-        this.service.getAuditchecklistyes(details,data).then(res=>{  
+        this.service.getAuditchecklistyes(billInfo).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item))
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data))
             this.$toasted.show("操作成功！")
@@ -292,13 +295,14 @@ export default class stockTaking extends Vue{
        if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可保存！")
         }
+        var rows=[];
         this.inventoryDetails.forEach((item:any) => {
             let obj = {
                 material_id:item.material_id,   
               };
             rows.push(obj);
         });
-        let details={
+        let billInfo={
           "entry_name":this.user.auth.username,
           "bill_status":0,   //暂存
           "bill_type_name":this.details.bill_type_name,
@@ -308,8 +312,9 @@ export default class stockTaking extends Vue{
           "busi_date":this.user.auth.busi_date,
           "organ_brief_code":this.user.auth.organ_brief_code,
           "stock_count_mode":this.details.treatment,
+          "details":rows
         }
-        this.service.getAdditionalcheckList(rows,details).then(res=>{  
+        this.service.getAdditionalcheckList(billInfo).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.cache.clear();
@@ -326,13 +331,14 @@ export default class stockTaking extends Vue{
         if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可提交！")
         }
+        var rows=[];
         this.inventoryDetails.forEach((item:any) => {
             let obj = {
                 material_id:item.material_id,   
               };
             rows.push(obj);
         });
-        let details={
+        let billInfo={
           "entry_name":this.user.auth.username,
           "bill_status":1,   //提交
           "bill_type_name":this.details.bill_type_name,
@@ -342,8 +348,9 @@ export default class stockTaking extends Vue{
           "busi_date":this.user.auth.busi_date,
           "organ_brief_code":this.user.auth.organ_brief_code,
           "stock_count_mode":this.details.treatment,
+          "details":rows
         }
-        this.service.getAdditionalcheckList(rows,details).then(res=>{  
+        this.service.getAdditionalcheckList(billInfo).then(res=>{  
             this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
             this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
             this.$toasted.show("操作成功！")

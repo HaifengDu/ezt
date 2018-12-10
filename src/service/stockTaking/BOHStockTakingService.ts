@@ -113,7 +113,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param busi_date 
      * @param details 
      */
-    getAdditionalcheckList(rows:Array<any>,details:object){
+    getAdditionalcheckList(billInfo:object){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -124,8 +124,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
             // "bill_type_name" :bill_type_name,
             // "warehouse_id": warehouse_id,
             // "busi_date": busi_date,
-            "rows":rows,
-            "details":details,
+            "billInfo":billInfo,
             /*[{
                 "unit_name": unit_name,
                 "unit_id":unit_id,
@@ -171,7 +170,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param bill_status 
      * @param details 
      */
-    getAuditchecklistyes(details:Array<any>,data:object){
+    getAuditchecklistyes(billInfo:object){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -184,8 +183,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
                 // "warehouse_id":warehouse_id,
                 // "busi_date":busi_date,
                 // "bill_status" : bill_status,     //SCM_AUDIT_YES  审核       SCM_AUDIT_NO 只是修改
-                "details" :details, 
-                "data":data,
+                "billInfo" :billInfo, 
                 //[
                 //     {    
                 //         "id" :ids,
@@ -194,7 +192,7 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
                 //         "consume_qty":consume_qty, 
                 //         "stockMode": stockMode, 
                 //         "material_num":material_num, 
-                //         "material_id": material_id, 
+                //         "material_id": material_id,     
                 //         "unit_id":unit_id, 
                 //         "thery_qty":thery_qty, 
                 //         "unit_name":unit_name, 

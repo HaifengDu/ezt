@@ -24,7 +24,7 @@
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
+             <li class="category-item" :class="[{active:typeName.smallActive}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
                {{item.name}}   
                <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
               </li>
@@ -349,12 +349,7 @@ export default class AddGood extends Vue{
     isAnyReturn:boolean
   };
   private isRemark:boolean=false;//编辑备注
-  // private useObj:any={
-  //   GoodPriceIsEdit:"",
-  //   GoodPriceOrAmt:0,
-  // }
   private isPrice:boolean=false;//编辑价格
-  // private addBillInfo:any;//价格与备注显示切换
   private orderType: any[] = [
     {
       //单据类型下拉数据
@@ -395,7 +390,7 @@ export default class AddGood extends Vue{
       if(res){
         this.allType = res.data.sortList;
         this.goodBigType = this.allType;
-        this.changeSmallType(this.allType[0]);
+        this.changeSmallType(this.allType[0]);//默认加载第一个类别的物品
       }     
     })
   }
@@ -417,10 +412,14 @@ export default class AddGood extends Vue{
     })    
     this.typeName = item;   
     this.goodSmallType = item.cdata; 
+    if(this.typeName.id == item.id){//小类中哪一个是激活的active
+      this.$set(item,'smallActive',true);
+    }
     // (item.cdata).forEach((info:any,index:any)=>{
     //   this.loadGood(info)
     // })
     this.loadGood(item.cdata[0]);
+  
     // TODO:加载货品this.goodSmallType[0]   
   }
   private loadGood(item:any){
@@ -430,6 +429,10 @@ export default class AddGood extends Vue{
     }else{
       item.addList = [];
     }
+    if(item.id==-1){//加载全部
+      this.goodList = item.goodsList;
+      return false;
+    }   
     _this_.service.getGoodList({goodsSortId:item.id,...this.materialParam}).then(res=>{
       let goodsList = res.data.goodsList;
         //TODO:item.id加载货品
@@ -479,12 +482,12 @@ export default class AddGood extends Vue{
     if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
         this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
       if(!item.isStock){
-        if(item.num == item.stock){
+        if(item.num == item.stock){//库存量
           this.$set(item,'isStock','true');
           return false;
         }
       }else{
-        if(item.num == item.returnNum){
+        if(item.num == item.returnNum){//可退量
           this.$set(item,'isStock','true');
           return false;
         }
@@ -511,13 +514,13 @@ export default class AddGood extends Vue{
     if(item.num>0){
       //新增
       var ret = this.selectedGoodList.find((value:any)=>{
-        return item.id == value.id;
+        return item.material_id == value.material_id;
       });
       if(!ret){
         this.selectedGoodList.push(item);
       }
       var smallRet = this.typeName.addList.find((value:any)=>{
-        return item.id == value.id;
+        return item.material_id == value.material_id;
       })
       if(!smallRet){       
         this.typeName.addList.push(item);
@@ -572,7 +575,7 @@ export default class AddGood extends Vue{
     ObjectHelper.merge(this.bindRemark,this.bindRemark,true);
     this.isRemark=false;
   }
-  /**
+/**
  * 改变直拨的 数量
  */
 private changeDirect(item:any){  

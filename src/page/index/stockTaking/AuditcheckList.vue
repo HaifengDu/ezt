@@ -43,16 +43,17 @@
                         <div>
                             <span class="good-detail-name">    
                               <span class="good-detail-break">{{item.material_name}}</span> 
-                              <span class="good-detail-sort">（{{item.utilname}}）</span> 
+                              <span class="good-detail-sort" v-if="item.material_model || ''">（{{item.material_model}}）</span> 
                             </span>
                         </div>
                         <div class="good-detail-nobreak">
-                              <span class="good-detail-billno">编码：00000001</span>
-                              <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
+                              <span class="good-detail-billno">编码：{{item.material_num}}</span>
+                              <span class="good-detail-sort">单位：{{item.unit_name}}</span> 
                         </div> 
                         <div>
                             <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
-                            <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num || 0" style="width:80px;border: 1px solid #ccc;border-radius: 0px;"></span> 
+                            <span class="title-search-name ezt-dense-box">实盘数：
+                              <input v-model="item.disperse_num" style="width:50px;border: 1px solid #ccc;border-radius: 0px;"></span> 
                         </div> 
                     </div>
                     <div class="good-detail-r">
@@ -130,6 +131,7 @@ export default class StockTaking extends Vue{
     private addBillInfo:any={
        editPrice:false
     }; 
+    private InventoryType:any; 
   created() {  
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createStockTaking();
@@ -145,12 +147,11 @@ export default class StockTaking extends Vue{
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
-        console.log(JSON.stringify(this.selectedGood))
     }
   }
 
   mounted(){ 
-   
+      
   }
   /**
    * 返回
@@ -219,16 +220,8 @@ export default class StockTaking extends Vue{
   /**
    *  审核盘点单 提交
    */
-  private saveReceive(details:Array<any>){
-        let data={
-          "id": this.selectedGood['id'],
-          "bill_type":this.selectedGood['bill_type'],
-          "bill_type_name":this.details.bill_type_name,
-          "warehouse_id":this.selectedGood['warehouse_id'],
-          "busi_date":this.user.auth.busi_date, 
-          "bill_status":'SCM_AUDIT_NO', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-        }
-        var details =[];
+  private saveReceive(rows:Array<any>){
+        var rows =[];
         this.selectedGood['details'].forEach((item:any) => {
 					let obj = {
               id: item.id,
@@ -246,9 +239,18 @@ export default class StockTaking extends Vue{
               distributePrice1:item.distributePrice1,
               disperse_num:item.disperse_num
             };
-					details.push(obj);    
-        });    
-      this.service.getAuditchecklistyes(details,data).then(res=>{ 
+					rows.push(obj);    
+        });  
+        let billInfo={   
+          "id": this.selectedGood['id'],
+          "bill_type":this.selectedGood['bill_type'],
+          "bill_type_name":this.details.bill_type_name,
+          "warehouse_id":this.selectedGood['warehouse_id'],
+          "busi_date":this.user.auth.busi_date, 
+          "bill_status":'SCM_AUDIT_NO', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+          "details":rows
+        }  
+      this.service.getAuditchecklistyes(billInfo).then(res=>{ 
         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("当前货品数量为0，请添加货品！");
             return false;
@@ -282,19 +284,11 @@ export default class StockTaking extends Vue{
       /**
        * 审核通过
        */
-      onConfirm (details:Array<any>) {
-            let data={
-              "id": _this.selectedGood['id'],
-              "bill_type":_this.selectedGood['bill_type'],
-              "bill_type_name":_this.details.bill_type_name,
-              "warehouse_id":_this.selectedGood['warehouse_id'],
-              "busi_date":_this.user.auth.busi_date, 
-              "bill_status":'SCM_AUDIT_YES', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
-            }
-            var details=[];
+      onConfirm (rows:Array<any>) {
+            var rows=[];
            	_this.selectedGood['details'].forEach((item:any) => {
               let obj = {
-                  ids: item.id,
+                  id: item.id,
                   stockChecked: item.stockChecked,
                   acc_amt: item.acc_amt,
                   consume_qty: item.consume_qty,
@@ -309,9 +303,18 @@ export default class StockTaking extends Vue{
                   distributePrice1:item.distributePrice1,
                   disperse_num:item.disperse_num
                 };
-              details.push(obj);
+              rows.push(obj);
             });
-            _this.service.getAuditchecklistyes(details,data).then(res=>{ 
+            let billInfo={
+              "id": _this.selectedGood['id'],
+              "bill_type":_this.selectedGood['bill_type'],
+              "bill_type_name":_this.details.bill_type_name,
+              "warehouse_id":_this.selectedGood['warehouse_id'],
+              "busi_date":_this.user.auth.busi_date, 
+              "bill_status":'SCM_AUDIT_YES', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
+              "details":rows
+            }
+            _this.service.getAuditchecklistyes(billInfo).then(res=>{ 
             if(!_this.selectedGood||_this.selectedGood.length<=0){
                 _this.$toasted.show("当前货品数量为0，请添加货品！");
                 return false;
@@ -323,7 +326,6 @@ export default class StockTaking extends Vue{
                 _this.$toasted.success("审核成功！");
                 _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
             },err=>{
-              // _this.$toasted.success(err.data.errmsg);
               _this.$toasted.show(err.message)
             })
       },
@@ -337,17 +339,16 @@ export default class StockTaking extends Vue{
   /**
    * 选择货品
    */
-  private selectMaterials(newType:any){ 
-      let goodTerm = {};
+  private selectMaterials(){ 
       if(this.addBillInfo){
+        let goodTerm = {};
         goodTerm={
           billsPageType: 'stocktaking',
         }     
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-        // this.cache.save(CACHE_KEY.INVENTORY_ADDINFO,JSON.stringify(res.data));
         this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
-        this.$router.push({name:'PublicAddGood',query:{newType:newType}})
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.details));
+        this.$router.push({name:'PublicAddGood',query:{}})
       }   
     }
   }

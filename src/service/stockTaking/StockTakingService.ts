@@ -121,11 +121,10 @@ export class StockTakingService extends BaseService implements IStockTakingServi
      * @param organ_brief_code 
      * @param stock_count_mode 
      */
-    getAdditionalcheckList(rows:Array<any>,details:object){
+    getAdditionalcheckList(billInfo:object){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{    
-                "rows":rows,//物料id
-                "details":details,//详情内容
+                "billInfo":billInfo,//详情内容    
                 // "entry_name":entry_name,    //制单人姓名
                 // "bill_status":bill_status,       //单据状态   0是暂存   1是提交
                 // "bill_type_name":bill_type_name,   //单据盘点类型名称
@@ -176,7 +175,7 @@ export class StockTakingService extends BaseService implements IStockTakingServi
      * @param stock_count_mode 
      * @param organ_brief_code 
      */
-    getAuditchecklistyes(details:Array<any>,data:object){
+    getAuditchecklistyes(billInfo:object){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             data:[{
                 // "list":[{
@@ -185,8 +184,7 @@ export class StockTakingService extends BaseService implements IStockTakingServi
                 //     "consume_num":consume_num,
                 //     "disperse_num":disperse_num
                 // }],
-                "details":details,
-                "data":data
+                "billInfo":billInfo,
                 // "store_name":store_name,
                 // "warehouse_name":warehouse_name,
                 // "audit_name":audit_name,

@@ -58,6 +58,9 @@
 .addinventorylist .weui-cells,.enquirylist .weui-cells{
    margin-top: 0em;
 }
+.weui-label{
+  font-size: 17px;
+}
 .addinventorylist .weui-label,.addinventorylist .vux-label,.enquirylist .weui-label,.enquirylist .vux-label{
   font-size: 13px;
   color: #5F7B9A;

@@ -46,7 +46,7 @@
                   </span>
                   <!---盘库显示规格账面数量-->
                   <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-                    规格： <span class="good-item-sort">{{item.material_model}}</span>
+                    规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
                     账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
                   </span>
                 </div>
@@ -193,7 +193,7 @@
               </span>
                 <!---盘库显示规格账面数量-->
               <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
-                规格： <span class="good-item-sort">{{item.material_model}}</span>
+                规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
                 账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
               </span>
               <!-- 默认不可以进行编辑 BOH不限制-->
@@ -261,8 +261,8 @@
             </span>
              <!-- 盘库显示规格账面数量 -->
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-               规格： <span class="good-item-sort">{{item.material_model}}</span>
-               账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
+                规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
+                账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
             </span>
             <!-- 默认不可以进行编辑  BOH不限制-->
             <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.utilname}}</span>

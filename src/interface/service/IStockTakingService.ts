@@ -7,9 +7,9 @@ export interface IStockTakingService{
     getTemplateImport?: (warehouse_id:string) =>AxiosPromise<any>;  //模板导入
     getTemplateDetails?: (template_id:string,flag:string,warehouse_id:string) =>AxiosPromise<any>;  //模板详情
     getInventorytypeImport?: (flag:string,warehouse_id:string) =>AxiosPromise<any>;//盘点类型批量导入
-    getAdditionalcheckList?: (row:Array<any>,details:object) =>AxiosPromise<any>;//新增盘点单 
+    getAdditionalcheckList?: (billInfo:object) =>AxiosPromise<any>;//新增盘点单      
     getAuditchecklistno?: (audit_name:string,ids:string,opinion:string) =>AxiosPromise<any>;//审核盘点单（不通过）
-    getAuditchecklistyes?: (details:Array<any>,data:object) =>AxiosPromise<any>;//审核盘点单（通过）
+    getAuditchecklistyes?: (billInfo:object) =>AxiosPromise<any>;//审核盘点单（通过）
     getDataSorting():AxiosPromise<any>;//数据整理
     getInventoryType?: (bill_type:string) =>AxiosPromise<any>;//盘点类型入口
     getWarehouse?: (inventory_type:string) =>AxiosPromise<any>;//动态加载仓库

@@ -16,6 +16,7 @@
           <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
+            <i class="divide">|</i>
           </span>
           <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
             <span @click="changeSmallType(item)" :class="[{active:item.active}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
@@ -772,7 +773,7 @@ private changeDirect(item:any){
     overflow-x:scroll;
     display:flex;
     white-space: nowrap;
-    padding-left: 8px;
+    padding-left: 10px;
     span{
       margin-right: 10px;
       max-width: 82px;
@@ -791,7 +792,7 @@ private changeDirect(item:any){
     height: 44px;
     float: left;
     font-size: 14px;
-    padding-left: 8px;
+    padding-left: 6px;
     max-width: 70px;
     // text-align: center;
     border-bottom-width: 1.5px;
@@ -800,28 +801,40 @@ private changeDirect(item:any){
   .collect-good.active{
     color: #1674fc;
   }
+  .collect-good .divide{
+    display: inline-block;
+    font-style: normal;
+    color: #ccc;
+  }
   .good-cont{
     display: flex;
     padding: 5px;
     width: 100%;
+    position: fixed;
+    top: 44px;
+    bottom: 50px;
   }
   .good-category-list{
     padding: 0;
     margin-top: 44px;
     position: fixed;
+    overflow-y: scroll;
+    top: 48px;
+    bottom: 50px;
   }
   .good-content-list{
     margin-top: 44px;
     padding: 0;
     padding-left: 1px;
     margin-left: 20%;
-    width: 78%;
+    width: 74%;
+    overflow-y: scroll;
   }
   .good-item{
     background: #fff;
     padding: 10px;
     text-align: left;
-    margin: 8px 0;
+    margin: 0px 0px 8px 0px;
     .good-remark{     
       padding: 1px;
       display:inline-block;

@@ -381,18 +381,17 @@ export default class AddGood extends Vue{
   /**
    * 各个模块查询分类时传的参数，自己存在缓存里，统一的一个参数
    *  */ 
-  private InventoryType:any; 
-  // private userpp:any[]=[];
+  private materialParam:any; 
   created(){ 
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createPublicGood();
     if(this.cache.getData(CACHE_KEY.MATERIAL_PARAM)){
-      this.InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_PARAM));
+      this.materialParam = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_PARAM));
     } 
     /**
      * 获取 类 物品列表
      */
-    this.service.getGoodClass(this.InventoryType).then(res=>{
+    this.service.getGoodClass(this.materialParam).then(res=>{
       if(res){
         this.allType = res.data.sortList;
         this.goodBigType = this.allType;
@@ -407,104 +406,45 @@ export default class AddGood extends Vue{
     this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
-    });  
-   /*  if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-      if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
-          this.allType = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
-      }  
-      if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
-          this.InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
-      }  
-    } */
-   
-    // if(!this.InterfaceSysTypeBOH){
-     
-    // }
+    });
     //TODO:把收藏从货品类别里抽出来
-    
-    // if(!this.InterfaceSysTypeBOH){
-      
-    // }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-    //   /**
-    //    * BOH版本  选择货品
-    //    */
-    //   this.goodBigType = this.allType['sortList'];
-    //   this.changeSmallType(this.allType['sortList'][0]);
     }
     //TODO:默认加载货品
   // }
   private changeSmallType(item:any){
-    // if(!this.InterfaceSysTypeBOH){ 
-         this.allType.forEach((bigSort,index)=>{
-          this.$set(bigSort,'active',bigSort.id == item.id);
-        })    
-        this.typeName = item;   
-        this.goodSmallType = item.cdata; 
-        // (item.cdata).forEach((info:any,index:any)=>{
-        //   this.loadGood(info)
-        // })
-        this.loadGood(item.cdata[0]);
-        // TODO:加载货品this.goodSmallType[0]      
-  //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-  //       /**
-  //        * BOH版本  盘库选择货品
-  //        */
-  //       this.BOHservice.getBohItemCategory(this.InventoryType.bill_type,item.id).then(res=>{ 
-  //           this.allType['sortList'].forEach((bigSort:any,index:any)=>{
-  //             this.$set(bigSort,'active',bigSort.id == item.id);
-  //           })    
-  //           this.typeName = item;   
-  //           this.goodSmallType = item.cdata;
-  //           (item.cdata).forEach((info:any,index:any)=>{
-  //             this.loadGood(info)
-  //           })
-  //           this.loadGood(item.cdata[0]);
-  //       })
-  //   }
+    this.allType.forEach((bigSort,index)=>{
+      this.$set(bigSort,'active',bigSort.id == item.id);
+    })    
+    this.typeName = item;   
+    this.goodSmallType = item.cdata; 
+    // (item.cdata).forEach((info:any,index:any)=>{
+    //   this.loadGood(info)
+    // })
+    this.loadGood(item.cdata[0]);
+    // TODO:加载货品this.goodSmallType[0]   
   }
   private loadGood(item:any){
-    debugger
     let _this_ = this;
-    // if(!this.InterfaceSysTypeBOH){
-       if(!item.addList){
-          this.$set(item,'addList',[]);
-        }else{
-          item.addList = [];
+    if(!item.addList){
+      this.$set(item,'addList',[]);
+    }else{
+      item.addList = [];
+    }
+    _this_.service.getGoodList({goodsSortId:item.id,...this.materialParam}).then(res=>{
+      let goodsList = res.data.goodsList;
+        //TODO:item.id加载货品
+      _.forEach(goodsList,good=>{
+        this.$set(good,'active',false);
+        const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+        if(index>=0){
+          ObjectHelper.merge(good,this.selectedGoodList[index],true);
+          this.selectedGoodList[index] = good;
+          item.addList.push(good);
         }
-        _this_.service.getGoodList({goodsSortId:item.id,...this.InventoryType}).then(res=>{
-          let goodsList = res.data.goodsList;
-           //TODO:item.id加载货品
-          _.forEach(goodsList,good=>{
-            this.$set(good,'active',false);
-            const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-            if(index>=0){
-              ObjectHelper.merge(good,this.selectedGoodList[index],true);
-              this.selectedGoodList[index] = good;
-              item.addList.push(good);
-            }
-          });
-          this.goodList = goodsList;
-        })
-        _this_.typeName=item;  
-  //   }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-  //       if(!item.addList){
-  //         this.$set(item,'addList',[]);
-  //       }else{
-  //         item.addList = [];
-  //       }
-  //       //TODO:item.id加载货品
-  //       _.forEach(item.goodsList,good=>{
-  //         this.$set(good,'active',false);
-  //         const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-  //         if(index>=0){
-  //           ObjectHelper.merge(good,this.selectedGoodList[index],true);
-  //           this.selectedGoodList[index] = good;
-  //           item.addList.push(good);
-  //         }
-  //       });
-  //       this.goodList = item.goodsList;
-  //       this.typeName=item;  
-  //   }
+      });
+      this.goodList = goodsList;
+    })
+    _this_.typeName=item; 
   }
   // private showDelete(item:any){
   private showDelete(s:any,e:any){
@@ -534,93 +474,65 @@ export default class AddGood extends Vue{
    * 添加/删除物品数量
    */
   private handlerNum(item:any){
-    // if(!this.InterfaceSysTypeBOH){
-        let _this = this;
-        //退货数量 限制处理
-        if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
-            this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
-          if(!item.isStock){
-            if(item.num == item.stock){
-              this.$set(item,'isStock','true');
-              return false;
-            }
-          }else{
-            if(item.num == item.returnNum){
-              this.$set(item,'isStock','true');
-              return false;
-            }
-          }     
-          let confirmTitle="";
-          if(this.materialLimit.billsPageType == 'supplierReturn'){
-            if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
-              confirmTitle = '实退数量不可大于库存数量';
-            }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
-              confirmTitle ='实退数量不可大于可退数量';
-            }
-          }else if(item.isStock&&item.num == item.stock){
-              confirmTitle ='添加数量不可大于库存量';
-          }
-          if(confirmTitle){
-            this.$vux.confirm.show({
-              content:confirmTitle,
-              showCancelButton:false,
-              hideOnBlur:true
-            })
-            return false;
-          }
+    let _this = this;
+    //退货数量 限制处理
+    if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
+        this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
+      if(!item.isStock){
+        if(item.num == item.stock){
+          this.$set(item,'isStock','true');
+          return false;
         }
-        if(item.num>0){
-          //新增
-          var ret = this.selectedGoodList.find((value:any)=>{
-            return item.id == value.id;
-          });
-          if(!ret){
-            this.selectedGoodList.push(item);
-          }
-          var smallRet = this.typeName.addList.find((value:any)=>{
-            return item.id == value.id;
-          })
-          if(!smallRet){       
-            this.typeName.addList.push(item);
-          }
-        }else{
-          //删除
-          const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-          if(index>=0){
-            this.selectedGoodList.splice(index,1);
-          }
-          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-          if(smallIndex>=0){
-            this.typeName.addList.splice(smallIndex,1);
-          }
+      }else{
+        if(item.num == item.returnNum){
+          this.$set(item,'isStock','true');
+          return false;
         }
-    // }else if(this.InterfaceSysTypeBOH && this.materialLimit.billsPageType == 'stocktaking'){
-    //   if(item.num>0){
-    //       //新增
-    //       var ret = this.selectedGoodList.find((value:any)=>{
-    //         return item.material_id == value.material_id;
-    //       });
-    //       if(!ret){
-    //         this.selectedGoodList.push(item);
-    //       }
-    //       var smallRet = this.typeName.addList.find((value:any)=>{
-    //         return item.material_id == value.material_id;
-    //       })
-    //       if(!smallRet){       
-    //         this.typeName.addList.push(item);
-    //       }
-    //     }else{
-    //       //删除
-    //       const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-    //       if(index>=0){
-    //         this.selectedGoodList.splice(index,1);
-    //       }
-    //       const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-    //       if(smallIndex>=0){
-    //         this.typeName.addList.splice(smallIndex,1);
-    //       }
-    //     }
-    // }
+      }     
+      let confirmTitle="";
+      if(this.materialLimit.billsPageType == 'supplierReturn'){
+        if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
+          confirmTitle = '实退数量不可大于库存数量';
+        }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
+          confirmTitle ='实退数量不可大于可退数量';
+        }
+      }else if(item.isStock&&item.num == item.stock){
+          confirmTitle ='添加数量不可大于库存量';
+      }
+      if(confirmTitle){
+        this.$vux.confirm.show({
+          content:confirmTitle,
+          showCancelButton:false,
+          hideOnBlur:true
+        })
+        return false;
+      }
+    }
+    if(item.num>0){
+      //新增
+      var ret = this.selectedGoodList.find((value:any)=>{
+        return item.id == value.id;
+      });
+      if(!ret){
+        this.selectedGoodList.push(item);
+      }
+      var smallRet = this.typeName.addList.find((value:any)=>{
+        return item.id == value.id;
+      })
+      if(!smallRet){       
+        this.typeName.addList.push(item);
+      }
+    }else{
+      //删除
+      const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+      if(index>=0){
+        this.selectedGoodList.splice(index,1);
+      }
+      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+      if(smallIndex>=0){
+        this.typeName.addList.splice(smallIndex,1);
+      }
+    }
   }
   /**
    * 查看已选择货品 显示/隐藏
@@ -639,14 +551,14 @@ export default class AddGood extends Vue{
    * 删除已选择货品
    */
   private selectedDelGood(item:any){
-      const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-      this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
-      this.selectedGoodList.splice(index,1);
-      if(this.typeName.addList.length>0){
-        const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-        this.typeName.addList[smallIndex].num=0;
-        this.typeName.addList.splice(smallIndex,1);
-      }
+    const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+    this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
+    this.selectedGoodList.splice(index,1);
+    if(this.typeName.addList.length>0){
+      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+      this.typeName.addList[smallIndex].num=0;
+      this.typeName.addList.splice(smallIndex,1);
+    }
   }
   /**
    * 搜索所有物品 显示/隐藏
@@ -729,242 +641,241 @@ private changeDirect(item:any){
 
 <style lang="less" scoped>
 .mine-bot-btn{
-    width: 100%;
-    // position: absolute;
-    margin-top: 20px;
-        .ezt-lone-btn{
-        display: inline-block;
-        font-size: 14px;
-        color: #FFFFFF;
-        letter-spacing: 0;
-        padding: 8px 90px;
-        margin-bottom: 10px;
-        border-radius: 40px;
-        background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
-        background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
-        -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
-        box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
-    }
-  }
-  .item-delete{
-    flex:1;
-    text-align: center;
-    align-self: center;
-    font-size: 20px;
-  }
-  .good-type{
-    height: 45px;
-    top: 40px;
-    z-index: 2;
-    line-height: 45px;   
-    // position: absolute;
-    position: fixed;
-    display:flex;
-    flex-direction: row;
-    align-items: baseline;
-    text-align: left;
-    width: 100%;
-    background: #fff;
-  }
-  .good-type-list{
-    // width: calc(100vw - 70px);
-    height: 100%;
-    width: 100%;
-    overflow-x:scroll;
-    display:flex;
-    white-space: nowrap;
-    padding-left: 10px;
-    span{
-      margin-right: 10px;
-      max-width: 82px;
-      min-width: 50px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    span.active{
-      color: #1674fc;
-    }
-  }
-  .good-type-list.collect{
-     width: calc(100vw - 70px);
-  }
-  .collect-good{
-    height: 44px;
-    float: left;
+  width: 100%;
+  margin-top: 20px;
+  .ezt-lone-btn{
+    display: inline-block;
     font-size: 14px;
-    padding-left: 6px;
-    max-width: 70px;
-    // text-align: center;
-    border-bottom-width: 1.5px;
-    border-bottom-color: #fff;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    padding: 8px 90px;
+    margin-bottom: 10px;
+    border-radius: 40px;
+    background-image: -webkit-gradient(linear, left top, right top, from(#5A12CC), to(#3C82FB));
+    background-image: linear-gradient(90deg, #018BFF 0%, #4A39F3 100%);
+    -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
+    box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
   }
-  .collect-good.active{
+}
+.item-delete{
+  flex:1;
+  text-align: center;
+  align-self: center;
+  font-size: 20px;
+}
+.good-type{
+  height: 45px;
+  top: 40px;
+  z-index: 2;
+  line-height: 45px;   
+  // position: absolute;
+  position: fixed;
+  display:flex;
+  flex-direction: row;
+  align-items: baseline;
+  text-align: left;
+  width: 100%;
+  background: #fff;
+}
+.good-type-list{
+  // width: calc(100vw - 70px);
+  height: 100%;
+  width: 100%;
+  overflow-x:scroll;
+  display:flex;
+  white-space: nowrap;
+  padding-left: 10px;
+  span{
+    margin-right: 10px;
+    max-width: 82px;
+    min-width: 50px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  span.active{
     color: #1674fc;
   }
-  .collect-good .divide{
-    display: inline-block;
-    font-style: normal;
-    color: #ccc;
-  }
-  .good-cont{
-    display: flex;
-    padding: 5px;
-    width: 100%;
-    position: fixed;
-    top: 44px;
-    bottom: 50px;
-  }
-  .good-category-list{
-    padding: 0;
-    margin-top: 44px;
-    position: fixed;
-    overflow-y: scroll;
-    top: 48px;
-    bottom: 50px;
-  }
-  .good-content-list{
-    margin-top: 44px;
-    padding: 0;
-    padding-left: 1px;
-    margin-left: 20%;
-    width: 74%;
-    overflow-y: scroll;
-  }
-  .good-item{
-    background: #fff;
-    padding: 10px;
-    text-align: left;
-    margin: 0px 0px 8px 0px;
-    .good-remark{     
-      padding: 1px;
-      display:inline-block;
-      // margin-right: 20px;
-      flex:.4;
-      font-size: 20px;
-    }
-    .good-number{
-      flex:1;
-    }
-    .good-collect{
-      flex:.4;
-      font-size: 20px;
-    }
-    .good-stock{
-      flex:.4;
-      font-size: 12px;
-      margin-right: 4px;
-    }
-    .good-collect.active{
-      color:#1674fc;
-    }
-  }
-  .category-item{
-    background: #eee;
-    border-bottom: 1px solid #fff;
-    border-width: .1px;
-    padding: 13px 10px;
-    font-size: 14px;
-    text-align: center;
-    max-width: 30px;  
-    position: relative;  
-  }
-  .category-item .ezt-reddot-s{
-    position: absolute;
-    width: 16px;
-    height: 16px;
-    background: red;
-    color: #fff;
-    top: 0;
-    right: -4px;
-    border-radius: 10px;
-  }
-  .category-item.active{
-    background: #1188FC;
-    border-color: #fff;
-    border-right-width: 0;
-    color: #fff;
 }
-  .good-item-bot{
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-top: 14px;
+.good-type-list.collect{
+  width: calc(100vw - 70px);
+}
+.collect-good{
+  height: 44px;
+  float: left;
+  font-size: 14px;
+  padding-left: 6px;
+  max-width: 70px;
+  // text-align: center;
+  border-bottom-width: 1.5px;
+  border-bottom-color: #fff;
+}
+.collect-good.active{
+  color: #1674fc;
+}
+.collect-good .divide{
+  display: inline-block;
+  font-style: normal;
+  color: #ccc;
+}
+.good-cont{
+  display: flex;
+  padding: 5px;
+  width: 100%;
+  position: fixed;
+  top: 44px;
+  bottom: 50px;
+}
+.good-category-list{
+  padding: 0;
+  margin-top: 45px;
+  position: fixed;
+  overflow-y: scroll;
+  top: 48px;
+  bottom: 50px;
+}
+.good-content-list{
+  margin-top: 44px;
+  padding: 0;
+  padding-left: 1px;
+  margin-left: 26%;
+  width: 70%;
+  overflow-y: scroll;
+}
+.good-item{
+  background: #fff;
+  padding: 10px;
+  text-align: left;
+  margin: 0px 0px 8px 0px;
+  .good-remark{     
+    padding: 1px;
+    display:inline-block;
+    // margin-right: 20px;
+    flex:.4;
+    font-size: 20px;
   }
-  .ezt-foot-storage{
-    position: relative;
+  .good-number{
+    flex:1;
   }
-  .ezt-badge{
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    content: "";
-    position: absolute;
-    background: red;
-    border-radius: 16px;
-    right: 30px;
-    top: 4px;
+  .good-collect{
+    flex:.4;
+    font-size: 20px;
+  }
+  .good-stock{
+    flex:.4;
+    font-size: 12px;
+    margin-right: 4px;
+  }
+  .good-collect.active{
+    color:#1674fc;
+  }
+}
+.category-item{
+  background: #eee;
+  border-bottom: 1px solid #fff;
+  border-width: .1px;
+  padding: 13px 10px;
+  font-size: 14px;
+  text-align: center;
+  max-width: 60px;  
+  position: relative;  
+}
+.category-item .ezt-reddot-s{
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: red;
+  color: #fff;
+  top: 0;
+  right: 0px;
+  border-radius: 10px;
+}
+.category-item.active{
+  background: #1188FC;
+  border-color: #fff;
+  border-right-width: 0;
+  color: #fff;
+}
+.good-item-bot{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 14px;
+}
+.ezt-foot-storage{
+  position: relative;
+}
+.ezt-badge{
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  content: "";
+  position: absolute;
+  background: red;
+  border-radius: 16px;
+  right: 30px;
+  top: 4px;
+  color: #fff;
+  line-height: 16px;
+}
+//已选 货品//搜索所有物品
+.selected-item,.search-item{
+  height: 120%;
+  transition: height 2s;
+  position: absolute;
+  background: #F1F6FF;
+  top: 1px;
+  bottom: 40px;
+  width: 100%;
+  z-index: 5;   
+}
+.searcted-item{
+  margin-top: 45px;
+}
+.selected-good-content{
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+.search-header{
+  position: fixed;
+  display: flex;
+  background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
+  background-color: transparent;
+  width: 100%;
+  padding: 8px 10px;
+  input{
+    width: 74%;
+    padding: 4px 4px 4px 35px;
+  }
+  .search-close{
+    flex: .6;
+    line-height: 100%;
+    margin: auto 0;
     color: #fff;
-    line-height: 16px;
   }
-  //已选 货品//搜索所有物品
-  .selected-item,.search-item{
-    height: 120%;
-    transition: height 2s;
+  .search-icon{
     position: absolute;
-    background: #F1F6FF;
-    top: 1px;
-    bottom: 40px;
-    width: 100%;
-    z-index: 5;   
+    left: 22px;
+    top: 10px;
+    color: #ccc;
+    font-size: 16px;
   }
-  .searcted-item{
-    margin-top: 45px;
-  }
-  .selected-good-content{
-    margin-top: 50px;
-    margin-bottom: 50px;
-  }
-  .search-header{
-    position: fixed;
-    display: flex;
-    background-image: linear-gradient(139deg, #018BFF 0%, #4A39F3 100%);
-    background-color: transparent;
-    width: 100%;
-    padding: 8px 10px;
-    input{
-      width: 74%;
-      padding: 4px 4px 4px 35px;
-    }
-    .search-close{
-      flex: .6;
-      line-height: 100%;
-      margin: auto 0;
-      color: #fff;
-    }
-    .search-icon{
-      position: absolute;
-      left: 22px;
-      top: 10px;
-      color: #ccc;
-      font-size: 16px;
-    }
-  }
+}
 
-  //带有删除的物料
-  .good-item.delete{
-    display:flex;
-    flex-direction: row;
+//带有删除的物料
+.good-item.delete{
+  display:flex;
+  flex-direction: row;
+}
+// 编辑备注时样式
+.good-item-title{
+  display: flex;
+  .good-item-name{
+    flex:1;
   }
-  // 编辑备注时样式
-  .good-item-title{
-    display: flex;
-    .good-item-name{
-      flex:1;
-    }
-    .good-item-sort.edit{
-      border: 1px solid #ccc;
-    }
+  .good-item-sort.edit{
+    border: 1px solid #ccc;
   }
+}
   //编辑物品 修改的字段
 .dialog-demo {
   .ezt-dialog-header {
@@ -1031,45 +942,45 @@ private changeDirect(item:any){
     box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
   }
 }
-  //直拨仓库   
-  .warehouse-list{
-      flex: 1;
-      text-align: center;
-      margin-left: 10px;
-      max-height: 160px;
-      overflow-x: auto;
-      .warehouse-isDefault{           
-        display: inline-block;               
-          
-      }   
-  }
-  .warehouse-title-num{
-    display: flex;
-    flex-direction: column;
-    background: #ccc;
-  }
-  .good-warehouse-num{
+//直拨仓库   
+.warehouse-list{
+    flex: 1;
+    text-align: center;
     margin-left: 10px;
-    color: #95A7BA;
-    letter-spacing: 0;
-  }
-  .remark-area{
-    flex: .8;
-  }  
-  .title-search-right{
-    flex: 2;
-    text-align: right;
-  }
-  .warehouse-isDefault li{
-    display:flex;
-    flex-direction: row;
-    align-items: center;
+    max-height: 160px;
+    overflow-x: auto;
+    .warehouse-isDefault{           
+      display: inline-block;               
+        
+    }   
+}
+.warehouse-title-num{
+  display: flex;
+  flex-direction: column;
+  background: #ccc;
+}
+.good-warehouse-num{
+  margin-left: 10px;
+  color: #95A7BA;
+  letter-spacing: 0;
+}
+.remark-area{
+  flex: .8;
+}  
+.title-search-right{
+  flex: 2;
+  text-align: right;
+}
+.warehouse-isDefault li{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  flex:1;
+  span{
     flex:1;
-    span{
-      flex:1;
-    }
-  }    
-  .ezt-dialog-header{
+  }
+}    
+.ezt-dialog-header{
   padding: 10px 0px;
   // display: flex;
   flex-direction: column;

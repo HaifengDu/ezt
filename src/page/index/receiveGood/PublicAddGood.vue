@@ -18,15 +18,15 @@
             <span>收藏</span>
             <i class="divide">|</i>
           </span>
-          <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
+          <div class="good-type-list" :class="{collect:(materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH)}">
             <span @click="changeSmallType(item)" :class="[{active:item.active}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
+              <li class="category-item" :class="[{active:(typeName.id==item.id)}]" @click="loadGood(item,goodSmallType.id)" :key=index v-for="(item,index) in goodSmallType.cdata">
                {{item.name}}   
-               <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
+                <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
               </li>
            </ul>
            <div class="good-content-list">
@@ -410,28 +410,53 @@ export default class AddGood extends Vue{
     this.allType.forEach((bigSort,index)=>{
       this.$set(bigSort,'active',bigSort.id == item.id);
     })    
-    this.typeName = item;   
-    this.goodSmallType = item.cdata;
+    this.typeName = item; 
+    this.$set(item,'categoryId',item.id);  
+    this.goodSmallType = item;
     // (item.cdata).forEach((info:any,index:any)=>{
     //   this.loadGood(info)
     // })
-    this.loadGood(item.cdata[0]);
+    this.loadGood(item.cdata[0],item.id);
+    // this.loadGood(this.goodSmallType[0]);
+    // this.loadGood(item);
   
     // TODO:加载货品this.goodSmallType[0]   
   }
-  private loadGood(item:any){
-    // let item = newItem.cdata[0];
+  /**
+   * item 小类 所谓的cdata
+   * categoryId 大类的id
+   */
+  private loadGood(item:any,categoryId:any){
     let _this_ = this;
     if(!item.addList){
       this.$set(item,'addList',[]);
     }else{
       item.addList = [];
     }
-    if(item.id==-1){//加载全部
-      this.goodList = item.goodsList;
-      return false;
+
+    if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
+      if(item.goodsList&&item.goodsList.length>0){//全部里面找出已经选择的货品
+        //TODO:item.id加载货品
+        _.forEach(item.goodsList,good=>{
+          this.$set(good,'active',false);
+          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+          if(index>=0){
+            ObjectHelper.merge(good,this.selectedGoodList[index],true);
+            this.selectedGoodList[index] = good;
+            item.addList.push(good);
+          }
+        });
+        this.goodList = item.goodsList;
+        _this_.typeName=item; 
+        return false;
+      }
     }   
-    _this_.service.getGoodList({stockGoodsSortId:item.id,...this.materialParam}).then(res=>{
+    let param = {
+      categoryId:categoryId,//大类id
+      orderGoodsName:item.name,//小类名称 
+      stockGoodsSortId:item.id//小类id
+    }
+    _this_.service.getGoodList( Object.assign(param,this.materialParam)).then(res=>{
       let goodsList = res.data.goodsList;
         //TODO:item.id加载货品
       _.forEach(goodsList,good=>{

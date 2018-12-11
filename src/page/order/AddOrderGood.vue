@@ -424,6 +424,7 @@ export default class Order extends Vue{
     private renderUrl(info: string) {
         let _this = this;
         let goodTerm = {};
+        let material_param ={};
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
@@ -435,9 +436,15 @@ export default class Order extends Vue{
         goodTerm={
             billsPageType: 'orderGood',
             showPrice: !this.materialSetting.show_order_price
-        }  
+        }
+        material_param={
+            supplierId : this.addBillInfo.storeId,
+            orderDate : this.addBillInfo.orderDate,
+            orderType : 'SCM_ORDER_TYPE_RULE'
+        }
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.setSelectedGood(this.goodData);

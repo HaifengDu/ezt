@@ -80,13 +80,13 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/chooseOrderGoods`,{
-            "id": 121,
-            "supplierId": 21,
-            "orderType" : "SCM_ORDER_TYPE_RULE",
-            "warehouse_id": 618,
-            "orderDate": "2018-11-26",
-            "categoryId ": 12,
-            "goodsSortId": "11",
+            "id": param.id || '',
+            "supplierId": param.supplierId,//21
+            "orderType" : param.orderType,
+            // "warehouse_id": 618,
+            "orderDate": param.orderDate,//"2018-11-24"
+            // "categoryId ": param.categoryId || "",//12,
+            // "goodsSortId": param.goodsSortId || "",//"11",
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
@@ -98,14 +98,14 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             let bb = res;
             bb.data.sortList = bb.data.categoryList;     
             bb.data.sortList.forEach((newitem:any)=>{
-                    newitem.cdata = newitem.childs;
-                    newitem.name = newitem.categoryName;
-                    newitem.cdata.forEach((cdataItem:any)=>{
-                        if(cdataItem.id ==0){
-                            cdataItem.id = -1;
-                        }
-                        cdataItem.name = cdataItem.sortName
-                    })
+                newitem.cdata = newitem.childs;
+                newitem.name = newitem.categoryName;
+                newitem.cdata.forEach((cdataItem:any)=>{
+                    if(cdataItem.id ==0){
+                        cdataItem.id = -1;
+                    }
+                    cdataItem.name = cdataItem.sortName
+                })
             })      
             return Promise.resolve(bb);
         });
@@ -120,19 +120,27 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
+        let firstIds = {};
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {}
+        }else{
+            firstIds = {
+                categoryId: param.categoryId,
+                "goodsSortId": param.stockGoodsSortId,
+                "goodsName":param.orderGoodsName,
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
-            "supplierId": 21,
-            "orderType" : "SCM_ORDER_TYPE_RULE",
-            "warehouse_id": 618,
-            "orderDate": "2018-11-24",
-            "goodsName":"鸡翅",
+            "supplierId": 21,//21,
+            "orderType" : param.orderType,
+            "orderDate": param.orderDate,//"2018-11-24",           
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
                 "pageno": 1, 
                 "pagesize": 20, 
                 "totalcount": 0
-            }
+            },...firstIds
         },config).then(res=>{              
             let bb = res;
             bb.data.goodsList.forEach((newitem:any)=>{
@@ -162,7 +170,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){
-            debugger
             return this.getBohOrderClass(param).then(res=>{
                 return Promise.resolve(res);
             })
@@ -187,7 +194,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){//boh订单 查询物品
-            debugger
             return this.getBohOrderGoods(param).then(res=>{
                 return Promise.resolve(res);
             })

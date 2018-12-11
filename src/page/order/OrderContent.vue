@@ -1,9 +1,7 @@
 <!--订单模块首页-->
 <template>
 <div>
-   <div class="ezt-page-con orderList"  ref="listContainer" v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+   <div class="ezt-page-con orderList">
     <ezt-header :back="false" title="订货">
       <div slot="action">
          <div class="add">
@@ -34,26 +32,34 @@
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
-                <span class="receive-icon-dcName">配</span>
-                <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==0"  @click.stop="toexamine('examine',item)">审核未通过</span>
+                <span class="receive-icon-dcName" v-if="!InterfaceSysTypeBOH">配</span>
+                <span class="return-list-title" style="margin-left:10px;"> {{item.dc_name}} {{item.billNo}}</span> 
+                <span class="receive-status" v-if="tabList.getActive().status==0 || tabList.getActive().status=='SCM_AUDIT_NO'"  @click.stop="toexamine('examine',item)">审核未通过</span>
                 <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || (tabList.getActive().status==2&&!InterfaceSysTypeBOH)">再来一单>></span>
               </div>
-              <div class="receive-icon-content" @click="orderdetails('payMent')">
-                <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-                <!-- <div style="display:flex"> -->
+              <div class="receive-icon-content" @click="orderdetails('payMent',item)">
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">要货机构：
+                    <span class="receive-dc-content">{{item.organName}}</span>  
+                  </span>
+                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">配送机构：
+                    <span class="receive-dc-content">{{item.supplierName}}</span>  
+                  </span>
                   <span class="receive-dc-title">要货日期：
-                    <span class="receive-dc-content">{{item.ask_goods_date}}</span>  
+                    <span class="receive-dc-content">{{item.ask_goods_date || item.orderDate}}</span>  
                   </span>
                   <span class="receive-dc-title">到货日期：
-                    <span class="receive-dc-content">{{item.arrive_date}}</span>
+                    <span class="receive-dc-content">{{item.arrive_date || item.arrivalDate}}</span>
                   </span>
                 <!-- </div> -->
-                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
               <div class="receive-icon-bottom">
-                <div class="glow-1">
+                <div class="glow-1" v-if="!InterfaceSysTypeBOH">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+                </div>
+                <div class="glow-1" v-if="InterfaceSysTypeBOH">
+                  <span>金额：￥{{item.totalAmt}}</span>
                 </div>
                 <!-- <div>
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
@@ -228,34 +234,39 @@ export default class OrderGoods extends Vue{
       },
     ]
     created() {
-      this.tabList.push({
-        name:"待审核",
-        status:0,
-        active:true,
-       })
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createOrderGood();
-       this.pager= new Pager();
-       this.pager.setLimit(20);
-       this.getList(); 
+       this.pager = new Pager().setLimit(20)
        /**
-        * saas有待支付
+        * saas版本有待支付
         */
         if(!this.InterfaceSysTypeBOH){
           this.tabList.push({
-            name:"待支付",
-            status:1,
-            active:false
+              name:"待审核",
+              status:0,
+              active:true,
+            },{
+              name:"待支付",
+              status:1,
+              active:false
           },{
-            name:"已完成",
-            status:2,
-            active:false
+              name:"已完成",
+              status:2,
+              active:false
           })
-        }else{    //BOH没有待支付
-          this.tabList.push({          
-            name:"已完成",
-            status:2,
-            active:false      
+        }
+        /**
+         * BOH版本
+         */
+        if(this.InterfaceSysTypeBOH){  
+          this.tabList.push({
+              name:"待审核",
+              status:'SCM_AUDIT_NO',
+              active:true,
+            },{          
+              name:"已完成",
+              status:'SCM_AUDIT_YES',
+              active:false      
           })
         } 
     }
@@ -311,8 +322,6 @@ export default class OrderGoods extends Vue{
     }
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.allLoaded=false;
-      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }  
@@ -328,36 +337,18 @@ export default class OrderGoods extends Vue{
           _this.goodList[newIndex].active = false;
         },
         onConfirm () {
-          let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+          _this.service.getDeleteOrder(item.id).then(res=>{
+            let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
             return item.id == info.id;
+            })
+            _this.goodList.splice(newIndex,1);
+            _this.getList();
+          },err=>{
+            _this.$toasted.show(err.message)
           })
-          _this.goodList.splice(newIndex,1);
         },
         content:'是否要删除该单据？'
       })
-    }
-    //下拉加载更多
-    private loadMore() {
-      if(!this.allLoaded){  
-         this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });
-      this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }  
-        this.goodList=this.goodList.concat(res.data.data);
-        (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })      
-      }     
     }
     //获取列表
     private getList(){
@@ -367,7 +358,11 @@ export default class OrderGoods extends Vue{
         this.$vux.loading.show({
           text: '加载中...'
         });
-        this.goodList=res.data.data;
+        if(!this.InterfaceSysTypeBOH){
+           this.goodList = res.data.data;
+        }else{
+          this.goodList = res.data.goodsList;
+        }
         (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide();
@@ -382,7 +377,7 @@ export default class OrderGoods extends Vue{
      */
     private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
-      if(status =="0"){
+      if(status =="0" || status =='SCM_AUDIT_NO'){
          item.active = active;
       }     
     }
@@ -410,9 +405,14 @@ export default class OrderGoods extends Vue{
       this.$router.push('/searchOrderGood');
    }
    // 跳转详情页面
-    private orderdetails(info:any){
-      if(this.tabList.getActive().status==2){//已完成，只查看详情
-        this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+    private orderdetails(info:any,item:any){
+      if(this.tabList.getActive().status==2 || this.tabList.getActive().status=='SCM_AUDIT_YES'){//已完成，只查看详情
+        this.service.getGoodDetail(item.id).then(res=>{ 
+         this.cache.save(CACHE_KEY.ORDER_DETAILS,JSON.stringify(res.data));
+         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+        },err=>{
+            this.$toasted.show(err.message)
+        })
       }
       if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
@@ -420,17 +420,13 @@ export default class OrderGoods extends Vue{
     }   
     // 审核要货单
     private toexamine(type:any,item:any){   
-      let OrderModule = {}; 
-      if(this.tabList.getActive().status==0){
-         OrderModule={
-          billno:item.bill_no,
-          unit:'供应商1号',
-          orderDate:item.ask_goods_date,   
-          arriveDate:item.arrive_date,
-          remark:'提前一天联系供应商',        
-        }   
-        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(OrderModule));
-        this.$router.push({name:'AuditInvoice',query:{type:type}});  
+      if(this.tabList.getActive().status==0 || this.tabList.getActive().status=='SCM_AUDIT_NO'){
+         this.service.getGoodDetail(item.id).then(res=>{ 
+         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
+         this.$router.push({name:'AuditInvoice',query:{type:type}});  
+        },err=>{
+            this.$toasted.show(err.message)
+        })
       }
      }     
     //  再来一单 

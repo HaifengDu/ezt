@@ -275,7 +275,7 @@ export default class Order extends Vue{
             if(this.addBillInfo.billTypes=="handlers"){//假如从再来一单跳过来的单据
                 this.isShowObj.isorderType = true;
             }
-        }
+        } 
         this.goodData = ObjectHelper.serialize(this.selectedGood);
        
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝

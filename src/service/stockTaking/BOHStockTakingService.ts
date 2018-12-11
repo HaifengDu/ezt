@@ -11,6 +11,9 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
         super(ERequestType.Boh)
     }
     
+    /**
+     * 这个接口SAAS需要   BOH不需要   要是不加的话报错   必须BOH跟SAAS接口名称一样并且都的有
+     */
     getDataSorting(){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[],

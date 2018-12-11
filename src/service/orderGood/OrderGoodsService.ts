@@ -26,7 +26,14 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
     /**
      * 详情页
      */
-    getGoodDetail(){
+    getGoodDetail(id:string){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
+     /**
+     * 详情页
+     */
+    getDeleteOrder(id:string){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
@@ -38,6 +45,13 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }    
+    /**
+     * 审核要货单提交  提交并审核
+     */
+    getAuditorderlistyes(data:object){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
     static createInstance() {
         OrderGoodsService.getInstance();
     }

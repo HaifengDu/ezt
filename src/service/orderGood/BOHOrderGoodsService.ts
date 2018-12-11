@@ -3,11 +3,8 @@ import { IOrderGoodsService } from "../../interface/service/IOrderGoodsService";
 import ERequestType from "../../enum/ERequestType";
 import { IPagerData } from "../../interface/IPagerData";
 import Axios from 'axios';
-
 export class BOHOrderGoodsService extends BaseService implements IOrderGoodsService{   
-    
     private static _instance: BOHOrderGoodsService;
-
     private constructor(){
         super(ERequestType.Boh)
     }
@@ -17,14 +14,14 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
      * @param status 
      * @param pager    
      */
-    getGoodList(audit_status:string,pager:IPagerData){
+    getGoodList(auditStatus:string,pager:IPagerData){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/getOrders`,{
-            "audit_status":audit_status,
+            "auditStatus":auditStatus,
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
@@ -36,14 +33,66 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
             return Promise.resolve(res);
         });
     }  
+    /**
+     * 订货 待审核状态删除
+     * @param id 
+     */
+    getDeleteOrder(id:string){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/delOrders`,{
+            "id":id,  //订单id
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
 
     /**
-     * 详情页
+     * 订货详情  
+     * @param id 
      */
-    getGoodDetail(){
-        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
-        return promise;
+    getGoodDetail(id:string){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/findOrderbyId`,{
+            "id":id,  //订单id
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
+
+
+    /**
+     * 审核要货单  提交  提交并审核
+     * @param data 
+     */
+    getAuditorderlistyes(data:object){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/updateOrder`,{
+                "data" :data, 
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
     }
+
+
+
+
+
+
+
+
+
 
     static createInstance(){
         BOHOrderGoodsService.getInstance();

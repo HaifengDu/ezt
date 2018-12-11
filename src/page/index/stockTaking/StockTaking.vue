@@ -24,11 +24,11 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
-         <div v-if="!inventoryList" class="done-none">
+         <div v-if="this.inventoryList.list==0" class="done-none">
             <div></div>
             <span>目前还没有任何订单</span>
           </div>
-        <div v-if="inventoryList">
+        <div v-if="!this.inventoryList.list==0">
           <div class="receive-dc-list" v-for="(item,index) in inventoryList.list" :key="index">
             <div class="ezt-list-show" 
                 v-swipeleft="handlerSwipe.bind(this,item,true)"  
@@ -199,7 +199,7 @@ export default class stockTaking extends Vue{
               name:"待审核",   
               status:0,
               active:true,
-            },{
+            },{   
               name:"已审核",
               status:1,
               active:false       

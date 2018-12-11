@@ -12,20 +12,22 @@
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">item.dc_name</span> 
+                    <span class="return-list-title">{{bill.organName}}</span> 
                     <span class="receive-status">{{isPayMent?"待支付":"已完成"}}</span>
                 </div>
                 <div class="receive-icon-content">
                      <div style="display:flex">
-                        <span class="receive-dc-title">单号：<span class="receive-dc-content">asd123123</span></span>
+                        <span class="receive-dc-title">单号：<span class="receive-dc-content">{{bill.billNo}}</span></span>
                         <span class="receive-dc-title" v-if="Payment">已付：<span class="receive-dc-content">1212222</span></span>
                     </div>
                     <div style="display:flex">
-                        <span class="receive-dc-title">要货日期：<span class="receive-dc-content">2018-09-12</span></span>
-                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">2018-09-12</span></span>
+                        <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{bill.orderDate}}</span></span>
                     </div>
-                    <div style="display:flex;padding-bottom:20px;">
-                        <span class="receive-dc-title">备注：<span class="receive-dc-content">不要啦就是你的济南市快递那福克斯地方</span></span>
+                    <div style="display:flex">
+                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{bill.arrivalDate}}</span></span>
+                    </div>
+                    <div style="display:flex;padding-bottom:20px;" >
+                        <span class="receive-dc-title">备注：<span class="receive-dc-content">{{bill.memo}}</span></span>
                     </div>
                     <div class="receive-ys" v-if="!isPayMent">已收</div>
                 </div>
@@ -38,20 +40,20 @@
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div>
-                                <span class="good-detail-name">{{item.dc_name}}</span>
-                                <span class="good-detail-sort"  v-if="materialSetting.show_order_price||isPayMent">￥{{item.material_size}}</span>
+                                <span class="good-detail-name">{{item.dc_name || item.goodsName}}</span>
+                                <span class="good-detail-sort"  v-if="materialSetting.show_order_price||isPayMent">￥{{item.distributePrice1}}</span>
                             </div>
                             <div>
-                                <span class="good-detail-billno">编号：{{item.bill_no}}</span>
-                            </div>
+                                <span class="good-detail-billno">编码：{{item.goodsCode}}  <span v-if="InterfaceSysTypeBOH" class="good-detail-billno">订货单位：{{item.orderUnitName}}</span></span>
+                            </div> 
                         </div>
                         <div class="good-detail-r">
-                            <span class="good-detail-num">3</span>
+                            <span class="good-detail-num">{{item.finalOrderQty}}</span>
                         </div>
                     </div>
-                    <div class="good-detail-item" v-if="item.remark">
+                    <div class="good-detail-item" v-if="!InterfaceSysTypeBOH">
                         <div class="good-detail-sort content">备注：
-                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
+                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}"></div>
                             <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                         </div>
                     </div>
@@ -128,6 +130,8 @@ import {maskMixin} from "../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../helper/methods';
 import { FactoryService } from '../../factory/FactoryService';
 import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
+import CACHE_KEY from '../../constans/cacheKey';
+import { CachePocily } from "../../common/Cache";
 import { strictEqual } from 'assert';
 declare var mobiscroll:any;
 @Component({
@@ -150,6 +154,8 @@ declare var mobiscroll:any;
 export default class OrderGoods extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private service: IOrderGoodsService;
+    private cache = CachePocily.getInstance();
+    private bill:any={}; //表头信息
     private details:any[] = [];  //物料明细
     private isPayMent:boolean=false; //是否有支付按钮
     private paytitle:string="";
@@ -181,8 +187,16 @@ export default class OrderGoods extends Vue{
     }
     
     mounted(){ 
-        this.detailList();
+        if(!this.InterfaceSysTypeBOH){
+          this.detailList();
+        }
+        if(this.cache.getData(CACHE_KEY.ORDER_DETAILS)){
+            const list = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_DETAILS));
+            this.bill = list.data
+            this.details = list.data['detailList']
+        }
         this.getData();   
+        
         if(this.$route.params.isPayMent=='false'){
             this.isPayMent = false;
             this.paytitle = "订货单详情";
@@ -191,7 +205,6 @@ export default class OrderGoods extends Vue{
             this.paytitle = "订单支付"
             this.Payment = true
         }
-        
     }
     private closePayment(){
         this.payMethod = false;
@@ -233,18 +246,18 @@ export default class OrderGoods extends Vue{
             if(item.price){
                 ori.Amt = ori.Amt + (item.num * item.price);
             }else if(item.Amt){
-                ori.Amt = ori.Amt + (item.amt);
+                ori.Amt = ori.Amt + (item.amt); 
             }else{
                 ori.num = 0;
                 ori.Amt = 0;
             }      
         
         return ori;
-        },{num:0,Amt:0});
+        },{num:0,Amt:0});  
     }
     // 物料明细
     private detailList(){
-     this.service.getGoodDetail().then(res=>{
+     this.service.getGoodDetail('id').then(res=>{
           this.details=res.data.data;
         },err=>{
           this.$toasted.show(err.message);

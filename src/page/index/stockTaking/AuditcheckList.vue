@@ -315,16 +315,12 @@ export default class StockTaking extends Vue{
               "details":rows
             }
             _this.service.getAuditchecklistyes(billInfo).then(res=>{ 
-            if(!_this.selectedGood||_this.selectedGood.length<=0){
-                _this.$toasted.show("当前货品数量为0，请添加货品！");
-                return false;
-              } 
                 _this.addBillInfo={};
                 _this.setSelectedGood([]);
                 _this.addBeforeBillInfo={};
                 _this.cache.clear();
                 _this.$toasted.success("审核成功！");
-                _this.$router.push({name:'StockTaking',params:{'purStatus':'已审核'}}); 
+                _this.$router.push({name:'StockTaking'}); 
             },err=>{
               _this.$toasted.show(err.message)
             })

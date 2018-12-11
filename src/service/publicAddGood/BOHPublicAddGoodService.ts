@@ -120,21 +120,27 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
+        let firstIds = {};
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {}
+        }else{
+            firstIds = {
+                categoryId: param.categoryId,
+                "goodsSortId": param.stockGoodsSortId,
+                "goodsName":param.orderGoodsName,
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
             "supplierId": 21,//21,
             "orderType" : param.orderType,
-            "warehouse_id": 618,
-            "orderDate": param.orderDate,//"2018-11-24",
-            "goodsName":param.orderGoodsName,
-            "categoryId":param.categoryId,
-            "goodsSortId":param.stockGoodsSortId,
+            "orderDate": param.orderDate,//"2018-11-24",           
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
                 "pageno": 1, 
                 "pagesize": 20, 
                 "totalcount": 0
-            }
+            },...firstIds
         },config).then(res=>{              
             let bb = res;
             bb.data.goodsList.forEach((newitem:any)=>{
@@ -164,7 +170,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){
-            debugger
             return this.getBohOrderClass(param).then(res=>{
                 return Promise.resolve(res);
             })
@@ -189,7 +194,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){//boh订单 查询物品
-            debugger
             return this.getBohOrderGoods(param).then(res=>{
                 return Promise.resolve(res);
             })

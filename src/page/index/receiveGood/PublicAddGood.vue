@@ -433,12 +433,30 @@ export default class AddGood extends Vue{
     }else{
       item.addList = [];
     }
-    if(item.id==-1){//加载全部
-      this.goodList = item.goodsList;
-      _this_.typeName=item; 
-      return false;
+
+    if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
+      if(item.goodsList&&item.goodsList.length>0){//全部里面找出已经选择的货品
+        //TODO:item.id加载货品
+        _.forEach(item.goodsList,good=>{
+          this.$set(good,'active',false);
+          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+          if(index>=0){
+            ObjectHelper.merge(good,this.selectedGoodList[index],true);
+            this.selectedGoodList[index] = good;
+            item.addList.push(good);
+          }
+        });
+        this.goodList = item.goodsList;
+        _this_.typeName=item; 
+        return false;
+      }
     }   
-    _this_.service.getGoodList({categoryId:categoryId,orderGoodsName:item.name,stockGoodsSortId:item.id,...this.materialParam}).then(res=>{
+    let param = {
+      categoryId:categoryId,//大类id
+      orderGoodsName:item.name,//小类名称 
+      stockGoodsSortId:item.id//小类id
+    }
+    _this_.service.getGoodList( Object.assign(param,this.materialParam)).then(res=>{
       let goodsList = res.data.goodsList;
         //TODO:item.id加载货品
       _.forEach(goodsList,good=>{

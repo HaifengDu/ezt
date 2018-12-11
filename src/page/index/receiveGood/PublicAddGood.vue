@@ -24,9 +24,9 @@
         </div>
         <div class="good-cont">
            <ul class="good-category-list">
-             <li class="category-item" :class="[{active:typeName.id==item.id}]" @click="loadGood(item)" :key=index v-for="(item,index) in goodSmallType">
+              <li class="category-item" :class="[{active:(typeName.id==item.id)}]" @click="loadGood(item,goodSmallType.id)" :key=index v-for="(item,index) in goodSmallType.cdata">
                {{item.name}}   
-               <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
+                <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
               </li>
            </ul>
            <div class="good-content-list">
@@ -410,17 +410,23 @@ export default class AddGood extends Vue{
     this.allType.forEach((bigSort,index)=>{
       this.$set(bigSort,'active',bigSort.id == item.id);
     })    
-    this.typeName = item;   
-    this.goodSmallType = item.cdata;
+    this.typeName = item; 
+    this.$set(item,'categoryId',item.id);  
+    this.goodSmallType = item;
     // (item.cdata).forEach((info:any,index:any)=>{
     //   this.loadGood(info)
     // })
-    this.loadGood(item.cdata[0]);
+    this.loadGood(item.cdata[0],item.id);
+    // this.loadGood(this.goodSmallType[0]);
+    // this.loadGood(item);
   
     // TODO:加载货品this.goodSmallType[0]   
   }
-  private loadGood(item:any){
-    // let item = newItem.cdata[0];
+  /**
+   * item 小类 所谓的cdata
+   * categoryId 大类的id
+   */
+  private loadGood(item:any,categoryId:any){
     let _this_ = this;
     if(!item.addList){
       this.$set(item,'addList',[]);
@@ -429,9 +435,10 @@ export default class AddGood extends Vue{
     }
     if(item.id==-1){//加载全部
       this.goodList = item.goodsList;
+      _this_.typeName=item; 
       return false;
     }   
-    _this_.service.getGoodList({stockGoodsSortId:item.id,...this.materialParam}).then(res=>{
+    _this_.service.getGoodList({categoryId:categoryId,orderGoodsName:item.name,stockGoodsSortId:item.id,...this.materialParam}).then(res=>{
       let goodsList = res.data.goodsList;
         //TODO:item.id加载货品
       _.forEach(goodsList,good=>{

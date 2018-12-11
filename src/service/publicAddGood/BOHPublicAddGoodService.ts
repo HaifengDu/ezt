@@ -80,13 +80,13 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/chooseOrderGoods`,{
-            "id": 121,
-            "supplierId": 21,
-            "orderType" : "SCM_ORDER_TYPE_RULE",
-            "warehouse_id": 618,
-            "orderDate": "2018-11-26",
-            "categoryId ": 12,
-            "goodsSortId": "11",
+            "id": param.id || '',
+            "supplierId": param.supplierId,//21
+            "orderType" : param.orderType,
+            // "warehouse_id": 618,
+            "orderDate": param.orderDate,//"2018-11-24"
+            // "categoryId ": param.categoryId || "",//12,
+            // "goodsSortId": param.goodsSortId || "",//"11",
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
@@ -98,14 +98,14 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             let bb = res;
             bb.data.sortList = bb.data.categoryList;     
             bb.data.sortList.forEach((newitem:any)=>{
-                    newitem.cdata = newitem.childs;
-                    newitem.name = newitem.categoryName;
-                    newitem.cdata.forEach((cdataItem:any)=>{
-                        if(cdataItem.id ==0){
-                            cdataItem.id = -1;
-                        }
-                        cdataItem.name = cdataItem.sortName
-                    })
+                newitem.cdata = newitem.childs;
+                newitem.name = newitem.categoryName;
+                newitem.cdata.forEach((cdataItem:any)=>{
+                    if(cdataItem.id ==0){
+                        cdataItem.id = -1;
+                    }
+                    cdataItem.name = cdataItem.sortName
+                })
             })      
             return Promise.resolve(bb);
         });
@@ -121,11 +121,13 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
-            "supplierId": 21,
-            "orderType" : "SCM_ORDER_TYPE_RULE",
+            "supplierId": 21,//21,
+            "orderType" : param.orderType,
             "warehouse_id": 618,
-            "orderDate": "2018-11-24",
-            "goodsName":"鸡翅",
+            "orderDate": param.orderDate,//"2018-11-24",
+            "goodsName":param.orderGoodsName,
+            "categoryId":param.categoryId,
+            "goodsSortId":param.stockGoodsSortId,
             "pagination": {
                 "orderby": null, 
                 "asc": false, 

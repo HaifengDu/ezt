@@ -407,12 +407,16 @@ export default class OrderGoods extends Vue{
    // 跳转详情页面
     private orderdetails(info:any,item:any){
       if(this.tabList.getActive().status==2 || this.tabList.getActive().status=='SCM_AUDIT_YES'){//已完成，只查看详情
-        this.service.getGoodDetail(item.id).then(res=>{ 
-         this.cache.save(CACHE_KEY.ORDER_DETAILS,JSON.stringify(res.data));
-         this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
-        },err=>{
-            this.$toasted.show(err.message)
-        })
+         if(this.InterfaceSysTypeBOH){
+           this.service.getGoodDetail(item.id).then(res=>{ 
+            this.cache.save(CACHE_KEY.ORDER_DETAILS,JSON.stringify(res.data));
+            this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+            },err=>{
+                this.$toasted.show(err.message)
+            })
+         }else{
+           this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+         }
       }
       if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
         this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
@@ -421,12 +425,16 @@ export default class OrderGoods extends Vue{
     // 审核要货单
     private toexamine(type:any,item:any){   
       if(this.tabList.getActive().status==0 || this.tabList.getActive().status=='SCM_AUDIT_NO'){
-         this.service.getGoodDetail(item.id).then(res=>{ 
-         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
-         this.$router.push({name:'AuditInvoice',query:{type:type}});  
-        },err=>{
-            this.$toasted.show(err.message)
-        })
+        if(this.InterfaceSysTypeBOH){
+          this.service.getGoodDetail(item.id).then(res=>{ 
+            this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
+            this.$router.push({name:'AuditInvoice',query:{type:type}});  
+            },err=>{
+                this.$toasted.show(err.message)
+            })
+        }else{
+           this.$router.push({name:'AuditInvoice',query:{type:type}});  
+        }
       }
      }     
     //  再来一单 

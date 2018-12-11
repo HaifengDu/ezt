@@ -18,7 +18,7 @@
             <span>收藏</span>
             <i class="divide">|</i>
           </span>
-          <div class="good-type-list" :class="{collect:materialLimit.billsPageType!='initStock'}">
+          <div class="good-type-list" :class="{collect:(materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH)}">
             <span @click="changeSmallType(item)" :class="[{active:item.active}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
           </div>
         </div>

@@ -24,7 +24,15 @@ export class StockTakingService extends BaseService implements IStockTakingServi
         });
         //const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=19`);
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/`)
-    }       
+    }     
+     /**
+     * 待审核单据 删除
+     * @param id 
+     */
+    getDeleteStock(id:string){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        return promise;
+    }    
     /**
      * 盘库详情  待提交状态下的提交按钮
      * @param id 
@@ -46,10 +54,13 @@ export class StockTakingService extends BaseService implements IStockTakingServi
      * @param begin_date  
      * @param warehouse_id 
      */
-    getEnquiryList(datails:object){
+    getEnquiryList(begin_date:string,bill_no:string,end_date:string,warehouse_id:string){
         return Axios.post(`${this.reqUrl}inventory/post`,{
             "data":[{
-                "details":datails,
+                "begin_date":begin_date,
+                "bill_no":bill_no,
+                "end_date":end_date,
+                "warehouse_id":warehouse_id,
             }],   
             "oper":"INVENTORY_QUERY",
             "pagination":[{"asc":false,"orderby":null,"pageno":1,"pagesize":20,"totalcount":0}]

@@ -163,7 +163,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
 
      })
    }   
-})
+}) 
 export default class stockTaking extends Vue{
     private pager:Pager; 
     private service:IStockTakingService;
@@ -299,7 +299,7 @@ export default class stockTaking extends Vue{
       this.getpkList();  
     }
     /**
-     * 点击删除按钮
+     * 点击删除按钮 
      */
     private delAction(item:any){
       let _this = this;
@@ -311,10 +311,22 @@ export default class stockTaking extends Vue{
           _this.inventoryList.list[newIndex].active = false;
         },
         onConfirm () {
-          let newIndex = _this.inventoryList.list.findIndex((info:any,index:any)=>{
-            return item.id == info.id;
-          })
-          _this.inventoryList.list.splice(newIndex,1);
+          if(!_this.InterfaceSysTypeBOH){
+              let newIndex = _this.inventoryList.list.findIndex((info:any,index:any)=>{
+                return item.id == info.id;
+              })
+              _this.inventoryList.list.splice(newIndex,1);
+          }else{
+             _this.service.getDeleteStock(item.id).then(res=>{
+              let newIndex = _this.inventoryList.list.findIndex((info:any,index:any)=>{
+              return item.id == info.id;
+              })
+              _this.inventoryList.list.splice(newIndex,1);
+              _this.getpkList();
+            },err=>{
+              _this.$toasted.show(err.message)
+            })
+          }
         },
         content:'是否要删除该单据?'
       })
@@ -332,8 +344,9 @@ export default class stockTaking extends Vue{
         if(!this.InterfaceSysTypeBOH){
            this.inventoryList = res.data.data[0];
         }else{
-          this.inventoryList = res.data;
+          this.inventoryList = res.data;   
           this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
+          this.searchParam.selectedWarehouse = this.inventoryList.list[0].warehouse_id
         }
         (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
@@ -450,19 +463,17 @@ export default class stockTaking extends Vue{
      * 查询结果页
      */
     private toSearch(){
-        let datails={
-          "begin_date":this.searchParam.startDate || null,
-          "bill_no":this.searchParam.billNumber || null,
-          "end_date" : this.searchParam.endDate || null,      
-          "warehouse_id": this.searchParam.selectedWarehouse || null,
-        }
-        this.service.getEnquiryList(datails).then(res=>{ 
+        const begin_date = this.searchParam.startDate || null
+        const bill_no = this.searchParam.billNumber || null
+        const end_date = this.searchParam.endDate
+        const warehouse_id = this.searchParam.selectedWarehouse || null
+        this.service.getEnquiryList(begin_date,bill_no,end_date,warehouse_id).then(res=>{ 
           this.hideMask();     
           this.isSearch = false;
           if(!this.InterfaceSysTypeBOH){
               this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
           }else{
-            this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
+              this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));
           }
           this.$router.push({name:'QueryResult'});
         },err=>{

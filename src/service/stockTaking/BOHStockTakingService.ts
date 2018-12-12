@@ -46,7 +46,24 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
         },config).then(res=>{              
             return Promise.resolve(res);
         });
-    }    
+    }  
+    /**
+     * 待审核单据 删除 
+     * @param id 
+     */
+    getDeleteStock(id:string){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/stock/taking/deleteStockTaking`,{
+            "id":id,
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
+
     /**
      * BOH版本 高级查询    查询盘库单
      * @param audit_status 
@@ -54,14 +71,17 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
      * @param bill_no 
      * @param end_date 
      */
-    getEnquiryList(datails:object){
+    getEnquiryList(begin_date:string,bill_no:string,end_date:string,warehouse_id:string){
         let config = {
             headers: { 
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/findStockTakings`,{
-            "details":datails,
+            "begin_date":begin_date,
+            "bill_no":bill_no,
+            "end_date":end_date,
+            "warehouse_id":warehouse_id,
             "pagination":{
                 orderby:null,
                 asc:false,

@@ -178,6 +178,7 @@ export default class StockTaking extends Vue{
       treatment:'',
     };//新增盘库单
     private selectedGood:any[];//store中selectedGood的值
+    // private MaterialDetails:any[];
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
@@ -199,18 +200,19 @@ export default class StockTaking extends Vue{
     this.service = factory.createStockTaking();
     (this.selectedGood||[]).forEach(item=>item.active = false);
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));   
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO)){   
-        this.addBeforeBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO));
+        this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDBEFOREINFO));
     }    
     if(this.cache.getData(CACHE_KEY.INVENTORY_TYPE)){
         const InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_TYPE));
-        this.addinventory.name = InventoryType.name
+        this.addinventory.name = InventoryType.name 
         this.addinventory.bill_type = InventoryType.bill_type
     }
     if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
         this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
+        
     }
     /**
      * BOH版本 获取仓库
@@ -222,7 +224,6 @@ export default class StockTaking extends Vue{
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
-        console.log(JSON.stringify(this.selectedGood))
     }
     /**
      * SAAS版本  动态加载仓库

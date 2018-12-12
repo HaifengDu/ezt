@@ -29,6 +29,10 @@
       </tab>
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
+         <!-- <div v-if="this.goodList==0" class="done-none">
+            <div></div>
+            <span>目前还没有任何订单</span>
+          </div> -->
           <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
@@ -66,7 +70,7 @@
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
                 </div> -->
                 <div class="receive-ys"  v-if="tabList.getActive().status==3">已收</div>
-              </div>
+              </div> 
             </div>
             <div class="ezt-list-del" @click="deleteBill(item)">
               <i class="fa fa-trash" aria-hidden="true"></i>
@@ -235,7 +239,7 @@ export default class OrderGoods extends Vue{
     created() {
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createOrderGood();
-      this.pager = new Pager().setLimit(20)
+       this.pager = new Pager().setLimit(20)
        /**
         * saas有待支付
         */
@@ -335,7 +339,7 @@ export default class OrderGoods extends Vue{
           _this.goodList[newIndex].active = false;
         },
         onConfirm () {
-          if(!this.InterfaceSysTypeBOH){
+          if(!_this.InterfaceSysTypeBOH){
               let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
                 return item.id == info.id;
               })

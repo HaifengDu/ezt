@@ -12,7 +12,7 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
      /**
      * 订货列表
      * @param status 
-     * @param pager    
+     * @param pager     
      */
     getGoodList(auditStatus:string,pager:IPagerData){
         let config = {

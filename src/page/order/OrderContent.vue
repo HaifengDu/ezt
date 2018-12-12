@@ -33,13 +33,14 @@
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName" v-if="!InterfaceSysTypeBOH">配</span>
-                <span class="return-list-title" style="margin-left:10px;"> {{item.dc_name}} {{item.billNo}}</span> 
+                <span class="return-list-title"  style="margin-left:10px;">{{item.dc_name}} {{item.billNo}}</span> 
                 <span class="receive-status" v-if="tabList.getActive().status==0 || tabList.getActive().status=='SCM_AUDIT_NO'"  @click.stop="toexamine('examine',item)">审核未通过</span>
                 <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || (tabList.getActive().status==2&&!InterfaceSysTypeBOH)">再来一单>></span>
+                <span class="receive-status" v-if="tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent',item)">
-                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">要货机构：
+                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                 <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">要货机构：
                     <span class="receive-dc-content">{{item.organName}}</span>  
                   </span>
                   <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">配送机构：
@@ -55,7 +56,7 @@
                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
               <div class="receive-icon-bottom">
-                <div class="glow-1" v-if="!InterfaceSysTypeBOH">
+                 <div class="glow-1" v-if="!InterfaceSysTypeBOH">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
                 <div class="glow-1" v-if="InterfaceSysTypeBOH">
@@ -71,7 +72,6 @@
               <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
         </div>
-         <span v-show="allLoaded">已全部加载</span>          
       </div>
     </div>
     <ezt-footer>
@@ -193,7 +193,6 @@ export default class OrderGoods extends Vue{
     private service: IOrderGoodsService;
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
-    private allLoaded:boolean= false;//数据是否已经全部加载完
     private addMaskClickListener:(...args:any[])=>void;
     private hideMask:()=>void;
     private showMask:()=>void;
@@ -236,9 +235,9 @@ export default class OrderGoods extends Vue{
     created() {
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createOrderGood();
-       this.pager = new Pager().setLimit(20)
+      this.pager = new Pager().setLimit(20)
        /**
-        * saas版本有待支付
+        * saas有待支付
         */
         if(!this.InterfaceSysTypeBOH){
           this.tabList.push({
@@ -246,19 +245,19 @@ export default class OrderGoods extends Vue{
               status:0,
               active:true,
             },{
-              name:"待支付",
-              status:1,
-              active:false
+            name:"待支付",
+            status:1,
+            active:false
           },{
-              name:"已完成",
-              status:2,
-              active:false
+            name:"已完成",
+            status:2,
+            active:false
           })
         }
         /**
          * BOH版本
          */
-        if(this.InterfaceSysTypeBOH){  
+         if(this.InterfaceSysTypeBOH){  
           this.tabList.push({
               name:"待审核",
               status:'SCM_AUDIT_NO',
@@ -276,7 +275,6 @@ export default class OrderGoods extends Vue{
         this.isSearch=false; 
         this.hideMask();
       });
-      
       /**
        * 跳转页面选中状态
        */
@@ -337,15 +335,22 @@ export default class OrderGoods extends Vue{
           _this.goodList[newIndex].active = false;
         },
         onConfirm () {
-          _this.service.getDeleteOrder(item.id).then(res=>{
-            let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
-            return item.id == info.id;
+          if(!this.InterfaceSysTypeBOH){
+              let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+                return item.id == info.id;
+              })
+              _this.goodList.splice(newIndex,1);
+          }else{
+             _this.service.getDeleteOrder(item.id).then(res=>{
+              let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+              return item.id == info.id;
+              })
+              _this.goodList.splice(newIndex,1);
+              _this.getList();
+            },err=>{
+              _this.$toasted.show(err.message)
             })
-            _this.goodList.splice(newIndex,1);
-            _this.getList();
-          },err=>{
-            _this.$toasted.show(err.message)
-          })
+          }
         },
         content:'是否要删除该单据？'
       })
@@ -377,7 +382,7 @@ export default class OrderGoods extends Vue{
      */
     private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
-      if(status =="0" || status =='SCM_AUDIT_NO'){
+      if(status =="0"  || status =='SCM_AUDIT_NO'){
          item.active = active;
       }     
     }
@@ -406,36 +411,50 @@ export default class OrderGoods extends Vue{
    }
    // 跳转详情页面
     private orderdetails(info:any,item:any){
-      if(this.tabList.getActive().status==2 || this.tabList.getActive().status=='SCM_AUDIT_YES'){//已完成，只查看详情
-         if(this.InterfaceSysTypeBOH){
-           this.service.getGoodDetail(item.id).then(res=>{ 
+      if(!this.InterfaceSysTypeBOH){
+        if(this.tabList.getActive().status==2){//已完成，只查看详情
+        this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+        }
+        if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
+          this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
+        }
+      }else{
+        if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
+          this.service.getGoodDetail(item.id).then(res=>{ 
             this.cache.save(CACHE_KEY.ORDER_DETAILS,JSON.stringify(res.data));
             this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
-            },err=>{
-                this.$toasted.show(err.message)
-            })
-         }else{
-           this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
-         }
-      }
-      if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
-        this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});
+          },err=>{
+              this.$toasted.show(err.message)
+          })
+        }
       }
     }   
     // 审核要货单
     private toexamine(type:any,item:any){   
-      if(this.tabList.getActive().status==0 || this.tabList.getActive().status=='SCM_AUDIT_NO'){
-        if(this.InterfaceSysTypeBOH){
+      if(!this.InterfaceSysTypeBOH){
+        let OrderModule = {}; 
+        if(this.tabList.getActive().status==0){
+          OrderModule={
+            billNo:item.bill_no,
+            supplierName:'供应商1号',
+            orderDate:item.ask_goods_date,   
+            arriveDate:item.arrive_date,
+            memo:'提前一天联系供应商',        
+          }   
+          this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(OrderModule));
+          this.$router.push({name:'AuditInvoice',query:{type:type}});  
+        }
+      }else{
+        if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
           this.service.getGoodDetail(item.id).then(res=>{ 
             this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
             this.$router.push({name:'AuditInvoice',query:{type:type}});  
             },err=>{
                 this.$toasted.show(err.message)
-            })
-        }else{
-           this.$router.push({name:'AuditInvoice',query:{type:type}});  
+          })
         }
       }
+      
      }     
     //  再来一单 
     private morelist(type:any,item:any){

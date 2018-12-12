@@ -7,7 +7,7 @@
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">    
                     <li v-if="this.type == 'examine'">
-                        <span class="title-search-name">单号：</span>     
+                        <span class="title-search-name">单号：</span>      
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.billNo">
                     </li>
                     <li>    
@@ -44,7 +44,7 @@
                 </ul>
                 <!-- 选择的物料明细 -->
                  <ul>
-                    <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index">
+                    <li class="good-detail-content" v-for="(item,index) in MaterialDetails" :key="index">
                         <div class="ezt-detail-good" v-swipeleft="handlerSwipe.bind(this,item,true)" 
                         v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
                             <div class="good-detail-l">
@@ -78,8 +78,8 @@
         </div>
         <ezt-footer>
             <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                    <b>品项</b><span>{{this.selectedGood.length}}</span>，  
+                <div class="ezt-foot-total" v-if="this.MaterialDetails.length>0">合计：
+                    <b>品项</b><span>{{this.MaterialDetails.length}}</span>，  
                     <b>数量</b><span>{{Total.num}}</span>
                     <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">，￥</b>
                     <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
@@ -122,7 +122,8 @@ export default class Order extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private service: IOrderGoodsService;
-    private selectedGood:any[]=[];//store中selectedGood的值
+    private selectedGood:any[];//store中selectedGood的值
+    private MaterialDetails:any[];
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
@@ -135,10 +136,16 @@ export default class Order extends Vue{
     created() {   
         const factory = FactoryService.getInstance().createFactory();       
         this.service = factory.createOrderGood();
-        (this.selectedGood||[]).forEach(item=>item.active = false);
+        (this.MaterialDetails||[]).forEach(item=>item.active = false);
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
-            this.selectedGood = this.addBillInfo['detailList']
+            if(!this.InterfaceSysTypeBOH){
+                this.MaterialDetails = this.addBillInfo
+            }
+            if(this.InterfaceSysTypeBOH){
+                this.MaterialDetails = this.addBillInfo['detailList']
+                 
+            }
         }    
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
@@ -149,16 +156,16 @@ export default class Order extends Vue{
         this.$vux.confirm.show({
         // 组件除show外的属性
         onCancel () {
-            let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            let newIndex = _this.MaterialDetails.findIndex((info:any,index:any)=>{
                  return item.id == info.id;
             })
-            _this.selectedGood[newIndex].active = false;
+            _this.MaterialDetails[newIndex].active = false;
         },
         onConfirm () {
-            let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+            let newIndex = _this.MaterialDetails.findIndex((info:any,index:any)=>{
                 return item.id == info.id;
             })
-            _this.selectedGood.splice(newIndex,1);
+            _this.MaterialDetails.splice(newIndex,1);
         },
         content:'请确认是否删除该物料?'
         })
@@ -174,10 +181,10 @@ export default class Order extends Vue{
      * 左滑删除某一项
      */
     private deleteSection(item:any){
-        let newIndex = this.selectedGood.findIndex((info:any,index:any)=>{
+        let newIndex = this.MaterialDetails.findIndex((info:any,index:any)=>{
         return item.id == info.id;
         })
-        this.selectedGood.splice(newIndex,1);
+        this.MaterialDetails.splice(newIndex,1);
     }
     // 向左滑动
     private handlerSwipe(item:any,active:boolean){     
@@ -185,15 +192,21 @@ export default class Order extends Vue{
     }
     //选择物料
     private renderUrl(info: string) {   
-        let goodTerm = {};
+       let goodTerm = {};
+        let material_param ={};
         goodTerm={
             billsPageType: 'orderGood',
             showPrice: !this.materialSetting.show_order_price
         }  
+        material_param={
+            supplierId : this.addBillInfo.supplierId,
+            orderDate : this.addBillInfo.orderDate,
+            orderType : 'SCM_ORDER_TYPE_RULE'
+        }
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-        // this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        // this.setAddBillInfo(this.addBillInfo); //将选择的单据信息保存在store中
+        this.setSelectedGood(this.MaterialDetails);
         this.$router.push(info);
     }
    /**
@@ -216,9 +229,20 @@ export default class Order extends Vue{
      * 提交
      */
     private saveReceive(rows:Array<any>){
-        var rows =[];
-        this.selectedGood.forEach((item:any) => {
-			let obj = {
+        if(!this.InterfaceSysTypeBOH){
+             if(!this.MaterialDetails||this.MaterialDetails.length<=0){
+            this.$toasted.show("当前物料数量为0，请添加物料！");
+            return false;
+            } 
+            this.addBillInfo={};
+            this.setSelectedGood([]);
+            this.addBeforeBillInfo={};
+            this.$toasted.success("保存成功！");
+            this.$router.push('/orderGood');
+        }else{
+            var rows =[];
+            this.MaterialDetails.forEach((item:any) => {
+			   let obj = {
                 "orderCategoryId": item.orderCategoryId,
                 "salesAmt":item.salesAmt,
                 "minSingleStock":item.minSingleStock,
@@ -249,149 +273,150 @@ export default class Order extends Vue{
                 "goodsCode": item.goodsCode
             };
 			rows.push(obj);    
-        });  
-        let data={   
-            "supplierName": this.addBillInfo.supplierName,
-            "billNo": this.addBillInfo.billNo,
-            "organId": this.addBillInfo.organId,
-            "totalAmt": this.addBillInfo.totalAmt,
-            "organName": this.addBillInfo.organName,
-            "busiDate": this.addBillInfo.busiDate,
-            "creator": this.addBillInfo.creator,
-            "orderDate": this.addBillInfo.orderDate,
-            "upBillId": this.addBillInfo.upBillId,
-            "orderStatus":this.addBillInfo.orderStatus,
-            "arrivalDate":this.addBillInfo.arrivalDate,
-            "id":this.addBillInfo.id,
-            "supplierId":this.addBillInfo.supplierId,
-            "createDate":this.addBillInfo.createDate,
-            "auditStatus": "SCM_AUDIT_NO",   //提交
-            "memo": this.addBillInfo.memo,
-            "receiveOrganName": this.addBillInfo.receiveOrganName,
-            "orderType": this.addBillInfo.orderType,
-            "receiveOrganId":this.addBillInfo.receiveOrganId,
-            "detailList":rows
-        }  
-      this.service.getAuditorderlistyes(data).then(res=>{ 
-        if(!this.selectedGood||this.selectedGood.length<=0){
-            this.$toasted.show("当前物料数量为0，请添加物料！");
-            return false;
-         } 
-        this.addBillInfo={};
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.$toasted.success("提交成功！");
-        this.$router.push('/orderGood');
-      },err=>{
-          this.$toasted.show(err.message)
-      })
+            });  
+            let data={   
+                "supplierName": this.addBillInfo.supplierName,
+                "billNo": this.addBillInfo.billNo,
+                "organId": this.addBillInfo.organId,
+                "totalAmt": this.addBillInfo.totalAmt,
+                "organName": this.addBillInfo.organName,
+                "busiDate": this.addBillInfo.busiDate,
+                "creator": this.addBillInfo.creator,
+                "orderDate": this.addBillInfo.orderDate,
+                "upBillId": this.addBillInfo.upBillId,
+                "orderStatus":this.addBillInfo.orderStatus,
+                "arrivalDate":this.addBillInfo.arrivalDate,
+                "id":this.addBillInfo.id,
+                "supplierId":this.addBillInfo.supplierId,
+                "createDate":this.addBillInfo.createDate,
+                "auditStatus": "SCM_AUDIT_NO",   //提交
+                "memo": this.addBillInfo.memo,
+                "receiveOrganName": this.addBillInfo.receiveOrganName,
+                "orderType": this.addBillInfo.orderType,
+                "receiveOrganId":this.addBillInfo.receiveOrganId,
+                "detailList":rows
+            }  
+        this.service.getAuditorderlistyes(data).then(res=>{ 
+            this.addBillInfo={};
+            this.setSelectedGood([]);
+            this.addBeforeBillInfo={};
+            this.$toasted.success("提交成功！");
+            this.$router.push('/orderGood');
+        },err=>{
+            this.$toasted.show(err.message)
+        })
+      }
     }
-
     /**
      * 提交并审核
      */
     private confirmReceive(index:any){
-        // let _this = this;
-        // if(!this.selectedGood||this.selectedGood.length<=0){
-        //     this.$toasted.show("当前物料数量为0，请添加物料！");
-        //     return false;
-        // }
-        //  this.$vux.confirm.show({
-        //     /**
-        //      * 审核不通过
-        //      */
-        //     onCancel () {
+        let _this = this;
+        if(!this.MaterialDetails||this.MaterialDetails.length<=0){
+            this.$toasted.show("当前物料数量为0，请添加物料！");
+            return false;
+        }
+         this.$vux.confirm.show({
+            /**
+             * 审核不通过
+             */
+            onCancel () {
                
-        //     },
-        //     /**
-        //      * 审核通过
-        //      */
-        //     onConfirm (row:Array<string>) { 
-        //             var row =[];
-        //             _this.selectedGood.forEach((item:any) => {
-        //                 let objList = {
-        //                     "orderCategoryId": item.orderCategoryId,
-        //                     "salesAmt":item.salesAmt,
-        //                     "minSingleStock":item.minSingleStock,
-        //                     "isNew": item.minSingleStock,
-        //                     "billId": item.billId,
-        //                     "id": item.id,
-        //                     "orderUnitName":item.orderUnitName,
-        //                     "finalQty": item.finalQty,
-        //                     "maxSingleStock":item.maxSingleStock,
-        //                     "orderCategoryName": item.orderCategoryName,
-        //                     "finalOrderQty": item.finalOrderQty,
-        //                     "currentQty":item.currentQty,
-        //                     "orderUnitId": item.orderUnitId,
-        //                     "unitName": item.unitName,
-        //                     "goodsName": item.goodsName,
-        //                     "sendDate": item.sendDate,
-        //                     "unitQty":item.unitQty,
-        //                     "orderQty":item.orderQty,
-        //                     "estimateQty":item.estimateQty,
-        //                     "sysQty":item.sysQty,
-        //                     "distributePrice1":item.distributePrice1,
-        //                     "onPassageQty": item.onPassageQty,
-        //                     "goodsId": item.goodsId,
-        //                     "orderUnitRates":item.orderUnitRates,
-        //                     "busiDate": item.busiDate,
-        //                     "unitId": item.unitId,
-        //                     "upQty": item.upQty,
-        //                     "goodsCode": item.goodsCode
-        //                 };
-        //                 row.push(objList);    
-        //             });  
-        //             let data={   
-        //                 "supplierName": _this.addBillInfo.supplierName,
-        //                 "billNo": _this.addBillInfo.billNo,
-        //                 "organId": _this.addBillInfo.organId,
-        //                 "totalAmt": _this.addBillInfo.totalAmt,
-        //                 "organName": _this.addBillInfo.organName,
-        //                 "busiDate": _this.addBillInfo.busiDate,
-        //                 "creator": _this.addBillInfo.creator,
-        //                 "orderDate": _this.addBillInfo.orderDate,
-        //                 "upBillId": _this.addBillInfo.upBillId,
-        //                 "orderStatus":_this.addBillInfo.orderStatus,
-        //                 "arrivalDate":_this.addBillInfo.arrivalDate,
-        //                 "id":_this.addBillInfo.id,
-        //                 "supplierId":_this.addBillInfo.supplierId,
-        //                 "createDate":_this.addBillInfo.createDate,
-        //                 "auditStatus": "SCM_AUDIT_YES",   //提交并审核
-        //                 "memo": _this.addBillInfo.memo,
-        //                 "receiveOrganName": _this.addBillInfo.receiveOrganName,
-        //                 "orderType": _this.addBillInfo.orderType,
-        //                 "receiveOrganId":_this.addBillInfo.receiveOrganId,
-        //                 "detailList":row,
-        //             }  
-        //          _this.service.getAuditorderlistyes(data).then(res=>{ 
-        //             _this.addBillInfo={};
-        //             _this.setSelectedGood([]);
-        //             _this.addBeforeBillInfo={};
-        //             _this.cache.clear();
-        //             _this.$toasted.success("审核成功！");
-        //             if(!_this.InterfaceSysTypeBOH){//SAAS才有待支付
-        //                 _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
-        //             }else{
-        //                 _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
-        //             }
-        //         },err=>{
-        //             _this.$toasted.show(err.message)
-        //         })
-        //     },
-        //     content:'确认审核该单据？',
-        //     confirmText:"审核通过",
-        //     cancelText:"审核不通过",
-        //     showCancelButton:!_this.InterfaceSysTypeBOH,
-        //     hideOnBlur:true
-        // })
+            },
+            /**
+             * 审核通过
+             */
+            onConfirm (row:Array<any>) { 
+                if(!this.InterfaceSysTypeBOH){
+                    _this.setSelectedGood([]);
+                    _this.$toasted.success("审核成功！");
+                    if(!_this.InterfaceSysTypeBOH){//SAAS才有待支付
+                        _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
+                    }else{
+                        _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                    }
+                }else{
+                    var row =[];
+                    _this.MaterialDetails.forEach((item:any) => {
+                        let objList = {
+                            "orderCategoryId": item.orderCategoryId,
+                            "salesAmt":item.salesAmt,
+                            "minSingleStock":item.minSingleStock,
+                            "isNew": item.minSingleStock,
+                            "billId": item.billId,
+                            "id": item.id,
+                            "orderUnitName":item.orderUnitName,
+                            "finalQty": item.finalQty,
+                            "maxSingleStock":item.maxSingleStock,
+                            "orderCategoryName": item.orderCategoryName,
+                            "finalOrderQty": item.finalOrderQty,
+                            "currentQty":item.currentQty,
+                            "orderUnitId": item.orderUnitId,
+                            "unitName": item.unitName,
+                            "goodsName": item.goodsName,
+                            "sendDate": item.sendDate,
+                            "unitQty":item.unitQty,
+                            "orderQty":item.orderQty,
+                            "estimateQty":item.estimateQty,
+                            "sysQty":item.sysQty,
+                            "distributePrice1":item.distributePrice1,
+                            "onPassageQty": item.onPassageQty,
+                            "goodsId": item.goodsId,
+                            "orderUnitRates":item.orderUnitRates,
+                            "busiDate": item.busiDate,
+                            "unitId": item.unitId,
+                            "upQty": item.upQty,
+                            "goodsCode": item.goodsCode
+                        };
+                        row.push(objList);    
+                    });  
+                    let data={   
+                        "supplierName": _this.addBillInfo.supplierName,
+                        "billNo": _this.addBillInfo.billNo,
+                        "organId": _this.addBillInfo.organId,
+                        "totalAmt": _this.addBillInfo.totalAmt,
+                        "organName": _this.addBillInfo.organName,
+                        "busiDate": _this.addBillInfo.busiDate,
+                        "creator": _this.addBillInfo.creator,
+                        "orderDate": _this.addBillInfo.orderDate,
+                        "upBillId": _this.addBillInfo.upBillId,
+                        "orderStatus":_this.addBillInfo.orderStatus,
+                        "arrivalDate":_this.addBillInfo.arrivalDate,
+                        "id":_this.addBillInfo.id,
+                        "supplierId":_this.addBillInfo.supplierId,
+                        "createDate":_this.addBillInfo.createDate,
+                        "auditStatus": "SCM_AUDIT_YES",   //提交并审核
+                        "memo": _this.addBillInfo.memo,
+                        "receiveOrganName": _this.addBillInfo.receiveOrganName,
+                        "orderType": _this.addBillInfo.orderType,
+                        "receiveOrganId":_this.addBillInfo.receiveOrganId,
+                        "detailList":row,
+                    }  
+                _this.service.getAuditorderlistyes(data).then(res=>{ 
+                    _this.addBillInfo={};
+                    _this.setSelectedGood([]);
+                    _this.addBeforeBillInfo={};
+                    _this.cache.clear();
+                    _this.$toasted.success("审核成功！");
+                    _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                },err=>{
+                    _this.$toasted.show(err.message)
+                })
+              }
+            },
+            content:'确认审核该单据？',
+            confirmText:"审核通过",
+            cancelText:"审核不通过",
+            showCancelButton:!_this.InterfaceSysTypeBOH,
+            hideOnBlur:true
+        })
     }
-    
     /**
      * 返回
      */
     private goBack(){
         let _this = this;
-        if((this.addBillInfo&&this.addBillInfo.arriveDate||this.addBillInfo.remark)||this.selectedGood.length>0){
+        if((this.addBillInfo&&this.addBillInfo.arriveDate||this.addBillInfo.remark)||this.MaterialDetails.length>0){
              this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {

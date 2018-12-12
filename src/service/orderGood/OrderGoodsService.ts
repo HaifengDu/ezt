@@ -31,7 +31,7 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
         return promise;
     }
      /**
-     * 详情页
+     * 删除待审核单据
      */
     getDeleteOrder(id:string){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);

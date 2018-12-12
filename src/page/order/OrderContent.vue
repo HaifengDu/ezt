@@ -29,11 +29,11 @@
       </tab>
       <div class="ezt-add-content main-menu">
         <!-- 订货单列表  -->
-         <!-- <div v-if="this.goodList==0" class="done-none">
+         <div v-if="goodList.length==0" class="done-none">
             <div></div>
             <span>目前还没有任何订单</span>
-          </div> -->
-          <div class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
+          </div>
+          <div v-if="goodList.length!=0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName" v-if="!InterfaceSysTypeBOH">配</span>
@@ -43,7 +43,7 @@
                 <span class="receive-status" v-if="tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent',item)">
-                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span> 
                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">要货机构：
                     <span class="receive-dc-content">{{item.organName}}</span>  
                   </span>
@@ -275,7 +275,10 @@ export default class OrderGoods extends Vue{
     }
     mounted(){      
       this.getList();
-      this.addMaskClickListener(()=>{  //点击遮罩隐藏下拉
+      /**
+       * 点击遮罩层下拉
+       */
+      this.addMaskClickListener(()=>{ 
         this.isSearch=false; 
         this.hideMask();
       });
@@ -322,22 +325,35 @@ export default class OrderGoods extends Vue{
       (<any>this.$refs.startDate).setMax(new Date(val));
       (<any>this.$refs.endDate).setMin(new Date(val));
     }
+    /**
+     * 获取订货列表页
+     */
     private tabClick(index:number){
       this.tabList.setActive(index);
-      this.pager.resetStart();//分页加载还原pageNum值
+      /**
+       * 分页加载还原pageNum值
+       */
+      this.pager.resetStart();
       this.getList();     
     }  
-    // 点击删除按钮
+    /**
+     * 点击删除待审核单据
+     */
     private deleteBill(item:any){
       let _this = this;
       this.$vux.confirm.show({
-        // 组件除show外的属性
+        /**
+         * 取消操作
+         */
         onCancel () {
           let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
             return item.id == info.id;
           })
           _this.goodList[newIndex].active = false;
         },
+        /**
+         * 确定操作
+         */
         onConfirm () {
           if(!_this.InterfaceSysTypeBOH){
               let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
@@ -359,7 +375,9 @@ export default class OrderGoods extends Vue{
         content:'是否要删除该单据？'
       })
     }
-    //获取列表
+    /**
+     * 获取列表
+     */
     private getList(){
       const status = this.tabList.getActive().status;
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
@@ -383,7 +401,7 @@ export default class OrderGoods extends Vue{
     } 
     /**
      * 左侧滑动删除
-     */
+     */ 
     private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
       if(status =="0"  || status =='SCM_AUDIT_NO'){
@@ -396,7 +414,9 @@ export default class OrderGoods extends Vue{
           this.addgoods = false
       }, 5000);
     }
-    //首页菜单跳转
+    /**
+     * 首页菜单跳转
+     */
     private toPage(info:string){
       if(info){
         this.$router.push(info);

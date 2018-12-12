@@ -24,11 +24,11 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
-         <div v-if="this.inventoryList.list==0" class="done-none">
-            <div></div>
-            <span>目前还没有任何订单</span>
-          </div>
-        <div v-if="!this.inventoryList.list==0">
+        <div v-if="inventoryList.list==0" class="done-none">
+          <div></div>
+          <span>目前还没有任何订单</span>  
+        </div>
+        <div v-if="inventoryList.list!=0">
           <div class="receive-dc-list" v-for="(item,index) in inventoryList.list" :key="index">
             <div class="ezt-list-show" 
                 v-swipeleft="handlerSwipe.bind(this,item,true)"  
@@ -345,8 +345,8 @@ export default class stockTaking extends Vue{
            this.inventoryList = res.data.data[0];
         }else{
           this.inventoryList = res.data;   
-          this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
-          this.searchParam.selectedWarehouse = this.inventoryList.list[0].warehouse_id
+          // this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
+          // this.searchParam.selectedWarehouse = this.inventoryList.list[0].warehouse_id
         }
         (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
@@ -460,7 +460,7 @@ export default class stockTaking extends Vue{
       this.isSearch?this.showMask():this.hideMask();
     }
     /**
-     * 查询结果页
+     * 查询结果页  
      */
     private toSearch(){
         const begin_date = this.searchParam.startDate || null

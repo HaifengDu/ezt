@@ -14,10 +14,10 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
      * @param status 单据状态
      * @param pager  分页数据
      */
-    getGoodList(status:string,pager:IPagerData){
+    getGoodList(receiveType:string,auditStatus:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
-        //     "oper": "UNDER_RECEIVING_LIST",
+        //     "oper": "UNDER_RECEIVING_LIST", 
         //     "pagination": pager
         // });
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
@@ -25,10 +25,11 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
     }
     /**
      * 单据详情接口
-     * @param id 单据id
-     * @param type  单据类型
+     * @param receiveType 
+     * @param id 
+     * @param pager 
      */
-    getGoodDetail(id:string,type:string){
+    getGoodDetail(receiveType:string,id:string,pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }

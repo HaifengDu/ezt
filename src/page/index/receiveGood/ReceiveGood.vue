@@ -1,10 +1,7 @@
 <!--整体页面的头部布局-->
 <template>
   <div>
-    <div class="ezt-page-con"  ref="listContainer" 
-        v-infinite-scroll="loadMore"
-        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
-        infinite-scroll-distance="10">
+    <div class="ezt-page-con">
       <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
         <div slot="action">   
           <div>
@@ -33,32 +30,35 @@
           <div v-if="goodList.length==0" class="done-none">
             <div></div>
             <span>暂无记录</span>
-          </div>
+          </div> 
           <!-- 收货单列表       -->
           <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
               <div class="receive-icon-title">
               <span class="receive-icon-dcName"></span>
-              <span class="return-list-title">{{item.dc_name}}</span> 
-              <span class="receive-status">{{billStatus}}</span>
+              <span class="return-list-title">{{item.dc_name}} {{item.billNo}}</span> 
+              <span class="receive-status" v-if="tabList.getActive().status==1 || tabList.getActive().status=='SCM_AUDIT_NO'">待审核</span>
+              <span class="receive-status" v-if="tabList.getActive().status==3 || tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>
               </div>
               <div class="receive-icon-content">
-                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-                <!-- <div style="display:flex"> -->
-                  <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
-                  <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
-                <!-- </div> -->
-                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">配送机构：<span class="receive-dc-content">{{item.outOrganName}}</span></span>
+                 <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date || item.orderDate}}</span></span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">到货日期：<span class="receive-dc-content">{{item.arrive_date || item.arrivalDate}}</span></span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
               <div class="receive-icon-bottom">
-                <div class="glow-1">
+                <div class="glow-1" v-if="!InterfaceSysTypeBOH">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
+                </div>
+                <div class="glow-1" v-if="InterfaceSysTypeBOH" style="justify-content: space-between;">
+                  <span>业务日期：{{item.busiDate}}</span>
+                  <span>金额：￥{{item.totalAmt}}</span>
                 </div>
                 <div>
                   <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
                 </div>
               </div>
           </div>
-          <span v-show="allLoaded">已全部加载</span>          
         </div>
       </div>         
     </div>
@@ -170,10 +170,6 @@ export default class ReceiveGood extends Vue{
    */
   private goodList:any[] = [];
   /**
-   * 数据是否已经全部加载完
-   */
-  private allLoaded:boolean= false;
-  /**
    * 搜索显示
    */
   private isSearch:boolean= false; 
@@ -215,15 +211,27 @@ export default class ReceiveGood extends Vue{
     {id:"receiveType",msg:"请选择收货类型！",receiveType:false},
     {id:"storeId",msg:"请选择来货单位！",storeId:false}];
   created() {
-    this.tabList.push({
-      name:"待收货",
-      status:1,
-      active:true,
-    },{
-      name:"已完成",
-      status:3,
-      active:false
-    });
+    if(!this.InterfaceSysTypeBOH){
+        this.tabList.push({
+          name:"待收货",
+          status:1,
+          active:true,
+        },{
+          name:"已完成",
+          status:3,
+          active:false
+        });
+    }else{
+      this.tabList.push({
+          name:"待收货",
+          status:'SCM_AUDIT_NO',
+          active:true,
+        },{
+          name:"已完成",
+          status:'SCM_AUDIT_YES',
+          active:false
+        });
+    }
     this.pager = new Pager().setLimit(20)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createReceiveGood();
@@ -234,7 +242,7 @@ export default class ReceiveGood extends Vue{
     this.getList();
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.isSearch=false; 
-      this.hideMask();
+      this.hideMask(); 
     }); 
     if(this.$route.params.purStatus=="已完成"){//tab 哪个是选中状态
       this.tabList.TabList.forEach((item,index)=>{
@@ -316,8 +324,16 @@ export default class ReceiveGood extends Vue{
       }
       this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
       this.$router.push('/checkDetail');
+    }else if(this.tabList.getActive().status=='SCM_AUDIT_YES'){   //BOH版本收货单详情页
+       const receiveType = 'SCM_RECEIVE_TYPE_INVOICE';
+       const status = this.tabList.getActive().status;
+       this.service.getGoodDetail(receiveType,item.id,this.pager.getPage()).then(res=>{ 
+        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(res.data.data));
+        this.$router.push('/checkDetail');
+      },err=>{
+          this.$toasted.show(err.message)
+      })
     }
-    
   }
   /**
    * computed demo
@@ -332,42 +348,23 @@ export default class ReceiveGood extends Vue{
   }
   private tabClick(index:number){
     this.tabList.setActive(index);
-    this.allLoaded=false;
-    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
     this.pager.resetStart();//分页加载还原pageNum值
     this.getList();     
-  }
-  //下拉加载更多
-  private loadMore() {
-    if(!this.allLoaded){
-      this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });
-      this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.data.length){
-          this.allLoaded=true;
-        }
-        this.goodList=this.goodList.concat(res.data.data);
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })
-    }     
   }
   //获取列表
   private getList(){
     const status = this.tabList.getActive().status;
-    this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+    const receiveType = "SCM_RECEIVE_TYPE_INVOICE";
+    this.service.getGoodList(receiveType,status as string,this.pager.getPage()).then(res=>{
       this.showMask();
       this.$vux.loading.show({
         text: '加载中...'
         });
-      this.goodList=res.data.data;
+      if(!this.InterfaceSysTypeBOH){
+           this.goodList = res.data.data;
+        }else{
+           this.goodList = res.data.list;
+        }
       setTimeout(()=>{
         this.$vux.loading.hide();
         this.hideMask();
@@ -417,7 +414,9 @@ export default class ReceiveGood extends Vue{
     border-bottom: 2px solid #54B1FD;
     padding: 3px 6px;
   }
-
+  .ezt-add-content{
+    padding-bottom: 0;
+  }
   .mint-tab-item.is-selected .purchase {
     color: #6EDB90;
     border-bottom: 2px solid #6EDB90;

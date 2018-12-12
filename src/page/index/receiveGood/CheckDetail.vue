@@ -5,24 +5,28 @@
     <div class="ezt-main"> 
         <div class="ezt-backcolor"></div>
         <div class="ezt-detail-cot">
-            <!-- 单据信息 -->
+            <!-- 单据信息 --> 
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">{{detailList.dc_name}}</span> 
+                    <span class="return-list-title">{{detailList.dc_name}} {{detailList.outOrganName}}-{{detailList.businessName}}</span> 
                     <span class="receive-status">已完成</span>
                 </div>
                 <div class="receive-icon-content">
-                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{detailList.bill_no}}</span></span>
-                    <div style="display:flex">
+                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{detailList.bill_no || detailList.billNo}}</span></span>
+                    <div style="display:flex" v-if="InterfaceSysTypeBOH">
+                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{detailList.busiDate}}</span></span>
+                        <span class="receive-dc-title">金额：<span class="receive-dc-content">{{detailList.totalAmt}}</span></span>
+                    </div>
+                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
                         <span class="receive-dc-title">含税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">税率：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>
-                    <div style="display:flex">
+                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
                         <span class="receive-dc-title">未税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">到货日期<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>
-                    <div style="display:flex">
+                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
                         <span class="receive-dc-title">仓库：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">备注：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>              
@@ -31,26 +35,38 @@
             <div class="detail-acount-title">
             物品清单
             </div>  
-            <ul v-if="goodList.length>0">
+            <div v-if="goodList.length==0" class="done-none">
+                <div></div>
+                <span>暂无记录</span>
+            </div> 
+            <ul v-if="goodList.length!=0">
                 <li class="good-detail-content" v-for="(item,index) in goodList" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
                             <div class="title">
-                                <span class="good-detail-name">{{item.name}}
-                                    <span class="good-detail-sort">（{{item.sort}}）</span>
+                                <span class="good-detail-name">{{item.name || item.goodsName}}
+                                    <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">（{{item.sort}}）</span>
                                 </span>
-                                <span class="good-detail-sort">￥{{item.price}}/{{item.unitName}}</span>
+                                <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">￥{{item.price}}/{{item.unitName}}</span>
                             </div>
                             <div class="title">
                                 <span class="good-detail-billno">编号：{{item.billNo}}</span>
-                                <span class="good-detail-sort">￥{{item.amt}}</span>
+                                <span class="good-detail-billno">单位：{{item.orderUnitName}}</span>
+                                <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">￥{{item.amt}}</span>
+                            </div>  
+                            <div class="title">
+                                <span class="good-detail-billno">发货数：{{item.sendQty}}</span>
+                                <span class="good-detail-billno">发货单价：{{item.sendPrice}}</span>
+                            </div>  
+                            <div class="title">
+                                <span class="good-detail-billno">发货金额：{{item.sendAmt}}</span>
                             </div>                            
                         </div>
-                        <div class="good-detail-r">
+                        <div class="good-detail-r" v-if="!InterfaceSysTypeBOH">
                             <span class="good-detail-num">{{item.num}}</span>
                         </div>
                     </div>
-                    <div class="good-detail-item" v-if="item.remark">
+                    <div class="good-detail-item" v-if="!InterfaceSysTypeBOH">
                         <div class="good-detail-sort content">备注：
                             <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
                             <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
@@ -135,53 +151,57 @@ export default class ReceiveGood extends Vue{
     }
     mounted(){ 
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
-            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
-            this.detailList.goodList = [{
-            name:"猪肉",
-            sort:"规格",
-            price:12,
-            unitName:"KG",
-            billNo:"003222",
-            amt: 360,
-            remark:"这是水果11111111111111111111111111111111111111111111222222222222222222222366666454545454545454545454545454545",
-            num:3,
-            directWarehouse:[{
-                name:"仓库1",
-                num:1,
-            },{
-                name:"仓库2",
-                num:2,
-            },{
-                name:"仓库3",
-                num:3,
-            },{
-                name:"仓库4",
-                num:66
-            }]
-            },{
-                name:"大猪蹄子",
-                sort:"规格",
-                price:22,
-                unitName:"KG",
-                billNo:"003222",
-                amt: 660,
-                remark:"这是肉",
-                num: 6,
-                directWarehouse:[{
-                    name:"上海仓库1",
-                    num:1,
-                },{
-                    name:"北京仓库2",
-                    num:2,
-                },{
-                    name:"軣咕咕3",
+            this.detailList = JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST));
+            if(!this.InterfaceSysTypeBOH){
+               this.detailList.goodList = [{
+                    name:"猪肉",
+                    sort:"规格",
+                    price:12,
+                    unitName:"KG",
+                    billNo:"003222",
+                    amt: 360,
+                    remark:"这是水果11111111111111111111111111111111111111111111222222222222222222222366666454545454545454545454545454545",
                     num:3,
-                },{
-                    name:"仓库4",
-                    num:66
-                }]
-            }]
-            this.goodList = this.detailList.goodList;
+                    directWarehouse:[{
+                        name:"仓库1",
+                        num:1,
+                    },{
+                        name:"仓库2",
+                        num:2,
+                    },{
+                        name:"仓库3",
+                        num:3,
+                    },{
+                        name:"仓库4",
+                        num:66
+                    }]
+                    },{
+                        name:"大猪蹄子",
+                        sort:"规格",
+                        price:22,
+                        unitName:"KG",
+                        billNo:"003222",
+                        amt: 660,
+                        remark:"这是肉",
+                        num: 6,
+                        directWarehouse:[{
+                            name:"上海仓库1",
+                            num:1,
+                        },{
+                            name:"北京仓库2",
+                            num:2,
+                        },{
+                            name:"軣咕咕3",
+                            num:3,
+                        },{
+                            name:"仓库4",
+                            num:66
+                        }]
+                    }]
+                this.goodList = this.detailList.goodList;
+            }else{
+                this.goodList = this.detailList.detailList;
+            }
         }
     }
     /**

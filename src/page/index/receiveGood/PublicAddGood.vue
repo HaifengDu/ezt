@@ -29,7 +29,9 @@
                 <span class="ezt-reddot-s" v-if="item.addList&&item.addList.length>0">{{item.addList.length}}</span>
               </li>
            </ul>
-           <div class="good-content-list">
+          <div class="good-content-list" ref="listContainer" v-infinite-scroll="loadMore"
+            :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+            infinite-scroll-distance="10">
              <div class="good-item" v-for="(item) in goodList" :key='item.id'>
                 <div class="good-item-title">
                   <span class="good-item-name">{{item.name || item.material_name}}</span>  
@@ -376,8 +378,15 @@ export default class AddGood extends Vue{
   /**
    * 各个模块查询分类时传的参数，自己存在缓存里，统一的一个参数
    *  */ 
-  private materialParam:any; 
+  private materialParam:any;
+  /**
+   * 下拉加载更多时需要 把参数保存起来
+   *  */ 
+  private loadMoreParam:any = {};
+  private pager:Pager;
+  private allLoaded: boolean = false;
   created(){ 
+    this.pager = new Pager().setLimit(7)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createPublicGood();
     if(this.cache.getData(CACHE_KEY.MATERIAL_PARAM)){
@@ -386,7 +395,7 @@ export default class AddGood extends Vue{
     /**
      * 获取 类 物品列表
      */
-    this.service.getGoodClass(this.materialParam).then(res=>{
+    this.service.getGoodClass(this.materialParam,this.pager.getPage()).then(res=>{
       if(res){
         this.allType = res.data.sortList;
         this.goodBigType = this.allType;
@@ -407,18 +416,20 @@ export default class AddGood extends Vue{
     //TODO:默认加载货品
   // }
   private changeSmallType(item:any){
+    this.allLoaded=false;
+    this.pager.resetStart();//分页加载还原pageNum值
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+
     this.allType.forEach((bigSort,index)=>{
       this.$set(bigSort,'active',bigSort.id == item.id);
     })    
     this.typeName = item; 
     this.$set(item,'categoryId',item.id);  
     this.goodSmallType = item;
-    // (item.cdata).forEach((info:any,index:any)=>{
-    //   this.loadGood(info)
-    // })
+   /*  (item.cdata).forEach((info:any,index:any)=>{
+      this.loadGood(info,info.id);
+    }) */
     this.loadGood(item.cdata[0],item.id);
-    // this.loadGood(this.goodSmallType[0]);
-    // this.loadGood(item);
   
     // TODO:加载货品this.goodSmallType[0]   
   }
@@ -427,52 +438,101 @@ export default class AddGood extends Vue{
    * categoryId 大类的id
    */
   private loadGood(item:any,categoryId:any){
+    this.allLoaded=false;
+    this.pager.resetStart();//分页加载还原pageNum值
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+    
     let _this_ = this;
     if(!item.addList){
       this.$set(item,'addList',[]);
     }else{
       item.addList = [];
     }
-
+    this.loadMoreParam = {
+      categoryId:categoryId,//大类id
+      orderGoodsName:item.name,//小类名称 
+      stockGoodsSortId:item.id,//小类id
+      allGoods: item//下拉加载的时候分类中已经有返回全部的物品，加载更多
+    }
     if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
       if(item.goodsList&&item.goodsList.length>0){//全部里面找出已经选择的货品
-        //TODO:item.id加载货品
-        _.forEach(item.goodsList,good=>{
-          this.$set(good,'active',false);
-          const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-          if(index>=0){
-            ObjectHelper.merge(good,this.selectedGoodList[index],true);
-            this.selectedGoodList[index] = good;
-            item.addList.push(good);
-          }
-        });
-        this.goodList = item.goodsList;
+        this.allGoods(item);
         _this_.typeName=item; 
         return false;
       }
-    }   
-    let param = {
-      categoryId:categoryId,//大类id
-      orderGoodsName:item.name,//小类名称 
-      stockGoodsSortId:item.id//小类id
-    }
-    _this_.service.getGoodList( Object.assign(param,this.materialParam)).then(res=>{
+    }      
+    _this_.service.getGoodList( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList;
-        //TODO:item.id加载货品
-      _.forEach(goodsList,good=>{
-        this.$set(good,'active',false);
-        const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-        if(index>=0){
-          ObjectHelper.merge(good,this.selectedGoodList[index],true);
-          this.selectedGoodList[index] = good;
-          item.addList.push(good);
-        }
-      });
+      this.allGoods(res.data);
       this.goodList = goodsList;
     })
     _this_.typeName=item; 
   }
-  // private showDelete(item:any){
+  /**
+   * 加载全部的物品
+   */
+  private allGoods(item:any){
+    let _this_ = this;    
+    if(!item.addList){
+      this.$set(item,'addList',[]);
+    }else{
+      item.addList = [];
+    }
+    //TODO:item.id加载货品
+    _.forEach(item.goodsList,good=>{
+      this.$set(good,'active',false);
+      const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+      if(index>=0){
+        ObjectHelper.merge(good,this.selectedGoodList[index],true);
+        this.selectedGoodList[index] = good;
+        item.addList.push(good);
+      }
+    });
+    this.goodList = item.goodsList;    
+    return false;
+  }
+
+  /**
+   * 下滑加载更多物品
+   */
+  private loadMore(){
+    if(!this.allLoaded){
+      let _this_ = this;
+      this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setNext();
+      if(this.loadMoreParam.allGoods.goodsList&&this.loadMoreParam.allGoods.goodsList.length>0){//从分类中返回的物品 分页加载
+        _this_.service.getGoodClass(this.materialParam,this.pager.getPage()).then(res=>{
+          let goodsList = res.data.sortList[0].cdata[0].goodsList;
+          if(this.pager.getPage().limit>goodsList.length){
+            this.allLoaded = true;
+          }
+          this.goodList = this.goodList.concat(goodsList);
+          setTimeout(()=>{
+            this.$vux.loading.hide();
+            this.hideMask();
+          },500);
+        })
+      }else{//分类当中并没有返回全部的物品，要去单独请求一次物品的接口
+        _this_.service.getGoodList(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
+          let goodsList = res.data.goodsList;
+          if(this.pager.getPage().limit>goodsList.length){
+            this.allLoaded = true;
+          }
+          this.goodList = this.goodList.concat(goodsList);
+          setTimeout(()=>{
+            this.$vux.loading.hide();
+            this.hideMask();
+          },500);
+        },err=>{
+          this.$toasted.show(err.message);
+        })
+      } 
+    }    
+  }
+  
   private showDelete(s:any,e:any){
   }
 

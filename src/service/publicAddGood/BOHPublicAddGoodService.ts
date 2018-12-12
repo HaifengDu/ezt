@@ -4,10 +4,9 @@ import { CachePocily } from "../../common/Cache";
 import CACHE_KEY from '../../constans/cacheKey'
 import Axios from 'axios';
 import { IPublicAddGoodService } from "../../interface/service/IPublicAddGoodService";
-import ErrorMsg from "../../model/ErrorMsg";
 import ObjectHelper from "../../common/objectHelper";
 import { AxiosPromise } from 'axios';
-import { promises } from "fs";
+import { IPagerData } from "../../interface/IPagerData";
 export class BOHPublicAddGoodService extends BaseService implements IPublicAddGoodService{
 
     private cache = CachePocily.getInstance();
@@ -24,7 +23,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * BOH版本   编制盘点单新增物品  （按分类检索）
      * @param bill_type 
      */
-    getBohClassifiedSearch(param:any){
+    getBohClassifiedSearch(param:any,pager:IPagerData){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -35,8 +34,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
-                "pageno": 1, 
-                "pagesize": 20, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
                 "totalcount": 0
             }
         },config).then(res=>{              
@@ -49,7 +48,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param bill_type 
      * @param goodsSortId 
      */
-    getBohItemCategory(param:any){
+    getBohItemCategory(param:any,pager:IPagerData){
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -61,8 +60,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
-                "pageno": 1, 
-                "pagesize": 20, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
                 "totalcount": 0
             }
         },config).then(res=>{              
@@ -72,8 +71,9 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     /**
      * 订货  查询分类
      * @param param 
+     * @pager 分页
      */
-    getBohOrderClass(param:any):AxiosPromise<any>{
+    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -90,8 +90,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
-                "pageno": 1, 
-                "pagesize": 20, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
                 "totalcount": 0   
             }          
         },config).then(res=>{ 
@@ -112,9 +112,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     }
     /**
      * 订单  查物品
-     * @param param 
+     * @param param //接口所传的参数
+     * @param pager //分页
      */
-    getBohOrderGoods(param:any):AxiosPromise<any>{
+    getBohOrderGoods(param:any,pager:IPagerData):AxiosPromise<any>{
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -137,8 +138,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
-                "pageno": 1, 
-                "pagesize": 20, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
         },config).then(res=>{              
@@ -156,7 +157,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     /**
      * 获取分类
      */
-    getGoodClass(param:any):AxiosPromise<any>{
+    getGoodClass(param:any,pager:IPagerData):AxiosPromise<any>{
         let materialLimit = { billsPageType:'' };
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
@@ -166,11 +167,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
         if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询分类
-            return this.getBohClassifiedSearch(param).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
+            return this.getBohClassifiedSearch(param,pager).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){
-            return this.getBohOrderClass(param).then(res=>{
+            return this.getBohOrderClass(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
         }else{//默认查询不到为空
@@ -180,7 +181,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     /**
      * 获取分类对应的物品
      */
-    getGoodList(param:any):AxiosPromise<any>{
+    getGoodList(param:any,pager:IPagerData):AxiosPromise<any>{
         let materialLimit = { billsPageType:'' };
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
@@ -190,11 +191,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
         if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询物品
-            return this.getBohItemCategory(param).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
+            return this.getBohItemCategory(param,pager).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){//boh订单 查询物品
-            return this.getBohOrderGoods(param).then(res=>{
+            return this.getBohOrderGoods(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
         }else{//默认查询不到为空

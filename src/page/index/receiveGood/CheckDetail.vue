@@ -36,8 +36,7 @@
             物品清单
             </div>  
             <div v-if="goodList.length==0" class="done-none">
-                <div></div>
-                <span>暂无记录</span>
+                <span>暂无物品明细</span>
             </div> 
             <ul v-if="goodList.length!=0">
                 <li class="good-detail-content" v-for="(item,index) in goodList" :key="index">

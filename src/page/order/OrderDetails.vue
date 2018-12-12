@@ -8,7 +8,7 @@
     <div class="ezt-main" :class="{'no-pament':!isPayMent||InterfaceSysTypeBOH}"> 
         <div class="ezt-backcolor"></div>
          <div class="ezt-detail-cot">
-            <!-- 单据信息 -->
+            <!-- 单据信息 --> 
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>

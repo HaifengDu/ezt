@@ -9,16 +9,12 @@
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">{{detailList.dc_name}} {{detailList.outOrganName}}-{{detailList.businessName}}</span> 
+                    <span class="return-list-title">{{detailList.dc_name||detailList.outOrganName}}</span> 
                     <span class="receive-status">已完成</span>
                 </div>
-                <div class="receive-icon-content">
-                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{detailList.bill_no || detailList.billNo}}</span></span>
-                    <div style="display:flex" v-if="InterfaceSysTypeBOH">
-                        <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{detailList.busiDate}}</span></span>
-                        <span class="receive-dc-title">金额：<span class="receive-dc-content">{{detailList.totalAmt}}</span></span>
-                    </div>
-                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
+                <div class="receive-icon-content" v-if="!InterfaceSysTypeBOH">
+                    <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{detailList.bill_no}}</span></span>
+                    <div style="display:flex">
                         <span class="receive-dc-title">含税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">税率：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>
@@ -30,6 +26,11 @@
                         <span class="receive-dc-title">仓库：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">备注：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>              
+                </div>
+                <div class="receive-icon-content" v-if="InterfaceSysTypeBOH">
+                    <span class="receive-dc-title">单据号：<span class="receive-dc-content">{{detailList.billNo}}</span></span>                    
+                    <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{new Date (detailList.busiDate||new Date()).format("yyyy-MM-dd")}}</span></span>
+                    <span class="receive-dc-title">金额：<span class="receive-dc-content">{{detailList.totalAmt}}</span></span> 
                 </div>
             </div>
             <div class="detail-acount-title">
@@ -47,25 +48,21 @@
                                     <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">（{{item.sort}}）</span>
                                 </span>
                                 <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">￥{{item.price}}/{{item.unitName}}</span>
+                                <span class="good-detail-sort">￥{{item.sendPrice}}/{{item.orderUnitName}}</span>
                             </div>
                             <div class="title">
-                                <span class="good-detail-billno">编号：{{item.billNo}}</span>
-                                <span class="good-detail-billno">单位：{{item.orderUnitName}}</span>
+                                <span class="good-detail-billno">编号：{{item.goodsCode}}</span>
                                 <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">￥{{item.amt}}</span>
-                            </div>  
-                            <div class="title">
-                                <span class="good-detail-billno">发货数：{{item.sendQty}}</span>
-                                <span class="good-detail-billno">发货单价：{{item.sendPrice}}</span>
-                            </div>  
+                            </div> 
                             <div class="title">
                                 <span class="good-detail-billno">发货金额：{{item.sendAmt}}</span>
                             </div>                            
                         </div>
-                        <div class="good-detail-r" v-if="!InterfaceSysTypeBOH">
-                            <span class="good-detail-num">{{item.num}}</span>
+                        <div class="good-detail-r">
+                            <span class="good-detail-num">{{item.num || item.sendQty}}</span>
                         </div>
                     </div>
-                    <div class="good-detail-item" v-if="!InterfaceSysTypeBOH">
+                    <div class="good-detail-item" v-if="item.remark && !InterfaceSysTypeBOH">
                         <div class="good-detail-sort content">备注：
                             <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark}}</div>
                             <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
@@ -94,7 +91,7 @@
         <div class="ezt-foot-temporary" slot="confirm">
         <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{goodList.length}}</span>，
-            <b>数量</b><span>{{Total.num}}</span>，
+            <b>数量</b><span>{{Total.num||Total.sendQty}}</span>，
             <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
         </div> 
         </div>
@@ -149,58 +146,13 @@ export default class ReceiveGood extends Vue{
         this.service = factory.createReceiveGood(); 
     }
     mounted(){ 
+        this.pager = new Pager().setLimit(7)
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
-            this.detailList = JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST));
-            if(!this.InterfaceSysTypeBOH){
-               this.detailList.goodList = [{
-                    name:"猪肉",
-                    sort:"规格",
-                    price:12,
-                    unitName:"KG",
-                    billNo:"003222",
-                    amt: 360,
-                    remark:"这是水果11111111111111111111111111111111111111111111222222222222222222222366666454545454545454545454545454545",
-                    num:3,
-                    directWarehouse:[{
-                        name:"仓库1",
-                        num:1,
-                    },{
-                        name:"仓库2",
-                        num:2,
-                    },{
-                        name:"仓库3",
-                        num:3,
-                    },{
-                        name:"仓库4",
-                        num:66
-                    }]
-                    },{
-                        name:"大猪蹄子",
-                        sort:"规格",
-                        price:22,
-                        unitName:"KG",
-                        billNo:"003222",
-                        amt: 660,
-                        remark:"这是肉",
-                        num: 6,
-                        directWarehouse:[{
-                            name:"上海仓库1",
-                            num:1,
-                        },{
-                            name:"北京仓库2",
-                            num:2,
-                        },{
-                            name:"軣咕咕3",
-                            num:3,
-                        },{
-                            name:"仓库4",
-                            num:66
-                        }]
-                    }]
-                this.goodList = this.detailList.goodList;
-            }else{
-                this.goodList = this.detailList.detailList;
-            }
+            this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
+            this.service.getGoodDetail(this.detailList.id,this.pager.getPage()).then(res=>{
+                this.detailList = res.data.data;
+                this.goodList = res.data.data.detailList;
+            })           
         }
     }
     /**
@@ -209,17 +161,33 @@ export default class ReceiveGood extends Vue{
      */
     private get Total(){
         return this.goodList.reduce((ori,item)=>{
-        ori.num = ori.num+Number(item.num); 
-        if(item.price){
-            ori.Amt = ori.Amt + (item.num * item.price);
-        }else if(item.Amt){
-            ori.Amt = ori.Amt + (item.amt);
-        }else{
-            ori.Amt = 0;
-            ori.num = 0;
-        } 
-        return ori;
-        },{num:0,Amt:0});
+            if(item.sendPrice){
+                //boh版的数量，金额
+                ori.sendQty = ori.sendQty + Number(item.sendQty);
+                if(item.sendPrice){
+                    ori.Amt = ori.Amt + (item.sendQty * item.sendPrice);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.sendQty = 0;
+                }
+                return ori;
+            }else{
+                //saas版的数量，金额
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+            }
+           
+        },{num:0,Amt:0,sendPrice:0,sendQty:0});
     }
     // 备注出现查看更多
     private handleFold(item:any) {

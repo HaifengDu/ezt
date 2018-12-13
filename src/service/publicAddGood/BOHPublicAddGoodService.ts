@@ -7,15 +7,13 @@ import { IPublicAddGoodService } from "../../interface/service/IPublicAddGoodSer
 import ObjectHelper from "../../common/objectHelper";
 import { AxiosPromise } from 'axios';
 import { IPagerData } from "../../interface/IPagerData";
+import formData from '../../dictory/formData';
+
 export class BOHPublicAddGoodService extends BaseService implements IPublicAddGoodService{
 
     private cache = CachePocily.getInstance();
-    private static _instance: BOHPublicAddGoodService;    
+    private static _instance: BOHPublicAddGoodService;  
     
-    // if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
-    // materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
-    // } 
-
     private constructor(){
         super(ERequestType.Boh)
     }
@@ -83,10 +81,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             "id": param.id || '',
             "supplierId": param.supplierId,//21
             "orderType" : param.orderType,
-            // "warehouse_id": 618,
             "orderDate": param.orderDate,//"2018-11-24"
-            // "categoryId ": param.categoryId || "",//12,
-            // "goodsSortId": param.goodsSortId || "",//"11",
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
@@ -96,20 +91,19 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }          
         },config).then(res=>{ 
             let bb = res;
-            bb.data.sortList = bb.data.categoryList;     
-            bb.data.sortList.forEach((newitem:any)=>{
-                newitem.cdata = newitem.childs;
-                newitem.name = newitem.categoryName;
-                newitem.cdata.forEach((cdataItem:any)=>{
-                    if(cdataItem.id ==0){
-                        cdataItem.id = -1;
-                    }
-                    cdataItem.name = cdataItem.sortName
-                })
-            })      
+            /**
+             * 转一下 publicGood里面页面显示字段
+             */
+            formData.modifyParams( bb.data, {
+                categoryList:'sortList',
+                categoryName:'name',
+                categoryId:'id',
+                childs:'cdata',
+                sortName:'name', 
+            });
             return Promise.resolve(bb);
         });
-    }
+    } 
     /**
      * 订单  查物品
      * @param param //接口所传的参数
@@ -162,12 +156,9 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
         }
-        // if(!materialLimit){
-        //     return Promise.reject(new ErrorMsg(false,"没有物品"));
-        // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
         if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询分类
-            return this.getBohClassifiedSearch(param,pager).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
+            return this.getBohClassifiedSearch(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){
@@ -186,12 +177,9 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
             materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
         }
-        // if(!materialLimit){
-        //     return Promise.reject(new ErrorMsg(false,"没有物品"));
-        // }
         materialLimit = ObjectHelper.parseJSON(materialLimit);
         if(materialLimit && materialLimit.billsPageType == 'stocktaking'){//boh盘点单的 查询物品
-            return this.getBohItemCategory(param,pager).then(res=>{//TODO:参数现在是写死的，需要自己传过来????
+            return this.getBohItemCategory(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){//boh订单 查询物品

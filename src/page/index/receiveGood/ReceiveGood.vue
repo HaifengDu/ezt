@@ -1,7 +1,10 @@
 <!--整体页面的头部布局-->
 <template>
   <div>
-    <div class="ezt-page-con">
+    <div class="ezt-page-con" ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
       <ezt-header :back="true" title="收货" :isInfoGoback="true" @goBack="goBack">
         <div slot="action">   
           <div>
@@ -35,16 +38,20 @@
           <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
               <div class="receive-icon-title">
               <span class="receive-icon-dcName"></span>
-              <span class="return-list-title">{{item.dc_name}} {{item.billNo}}</span> 
-              <span class="receive-status" v-if="tabList.getActive().status==1 || tabList.getActive().status=='SCM_AUDIT_NO'">待审核</span>
-              <span class="receive-status" v-if="tabList.getActive().status==3 || tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>
+              <span class="return-list-title">{{item.dc_name || item.outOrganName}}</span> 
+              <span class="receive-status">{{billStatus}}</span>
               </div>
-              <div class="receive-icon-content">
-                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-                  <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">配送机构：<span class="receive-dc-content">{{item.outOrganName}}</span></span>
-                 <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date || item.orderDate}}</span></span>
-                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">到货日期：<span class="receive-dc-content">{{item.arrive_date || item.arrivalDate}}</span></span>
-                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+              <div class="receive-icon-content" v-if="!InterfaceSysTypeBOH">
+                <span class="receive-dc-title">订单编号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <span class="receive-dc-title">到货日期：<span class="receive-dc-content">{{item.arrive_date}}</span></span>
+                <span class="receive-dc-title">要货日期：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>
+                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+              </div>
+              <div class="receive-icon-content" v-if="InterfaceSysTypeBOH">
+                <span class="receive-dc-title">单据号：<span class="receive-dc-content">{{item.billNo}}</span></span>
+                <span class="receive-dc-title">发货日期：<span class="receive-dc-content">{{new Date (item.busiDate).format('yyyy-MM-dd')}}</span></span>
+                <span class="receive-dc-title">创建人：<span class="receive-dc-content">{{item.creator}}</span></span>
+                <span class="receive-dc-title">备注:<span class="receive-dc-content">{{item.memo}}</span></span>
               </div>
               <div class="receive-icon-bottom">
                 <div class="glow-1" v-if="!InterfaceSysTypeBOH">
@@ -59,6 +66,7 @@
                 </div>
               </div>
           </div>
+           <span v-show="allLoaded">已全部加载</span>   
         </div>
       </div>         
     </div>
@@ -169,6 +177,10 @@ export default class ReceiveGood extends Vue{
    * 列表页list数据
    */
   private goodList:any[] = [];
+   /**
+   * 数据是否已经全部加载完
+   */
+  private allLoaded:boolean= false;
   /**
    * 搜索显示
    */
@@ -212,25 +224,25 @@ export default class ReceiveGood extends Vue{
     {id:"storeId",msg:"请选择来货单位！",storeId:false}];
   created() {
     if(!this.InterfaceSysTypeBOH){
-        this.tabList.push({
-          name:"待收货",
-          status:1,
-          active:true,
-        },{
-          name:"已完成",
-          status:3,
-          active:false
-        });
+      this.tabList.push({
+        name:"待收货",
+        status:1,
+        active:true,
+      },{
+        name:"已完成",
+        status:3,
+        active:false
+      });
     }else{
       this.tabList.push({
-          name:"待收货",
-          status:'SCM_AUDIT_NO',
-          active:true,
-        },{
-          name:"已完成",
-          status:'SCM_AUDIT_YES',
-          active:false
-        });
+        name:"待收货",
+        status:'SCM_AUDIT_NO',
+        active:true,
+      },{
+        name:"已完成",
+        status:'SCM_AUDIT_YES',
+        active:false
+      });
     }
     this.pager = new Pager().setLimit(20)
     const factory = FactoryService.getInstance().createFactory();
@@ -300,13 +312,9 @@ export default class ReceiveGood extends Vue{
       this.$router.push(info);
       return false;
     }
-    if(this.tabList.getActive().status==1){
+    if(this.tabList.getActive().status=="SCM_AUDIT_NO"||this.tabList.getActive().status=="1"){
       confirmGoodInfo={
-        bill_no:item.bill_no,
-        billType:'q',
-        billTypeName:'合同采购',
-        warehouse:'01',
-        remark:'在途中',         
+        id: item.id,          
       }
       if(this.InterfaceSysTypeBOH){
         //BOH只支持配送收货
@@ -317,10 +325,11 @@ export default class ReceiveGood extends Vue{
      
       this.cache.save(CACHE_KEY.RECEIVE_ADDINFO,JSON.stringify(confirmGoodInfo));
       this.$router.push('/comfirmAccept');
-    }else if(this.tabList.getActive().status==3){
+    }else if(this.tabList.getActive().status=="SCM_AUDIT_YES" || this.tabList.getActive().status=="3"){
       detailList = {
         dc_name:"配送中心-8店",
-        bill_no:"000111aab",         
+        bill_no:"000111aab",   
+        id: item.id,      
       }
       this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
       this.$router.push('/checkDetail');
@@ -344,34 +353,53 @@ export default class ReceiveGood extends Vue{
     },0);
   }
   private get billStatus(){
-    return this.tabList.getActive().status==1?'待审核':'已完成';
+    return this.tabList.getActive().status=='SCM_AUDIT_NO'?'待审核':'已完成';
   }
   private tabClick(index:number){
     this.tabList.setActive(index);
+      this.allLoaded=false;
+    (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
     this.pager.resetStart();//分页加载还原pageNum值
     this.getList();     
+  }
+  //下拉加载更多
+  private loadMore() {
+    if(!this.allLoaded){
+      this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setNext();
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+        if(this.pager.getPage().limit>res.data.list.length){
+          this.allLoaded=true;
+        }
+        this.goodList=this.goodList.concat(res.data.list);
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500); 
+      },err=>{
+          this.$toasted.show(err.message);
+      })
+    }     
   }
   //获取列表
   private getList(){
     const status = this.tabList.getActive().status;
-    const receiveType = "SCM_RECEIVE_TYPE_INVOICE";
-   /*  this.service.getGoodList(receiveType,status as string,this.pager.getPage()).then(res=>{
+     this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
       this.showMask();
       this.$vux.loading.show({
         text: '加载中...'
         });
-      if(!this.InterfaceSysTypeBOH){
-           this.goodList = res.data.data;
-        }else{
-           this.goodList = res.data.list;
-        }
+      this.goodList=res.data.list;
       setTimeout(()=>{
         this.$vux.loading.hide();
         this.hideMask();
       },400); 
       },err=>{
         this.$toasted.show(err.message);
-    }); */
+    });
   }
   //搜索选择的条件显示/隐藏
   private searchTitle(){
@@ -414,10 +442,7 @@ export default class ReceiveGood extends Vue{
     border-bottom: 2px solid #54B1FD;
     padding: 3px 6px;
   }
-  .ezt-add-content{
-    padding-bottom: 0;
-  }
-  .mint-tab-item.is-selected .purchase {
+    .mint-tab-item.is-selected .purchase {
     color: #6EDB90;
     border-bottom: 2px solid #6EDB90;
     padding: 3px 6px;

@@ -17,51 +17,50 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param status 单据状态
      * @param pager  分页数据
      */
-    getGoodList(param:any,pager:IPagerData){
-        let config = { 
-            headers: { 
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }
+    getGoodList(status:string,pager:IPagerData){
+        // let config = {
+        //     headers: {
+        //         'X-Requested-With': 'XMLHttpRequest'
+        //     }
+        // }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
-            "receiveType":param.receiveType,
-            "auditStatus":param.auditStatus,
-            "pagination":{
-                orderby:null,
-                asc:false,
-                pageno:1,
-                pagesize:20,
-                totalcount:0
+            "receiveType" : "SCM_RECEIVE_TYPE_INVOICE", 
+            "auditStatus" : status, 
+            "pagination": {
+                "orderby": null, 
+                "asc": false, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
+                "totalcount": 0
             }
-        },config).then(res=>{              
+        }).then(res=>{         
             return Promise.resolve(res);
         });
-    } 
+        // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        // return promise;
+    }
     /**
      * 单据详情接口
      * @param receiveType 收货类型
      * @param id  单据id
      */
-    getGoodDetail(param:any,pager:IPagerData){
-        let config = { 
-            headers: { 
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }
+    getGoodDetail(id:string,pager:IPagerData){
         return Axios.post(`${this.reqUrl}mobile/stock/receive/findBillById`,{
-            "receiveType":param.receiveType,
-            "id":param.id,
-            "pagination":{
-                orderby:null,
-                asc:false,
-                pageno:1,
-                pagesize:20,
-                totalcount:0
+            "receiveType" : "SCM_RECEIVE_TYPE_INVOICE",
+            "id" : 228,
+            "pagination": {
+                "orderby": null, 
+                "asc": false, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
+                "totalcount": 0
             }
-        },config).then(res=>{              
+        }).then(res=>{        
             return Promise.resolve(res);
         });
-    } 
+        // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
+        // return promise;
+    }
 
     static createdInstance(){
         BOHReceiveGoodService.getInstance();

@@ -29,7 +29,7 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
      * @param id 
      * @param pager 
      */
-    getGoodDetail(param:any,pager:IPagerData){
+    getGoodDetail(id:string,pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }

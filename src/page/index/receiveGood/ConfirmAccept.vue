@@ -8,7 +8,7 @@
           <li>
             <span class="title-search-name">单号：</span>
             <!-- <input type="text" class="ezt-middle"> -->
-            {{addBillInfo.bill_no}}
+            {{addBillInfo.bill_no || addBillInfo.billNo}}
           </li>
           <li class="select-list" v-if="receive_billtype.cai">
             <span class="title-search-name">单据类型：</span>
@@ -18,9 +18,9 @@
           </li>
           <li>
             <span class="title-search-name">来货单位：</span>
-            <span>{{111}}</span>
+            <span>{{addBillInfo.outOrganName||addBillInfo.dc_name}}</span>
           </li>
-          <li class="select-list">
+          <li class="select-list" v-if="!InterfaceSysTypeBOH">
             <span class="title-search-name is-required">仓库：</span>
             <span class="title-select-name item-select" v-if="!receive_billtype.cai">
               <select name="" id="" placeholder="请选择" class="ezt-select" @change="handlerWarehouse"
@@ -33,9 +33,10 @@
               {{addBillInfo.warehouse}}
             </span>
           </li>
-          <li class="input-list">
+          <li class="input-list" >
             <span class="title-search-name">备注：</span>
-            <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+            <input type="text" v-if="!InterfaceSysTypeBOH" class="ezt-middle" v-model="addBillInfo.remark">
+            <span v-if="InterfaceSysTypeBOH">{{addBillInfo.memo}}</span>
           </li>  
           <li v-if="receive_billtype.cai">
             <span class="title-search-name">选择物料：</span>
@@ -54,24 +55,37 @@
               <div class="ezt-detail-good">
                   <div class="good-detail-l">
                       <div class="good-detail-t">
-                          <span class="good-detail-name">{{item.name}}
-                              <span class="good-detail-sort">（规格）</span>
+                          <span class="good-detail-name">{{item.name||item.goodsName}}
                           </span> 
-                          <span class="good-detail-billno">编码：003222</span>  
+                          <span class="good-detail-billno">编码：{{item.goodsCode}}</span>  
                       </div>
-                      <div class="good-detail-price" v-if="materialSetting.show_dc_price||InterfaceSysTypeBOH">
+                      <!-- saas价格/单位 总金额显示 -->
+                      <div class="good-detail-price" v-if="materialSetting.show_dc_price&&!InterfaceSysTypeBOH">
                         <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span> 
                         <span class="good-detail-sort">￥360.001</span>
                       </div>
-                      <div class="good-detail-num">                         
+                      <!-- boh价格/单位 总金额显示 -->
+                      <div class="good-detail-price" v-if="InterfaceSysTypeBOH">
+                        <span class="good-detail-sort">￥{{item.sendPrice}}/{{item.orderUnitName}}</span> 
+                        <span class="good-detail-sort">￥{{item.sendAmt}}</span>
+                      </div>
+                       <!-- saas显示 发、收量  -->
+                      <div class="good-detail-num" v-if="(!InterfaceSysTypeBOH)">                                                 
                           <span class="title-search-name ezt-dense-box">发：{{item.sendNum}}</span>   
                           <span class="title-search-name ezt-dense-box">   
                             <!-- SAAS可编辑数量 -->
                             收：<input v-if="!InterfaceSysTypeBOH&&materialSetting.allow_modify_quantity" type="text" @change="numChange(item,'num')" placeholder="10000" v-model="item.num" class="ezt-smart">
                             <!-- BOH不可编辑数量 SAAS物料参数控制不可编辑数量false为禁止-->
-                            <span v-if="InterfaceSysTypeBOH||(!InterfaceSysTypeBOH&&!materialSetting.allow_modify_quantity)">{{item.num}}</span>
+                            <span v-if="(!InterfaceSysTypeBOH&&!materialSetting.allow_modify_quantity)">{{item.num}}</span>
                           </span>
-                      </div>                     
+                      </div>
+                       <!-- boh显示 收量 -->   
+                      <div class="good-detail-num" v-if="(InterfaceSysTypeBOH)"> 
+                          <span class="title-search-name ezt-dense-box">发：{{item.sendQty}}</span>   
+                          <span class="title-search-name ezt-dense-box">收：                          
+                            <span v-if="InterfaceSysTypeBOH">{{item.factQty}}</span>
+                          </span>
+                      </div>                   
                   </div>
                   <div class="good-detail-r" v-if="receive_billtype.shou&&!InterfaceSysTypeBOH">
                     <span class="icon-dail" @click="handlerDirect(item)">拨</span>
@@ -193,12 +207,12 @@
         <div class="ezt-foot-temporary" slot="confirm">
           <div class="ezt-foot-total">合计：
             <b>品项</b><span>{{this.selectedGood.length}}</span>，
-            <b>数量</b><span>{{Total.num}}</span>，
+            <b>数量</b><span>{{Total.num||Total.sendQty}}</span>，
             <b v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao||materialSetting.show_dc_price">￥</b>
             <span v-if="(materialSetting.show_db_price && receive_billtype.diao)||!receive_billtype.diao||materialSetting.show_dc_price">{{Total.Amt.toFixed(2)}}</span>
           </div>
           <div class="ezt-foot-button">
-            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou">暂存</a>  
+            <a href="javascript:(0)" class="ezt-foot-storage" @click="saveReceive" v-if="receive_billtype.shou&&!InterfaceSysTypeBOH">暂存</a>  
             <a href="javascript:(0)" class="ezt-foot-storage" @click="refulseReceive" v-if="receive_billtype.diao">驳回</a>  
             <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmReceive" v-if="receive_billtype.shou || receive_billtype.diao">收货</a>
             <a href="javascript:(0)" class="ezt-foot-storage" @click="submitReceive" v-if="receive_billtype.cai">提交</a>
@@ -213,6 +227,7 @@
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
+import Pager from '../../../common/Pager';
 import { mapActions, mapGetters } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
@@ -242,6 +257,7 @@ declare var mobiscroll:any;
   }
 })
 export default class ReceiveGood extends Vue{
+  private pager:Pager;
   private cache = CachePocily.getInstance();
   private service: IReceiveGoodService;
   private selectedGood: any[];
@@ -275,7 +291,7 @@ export default class ReceiveGood extends Vue{
     this.selectedGood.forEach(item=> this.$set(item,'active',false));
   }
   mounted(){     
-    
+    this.pager = new Pager().setLimit(7)
     if(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE)){
       switch (JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE))){
         case "配":
@@ -301,48 +317,16 @@ export default class ReceiveGood extends Vue{
     console.log(this.receive_billtype,'000999')
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
       this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
-      this.addBillInfo.goodList = [{
-          id:21,
-          name:'牛肉',
-          price:'15',
-          utilname:'KG',
-          num:2,
-          sendNum:5,
-          roundValue:{//可直拨的数据
-            num: 10,
-            numed:0,
-            list:[{
-              name:'仓库一号',
-              num:0
-            },{
-              name:'仓库二号',
-              num:0
-            }]
-          }
-        },{
-            id:2,
-            name:'白菜',
-            price:'1.5',
-            utilname:'KG',
-            sendNum:2,
-            num:3,
-            roundValue:{//可直拨的数据
-              num: 10,
-              numed:0,
-              list:[{
-                name:'仓库一号',
-                num:0
-              },{
-                name:'仓库二号',
-                num:0
-              }]
-            }
-        }]
+      this.service.getGoodDetail(this.addBillInfo.id,this.pager.getPage()).then(res=>{
+        this.addBillInfo = res.data.data || {};
+        this.addBillInfo.goodList = (res.data.data&&res.data.data.detailList) ||[];
+        if(this.selectedGood.length==0&&this.addBillInfo.goodList){
+        this.setSelectedGood(this.addBillInfo.goodList); 
+        }
+      })  
     }
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-    if(this.selectedGood.length==0&&this.addBillInfo.goodList){
-      this.setSelectedGood(this.addBillInfo.goodList); 
-    }
+   
     (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
   }
 
@@ -352,10 +336,33 @@ export default class ReceiveGood extends Vue{
  */
   private get Total(){
     return this.selectedGood.reduce((ori,item)=>{
-      ori.num = ori.num+Number(item.num);       
-      ori.Amt = ori.Amt + (item.num * item.price);
-    return ori;
-    },{num:0,Amt:0});
+     if(item.sendPrice){
+        //boh版的数量，金额
+        ori.sendQty = ori.sendQty + Number(item.sendQty);
+        if(item.sendPrice){
+            ori.Amt = ori.Amt + (item.sendQty * item.sendPrice);
+        }else if(item.Amt){
+            ori.Amt = ori.Amt + (item.amt);
+        }else{
+            ori.Amt = 0;
+            ori.sendQty = 0;
+        }
+        return ori;
+    }else{
+        //saas版的数量，金额
+        ori.num = ori.num+Number(item.num); 
+        if(item.price){
+            ori.Amt = ori.Amt + (item.num * item.price);
+        }else if(item.Amt){
+            ori.Amt = ori.Amt + (item.amt);
+        }else{
+            ori.Amt = 0;
+            ori.num = 0;
+        } 
+        return ori;
+      }
+        
+    },{num:0,Amt:0,sendPrice:0,sendQty:0});
   }
 /**
  * 左侧滑动物料删除

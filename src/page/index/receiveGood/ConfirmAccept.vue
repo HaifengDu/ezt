@@ -285,6 +285,10 @@ export default class ReceiveGood extends Vue{
   private addBillInfo:any={};
   private addBeforeBillInfo:any={};
   private oldValue = 1;
+  /**
+   * 收货单据的类型
+   */
+  private submitType="";
   created() { 
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createReceiveGood();
@@ -317,7 +321,8 @@ export default class ReceiveGood extends Vue{
     console.log(this.receive_billtype,'000999')
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
       this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
-      this.service.getGoodDetail(this.addBillInfo.id,this.pager.getPage()).then(res=>{
+      this.submitType = this.addBillInfo.submitType 
+      this.service.getGoodDetail(this.submitType,this.addBillInfo.id,this.pager.getPage()).then(res=>{
         this.addBillInfo = res.data.data || {};
         this.addBillInfo.goodList = (res.data.data&&res.data.data.detailList) ||[];
         if(this.selectedGood.length==0&&this.addBillInfo.goodList){
@@ -408,7 +413,7 @@ private changeDirect(item:any){
    * 确认收货
    */
   private confirmReceive(){
-    if(!this.addBillInfo.warehouse||this.addBillInfo.warehouse==""){
+    if((!this.addBillInfo.warehouse||this.addBillInfo.warehouse=="")&&!this.InterfaceSysTypeBOH){
       this.errWarehouse = true;
       this.$toasted.show("请选择仓库！");
       return false;
@@ -417,11 +422,14 @@ private changeDirect(item:any){
       this.$toasted.show("请添加物料！");
       return false;
     }
-    this.addBillInfo={},
-    this.setSelectedGood([]);
-    this.addBeforeBillInfo={};
-    this.$toasted.success("收货成功！")
-    this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});     
+    this.service.goReceive(this.submitType,this.addBillInfo).then(res=>{
+      this.addBillInfo={},
+      this.setSelectedGood([]);
+      this.addBeforeBillInfo={};
+      this.$toasted.success("收货成功！")
+      this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});
+    })
+         
   }
   /**
    * 暂存收货

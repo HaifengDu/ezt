@@ -2,7 +2,8 @@ import {AxiosPromise} from 'Axios';
 import { IPagerData } from '../IPagerData';
 
 export interface IReceiveGoodService{
-    getGoodList(param:any,pager:IPagerData):AxiosPromise<any>;
+    getGoodList(submitType:string,param:any,pager:IPagerData):AxiosPromise<any>;
     checkWarehouse?:() => AxiosPromise<any>;
-    getGoodDetail(id:string,pager:IPagerData):AxiosPromise<any>;
+    getGoodDetail(submitType:string,id:string,pager:IPagerData):AxiosPromise<any>;
+    goReceive(submitType:string,param:Object):AxiosPromise<any>;
 }

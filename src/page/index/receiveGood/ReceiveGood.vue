@@ -197,6 +197,13 @@ export default class ReceiveGood extends Vue{
   };
   private tabList:TabList = new TabList();
   /**
+   * 单据类型
+   */
+  private submitType:any[]=[
+    "SCM_RECEIVE_TYPE_INVOICE",//发货单收货
+    "SCM_RECEIVE_TYPE_ORDER" //订单收货 
+  ]
+  /**
    * 下拉 列表
    */
   private pullList:any = {
@@ -314,7 +321,8 @@ export default class ReceiveGood extends Vue{
     }
     if(this.tabList.getActive().status=="SCM_AUDIT_NO"||this.tabList.getActive().status=="1"){
       confirmGoodInfo={
-        id: item.id,          
+        id: item.id,  
+        submitType:this.submitType[0]        
       }
       if(this.InterfaceSysTypeBOH){
         //BOH只支持配送收货
@@ -329,7 +337,8 @@ export default class ReceiveGood extends Vue{
       detailList = {
         dc_name:"配送中心-8店",
         bill_no:"000111aab",   
-        id: item.id,      
+        id: item.id,  
+        submitType:this.submitType[0]        
       }
       this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
       this.$router.push('/checkDetail');
@@ -370,7 +379,7 @@ export default class ReceiveGood extends Vue{
         text:'加载中..'
       });
       this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+      this.service.getGoodList(this.submitType[0],status as string, this.pager.getPage()).then(res=>{  
         if(this.pager.getPage().limit>res.data.list.length){
           this.allLoaded=true;
         }
@@ -387,7 +396,7 @@ export default class ReceiveGood extends Vue{
   //获取列表
   private getList(){
     const status = this.tabList.getActive().status;
-     this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
+     this.service.getGoodList(this.submitType[0],status as string, this.pager.getPage()).then(res=>{
       this.showMask();
       this.$vux.loading.show({
         text: '加载中...'

@@ -149,7 +149,8 @@ export default class ReceiveGood extends Vue{
         this.pager = new Pager().setLimit(7)
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
             this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
-            this.service.getGoodDetail(this.detailList.id,this.pager.getPage()).then(res=>{
+             let submitType = this.detailList.submitType 
+            this.service.getGoodDetail(submitType,this.detailList.id,this.pager.getPage()).then(res=>{
                 this.detailList = res.data.data;
                 this.goodList = res.data.data.detailList;
             })           

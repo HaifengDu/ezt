@@ -17,14 +17,14 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param status 单据状态
      * @param pager  分页数据
      */
-    getGoodList(status:string,pager:IPagerData){
+    getGoodList(submitType:string,status:string,pager:IPagerData){
         // let config = {
         //     headers: {
         //         'X-Requested-With': 'XMLHttpRequest'
         //     }
         // }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
-            "receiveType" : "SCM_RECEIVE_TYPE_INVOICE", 
+            "receiveType" : submitType, 
             "auditStatus" : status, 
             "pagination": {
                 "orderby": null, 
@@ -44,9 +44,9 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param receiveType 收货类型
      * @param id  单据id
      */
-    getGoodDetail(id:string,pager:IPagerData){
+    getGoodDetail(submitType:string,id:string,pager:IPagerData){
         return Axios.post(`${this.reqUrl}mobile/stock/receive/findBillById`,{
-            "receiveType" : "SCM_RECEIVE_TYPE_INVOICE",
+            "receiveType" : submitType,
             "id" : id,
             "pagination": {
                 "orderby": null, 
@@ -60,6 +60,17 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
         });
         // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         // return promise;
+    }
+    /**
+     * 收货
+     */
+    goReceive(submitType:string,param:Object){
+        return Axios.post(`${this.reqUrl}mobile/stock/receive/receive`,{
+            receiveType:submitType,
+            data : param
+        }).then(res=>{     
+            return Promise.resolve(res);
+        });
     }
 
     static createdInstance(){

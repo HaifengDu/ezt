@@ -327,12 +327,12 @@ export default class ReceiveGood extends Vue{
     }else if(this.tabList.getActive().status=='SCM_AUDIT_YES'){   //BOH版本收货单详情页
        const receiveType = 'SCM_RECEIVE_TYPE_INVOICE';
        const status = this.tabList.getActive().status;
-       this.service.getGoodDetail(receiveType,item.id,this.pager.getPage()).then(res=>{ 
+     /*   this.service.getGoodDetail(receiveType,item.id,this.pager.getPage()).then(res=>{ 
         this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(res.data.data));
         this.$router.push('/checkDetail');
       },err=>{
           this.$toasted.show(err.message)
-      })
+      }) */
     }
   }
   /**
@@ -355,7 +355,7 @@ export default class ReceiveGood extends Vue{
   private getList(){
     const status = this.tabList.getActive().status;
     const receiveType = "SCM_RECEIVE_TYPE_INVOICE";
-    this.service.getGoodList(receiveType,status as string,this.pager.getPage()).then(res=>{
+   /*  this.service.getGoodList(receiveType,status as string,this.pager.getPage()).then(res=>{
       this.showMask();
       this.$vux.loading.show({
         text: '加载中...'
@@ -371,7 +371,7 @@ export default class ReceiveGood extends Vue{
       },400); 
       },err=>{
         this.$toasted.show(err.message);
-    });
+    }); */
   }
   //搜索选择的条件显示/隐藏
   private searchTitle(){

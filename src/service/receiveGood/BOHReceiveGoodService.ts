@@ -17,15 +17,15 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param status 单据状态
      * @param pager  分页数据
      */
-    getGoodList(receiveType:string,auditStatus:string,pager:IPagerData){
+    getGoodList(param:any,pager:IPagerData){
         let config = { 
             headers: { 
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
-            "receiveType":receiveType,
-            "auditStatus":auditStatus,
+            "receiveType":param.receiveType,
+            "auditStatus":param.auditStatus,
             "pagination":{
                 orderby:null,
                 asc:false,
@@ -42,15 +42,15 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param receiveType 收货类型
      * @param id  单据id
      */
-    getGoodDetail(receiveType:string,id:string,pager:IPagerData){
+    getGoodDetail(param:any,pager:IPagerData){
         let config = { 
             headers: { 
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/findBillById`,{
-            "receiveType":receiveType,
-            "id":id,
+            "receiveType":param.receiveType,
+            "id":param.id,
             "pagination":{
                 orderby:null,
                 asc:false,

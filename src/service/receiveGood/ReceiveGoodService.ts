@@ -14,7 +14,7 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
      * @param status 单据状态
      * @param pager  分页数据
      */
-    getGoodList(receiveType:string,auditStatus:string,pager:IPagerData){
+    getGoodList(param:any,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
         //     data: [{"bill_type":"dc_order"}],
         //     "oper": "UNDER_RECEIVING_LIST", 
@@ -29,7 +29,7 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
      * @param id 
      * @param pager 
      */
-    getGoodDetail(receiveType:string,id:string,pager:IPagerData){
+    getGoodDetail(param:any,pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }

@@ -58,11 +58,11 @@
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
                 <div class="glow-1" v-if="InterfaceSysTypeBOH" style="justify-content: space-between;">
-                  <span>业务日期：{{item.busiDate}}</span>
+                  <!-- <span>业务日期：{{item.busiDate}}</span> -->
                   <span>金额：￥{{item.totalAmt}}</span>
                 </div>
                 <div>
-                  <span class="receive-ys-btn" v-if="tabList.getActive().status==1">验收</span>
+                  <span class="receive-ys-btn" v-if="tabList.getActive().status==1||tabList.getActive().status=='SCM_AUDIT_NO'">验收</span>
                 </div>
               </div>
           </div>
@@ -353,7 +353,7 @@ export default class ReceiveGood extends Vue{
     },0);
   }
   private get billStatus(){
-    return this.tabList.getActive().status=='SCM_AUDIT_NO'?'待审核':'已完成';
+    return (this.tabList.getActive().status=='SCM_AUDIT_NO'||this.tabList.getActive().status=='1')?'待审核':'已完成';
   }
   private tabClick(index:number){
     this.tabList.setActive(index);

@@ -47,7 +47,7 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
     getGoodDetail(id:string,pager:IPagerData){
         return Axios.post(`${this.reqUrl}mobile/stock/receive/findBillById`,{
             "receiveType" : "SCM_RECEIVE_TYPE_INVOICE",
-            "id" : 228,
+            "id" : id,
             "pagination": {
                 "orderby": null, 
                 "asc": false, 

@@ -264,10 +264,10 @@ export default class InitStock extends Vue {
       this.pager.setNext();
       this.service.getGoodList(status as string, this.pager.getPage()).then(
         res => {
-          if (this.pager.getPage().limit > res.data.data.length) {
+          if (this.pager.getPage().limit > res.data.list.length) {
             this.allLoaded = true;
           } 
-          this.goodList = this.goodList.concat(res.data.data);
+          this.goodList = this.goodList.concat(res.data.list);
           setTimeout(() => {
             this.$vux.loading.hide();
             this.hideMask();
@@ -288,7 +288,7 @@ export default class InitStock extends Vue {
         this.$vux.loading.show({
           text: "加载中..."
         });
-        this.goodList = res.data.data;
+        this.goodList = res.data.list;
         setTimeout(() => {
           this.$vux.loading.hide();
           this.hideMask();

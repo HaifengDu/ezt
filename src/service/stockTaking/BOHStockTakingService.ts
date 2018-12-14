@@ -23,7 +23,24 @@ export class BOHStockTakingService extends BaseService implements IStockTakingSe
             return Promise.resolve(res);
         });
     }  
-    
+
+
+    /**
+     * 加载仓库
+     * 
+     */
+    getWarehouse(){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/stock/taking/findScmWarehouse`,{
+            
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
     /**
      * BOH版本  盘库列表页
      * @param audit_status   

@@ -202,7 +202,7 @@ export default class StockTaking extends Vue{
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));   
     }
-    if(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO)){   
+    if(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO)){       
         this.addBeforeBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDBEFOREINFO));
     }    
     if(this.cache.getData(CACHE_KEY.INVENTORY_TYPE)){
@@ -342,7 +342,8 @@ export default class StockTaking extends Vue{
               "stockMode":item.stockMode,
               "material_id":item.material_id, 
               "material_name":item.material_name,
-              "distributePrice1":item.distributePrice1
+              "distributePrice1":item.distributePrice1,
+              "disperse_num":item.disperse_num,   //实盘数
             };
 					rows.push(obj);
         });

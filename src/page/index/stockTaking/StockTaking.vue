@@ -162,7 +162,7 @@ import CACHE_KEY from '../../../constans/cacheKey'
      ...mapActions({
 
      })
-   }   
+   }        
 }) 
 export default class stockTaking extends Vue{
     private pager:Pager; 
@@ -242,13 +242,10 @@ export default class stockTaking extends Vue{
           bill_type:'period_inventory'
         }
       );
-     
       /**
-       * SAAS版本  动态加载仓库
+       * SAAS BOH版本  加载仓库
        */
-      if(!this.InterfaceSysTypeBOH){
-          this.getWarehouseType();  
-      }
+      this.getWarehouseType();  
     }
     mounted(){   
       this.getpkList();
@@ -273,12 +270,22 @@ export default class stockTaking extends Vue{
      * 动态加载仓库
      */
     private getWarehouseType(){
-      const inventory_type = "week_inventory";
-      this.service.getWarehouse(inventory_type as string).then(res=>{ 
-            this.warehouseType = res.data.data
-      },err=>{       
-          this.$toasted.show(err.message);
-      });
+       if(!this.InterfaceSysTypeBOH){
+          const inventory_type = "week_inventory";
+          this.service.getWarehouse(inventory_type as string).then(res=>{ 
+                this.warehouseType = res.data.data
+          },err=>{       
+              this.$toasted.show(err.message);
+          });
+       }else{
+          this.service.getWarehouse('').then(res=>{ 
+                const result = res.data.warehouseList
+                this.searchParam.bohWarehouse = result[0].warehouseName
+                this.searchParam.selectedWarehouse = result[0].id
+          },err=>{       
+              this.$toasted.show(err.message);
+          });
+       }
     }
     /**
      * 查询日期限制
@@ -345,8 +352,7 @@ export default class stockTaking extends Vue{
            this.inventoryList = res.data.data[0];
         }else{
           this.inventoryList = res.data;   
-          // this.searchParam.bohWarehouse = this.inventoryList.list[0].warehouse_name
-          // this.searchParam.selectedWarehouse = this.inventoryList.list[0].warehouse_id
+          
         }
         (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
@@ -390,16 +396,17 @@ export default class stockTaking extends Vue{
       this.newlyadded = true   
     }  
     private addinventorylist(type:any,name:any,bill_type:string){
-          let InventoryType = {};
           this.service.getInventoryType(type.bill_type).then(res=>{ 
-            InventoryType={   
+            let OrderModule = {};
+            OrderModule={   
               name:type.name,
               bill_type:type.bill_type,
             }   
             if(!this.InterfaceSysTypeBOH){
               this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data.data[0].bill_type)); 
             }else{
-              this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(res.data)); 
+              this.cache.save(CACHE_KEY.INVENTORY_TYPE,JSON.stringify(OrderModule));
+              this.cache.save(CACHE_KEY.WAREHOUSE,JSON.stringify(res.data)); 
             }
             this.$router.push({name:'AddinventoryList'});
           },err=>{

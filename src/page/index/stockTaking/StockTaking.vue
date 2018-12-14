@@ -270,22 +270,18 @@ export default class stockTaking extends Vue{
      * 动态加载仓库
      */
     private getWarehouseType(){
-       if(!this.InterfaceSysTypeBOH){
           const inventory_type = "week_inventory";
-          this.service.getWarehouse(inventory_type as string).then(res=>{ 
-                this.warehouseType = res.data.data
+          this.service.getWarehouse(inventory_type as string || '').then(res=>{ 
+                if(!this.InterfaceSysTypeBOH){
+                  this.warehouseType = res.data.data
+                }else{
+                  const result = res.data.warehouseList
+                  this.searchParam.bohWarehouse = result[0].warehouseName
+                  this.searchParam.selectedWarehouse = result[0].id
+                }
           },err=>{       
               this.$toasted.show(err.message);
           });
-       }else{
-          this.service.getWarehouse('').then(res=>{ 
-                const result = res.data.warehouseList
-                this.searchParam.bohWarehouse = result[0].warehouseName
-                this.searchParam.selectedWarehouse = result[0].id
-          },err=>{       
-              this.$toasted.show(err.message);
-          });
-       }
     }
     /**
      * 查询日期限制

@@ -386,9 +386,9 @@ export default class OrderGoods extends Vue{
           text: '加载中...'
         });
         if(!this.InterfaceSysTypeBOH){
-           this.goodList = res.data.data;
+           this.goodList = res.data.list;
         }else{
-          this.goodList = res.data.goodsList;
+           this.goodList = res.data.goodsList;
         }
         (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
@@ -437,7 +437,16 @@ export default class OrderGoods extends Vue{
     private orderdetails(info:any,item:any){
       if(!this.InterfaceSysTypeBOH){
         if(this.tabList.getActive().status==2){//已完成，只查看详情
-        this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
+          let OrderModule = {};
+          OrderModule={
+              billNo:item.bill_no,
+              organName:'供应商1号',
+              orderDate:item.ask_goods_date,   
+              arrivalDate:item.arrive_date,
+              memo:'提前一天联系供应商',        
+          }   
+          this.cache.save(CACHE_KEY.ORDER_DETAILS,JSON.stringify(OrderModule));
+          this.$router.push({name:"OrderDetails",params:{'isPayMent':'false'}});
         }
         if(this.tabList.getActive().status ==1 && info == 'payMent'){//待支付，有支付
           this.$router.push({name:"OrderDetails",params:{'isPayMent':'true'}});

@@ -12,7 +12,7 @@
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
                     <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">{{bill.organName}}</span> 
+                    <span class="return-list-title">{{bill.organName || bill.dc_name}}</span> 
                     <span class="receive-status">{{isPayMent?"待支付":"已完成"}}</span>
                 </div>
                 <div class="receive-icon-content">
@@ -41,19 +41,19 @@
                         <div class="good-detail-l">
                             <div>
                                 <span class="good-detail-name">{{item.dc_name || item.goodsName}}</span>
-                                <span class="good-detail-sort"  v-if="materialSetting.show_order_price||isPayMent">￥{{item.distributePrice1}}</span>
+                                <span class="good-detail-sort"  v-if="materialSetting.show_order_price||isPayMent">￥{{item.distributePrice1 || item.amount}}</span>
                             </div>
                             <div>
-                                <span class="good-detail-billno">编码：{{item.goodsCode}}  <span v-if="InterfaceSysTypeBOH" class="good-detail-billno">订货单位：{{item.orderUnitName}}</span></span>
+                                <span class="good-detail-billno">编码：{{item.goodsCode || item.code}}  <span v-if="InterfaceSysTypeBOH" class="good-detail-billno">订货单位：{{item.orderUnitName}}</span></span>
                             </div> 
                         </div>
                         <div class="good-detail-r">
-                            <span class="good-detail-num">{{item.finalOrderQty}}</span>
+                            <span class="good-detail-num">{{item.finalOrderQty || item.unit}}</span>
                         </div>
                     </div>
                     <div class="good-detail-item" v-if="!InterfaceSysTypeBOH">
                         <div class="good-detail-sort content">备注：
-                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}"></div>
+                            <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}" v-html="item.remark"></div>
                             <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                         </div>
                     </div>
@@ -191,12 +191,15 @@ export default class OrderGoods extends Vue{
           this.detailList();
         }
         if(this.cache.getData(CACHE_KEY.ORDER_DETAILS)){
-            const list = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_DETAILS));
-            this.bill = list.data
-            this.details = list.data['detailList']
+            if(!this.InterfaceSysTypeBOH){
+                this.bill = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_DETAILS));
+            }else{
+                const list = JSON.parse(this.cache.getData(CACHE_KEY.ORDER_DETAILS));
+                this.bill = list.data
+                this.details = list.data['detailList']
+            }
         }
         this.getData();   
-        
         if(this.$route.params.isPayMent=='false'){
             this.isPayMent = false;
             this.paytitle = "订货单详情";

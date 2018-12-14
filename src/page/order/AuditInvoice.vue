@@ -150,7 +150,9 @@ export default class Order extends Vue{
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
     }
-    // 点击删除按钮
+    /**
+     * 删除按钮
+     */
     private deleteBill(item:any){
         let _this = this;
         this.$vux.confirm.show({
@@ -186,11 +188,15 @@ export default class Order extends Vue{
         })
         this.MaterialDetails.splice(newIndex,1);
     }
-    // 向左滑动
+    /**
+     * 向左滑动
+     */
     private handlerSwipe(item:any,active:boolean){     
         item.active = active;
     }
-    //选择物料
+    /**
+     * 选择物料
+     */
     private renderUrl(info: string) {   
        let goodTerm = {};
         let material_param ={};

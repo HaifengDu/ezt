@@ -422,7 +422,9 @@ export default class OrderGoods extends Vue{
         this.$router.push(info);
       }      
     }
-   // 查询订货
+   /**
+    * 查询订货
+    */
    private queryPage(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
@@ -433,7 +435,9 @@ export default class OrderGoods extends Vue{
       this.cache.save(CACHE_KEY.INITSTOCK_SEARCH,JSON.stringify(this.searchParam));
       this.$router.push('/searchOrderGood');
    }
-   // 跳转详情页面
+   /**
+    * 跳转详情页面
+    */
     private orderdetails(info:any,item:any){
       if(!this.InterfaceSysTypeBOH){
         if(this.tabList.getActive().status==2){//已完成，只查看详情
@@ -462,7 +466,9 @@ export default class OrderGoods extends Vue{
         }
       }
     }   
-    // 审核要货单
+    /**
+     * 审核要货单
+     */
     private toexamine(type:any,item:any){   
       if(!this.InterfaceSysTypeBOH){
         let OrderModule = {}; 
@@ -489,7 +495,9 @@ export default class OrderGoods extends Vue{
       }
       
      }     
-    //  再来一单 
+    /**
+     * 再来一单
+     */
     private morelist(type:any,item:any){
       let addInfo = {};
       let _this = this;

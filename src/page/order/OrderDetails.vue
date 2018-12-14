@@ -232,7 +232,9 @@ export default class OrderGoods extends Vue{
         console.log(this.payValue,'998')
         this.$router.push('/orderPaySuccess');
     }
-    // 备注出现查看更多
+    /**
+     * 备注出现查看更多
+     */
     private handleFold(item:any) {
         this.$set(item,'flod',!item.flod);
     }
@@ -258,7 +260,9 @@ export default class OrderGoods extends Vue{
         return ori;
         },{num:0,Amt:0});  
     }
-    // 物料明细
+    /**
+     * 物料明细
+     */
     private detailList(){
      this.service.getGoodDetail('id').then(res=>{
           this.details=res.data.data;

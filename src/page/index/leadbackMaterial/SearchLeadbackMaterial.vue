@@ -8,7 +8,7 @@
         infinite-scroll-distance="10">
     <ezt-header :back="true" title='领/退料单查询'>
        <div slot="action">
-       </div>   
+       </div>      
     </ezt-header>    
     <div class="ezt-main"> 
       <div class="ezt-add-content">

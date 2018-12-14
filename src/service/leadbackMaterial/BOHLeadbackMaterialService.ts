@@ -33,6 +33,14 @@ export class BOHLeadbackMaterialService extends BaseService implements ILeadback
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
+     /**
+     * 高级查询结果页
+     * @param pager 
+     */
+    getGoodResult(pager:IPagerData){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
 
     static createInstance(){
         BOHLeadbackMaterialService.getInstance();

@@ -342,15 +342,6 @@ export default class ReceiveGood extends Vue{
       }
       this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
       this.$router.push('/checkDetail');
-    }else if(this.tabList.getActive().status=='SCM_AUDIT_YES'){   //BOH版本收货单详情页
-       const receiveType = 'SCM_RECEIVE_TYPE_INVOICE';
-       const status = this.tabList.getActive().status;
-     /*   this.service.getGoodDetail(receiveType,item.id,this.pager.getPage()).then(res=>{ 
-        this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(res.data.data));
-        this.$router.push('/checkDetail');
-      },err=>{
-          this.$toasted.show(err.message)
-      }) */
     }
   }
   /**

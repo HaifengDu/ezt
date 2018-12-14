@@ -100,6 +100,7 @@ export default class SpilledSheet extends Vue{
     private cache = CachePocily.getInstance();
     private spilledDetails:any={};//损溢详情页面表头
     private details:any[] = [];  //物料明细
+    private Inventoryloss:boolean = false;
     created() {          
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createSpilledSheet();

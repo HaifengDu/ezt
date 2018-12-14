@@ -45,21 +45,21 @@
               <div class="receive-icon-content">
                 <div style="display:flex">
                   <span class="receive-dc-title" v-if="tabList.getActive().status==1 || tabList.getActive().status==2">领料库：
-                    <span class="receive-dc-content">{{item.storehouse}}</span>  
+                    <span class="receive-dc-content">{{item.dc_name}}</span>  
                   </span>
                   <span class="receive-dc-title" v-if="tabList.getActive().status==3 || tabList.getActive().status==4">退料库：
-                    <span class="receive-dc-content">{{item.storehouse}}</span>  
+                    <span class="receive-dc-content">{{item.dc_name}}</span>  
                   </span>
                   <span class="receive-dc-title">数量：
-                    <span class="receive-dc-content">{{item.number}}</span>
+                    <span class="receive-dc-content">{{item.exportNum}}</span>
                   </span>
                 </div>
                 <div style="display:flex">
                   <span class="receive-dc-title">主仓库：
-                    <span class="receive-dc-content">{{item.warehouse}}</span>  
+                    <span class="receive-dc-content">{{item.mater_name}}</span>  
                   </span>
                   <span class="receive-dc-title">单据金额：
-                    <span class="receive-dc-content">{{item.amount}}</span>
+                    <span class="receive-dc-content">{{item.acc_qty}}</span>
                   </span>
                 </div>
                 <span class="receive-dc-title">货品摘要：<span class="receive-dc-content">{{item.details}}</span></span>
@@ -292,7 +292,7 @@ export default class leadbackMaterial extends Vue{
         this.$vux.loading.show({
           text: '加载中...'
         });
-        this.goodList=res.data.data;
+        this.goodList=res.data.list;
         (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide();

@@ -40,7 +40,7 @@
               </div>
               <div class="receive-icon-content">
                 <span class="receive-dc-title">仓库：
-                  <span class="receive-dc-content">{{item.warehouse}}</span>  
+                  <span class="receive-dc-content">{{item.dc_name}}</span>  
                 </span>
                 <span class="receive-dc-title">制单日期：
                   <span class="receive-dc-content">{{item.arrive_date}}</span>
@@ -232,7 +232,7 @@ export default class SpilledSheet extends Vue{
         this.$vux.loading.show({
           text: '加载中...'
         }); 
-        this.goodList=res.data.data;
+        this.goodList=res.data.list;
         (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{
           this.$vux.loading.hide();

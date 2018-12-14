@@ -15,22 +15,22 @@
                 </div>
                 <div class="receive-icon-content">
                     <span class="receive-dc-title">单号：
-                        <span class="receive-dc-content">{{material.warehouse}}</span>
+                        <span class="receive-dc-content">{{material.bill_no}}</span>
                     </span>
                     <span class="receive-dc-title" v-if="this.$route.query.pageType == 'requisition'">领料日期：
                         <span class="receive-dc-content">{{material.arrive_date}}</span>
                     </span>
                     <span class="receive-dc-title" v-if="this.$route.query.pageType == 'requisition'">领料仓库：
-                        <span class="receive-dc-content">{{material.storehouse}}</span>
+                        <span class="receive-dc-content">{{material.dc_name}}</span>
                     </span>
                     <span class="receive-dc-title" v-if="this.$route.query.pageType == 'retreating'">退料日期：
                         <span class="receive-dc-content">{{material.arrive_date}}</span>
                     </span>
                     <span class="receive-dc-title" v-if="this.$route.query.pageType == 'retreating'">退料仓库：
-                        <span class="receive-dc-content">{{material.storehouse}}</span>
+                        <span class="receive-dc-content">{{material.dc_name}}</span>
                     </span>
                     <span class="receive-dc-title">主仓库：
-                        <span class="receive-dc-content">{{material.warehouse}}</span>
+                        <span class="receive-dc-content">{{material.dc_name}}</span>
                     </span>
                     <div style="display:flex;padding-bottom:20px;">
                         <span class="receive-dc-title">备注：<span class="receive-dc-content">{{material.remark}}</span></span>

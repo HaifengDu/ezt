@@ -87,9 +87,10 @@ export default class SpilledSheet extends Vue{
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createSpilledSheet();
        this.pager = new Pager().setLimit(20)
+       this.detailList();    
     }
 
-    mounted(){   
+    mounted(){  
       this.detailList();    
       if(this.cache.getData(CACHE_KEY.SPILLEDSHEET_SEARCH)){
         this.searchParam = this.cache.getDataOnce(CACHE_KEY.SPILLEDSHEET_SEARCH);

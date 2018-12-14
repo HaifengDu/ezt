@@ -352,7 +352,6 @@ export default class stockTaking extends Vue{
            this.inventoryList = res.data.data[0];
         }else{
           this.inventoryList = res.data;   
-          
         }
         (this.inventoryList.list||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{

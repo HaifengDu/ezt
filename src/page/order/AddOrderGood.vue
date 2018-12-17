@@ -324,6 +324,7 @@ export default class Order extends Vue{
         }
         // }
         (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
+        (this.goodData||[]).forEach((item:any)=>this.$set(item,'active',false));
     }
     private getSupplierList(){
         this.service.getSupplierList().then(res=>{

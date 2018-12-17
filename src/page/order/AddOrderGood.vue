@@ -121,7 +121,7 @@
                             </div>
                             <div class="good-detail-r">
                                 <div class="park-input">
-                                    <span class="title-search-name">备注：{{item.remark}}</span>
+                                    <span class="title-search-name">备注：{{item.remark||item.memo}}</span>
                                 </div>                 
                             </div>
                         </div>
@@ -292,7 +292,8 @@ export default class Order extends Vue{
         if(this.selectedGood&&this.selectedGood.length>0){
             formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
                 num:"finalOrderQty",  
-                price:"distributePrice1",              
+                price:"distributePrice1",    
+                remark:'memo',          
             })
         }
         this.goodData = ObjectHelper.serialize(this.selectedGood);
@@ -479,6 +480,7 @@ export default class Order extends Vue{
         formData.modifyParams(this.goodData,{
             finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
             distributePrice1:'price',
+            memo:'remark',
         })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));

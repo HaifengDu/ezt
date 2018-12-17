@@ -116,6 +116,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 categoryId:'id',
                 childs:'cdata',
                 sortName:'name', 
+                memo:'remark',
             });
             return Promise.resolve(bb);
         });
@@ -157,6 +158,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 goodsName:'name',
                 currentQty:'num',
                 distributePrice1:'price',
+                memo:'remark',
             });  
             return Promise.resolve(bb);
         });

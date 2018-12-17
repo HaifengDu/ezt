@@ -1,7 +1,7 @@
 <!--订货单详情-->
 <template>
   <div class="ezt-page-con">
-    <ezt-header :back="true" :title="paytitle" @goBack="goBack" :isInfoGoback="true">
+    <ezt-header :back="true" :title="paytitle">
        <div slot="action">
        </div>    
     </ezt-header>    
@@ -198,7 +198,7 @@ export default class OrderGoods extends Vue{
                 this.details = list.data['detailList']
             }
         }
-        this.getData();   
+        this.getData();     
         if(this.$route.params.isPayMent=='false'){
             this.isPayMent = false;
             this.paytitle = "订货单详情";
@@ -280,12 +280,6 @@ export default class OrderGoods extends Vue{
         },err=>{
           this.$toasted.show(err.message);
       });
-    }
-    /**
-     * 返回
-     */
-    private goBack(){
-        this.$router.push('/orderGood')
     }
 }
 </script>

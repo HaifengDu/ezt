@@ -43,7 +43,7 @@
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
                       <p v-if="!InterfaceSysTypeBOH">采购单位：<span>{{item.whole_num || '0'}}{{item.pur_unit_name}}</span></p>
                       <p v-if="!InterfaceSysTypeBOH">库存主单位：<span>{{item.disperse_num || '0'}}{{item.unit_name}}</span></p>
-                      <p>账面数量：<span>{{item.acc_qty}}</span></p>
+                      <p v-if="InterfaceSysTypeBOH">账面数量：<span>{{item.acc_qty}}</span></p>
                       <p v-if="InterfaceSysTypeBOH">实盘数：<span>{{item.disperse_num || '0'}}</span></p>
                     </div>
                     <div v-if="types== pageType.AuditList || types== pageType.LibraryDetails">
@@ -295,34 +295,65 @@ export default class stockTaking extends Vue{
        if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可保存！")
         }
-        var rows=[];
-        this.inventoryDetails.forEach((item:any) => {
-            let obj = {
-                material_id:item.material_id,   
-              };
-            rows.push(obj);
-        });
-        let billInfo={
-          "entry_name":this.user.auth.username,
-          "bill_status":0,   //暂存
-          "bill_type_name":this.details.bill_type_name,
-          "warehouse_id":this.details.warehouse_id,
-          "bill_type":this.details.bill_type,
-          "stock_count_mode_name":this.details.treatment,
-          "busi_date":this.user.auth.busi_date,
-          "organ_brief_code":this.user.auth.organ_brief_code,
-          "stock_count_mode":this.details.treatment,
-          "details":rows
+        if(!this.InterfaceSysTypeBOH){
+            var rows=[];
+            this.inventoryDetails.forEach((item:any) => {
+                let obj = {
+                    material_id:item.material_id,   
+                  };
+                rows.push(obj);
+            });
+            let billInfo={
+              "entry_name":this.user.auth.username,
+              "bill_status":0,   //暂存
+              "bill_type_name":this.details.bill_type_name,
+              "warehouse_id":this.details.warehouse_id,
+              "bill_type":this.details.bill_type,
+              "stock_count_mode_name":this.details.treatment,
+              "busi_date":this.user.auth.busi_date,
+              "organ_brief_code":this.user.auth.organ_brief_code,
+              "stock_count_mode":this.details.treatment,
+              "details":rows
+            }
+            this.service.getAdditionalcheckList(billInfo).then(res=>{  
+                this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+                this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+                this.cache.clear();
+                this.$toasted.show("操作成功！")
+                this.$router.push('/')   
+            },err=>{
+                this.$toasted.show(err.message)
+            })
+        }else{
+            var rows=[];
+            this.inventoryDetails.forEach((item:any) => {
+                let obj = {
+                    material_id:item.material_id,   
+                  };
+                rows.push(obj);
+            });
+            let billInfo={
+              "entry_name":this.user.auth.username,
+              "bill_status":0,   //暂存
+              "bill_type_name":this.details.bill_type_name,
+              "warehouse_id":this.details.warehouse_id,
+              "bill_type":this.details.bill_type,
+              "stock_count_mode_name":this.details.treatment,
+              "busi_date":this.user.auth.busi_date,
+              "organ_brief_code":this.user.auth.organ_brief_code,
+              "stock_count_mode":this.details.treatment,
+              "details":rows
+            }
+            this.service.getAdditionalcheckList(billInfo).then(res=>{  
+                this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+                this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+                this.cache.clear();
+                this.$toasted.show("操作成功！")
+                this.$router.push('/')   
+            },err=>{
+                this.$toasted.show(err.message)
+            })
         }
-        this.service.getAdditionalcheckList(billInfo).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.cache.clear();
-            this.$toasted.show("操作成功！")
-            this.$router.push('/')   
-        },err=>{
-            this.$toasted.show(err.message)
-        })
     }
     /**
      * 盘点类型导入 模板导入  提交按钮
@@ -331,34 +362,65 @@ export default class stockTaking extends Vue{
         if(this.inventoryDetails.length === 0){
             this.$toasted.show("没有数据可提交！")
         }
-        var rows=[];
-        this.inventoryDetails.forEach((item:any) => {
-            let obj = {
-                material_id:item.material_id,   
-              };
-            rows.push(obj);
-        });
-        let billInfo={
-          "entry_name":this.user.auth.username,
-          "bill_status":1,   //提交
-          "bill_type_name":this.details.bill_type_name,
-          "warehouse_id":this.details.warehouse_id,
-          "bill_type":this.details.bill_type,
-          "stock_count_mode_name":this.details.treatment,
-          "busi_date":this.user.auth.busi_date,
-          "organ_brief_code":this.user.auth.organ_brief_code,
-          "stock_count_mode":this.details.treatment,
-          "details":rows
+        if(!this.InterfaceSysTypeBOH){
+            var rows=[];
+            this.inventoryDetails.forEach((item:any) => {
+                let obj = {
+                    material_id:item.material_id,   
+                  };
+                rows.push(obj);
+            });
+            let billInfo={
+              "entry_name":this.user.auth.username,
+              "bill_status":1,   //提交
+              "bill_type_name":this.details.bill_type_name,
+              "warehouse_id":this.details.warehouse_id,
+              "bill_type":this.details.bill_type,
+              "stock_count_mode_name":this.details.treatment,
+              "busi_date":this.user.auth.busi_date,
+              "organ_brief_code":this.user.auth.organ_brief_code,
+              "stock_count_mode":this.details.treatment,
+              "details":rows
+            }
+            this.service.getAdditionalcheckList(billInfo).then(res=>{  
+                this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+                this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+                this.$toasted.show("操作成功！")
+                this.cache.clear();
+                this.$router.push('/')
+            },err=>{
+                this.$toasted.show(err.message)
+            })
+        }else{
+            var rows=[];
+            this.inventoryDetails.forEach((item:any) => {
+                let obj = {
+                    material_id:item.material_id,   
+                  };
+                rows.push(obj);
+            });
+            let billInfo={
+              "entry_name":this.user.auth.username,
+              "bill_status":1,   //提交
+              "bill_type_name":this.details.bill_type_name,
+              "warehouse_id":this.details.warehouse_id,
+              "bill_type":this.details.bill_type,
+              "stock_count_mode_name":this.details.treatment,
+              "busi_date":this.user.auth.busi_date,
+              "organ_brief_code":this.user.auth.organ_brief_code,
+              "stock_count_mode":this.details.treatment,
+              "details":rows
+            }
+            this.service.getAdditionalcheckList(billInfo).then(res=>{  
+                this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+                this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+                this.$toasted.show("操作成功！")
+                this.cache.clear();
+                this.$router.push('/')
+            },err=>{
+                this.$toasted.show(err.message)
+            })
         }
-        this.service.getAdditionalcheckList(billInfo).then(res=>{  
-            this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
-            this.$toasted.show("操作成功！")
-            this.cache.clear();
-            this.$router.push('/')
-        },err=>{
-            this.$toasted.show(err.message)
-        })
     }
 }     
 </script>

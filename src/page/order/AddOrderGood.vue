@@ -521,12 +521,20 @@ export default class Order extends Vue{
         if(this.goodData.length>0){
             this.$vux.confirm.show({
                 // 组件除show外的属性
-                onCancel () {
-                    _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
+                onCancel () {                   
+                   _this.addBillInfo[val] = _this.addBeforeBillInfo[val];
                 },
                 onConfirm () {
                     _this.goodData=[];
                     _this.addBeforeBillInfo[val]=_this.addBillInfo[val];
+                    if(val == 'supplierId'){
+                        _this.supplierLists.forEach((item:any,index:any)=>{
+                            if(supplierId == item.id){
+                                _this.addBillInfo.supplierName = item.name;
+                                _this.addBeforeBillInfo.supplierName = item.name;
+                            }
+                        })
+                    }
                     _this.checkNone();    
                 },
                 content:title

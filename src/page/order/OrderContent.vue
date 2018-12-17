@@ -33,7 +33,7 @@
             <div></div>
             <span>目前还没有任何订单</span>
           </div>
-          <div v-if="goodList.length!=0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
+          <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index">
             <div class="ezt-list-show" v-swipeleft="handlerSwipe.bind(this,item,true)"  v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName" v-if="!InterfaceSysTypeBOH">配</span>
@@ -56,7 +56,6 @@
                   <span class="receive-dc-title">到货日期：
                     <span class="receive-dc-content">{{item.arrive_date || item.arrivalDate}}</span>
                   </span>
-                <!-- </div> -->
                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
               </div>
               <div class="receive-icon-bottom">
@@ -98,26 +97,36 @@
   <!-- 查询订货 -->  
   <div v-show="isSearch" class="search-dialog orderList">
       <ul class="ezt-title-search">
-        <li class="select-list" v-if="!InterfaceSysTypeBOH">
-          <span class="title-search-name ">订货类型：</span>
-          <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" v-model="searchParam.orderSuccess">
-              <option value='' style="display:none;" disabled="disabled" selected="selected">请选择订货类型</option>
-              <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-            </select>
-        </span>
-        <li v-if="InterfaceSysTypeBOH">
-         <x-input title="订货类型：" :max="50" disabled  value="订单"  placeholder="请输入盘点库"></x-input>
-       </li>  
-      <li class="select-list">
-        <span class="title-search-name ">供货机构：</span>
-        <span class="title-select-name item-select">
-          <select placeholder="请选择" class="ezt-select" v-model="supplyAgency">
-            <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
-            <option :value="item.id" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
-          </select>
-        </span>   
-      </li>
+          <li class="select-list" v-if="!InterfaceSysTypeBOH">
+              <span class="title-search-name ">订货类型：</span>
+              <span class="title-select-name item-select">
+                <select placeholder="请选择" class="ezt-select" v-model="orderSaas">
+                  <option value='' style="display:none;" disabled="disabled" selected="selected">请选择订货类型</option>
+                  <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                </select>
+            </span>
+          </li>
+          <li class="select-list" v-if="!InterfaceSysTypeBOH">
+            <span class="title-search-name ">供货机构：</span>
+            <span class="title-select-name item-select">
+              <select placeholder="请选择" class="ezt-select" v-model="supplyAgencySaas">
+                <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
+                <option :value="item.id" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
+              </select>
+            </span>   
+          </li>
+          <li v-if="InterfaceSysTypeBOH">
+            <x-input title="订货类型：" :max="50" disabled  value="订单"  placeholder="请输入盘点库"></x-input>
+          </li>  
+          <li class="select-list" v-if="InterfaceSysTypeBOH">
+            <span class="title-search-name ">供货机构：</span>
+            <span class="title-select-name item-select">
+              <select placeholder="请选择" class="ezt-select" v-model="supplyAgencyBoh">
+                <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
+                <option :value="item.id" :key="index" v-for="(item,index) in selectionBoh">{{item.name}}</option>
+              </select>
+            </span>   
+          </li>
        <li class="select-list" v-if="!InterfaceSysTypeBOH">
           <span class="title-search-name ">支付类型：</span> 
           <span class="title-select-name item-select">
@@ -204,27 +213,28 @@ export default class OrderGoods extends Vue{
     private showMask:()=>void;
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
-    private orderSuccess:string= '';
-    private supplyAgency:string= '';
     private selection:any[]=[];
+    private selectionBoh:any=[{}];
+    private supplyAgencyBoh:any=[{}];
+    private supplyAgencySaas:any;
     private searchParam:any={
       paymentType:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
       endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
     };//搜索时的查询条件
     private orderType=[{
-        name: '订货01',
+        name: '订货01',id:1,
         supply: [
-          {name: '供货01'},
-          {name: '供货02'},
-          {name: "供货03"}
+          {name: '供货01',id:1},
+          {name: '供货02',id:2},
+          {name: "供货03",id:3}
           ]
       }, {
-        name: '订货02',
+        name: '订货02',id:2,
         supply: [
-          {name: '供货001'}, 
-          {name: '供货002'}, 
-          {name: "供货003"}, 
+          {name: '供货001',id:1}, 
+          {name: '供货002',id:2}, 
+          {name: "供货003",id:3}, 
           ]
      }]
     private paymentType:any=[{
@@ -277,7 +287,10 @@ export default class OrderGoods extends Vue{
         /**
          * 获取供货机构
          */
-        this.getOrganization();  
+        if(this.InterfaceSysTypeBOH){
+          this.getOrganization();  
+        }
+        
     }
     mounted(){      
       this.getList();
@@ -313,15 +326,15 @@ export default class OrderGoods extends Vue{
     /**
      * 供货机构二级联动
      */
-    @Watch("orderSuccess",{
+    @Watch("orderSaas",{
       deep:true
     })
-    private orderSuccessWatch(newVal:any,oldVal:any){
+    private orderSaasWatch(newVal:any,oldVal:any){
       if(!this.InterfaceSysTypeBOH){
          this.orderType.forEach(item => {
 					if(item.name === newVal) {
              this.selection = item.supply;
-             this.supplyAgency = this.selection[0].name
+             this.supplyAgencySaas = this.selection[0].name
 					}
 				})
       }
@@ -330,11 +343,12 @@ export default class OrderGoods extends Vue{
      * 获取供货机构
      */
     private getOrganization(){
-          this.service.getSupplyOrganization().then(res=>{ 
-              this.selection = res.data.organList
-          },err=>{       
-              this.$toasted.show(err.message);
-          });
+        this.service.getSupplyOrganization().then(res=>{ 
+            this.selectionBoh = res.data.organList
+            this.supplyAgencyBoh = this.selectionBoh[0].id
+        },err=>{       
+            this.$toasted.show(err.message);
+        });
     }
     /**
      * 查询日期限制
@@ -443,20 +457,20 @@ export default class OrderGoods extends Vue{
    /**
     * 查询订货
     */
-   private queryPage(){
+   private queryPage(){   
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
    }
-   private toSearch(){   
-        const supplierId = this.supplyAgency || null
-        const query = this.searchParam.materiel || null
-        const busiDateBegin = this.searchParam.startDate
-        const busiDateEnd = this.searchParam.endDate
+   private toSearch(){      
+        const supplierId = this.supplyAgencyBoh || null;
+        const query = this.searchParam.materiel || null;
+        const busiDateBegin = this.searchParam.startDate;
+        const busiDateEnd = this.searchParam.endDate;
         this.service.getGoodResult(supplierId,query,busiDateBegin,busiDateEnd,this.pager.getPage()).then(res=>{ 
           this.hideMask();     
           this.isSearch = false;
           this.cache.save(CACHE_KEY.ORDER_SEARCH,JSON.stringify(res.data));
-          this.$router.push({name:'searchOrderGood'});
+          this.$router.push({name:'SearchOrderGood'});
         },err=>{
             this.$toasted.show(err.message)
         })

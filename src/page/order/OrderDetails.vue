@@ -11,8 +11,7 @@
             <!-- 单据信息 --> 
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
-                    <span class="receive-icon-dcName"></span>
-                    <span class="return-list-title">{{bill.organName || bill.dc_name}}</span> 
+                    <span class="return-list-title" style="margin-left:15px;">{{bill.organName || bill.dc_name}}</span> 
                     <span class="receive-status">{{isPayMent?"待支付":"已完成"}}</span>
                 </div>
                 <div class="receive-icon-content">
@@ -63,9 +62,9 @@
     </div>
     <ezt-footer>
         <div class="ezt-foot-temporary" slot="confirm">
-            <div class="ezt-foot-total">合计：
-                <b>品项</b><span>{{details.length}}</span>，
-                <b>数量</b><span>{{Total.num}}</span>
+            <div class="ezt-foot-total" v-if="this.details.length>0">合计：
+                <b>品项</b><span>{{this.details.length}}</span>，
+                <b>数量</b><span>{{Total.num || Total.finalOrderQty}}</span>
                 <b v-if="materialSetting.show_order_price||isPayMent">，含税金额￥</b><span v-if="materialSetting.show_order_price||isPayMent">{{Total.Amt.toFixed(2)}}</span>
             </div>
             <div class="ezt-foot-button" v-if="isPayMent&&!InterfaceSysTypeBOH">
@@ -246,20 +245,32 @@ export default class OrderGoods extends Vue{
      * 物料总数量、总金额
      */
     private get Total(){
-        return this.details.reduce((ori,item)=>{
-        ori.num = ori.num+Number(item.num); 
-            if(item.price){
-                ori.Amt = ori.Amt + (item.num * item.price);
-            }else if(item.Amt){
-                ori.Amt = ori.Amt + (item.amt); 
-            }else{
-                ori.num = 0;
-                ori.Amt = 0;
-            }      
-        
-        return ori;
-        },{num:0,Amt:0});  
-    }
+        return this.details.reduce((ori,item) => {
+            if(item.distributePrice1){
+                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1 * item.orderUnitRates );
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.finalOrderQty = 0;
+                }
+                return ori;
+           }else{
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+           }
+    },{num:0,Amt:0,distributePrice1:0,finalOrderQty:0,orderUnitRates:0});
+  }
     /**
      * 物料明细
      */

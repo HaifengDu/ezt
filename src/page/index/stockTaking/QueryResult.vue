@@ -12,9 +12,9 @@
               <div class="librarytype">  
                 <div v-if="queryResult.list.length==0" class="done-none">
                   <div></div>
-                  <span>未查到符合条件的记录</span>
+                  <span>未查到符合条件的记录</span>   
                 </div>
-                <ul v-if="queryResult.list.length>0">   
+                <ul v-if="queryResult.list.length>0">     
                   <li :key="index" v-for="(item,index) in queryResult.list" >      
                       <p><em>{{item.bill_type_name}}</em><span>{{item.bill_no}}</span></p>
                       <div><p>盘点仓库：<span>{{item.warehouse_name}}</span></p></div>
@@ -64,13 +64,12 @@ export default class stockTaking extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();  
     private pageType = PageType;
-    private list:any[] = [];
     private queryResult:any[] = [];
     created() {
       const factory = FactoryService.getInstance().createFactory();
       this.service = factory.createStockTaking();
       if(this.cache.getData(CACHE_KEY.INVENTORY_RESULT)){
-            this.queryResult = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_RESULT));
+          this.queryResult = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_RESULT));
       }
     }
 

@@ -42,7 +42,7 @@
                  <div class="glow-1" v-if="!InterfaceSysTypeBOH">
                   <span>共{{item.material_size}}件货品<span class="receive-total">合计：￥434</span></span>
                 </div>
-                <div class="glow-1" v-if="InterfaceSysTypeBOH">
+                <div class="footer" v-if="InterfaceSysTypeBOH">
                   <span>金额：￥{{item.totalAmt}}</span>
                   <p class="see" @click="see(item)">查看</p>
                 </div>
@@ -100,7 +100,6 @@ export default class OrderGoods extends Vue{
     }
 
     mounted(){   
-      // this.detailList();
      
     }
     /**
@@ -122,5 +121,21 @@ export default class OrderGoods extends Vue{
 }
 .receive-icon-dcName{
   background: none;
+}
+.footer{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .see{
+        border: 1px solid #1188FC;
+        font-size: 12px;
+        color: #1188FC;
+        border-radius: 6px;
+        width: 70px;
+        height: 30px;
+        text-align: center;
+        line-height: 30px;
+        cursor: pointer;
+      }
 }
 </style>

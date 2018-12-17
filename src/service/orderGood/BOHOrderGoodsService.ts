@@ -141,7 +141,6 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
     saveOrder(param:object){
         return Axios.post(`${this.reqUrl}mobile/purchase/saveOrder`,{
             data:{
-                "auditStatus": "SCM_AUDIT_NO", 
                 "orderType": "SCM_ORDER_TYPE_RULE", 
                 ...param
             }

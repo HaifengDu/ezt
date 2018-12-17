@@ -8,7 +8,7 @@
             <!-- 单据信息 --> 
             <div class="receive-dc-list detail-order-info">
                 <div class="receive-icon-title">
-                    <span class="receive-icon-dcName"></span>
+                    <span class="receive-icon-dcName">{{detailList.type == 'SCM_RECEIVE_TYPE_INVOICE'? '配' : "无"}}</span>
                     <span class="return-list-title">{{detailList.dc_name||detailList.outOrganName}}</span> 
                     <span class="receive-status">已完成</span>
                 </div>

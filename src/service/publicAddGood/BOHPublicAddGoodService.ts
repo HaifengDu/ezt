@@ -37,7 +37,20 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "totalcount": 0
             }
         },config).then(res=>{              
-            return Promise.resolve(res);
+            let bb = res; 
+            if(bb.data.sortList&&bb.data.sortList.length>0){
+                bb.data.sortList.forEach((item:any)=>{
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>0){
+                        /**
+                         * 转一下 publicGood里面页面显示字段
+                         */
+                        formData.modifyParams( item.cdata[0].goodsList, {
+                            distributePrice1:'price',
+                        }); 
+                    }
+                })               
+            }        
+           return Promise.resolve(bb);
         });
     }
 
@@ -57,8 +70,21 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             }
-        }).then(res=>{              
-            return Promise.resolve(res);
+        }).then(res=>{  
+            let bb = res;
+            if(bb.data.sortList&&bb.data.sortList.length>0){
+                bb.data.sortList.forEach((item:any)=>{
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>0){
+                        /**
+                         * 转一下 publicGood里面页面显示字段
+                         */
+                        formData.modifyParams( item.cdata[0].goodsList, {
+                            distributePrice1:'price',
+                        }); 
+                    }
+                })               
+            }  
+            return Promise.resolve(bb);
         });
     }
     /**
@@ -90,6 +116,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 categoryId:'id',
                 childs:'cdata',
                 sortName:'name', 
+                memo:'remark',
             });
             return Promise.resolve(bb);
         });
@@ -121,13 +148,18 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        }).then(res=>{              
-            let bb = res;
-            bb.data.goodsList.forEach((newitem:any)=>{
-                newitem.material_id = newitem.goodsId;
-                newitem.name = newitem.goodsName;
-                newitem.num = newitem.currentQty;
-            })      
+        }).then(res=>{ 
+            let bb = res;  
+             /**
+             * 转一下 publicGood里面页面显示字段
+             */
+            formData.modifyParams( bb.data.goodsList, {
+                goodsId:'material_id',
+                goodsName:'name',
+                currentQty:'num',
+                distributePrice1:'price',
+                memo:'remark',
+            });  
             return Promise.resolve(bb);
         });
     }

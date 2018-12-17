@@ -322,7 +322,7 @@ export default class ReceiveGood extends Vue{
     if(this.cache.getData(CACHE_KEY.RECEIVE_ADDINFO)){
       this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_ADDINFO));
       // this.submitType = this.addBillInfo.submitType 
-      this.service.getGoodDetail(this.addBillInfo.type,this.addBillInfo.id,this.pager.getPage()).then(res=>{
+      this.service.getGoodDetail(this.addBillInfo.submitType,this.addBillInfo.id,this.pager.getPage()).then(res=>{
         this.addBillInfo = res.data.data || {};
         this.addBillInfo.goodList = (res.data.data&&res.data.data.detailList) ||[];
         if(this.selectedGood.length==0&&this.addBillInfo.goodList){

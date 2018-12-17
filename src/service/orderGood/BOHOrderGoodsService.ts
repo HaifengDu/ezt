@@ -94,11 +94,11 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
-        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{
-            "supplierId":"supplierId",     //配送中心id
-            "query": "query",    //名称
-            "busiDateBegin": "busiDateBegin",
-            "busiDateEnd": "busiDateEnd",
+        return Axios.post(`${this.reqUrl}mobile/purchase/getOrders`,{
+            "supplierId":supplierId,     //配送中心id
+            "query": query,    //名称
+            "busiDateBegin": busiDateBegin,
+            "busiDateEnd": busiDateEnd,
             "pagination": {
                 "orderby": "", 
                 "asc": false, 

@@ -122,7 +122,7 @@
               <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
                   <b>品项</b><span>{{this.selectedGood.length}}</span>，
-                  <b>数量</b><span>{{Total.num}}</span>，
+                  <b>数量</b><span>{{Total.num || Total.disperse_num}}</span>，
                   <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
@@ -170,6 +170,7 @@ export default class StockTaking extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private service:IStockTakingService;
     private bill_type:string; //弹层盘点类型
+    private selectedGood:any[];//store中selectedGood的值
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
@@ -177,8 +178,6 @@ export default class StockTaking extends Vue{
       stock:'',
       treatment:'',
     };//新增盘库单
-    private selectedGood:any[];//store中selectedGood的值
-    // private MaterialDetails:any[];
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
@@ -291,12 +290,32 @@ export default class StockTaking extends Vue{
    * 物料总数量\总金额
    */
     private get Total(){
-      return this.selectedGood.reduce((ori,item)=>{
-        ori.num = ori.num+Number(item.num);       
-        ori.Amt = ori.Amt + (Number(item.num) * Number(item.price));
-        return ori;
-      },{num:0,Amt:0});
-    }
+        return this.selectedGood.reduce((ori:any,item:any) => {
+            if(item.distributePrice1){
+                ori.disperse_num = ori.disperse_num + Number(item.disperse_num);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + Number(item.distributePrice1);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.disperse_num = 0;
+                }
+                return ori;
+           }else{
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+           }
+    },{num:0,Amt:0,distributePrice1:0,disperse_num:0});
+  } 
   /**
    * 删除物料操作
    */

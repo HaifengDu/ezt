@@ -71,7 +71,7 @@
                         </div>
                         <div class="ezt-detail-del" @click="deleteBill(item)">
                             <i class="fa fa-trash" aria-hidden="true"></i>
-                        </div>
+                        </div> 
                     </li>
                 </ul>   
             </div>
@@ -80,7 +80,7 @@
             <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total" v-if="this.MaterialDetails.length>0">合计：
                     <b>品项</b><span>{{this.MaterialDetails.length}}</span>，  
-                    <b>数量</b><span>{{Total.num}}</span>
+                    <b>数量</b><span>{{Total.num || Total.finalOrderQty}}</span>
                     <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">，￥</b>
                     <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
                 </div>
@@ -150,6 +150,9 @@ export default class Order extends Vue{
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
     }
+    mounted(){ 
+       
+    }
     /**
      * 删除按钮
      */
@@ -214,22 +217,38 @@ export default class Order extends Vue{
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
         this.setSelectedGood(this.MaterialDetails);
         this.$router.push(info);
-    }
+    }  
    /**
    * 
    * 物料总数量\总金额
    */
     private get Total(){
-       return this.selectedGood.reduce((ori,item)=>{
-       ori.num = ori.num+Number(item.num); 
-        if(item.price){
-            ori.Amt = ori.Amt + (item.num * item.price);
-        }else{
-            ori.Amt = ori.Amt + (item.amt);
-        }      
-      return ori;
-      },{num:0,Amt:0});
-    }    
+        return this.MaterialDetails.reduce((ori,item) => {
+            if(item.distributePrice1){
+                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1 * item.orderUnitRates );
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.finalOrderQty = 0;
+                }
+                return ori;
+           }else{
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+           }
+    },{num:0,Amt:0,distributePrice1:0,finalOrderQty:0,orderUnitRates:0});
+  } 
 
     /**
      * 提交

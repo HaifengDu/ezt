@@ -8,5 +8,6 @@ export interface IOrderGoodsService{
     getGoodResult?:(supplierId:string,query:string,busiDateBegin:string,busiDateEnd:string,pager:IPagerData)=>AxiosPromise<any>; //高级查询条件
     getGoodDetail(id:string):AxiosPromise<any>;  //订单详情
     getSupplyOrganization():AxiosPromise<any>;//获取供货机构
-   
+    getSupplierList():AxiosPromise<any>;//获取配送机构
+    saveOrder(param:object):AxiosPromise<any>;//订单新增保存
 }

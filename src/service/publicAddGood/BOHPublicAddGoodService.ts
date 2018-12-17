@@ -47,11 +47,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param goodsSortId 
      */
     getBohItemCategory(param:any,pager:IPagerData){
-        let config = {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,{
             "bill_type":param.bill_type, 
             "goodsSortId":param.goodsSortId,
@@ -62,7 +57,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             }
-        },config).then(res=>{              
+        }).then(res=>{              
             return Promise.resolve(res);
         });
     }
@@ -71,12 +66,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param param 
      * @pager 分页
      */
-    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{
-        let config = {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }
+    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{        
         return Axios.post(`${this.reqUrl}mobile/purchase/chooseOrderGoods`,{
             "id": param.id || '',
             "supplierId": param.supplierId,//21
@@ -89,7 +79,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0   
             }          
-        },config).then(res=>{ 
+        }).then(res=>{ 
             let bb = res;
             /**
              * 转一下 publicGood里面页面显示字段
@@ -110,11 +100,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param pager //分页
      */
     getBohOrderGoods(param:any,pager:IPagerData):AxiosPromise<any>{
-        let config = {
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        }
         let firstIds = {};
         if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
             firstIds = {}
@@ -126,7 +111,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
-            "supplierId": 21,//21,
+            "supplierId": param.supplierId,//21,
             "orderType" : param.orderType,
             "orderDate": param.orderDate,//"2018-11-24",           
             "pagination": {
@@ -136,7 +121,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        },config).then(res=>{              
+        }).then(res=>{              
             let bb = res;
             bb.data.goodsList.forEach((newitem:any)=>{
                 newitem.material_id = newitem.goodsId;

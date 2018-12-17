@@ -37,7 +37,7 @@
           <!-- 收货单列表       -->
           <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
               <div class="receive-icon-title">
-              <span class="receive-icon-dcName"></span>
+              <span class="receive-icon-dcName">{{item.type == 'SCM_RECEIVE_TYPE_INVOICE'? '配' : "无"}}</span>
               <span class="return-list-title">{{item.dc_name || item.outOrganName}}</span> 
               <span class="receive-status">{{billStatus}}</span>
               </div>
@@ -322,7 +322,7 @@ export default class ReceiveGood extends Vue{
     if(this.tabList.getActive().status=="SCM_AUDIT_NO"||this.tabList.getActive().status=="1"){
       confirmGoodInfo={
         id: item.id,  
-        submitType:this.submitType[0]        
+        submitType:item.type       
       }
       if(this.InterfaceSysTypeBOH){
         //BOH只支持配送收货
@@ -338,7 +338,7 @@ export default class ReceiveGood extends Vue{
         dc_name:"配送中心-8店",
         bill_no:"000111aab",   
         id: item.id,  
-        submitType:this.submitType[0]        
+        submitType:item.type        
       }
       this.cache.save(CACHE_KEY.RECEIVE_DETAILLIST,JSON.stringify(detailList));
       this.$router.push('/checkDetail');

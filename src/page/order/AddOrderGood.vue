@@ -114,7 +114,7 @@
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">{{item.goodsCode||""}}</span>
-                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname||item.unitName}}
+                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price||item.distributePrice1}}/{{item.utilname||item.unitName}}
                                     </span>
                                     <span class="good-detail-sort">数量：{{item.num||item.finalOrderQty}}</span>
                                 </div>                     
@@ -291,7 +291,8 @@ export default class Order extends Vue{
         } 
         if(this.selectedGood&&this.selectedGood.length>0){
             formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-                num:"finalOrderQty",                
+                num:"finalOrderQty",  
+                price:"distributePrice1",              
             })
         }
         this.goodData = ObjectHelper.serialize(this.selectedGood);
@@ -475,7 +476,8 @@ export default class Order extends Vue{
             orderType : 'SCM_ORDER_TYPE_RULE'
         }
         formData.modifyParams(this.goodData,{
-            finalOrderQty:"num"//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+            finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+            distributePrice1:'price',
         })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
@@ -563,8 +565,8 @@ export default class Order extends Vue{
         if(item.finalOrderQty){
                 //boh版的数量，金额
                 ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
-                if(1){
-                    ori.Amt = ori.Amt + (item.finalOrderQty * 1);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1);
                 }else if(item.Amt){
                     ori.Amt = ori.Amt + (item.amt);
                 }else{

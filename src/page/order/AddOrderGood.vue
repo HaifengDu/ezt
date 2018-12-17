@@ -105,7 +105,7 @@
                         v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
                             <div class="good-detail-l">
                                 <div>
-                                    <span class="good-detail-name">{{item.name}}
+                                    <span class="good-detail-name">{{item.name||item.goodsName}}
                                         <!-- <span class="good-detail-sort">（规格）</span> -->
                                     </span>
                                     <!-- <span @click="editStatus(item)">
@@ -293,7 +293,8 @@ export default class Order extends Vue{
             formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
                 num:"finalOrderQty",  
                 price:"distributePrice1",    
-                remark:'memo',          
+                remark:'memo',  
+                name:'goodsName'        
             })
         }
         this.goodData = ObjectHelper.serialize(this.selectedGood);
@@ -481,6 +482,7 @@ export default class Order extends Vue{
             finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
             distributePrice1:'price',
             memo:'remark',
+            goodsName:'name'
         })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
@@ -613,6 +615,12 @@ export default class Order extends Vue{
             return false;
         }
         this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
+        let newparam ={            
+            detailList:this.goodData,
+            totalAmt:this.Total.Amt,
+            auditStatus:'SCM_AUDIT_YES'
+        }         
+      
         this.$vux.confirm.show({
             // 组件除show外的属性
             onCancel () {//审核不通过
@@ -626,7 +634,13 @@ export default class Order extends Vue{
                 if(!_this.InterfaceSysTypeBOH){
                     _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
                 }else{
-                     _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                    _this.service.saveOrder((Object.assign(newparam,_this.addBeforeBillInfo))).then(res=>{
+                        _this.$toasted.success("审核成功");
+                        _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                    },err=>{
+                        this.$toasted.show(err.message);
+                    })
+                    
                 }
                
             },
@@ -662,7 +676,8 @@ export default class Order extends Vue{
         this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
         let param ={            
             detailList:this.goodData,
-            totalAmt:this.Total.Amt
+            totalAmt:this.Total.Amt,
+            auditStatus:'SCM_AUDIT_NO'
         }         
         this.service.saveOrder((Object.assign(param,this.addBeforeBillInfo))).then(res=>{
             this.addBillInfo={},

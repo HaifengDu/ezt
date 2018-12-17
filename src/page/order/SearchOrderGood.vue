@@ -92,7 +92,7 @@ export default class OrderGoods extends Vue{
     }
 
     mounted(){   
-      this.detailList();
+      // this.detailList();
       if(this.cache.getData(CACHE_KEY.INITSTOCK_SEARCH)){
         this.searchParam = this.cache.getDataOnce(CACHE_KEY.INITSTOCK_SEARCH);
       }
@@ -100,41 +100,19 @@ export default class OrderGoods extends Vue{
     /**
      * 物料明细
      */
-    private detailList(){
-      this.service.getGoodResult(this.pager.getPage()).then(res=>{
-          this.$vux.loading.show({
-              text: '加载中...'
-          });
-          this.details = res.data.data;
-          setTimeout(()=>{
-              this.$vux.loading.hide();
-          },400); 
-      },err=>{
-          this.$toasted.show(err.message);
-      });
-    }
-    /**
-     * 下拉加载更多
-     */
-    private loadMore() {
-        if(!this.allLoaded){
-            this.$vux.loading.show({
-                text:'加载中..'
-            });
-            this.pager.setNext(); 
-            this.service.getGoodResult(this.pager.getPage()).then(res=>{  
-                if(this.pager.getPage().limit>res.data.data.length){
-                     this.allLoaded=true;
-                }
-                this.details=this.details.concat(res.data.data);
-                setTimeout(()=>{
-                    this.$vux.loading.hide();
-                },500); 
-            },err=>{
-                this.$toasted.show(err.message);
-            })
-        }    
-    }
+    // private detailList(){
+    //   this.service.getGoodResult(this.pager.getPage()).then(res=>{
+    //       this.$vux.loading.show({
+    //           text: '加载中...'
+    //       });  
+    //       this.details = res.data.data;
+    //       setTimeout(()=>{
+    //           this.$vux.loading.hide();
+    //       },400); 
+    //   },err=>{
+    //       this.$toasted.show(err.message);
+    //   });
+    // }
 }
 </script>
 <style lang="less" scoped>

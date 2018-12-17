@@ -98,28 +98,30 @@
   <!-- 查询订货 -->  
   <div v-show="isSearch" class="search-dialog orderList">
       <ul class="ezt-title-search">
-        <li class="select-list">
+        <li class="select-list" v-if="!InterfaceSysTypeBOH">
           <span class="title-search-name ">订货类型：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" v-model="orderSuccess">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.orderSuccess">
               <option value='' style="display:none;" disabled="disabled" selected="selected">请选择订货类型</option>
               <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
             </select>
         </span>
-      </li>
+        <li v-if="InterfaceSysTypeBOH">
+         <x-input title="订货类型：" :max="50" disabled  value="订单"  placeholder="请输入盘点库"></x-input>
+       </li>  
       <li class="select-list">
         <span class="title-search-name ">供货机构：</span>
         <span class="title-select-name item-select">
           <select placeholder="请选择" class="ezt-select" v-model="supplyAgency">
             <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
-            <option :value="item.name" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
+            <option :value="item.id" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
           </select>
         </span>   
       </li>
        <li class="select-list" v-if="!InterfaceSysTypeBOH">
           <span class="title-search-name ">支付类型：</span> 
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" v-model="searchParam.paymentType" ref="paymentType">
+            <select placeholder="请选择" class="ezt-select" v-model="paymentType" ref="paymentType">
               <option value='' style="display:none;" disabled="disabled" selected="selected">请选择支付类型</option>
               <option :value="item.type" :key="index" v-for="(item,index) in paymentType">{{item.name}}</option>
             </select>
@@ -204,7 +206,7 @@ export default class OrderGoods extends Vue{
     private isSearch:boolean = false; //订货查询
     private orderSuccess:string= '';
     private supplyAgency:string= '';
-    private selection:any=[{}];
+    private selection:any[]=[];
     private searchParam:any={
       paymentType:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
@@ -272,6 +274,10 @@ export default class OrderGoods extends Vue{
               active:false      
           })
         } 
+        /**
+         * 获取供货机构
+         */
+        this.getOrganization();  
     }
     mounted(){      
       this.getList();
@@ -311,12 +317,24 @@ export default class OrderGoods extends Vue{
       deep:true
     })
     private orderSuccessWatch(newVal:any,oldVal:any){
-        this.orderType.forEach(item => {
+      if(!this.InterfaceSysTypeBOH){
+         this.orderType.forEach(item => {
 					if(item.name === newVal) {
              this.selection = item.supply;
              this.supplyAgency = this.selection[0].name
 					}
 				})
+      }
+    }
+    /**
+     * 获取供货机构
+     */
+    private getOrganization(){
+          this.service.getSupplyOrganization().then(res=>{ 
+              this.selection = res.data.organList
+          },err=>{       
+              this.$toasted.show(err.message);
+          });
     }
     /**
      * 查询日期限制
@@ -374,7 +392,7 @@ export default class OrderGoods extends Vue{
         },
         content:'是否要删除该单据？'
       })
-    }
+    }  
     /**
      * 获取列表
      */
@@ -429,11 +447,19 @@ export default class OrderGoods extends Vue{
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
    }
-   private toSearch(){
-      this.isSearch = false;
-      this.hideMask();
-      this.cache.save(CACHE_KEY.INITSTOCK_SEARCH,JSON.stringify(this.searchParam));
-      this.$router.push('/searchOrderGood');
+   private toSearch(){   
+        const supplierId = this.supplyAgency || null
+        const query = this.searchParam.materiel || null
+        const busiDateBegin = this.searchParam.startDate
+        const busiDateEnd = this.searchParam.endDate
+        this.service.getGoodResult(supplierId,query,busiDateBegin,busiDateEnd,this.pager.getPage()).then(res=>{ 
+          this.hideMask();     
+          this.isSearch = false;
+          this.cache.save(CACHE_KEY.ORDER_SEARCH,JSON.stringify(res.data));
+          this.$router.push({name:'searchOrderGood'});
+        },err=>{
+            this.$toasted.show(err.message)
+        })
    }
    /**
     * 跳转详情页面

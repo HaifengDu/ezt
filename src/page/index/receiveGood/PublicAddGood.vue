@@ -84,94 +84,96 @@
                       &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 </span>
                </div>
-                  <div>
-                    <x-dialog v-model="isRemark" class="dialog-demo"> 
-                      <div class="ezt-dialog-header">
-                        <div class="ezt-close" @click="isRemark=false" >
-                          <i class="fa fa-times" aria-hidden="true"></i>
-                        </div>
-                        <!-- 默认编辑 备注 -->
-                        <div class="header-name" v-if="materialLimit.billsPageType!='initStock'">
-                          <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
-                        </div>
-                        
-                      </div>
-                      <!-- 只有收货模块时才有直拨 -->
-                      <div v-if="materialLimit.billsPageType=='receiveGood'">
-                          <div class="ezt-dialog-title">
-                            <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
-                            <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
-                          </div>
-                          <div class="warehouse-list">
-                              <ul class="warehouse-isDefault">
-                                  <li v-for="(item,index) in ((bindRemark.roundValue&&bindRemark.roundValue.list)||[])" :key="index">
-                                    <span>{{item.name}}</span>
-                                    <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
-                                  </li>
-                              </ul>
-                          </div>
-                      </div>
-                      
-                      <div class="mine-bot-btn">
-                        <span class="ezt-lone-btn" @click="remarkConfirm">提交</span>
-                      </div>
-                    </x-dialog>
-                  </div>
-                <!-- 编辑价格信息时  -->
-                <div>
-                    <x-dialog v-model="isPrice" class="dialog-demo">
-                    <div class="ezt-dialog-header">                                
-                        <span class="ezt-close" @click="isPrice=false" >
-                        <i class="fa fa-times" aria-hidden="true"></i>
-                        </span>
-                    </div>                            
-                    <div class="warehouse-list">
-                        <ul class="edit-good-list">
-                            <li>
-                                <span class="title-select-name">数量：</span>
-                                <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
-                            </li>
-                            <li v-if="materialLimit.costType=='0'">
-                                <span class="title-dialog-name">价格：</span>
-                                <span class="icon-input price">
-                                    <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
-                                </span>                                       
-                            </li>
-                            <li v-if="materialLimit.costType=='1'">
-                                <span class="title-dialog-name">含税额：</span>
-                                <span class="icon-input price">
-                                    <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
-                                </span>                                       
-                            </li>
-                            <li>
-                                <span class="title-dialog-name">税率：</span>
-                                <span class="icon-input">
-                                    <input type="text" class="ezt-smart" @change="pubChange(bindRemark,'rate')" v-model="bindRemark.rate">
-                                </span>
-                            </li>
-                            <li class="select-list">
-                                <span class="title-dialog-name">供应商：</span>
-                                <span class="title-select-name item-select">
-                                <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
-                                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                    <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                                </select>
-                                </span>
-                            </li>
-                            <li>
-                                <span class="title-dialog-name">备注：</span>
-                                <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
-                            </li>
-                        </ul>
-                    </div>
-                    <div class="mine-bot-btn">
-                        <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
-                    </div>             
-                    </x-dialog>
-                </div>
+              
              </div>           
           </div>
         </div>
+      </div>
+       <!-- 编辑备注或者仓库时 -->
+      <div>
+        <x-dialog v-model="isRemark" class="dialog-demo"> 
+          <div class="ezt-dialog-header">
+            <div class="ezt-close" @click="isRemark=false" >
+              <i class="fa fa-times" aria-hidden="true"></i>
+            </div>
+            <!-- 默认编辑 备注 -->
+            <div class="header-name" v-if="materialLimit.billsPageType!='initStock'">
+              <textarea placeholder="请输入备注信息" style="height: 4em;" class="ezt-pri-remark" v-model="bindRemark.remark"></textarea>
+            </div>
+            
+          </div>
+          <!-- 只有收货模块时才有直拨 -->
+          <div v-if="materialLimit.billsPageType=='receiveGood'">
+              <div class="ezt-dialog-title">
+                <span>可直拨：<span class="num">{{(bindRemark.roundValue&&bindRemark.roundValue.num)||0}}</span></span>
+                <span>已直拨：<span class="num">{{DirectedNum}}</span></span>
+              </div>
+              <div class="warehouse-list">
+                  <ul class="warehouse-isDefault">
+                      <li v-for="(item,index) in ((bindRemark.roundValue&&bindRemark.roundValue.list)||[])" :key="index">
+                        <span>{{item.name}}</span>
+                        <x-number v-model="item.num" @on-change="changeDirect(item)" button-style="round" :min="0"></x-number>
+                      </li>
+                  </ul>
+              </div>
+          </div>
+          
+          <div class="mine-bot-btn">
+            <span class="ezt-lone-btn" @click="remarkConfirm">提交</span>
+          </div>
+        </x-dialog>
+      </div>
+      <!-- 编辑价格信息时  -->
+      <div>
+          <x-dialog v-model="isPrice" class="dialog-demo">
+          <div class="ezt-dialog-header">                                
+              <span class="ezt-close" @click="isPrice=false" >
+              <i class="fa fa-times" aria-hidden="true"></i>
+              </span>
+          </div>                            
+          <div class="warehouse-list">
+              <ul class="edit-good-list">
+                  <li>
+                      <span class="title-select-name">数量：</span>
+                      <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
+                  </li>
+                  <li v-if="materialLimit.costType=='0'">
+                      <span class="title-dialog-name">价格：</span>
+                      <span class="icon-input price">
+                          <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
+                      </span>                                       
+                  </li>
+                  <li v-if="materialLimit.costType=='1'">
+                      <span class="title-dialog-name">含税额：</span>
+                      <span class="icon-input price">
+                          <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
+                      </span>                                       
+                  </li>
+                  <li>
+                      <span class="title-dialog-name">税率：</span>
+                      <span class="icon-input">
+                          <input type="text" class="ezt-smart" @change="pubChange(bindRemark,'rate')" v-model="bindRemark.rate">
+                      </span>
+                  </li>
+                  <li class="select-list">
+                      <span class="title-dialog-name">供应商：</span>
+                      <span class="title-select-name item-select">
+                      <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
+                          <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                          <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                      </select>
+                      </span>
+                  </li>
+                  <li>
+                      <span class="title-dialog-name">备注：</span>
+                      <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
+                  </li>
+              </ul>
+          </div>
+          <div class="mine-bot-btn">
+              <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+          </div>             
+          </x-dialog>
       </div>
     </div>
     <!-- 已选择货品弹框 -->
@@ -719,7 +721,7 @@ private changeDirect(item:any){
   }
   //备注弹框确定
   private remarkConfirm(){
-    alert('备注保存成功');
+    // alert('备注保存成功');
     ObjectHelper.merge(this.restBindRemark,this.bindRemark,true);
     this.isRemark=false;
   }

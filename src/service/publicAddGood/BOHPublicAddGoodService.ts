@@ -121,13 +121,14 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        }).then(res=>{              
-            let bb = res;
+        }).then(res=>{ 
+            let bb = res;            
             bb.data.goodsList.forEach((newitem:any)=>{
                 newitem.material_id = newitem.goodsId;
                 newitem.name = newitem.goodsName;
                 newitem.num = newitem.currentQty;
-            })      
+            })         
+             
             return Promise.resolve(bb);
         });
     }

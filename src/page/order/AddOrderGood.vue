@@ -9,7 +9,7 @@
                         <span class="title-search-name is-required">配送机构：</span>
                         <span class="title-select-name item-select">
                         <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplierId" 
-                            @change="handlerStoreId('supplierId','您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。')" :class="[{'selectError':billFiles[0].storeId}]">
+                            @change="handlerStoreId('supplierId','您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。',addBillInfo.supplierId)" :class="[{'selectError':billFiles[0].storeId}]">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                             <option :value="item.id" :key="index" v-for="(item,index) in supplierLists">{{item.name}}</option>
                         </select>
@@ -509,7 +509,7 @@ export default class Order extends Vue{
     /**
      * 选择配送机构
      */
-    private handlerStoreId(val:any,title:any){      
+    private handlerStoreId(val:any,title:any,supplierId:any){      
          let _this = this;
         if(this.goodData.length>0){
             this.$vux.confirm.show({
@@ -528,7 +528,15 @@ export default class Order extends Vue{
             _this.addBeforeBillInfo[val]=_this.addBillInfo[val];  
             this.billFiles.forEach(item=>{
                 if(item.id == val){
-                item[val]= false;
+                    item[val]= false;
+                }
+                if(val == 'supplierId'){
+                    _this.supplierLists.forEach((item:any,index:any)=>{
+                        if(supplierId == item.id){
+                            _this.addBillInfo.supplierName = item.name;
+                            _this.addBeforeBillInfo.supplierName = item.name;
+                        }
+                    })
                 }
             }) 
             this.checkNone();        

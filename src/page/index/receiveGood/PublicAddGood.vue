@@ -396,12 +396,13 @@ export default class AddGood extends Vue{
      * 获取 类 物品列表
      */
     this.service.getGoodClass(this.materialParam,this.pager.getPage()).then(res=>{
-      if(res){
-        this.allType = res.data.sortList;
-        this.goodBigType = this.allType;
-        this.changeSmallType(this.allType[0]);//默认加载第一个类别的物品
-      }     
-    })
+      this.allType = res.data.sortList;
+      this.goodBigType = this.allType;
+      this.changeSmallType(this.allType[0]);//默认加载第一个类别的物品
+    },err=>{
+      this.$toasted.show(err.message);
+      this.$router.back();
+    });
   }
   mounted() {  
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
@@ -465,7 +466,9 @@ export default class AddGood extends Vue{
       let goodsList = res.data.goodsList;
       this.allGoods(res.data);
       this.goodList = goodsList;
-    })
+    },err=>{
+      this.$toasted.show(err.message);      
+    });
     _this_.typeName=item; 
   }
   /**
@@ -514,7 +517,9 @@ export default class AddGood extends Vue{
             this.$vux.loading.hide();
             this.hideMask();
           },500);
-        })
+        },err=>{
+          this.$toasted.show(err.message);
+        });
       }else{//分类当中并没有返回全部的物品，要去单独请求一次物品的接口
         _this_.service.getGoodList(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
           let goodsList = res.data.goodsList;
@@ -527,7 +532,7 @@ export default class AddGood extends Vue{
             this.hideMask();
           },500);
         },err=>{
-          this.$toasted.show(err.message);
+          this.$toasted.show(err.message);          
         })
       } 
     }    

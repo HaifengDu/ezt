@@ -618,8 +618,12 @@ export default class Order extends Vue{
         let newparam ={            
             detailList:this.goodData,
             totalAmt:this.Total.Amt,
-            auditStatus:'SCM_AUDIT_YES'
-        }         
+            auditStatus:'SCM_AUDIT_YES',
+            orderType:"SCM_ORDER_TYPE_RULE"
+        }  
+        if(!this.addBeforeBillInfo.orderType && this.InterfaceSysTypeBOH){//saas的要货方式
+            delete this.addBeforeBillInfo.orderType;
+        }       
       
         this.$vux.confirm.show({
             // 组件除show外的属性
@@ -639,8 +643,7 @@ export default class Order extends Vue{
                         _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
                     },err=>{
                         this.$toasted.show(err.message);
-                    })
-                    
+                    })                    
                 }
                
             },
@@ -677,8 +680,12 @@ export default class Order extends Vue{
         let param ={            
             detailList:this.goodData,
             totalAmt:this.Total.Amt,
-            auditStatus:'SCM_AUDIT_NO'
+            auditStatus:'SCM_AUDIT_NO',
+            orderType:"SCM_ORDER_TYPE_RULE"
         }         
+        if(!this.addBeforeBillInfo.orderType && this.InterfaceSysTypeBOH){//saas的要货方式
+            delete this.addBeforeBillInfo.orderType;
+        }  
         this.service.saveOrder((Object.assign(param,this.addBeforeBillInfo))).then(res=>{
             this.addBillInfo={},
             this.goodData=[];

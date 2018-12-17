@@ -12,7 +12,7 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
     /**
      * 订货列表
      * @param status 
-     * @param pager 
+     * @param pager   
      */
     getGoodList(status:string,pager:IPagerData){
         // const promise = Axios.post(`${this.reqUrl}returnorder/post`,{
@@ -41,7 +41,7 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
      * 高级查询明细
      * @param pager 
      */
-    getGoodResult(pager:IPagerData){
+    getGoodResult(supplierId:string,query:string,busiDateBegin:string,busiDateEnd:string,pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }    
@@ -52,6 +52,16 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
         return promise;
     }
+    /**
+     * 获取供货机构
+     */
+    getSupplyOrganization(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=20`);
+        return promise;
+    }
+
+
+
     static createInstance() {
         OrderGoodsService.getInstance();
     }

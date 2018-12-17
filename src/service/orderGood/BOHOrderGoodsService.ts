@@ -84,7 +84,48 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
             return Promise.resolve(res);
         });
     }
-
+    /**
+     * 高级查询明细
+     * @param pager 
+     */
+    getGoodResult(supplierId:string,query:string,busiDateBegin:string,busiDateEnd:string,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{
+            "supplierId":"supplierId",     //配送中心id
+            "query": "query",    //名称
+            "busiDateBegin": "busiDateBegin",
+            "busiDateEnd": "busiDateEnd",
+            "pagination": {
+                "orderby": "", 
+                "asc": false, 
+                "pageno": 1, 
+                "pagesize": 20, 
+                "totalcount": 0
+            } 
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }   
+    /**
+     * 获取供货机构
+     */
+    getSupplyOrganization(){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{
+                
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+        
 
 
 

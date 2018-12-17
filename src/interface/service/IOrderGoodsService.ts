@@ -7,5 +7,6 @@ export interface IOrderGoodsService{
     getAuditorderlistyes(data:object):AxiosPromise<any>;//审核要货单  提交  提交并审核
     getGoodResult?:(pager:IPagerData)=>AxiosPromise<any>;
     getGoodDetail(id:string):AxiosPromise<any>;
-   
+    getSupplierList():AxiosPromise<any>;//获取配送机构
+    saveOrder(param:object):AxiosPromise<any>;//订单新增保存
 }

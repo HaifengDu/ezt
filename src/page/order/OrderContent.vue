@@ -388,7 +388,7 @@ export default class OrderGoods extends Vue{
         if(!this.InterfaceSysTypeBOH){
            this.goodList = res.data.list;
         }else{
-           this.goodList = res.data.goodsList;
+           this.goodList = res.data.orderList;
         }
         (this.goodList||[]).forEach(item=>this.$set(item,'active',false));
         setTimeout(()=>{

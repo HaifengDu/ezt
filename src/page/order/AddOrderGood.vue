@@ -8,21 +8,30 @@
                     <li class="select-list">
                         <span class="title-search-name is-required">配送机构：</span>
                         <span class="title-select-name item-select">
-                        <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.storeId" 
-                            @change="handlerStoreId('storeId','您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。')" :class="[{'selectError':billFiles[0].storeId}]">
+                        <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplierId" 
+                            @change="handlerStoreId('supplierId','您已维护物料信息，如调整配送机构，须重新选择配送方式及物料。')" :class="[{'selectError':billFiles[0].storeId}]">
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                            <option :value="item.id" :key="index" v-for="(item,index) in supplierLists">{{item.name}}</option>
                         </select>
                         </span>
                     </li>
-                    <li class="select-list">
+                    <!-- boh版本要货日期 页面中不限制 -->
+                    <li class="select-list" v-if="InterfaceSysTypeBOH">
                         <span class="title-search-name is-required">要货日期：</span>
                         <span>
                             <ezt-canlendar ref="orderDate" v-model="addBillInfo.orderDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" 
-                            :max="addBillInfo.arriveDate" class="input-canlendar" @change="selectOrderChange" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
+                            class="input-canlendar" @change="selectOrderChange" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
                         </span>
                     </li>
-                    <li class="select-list">
+                    <!-- saas版本要货日期 页面中限制 -->
+                    <li class="select-list" v-if="!InterfaceSysTypeBOH">
+                        <span class="title-search-name is-required">要货日期：</span>
+                        <span>
+                            <ezt-canlendar ref="orderDate" v-model="addBillInfo.orderDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" 
+                            :max="addBillInfo.arriveDate" class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
+                        </span>
+                    </li>
+                    <li class="select-list" v-if="!InterfaceSysTypeBOH">
                         <span class="title-search-name is-required">到货日期：</span>
                         <span>
                             <ezt-canlendar ref="arriveDate" v-model="addBillInfo.arriveDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" :min="addBillInfo.orderDate"
@@ -97,17 +106,17 @@
                             <div class="good-detail-l">
                                 <div>
                                     <span class="good-detail-name">{{item.name}}
-                                        <span class="good-detail-sort">（规格）</span>
+                                        <!-- <span class="good-detail-sort">（规格）</span> -->
                                     </span>
                                     <!-- <span @click="editStatus(item)">
                                         <i class="fa fa-pencil-square-o" aria-hidden="true"></i> 
                                     </span>                                    -->
                                 </div>
                                 <div>
-                                    <span class="good-detail-billno">编码：003222</span>
-                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname}}
+                                    <span class="good-detail-billno">{{item.goodsCode||""}}</span>
+                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price}}/{{item.utilname||item.unitName}}
                                     </span>
-                                    <span class="good-detail-sort">数量：{{item.num}}</span>
+                                    <span class="good-detail-sort">数量：{{item.num||item.finalOrderQty}}</span>
                                 </div>                     
                             </div>
                             <div class="good-detail-r">
@@ -127,7 +136,7 @@
             <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total" v-if="this.goodData.length>0">合计：
                     <b>品项</b><span>{{this.goodData.length}}</span>，
-                    <b>数量</b><span>{{Total.num}}</span>，
+                    <b>数量</b><span>{{Total.num||Total.finalOrderQty}}</span>，
                     <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥</b>
                     <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
                 </div>
@@ -153,6 +162,7 @@ import ObjectHelper from '../../common/objectHelper'
 import CACHE_KEY from '../../constans/cacheKey'
 import commonService from '../../service/commonService.js';
 import {EGoodType} from '../../enum/EGoodType';
+import formData from '../../dictory/formData';
 @Component({
     computed:{
         ...mapGetters({
@@ -191,7 +201,7 @@ export default class Order extends Vue{
         isorderType:false,//再来一单 跳转的手工制作显示/隐藏
     }
     private doneInfo:string="";
-    private orderType:any=[{
+    private supplierLists:any=[{
         name:'配送中心1',
         id:'01'
     },{
@@ -252,7 +262,7 @@ export default class Order extends Vue{
    * 枚举 表单字段
    */
     private billFiles=[
-        {id:"storeId",msg:"请选择配送机构",storeId:false},
+        {id:"supplierId",msg:"请选择配送机构",supplierId:false},
         {id:"orderDate",msg:"请选择要货日期",orderDate:false},
         {id:"arriveDate",msg:"请选择到货日期",arriveDate:false}];
     mounted(){
@@ -262,13 +272,16 @@ export default class Order extends Vue{
     created() {
         const factory = FactoryService.getInstance().createFactory();
         this.service = factory.createOrderGood();
+         this.getSupplierList();  //配送机构下拉列表
        
-        //默认值
-            this.addBillInfo.storeId = this.orderType[0].id;
-            this.addBillInfo.orderDate = this.user.auth.busi_date;
+        //默认值       
+        this.addBillInfo.orderDate = this.user.auth.busi_date;
+        if(!this.InterfaceSysTypeBOH){//saas有的字段，boh没有            
             this.addBillInfo.orderType = 0;
             let dateNew = new Date(this.user.auth.busi_date);
             this.addBillInfo.arriveDate = new Date(dateNew.setDate(dateNew.getDate()+1)).format("yyyy-MM-dd");
+        }
+       
 
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){//单据信息
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
@@ -276,6 +289,11 @@ export default class Order extends Vue{
                 this.isShowObj.isorderType = true;
             }
         } 
+        if(this.selectedGood&&this.selectedGood.length>0){
+            formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
+                num:"finalOrderQty",                
+            })
+        }
         this.goodData = ObjectHelper.serialize(this.selectedGood);
        
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
@@ -299,12 +317,23 @@ export default class Order extends Vue{
         //         }
         //     }           
         // }else{
-            if(!this.addBillInfo.containTime){//要货方式不是预估要货
-                this.addBillInfo.containTime = "0:0";
-                this.addBeforeBillInfo.containTime = "0:0";
-            }
+        if(!this.addBillInfo.containTime){//要货方式不是预估要货
+            this.addBillInfo.containTime = "0:0";
+            this.addBeforeBillInfo.containTime = "0:0";
+        }
         // }
         (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
+    }
+    private getSupplierList(){
+        this.service.getSupplierList().then(res=>{
+            this.supplierLists = res.data.organList;
+            if(!this.addBillInfo.supplierId){
+                //默认值
+                this.addBillInfo.supplierId = this.supplierLists[0].id;
+                this.addBillInfo.supplierName = this.supplierLists[0].name; 
+            }
+                     
+        })
     }
     /**
      * 到货日期 小时\分钟
@@ -427,21 +456,27 @@ export default class Order extends Vue{
         let material_param ={};
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
-            if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+            if((!this.addBillInfo[item.id]||this.addBillInfo[item.id]=="")){
+                if(item.id == 'arriveDate' && this.InterfaceSysTypeBOH){
+                    continue;
+                }
                 this.$toasted.show(item.msg);
                 item[item.id]=true;
                 return false;
             }
         }
-        goodTerm={
+        goodTerm={//区分公共物料里的哪些显示/隐藏权限
             billsPageType: 'orderGood',
             showPrice: !this.materialSetting.show_order_price
         }
-        material_param={
-            supplierId : this.addBillInfo.storeId,
+        material_param={//查询物料时所用的参数
+            supplierId : this.addBillInfo.supplierId,
             orderDate : this.addBillInfo.orderDate,
             orderType : 'SCM_ORDER_TYPE_RULE'
         }
+        formData.modifyParams(this.goodData,{
+            finalOrderQty:"num"//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+        })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
@@ -517,15 +552,32 @@ export default class Order extends Vue{
    */
     private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
-       ori.num = ori.num+Number(item.num); 
-        if(item.price){
-            ori.Amt = ori.Amt + (item.num * item.price);
-        }else{
-            ori.Amt = ori.Amt + (item.amt);
-        }      
-     
-      return ori;
-      },{num:0,Amt:0});
+        if(item.finalOrderQty){
+                //boh版的数量，金额
+                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
+                if(1){
+                    ori.Amt = ori.Amt + (item.finalOrderQty * 1);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.finalOrderQty = 0;
+                }
+                return ori;
+            }else{
+                //saas版的数量，金额
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+            }
+      },{num:0,Amt:0,finalOrderQty:0});
     }
     /**
      * 提交并审核
@@ -535,6 +587,9 @@ export default class Order extends Vue{
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+                if(item.id == 'arriveDate' && this.InterfaceSysTypeBOH){
+                    continue;
+                }
                 this.$toasted.show(item.msg);
                 item[item.id]=true;
                 return false;
@@ -579,6 +634,9 @@ export default class Order extends Vue{
         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+                if(item.id == 'arriveDate' && this.InterfaceSysTypeBOH){
+                    continue;
+                }
                 this.$toasted.show(item.msg);
                 item[item.id]=true;
                 return false;
@@ -588,13 +646,20 @@ export default class Order extends Vue{
             this.$toasted.show("请添加物料！");
             return false;
         }
-        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut; 
-        this.addBillInfo={},
-        this.goodData=[];
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
-        this.$toasted.success("保存成功！");
-         this.$router.push('/orderGood')
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
+        let param ={            
+            detailList:this.goodData,
+            totalAmt:this.Total.Amt
+        }         
+        this.service.saveOrder((Object.assign(param,this.addBeforeBillInfo))).then(res=>{
+            this.addBillInfo={},
+            this.goodData=[];
+            this.setSelectedGood([]);
+            this.addBeforeBillInfo={};
+            this.$toasted.success("保存成功！");
+            this.$router.push('/orderGood')
+        })
+      
     }
     /**
      * 返回

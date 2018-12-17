@@ -84,6 +84,30 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
             return Promise.resolve(res);
         });
     }
+    /**
+     * 获取配送机构
+     */
+    getSupplierList(){
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{})
+        .then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+    /**
+     * 订单新增保存
+     */
+    saveOrder(param:object){
+        return Axios.post(`${this.reqUrl}mobile/purchase/saveOrder`,{
+            data:{
+                "auditStatus": "SCM_AUDIT_NO", 
+                "orderType": "SCM_ORDER_TYPE_RULE", 
+                ...param
+            }
+        })
+        .then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
 
 
 

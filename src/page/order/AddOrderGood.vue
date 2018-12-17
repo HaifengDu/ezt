@@ -20,7 +20,7 @@
                         <span class="title-search-name is-required">要货日期：</span>
                         <span>
                             <ezt-canlendar ref="orderDate" v-model="addBillInfo.orderDate" placeholder="开始时间" type="text" :formate="'yyyy-MM-dd'" 
-                            class="input-canlendar" @change="selectOrderChange" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
+                            class="input-canlendar" :defaultValue="addBillInfo.orderDate"></ezt-canlendar>                            
                         </span>
                     </li>
                     <!-- saas版本要货日期 页面中限制 -->

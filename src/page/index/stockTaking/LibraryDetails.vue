@@ -6,7 +6,7 @@
       <ezt-header :back="true" :title="title">
         <div slot="action">
             <span></span>
-        </div>        
+        </div>         
       </ezt-header>    
       <div class="ezt-main">
           <div class="content">
@@ -172,7 +172,7 @@ export default class stockTaking extends Vue{
       if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
           this.inventoryDetails = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
           if(this.InterfaceSysTypeBOH){
-              this.inventoryDetails = this.inventoryDetails['details']
+              this.inventoryDetails = this.inventoryDetails
           }
       }
       if(this.cache.getData(CACHE_KEY.TEMPLATE_NAME)){

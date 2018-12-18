@@ -60,7 +60,7 @@
                                     <span v-if="InterfaceSysTypeBOH">订货单位：{{item.orderUnitName}}</span>
                                 </div> 
                                 <div>
-                                    <span class="good-detail-sort">订货数量：<input style="border: 1px solid #ccc;width:80px;border-radius: 0;"  v-model="item.finalOrderQty"></span>
+                                    <span class="good-detail-sort">订货数量：{{item.finalOrderQty}}</span>
                                 </div>                     
                             </div>
                             <div class="good-detail-r" v-if="!InterfaceSysTypeBOH">

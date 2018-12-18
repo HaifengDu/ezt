@@ -45,10 +45,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
-                            acc_qty:"num",
+                            // acc_qty:"num",
                             distributePrice1:'price',
-                            memo:'remark',
-                            goodsName:'name'
+                            // memo:'remark',
+                            material_name:'name'
                         }); 
                     }
                 })               
@@ -82,10 +82,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
-                            acc_qty:"num",
+                            // acc_qty:"num",
                             distributePrice1:'price',
-                            memo:'remark',
-                            goodsName:'name'
+                            // memo:'remark',
+                            material_name:'name'
                         }); 
                     }
                 })               

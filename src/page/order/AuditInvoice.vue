@@ -53,7 +53,7 @@
                                         <span v-if="!InterfaceSysTypeBOH" class="good-detail-sort">（规格）</span>
                                     </span>
                                 </div>
-                                <div>
+                                <div> 
                                     <span class="good-detail-billno">{{item.goodsCode || ''}}</span>
                                      <span class="good-detail-sort" v-if="InterfaceSysTypeBOH">
                                          ￥{{item.price||item.distributePrice1}}/{{item.utilname||item.unitName}}
@@ -135,7 +135,7 @@ export default class Order extends Vue{
     created() {   
         const factory = FactoryService.getInstance().createFactory();       
         this.service = factory.createOrderGood();
-        
+        this.type = this.$route.query.type
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
             if(!this.InterfaceSysTypeBOH){
@@ -143,10 +143,8 @@ export default class Order extends Vue{
             }
             if(this.InterfaceSysTypeBOH){
                 this.MaterialDetails = this.addBillInfo['detailList']
-                 
             }
         }    
-       
         if(this.selectedGood&&this.selectedGood.length>0){
             formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
                 num:"finalOrderQty",  
@@ -157,9 +155,10 @@ export default class Order extends Vue{
             })
             this.MaterialDetails = ObjectHelper.serialize(this.selectedGood);
         }  
-        (this.MaterialDetails||[]).forEach(item=>item.active = false);
+        if(this.InterfaceSysTypeBOH){
+           (this.MaterialDetails||[]).forEach(item=>item.active = false);
+        } 
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-        this.type = this.$route.query.type
     }
     mounted(){ 
        

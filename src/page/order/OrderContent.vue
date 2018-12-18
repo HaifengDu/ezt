@@ -97,21 +97,21 @@
   <!-- 查询订货 -->  
   <div v-show="isSearch" class="search-dialog orderList">
       <ul class="ezt-title-search">
-          <li class="select-list" v-if="!InterfaceSysTypeBOH">
+           <li class="select-list"  v-if="!InterfaceSysTypeBOH">
               <span class="title-search-name ">订货类型：</span>
               <span class="title-select-name item-select">
-                <select placeholder="请选择" class="ezt-select" v-model="orderSaas">
+                <select placeholder="请选择" class="ezt-select" v-model="orderSuccess">
                   <option value='' style="display:none;" disabled="disabled" selected="selected">请选择订货类型</option>
-                  <option :value="item.id" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                  <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
                 </select>
             </span>
           </li>
-          <li class="select-list" v-if="!InterfaceSysTypeBOH">
+          <li class="select-list"  v-if="!InterfaceSysTypeBOH">
             <span class="title-search-name ">供货机构：</span>
             <span class="title-select-name item-select">
-              <select placeholder="请选择" class="ezt-select" v-model="supplyAgencySaas">
+              <select placeholder="请选择" class="ezt-select" v-model="supplyAgency">
                 <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
-                <option :value="item.id" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
+                <option :value="item.name" :key="index" v-for="(item,index) in selection">{{item.name}}</option>
               </select>
             </span>   
           </li>
@@ -213,10 +213,12 @@ export default class OrderGoods extends Vue{
     private showMask:()=>void;
     private addgoods:boolean = false;  //显示配送要货
     private isSearch:boolean = false; //订货查询
-    private selection:any[]=[];
+    private selection:any[] = [];
     private selectionBoh:any=[{}];
+    private orderSaas:any[] = [];
     private supplyAgencyBoh:any=[{}];
-    private supplyAgencySaas:any;
+    private orderSuccess:string= '';
+    private supplyAgency:string= '';
     private searchParam:any={
       paymentType:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
@@ -326,15 +328,15 @@ export default class OrderGoods extends Vue{
     /**
      * 供货机构二级联动
      */
-    @Watch("orderSaas",{
+    @Watch("orderSuccess",{
       deep:true
     })
-    private orderSaasWatch(newVal:any,oldVal:any){
+    private orderSuccessWatch(newVal:any,oldVal:any){
       if(!this.InterfaceSysTypeBOH){
          this.orderType.forEach(item => {
 					if(item.name === newVal) {
              this.selection = item.supply;
-             this.supplyAgencySaas = this.selection[0].name
+             this.supplyAgency = this.selection[0].name
 					}
 				})
       }
@@ -545,7 +547,7 @@ export default class OrderGoods extends Vue{
         addInfo={
           type:type,
           billno:item.bill_no,
-          unit:'供应商1号',
+          supplierName:'供应商1号',
           orderDate:item.ask_goods_date,   
           arriveDate:item.arrive_date,
           remark:'提前一天联系供应商',
@@ -556,7 +558,7 @@ export default class OrderGoods extends Vue{
            */
           this.$vux.confirm.show({
             // 组件除show外的属性
-            onCancel () {
+            onCancel () { 
               
             },
             onConfirm () {

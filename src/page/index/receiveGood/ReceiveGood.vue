@@ -37,7 +37,7 @@
           <!-- 收货单列表       -->
           <div v-if="goodList.length>0" class="receive-dc-list" v-for="(item,index) in goodList" :key="index" @click="toPage(item,'')">
               <div class="receive-icon-title">
-              <span class="receive-icon-dcName">{{item.type == 'SCM_RECEIVE_TYPE_INVOICE'? '配' : "无"}}</span>
+              <span class="receive-icon-dcName type">{{item.type == 'SCM_RECEIVE_TYPE_INVOICE'? '配' : "无"}}</span>
               <span class="return-list-title">{{item.dc_name || item.outOrganName}}</span> 
               <span class="receive-status">{{billStatus}}</span>
               </div>

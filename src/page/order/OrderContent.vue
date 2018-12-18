@@ -87,7 +87,7 @@
           <span class="footer-order"></span>
           <div>订货</div>
         </li>
-        <li @click="toPage('/chartContent')">
+        <li @click="toPage('/chartContent')" v-if='!InterfaceSysTypeBOH'>
           <span class="footer-chart"></span>
           <div>报表</div>
         </li>

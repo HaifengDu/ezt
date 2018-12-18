@@ -2,7 +2,7 @@
 <template>
  <div class="ezt-page-con">
     <ezt-header :back="false" custom>       
-       <div slot="action" class="title-date-position">
+       <div slot="action" class="title-date-position" v-if="!InterfaceSysTypeBOH">
            <span ref="canlendar">日结</span>
        </div>
        <div slot="title" class="indexPop" @click="handleSelect">

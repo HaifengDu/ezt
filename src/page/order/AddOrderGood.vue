@@ -64,7 +64,8 @@
                     <div v-if="!addBillInfo.orderType||addBillInfo.orderType==0||(addBillInfo.orderType==1&&templateList.length>0)||(addBillInfo.orderType==2&&estimateGoods.length>0)">
                         <li>
                             <span class="title-search-name">备注：</span>
-                            <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+                            <input type="text" class="ezt-middle" v-model="addBillInfo.remark" v-if="!InterfaceSysTypeBOH">
+                            <input type="text" class="ezt-middle" v-model="addBillInfo.memo" v-if="InterfaceSysTypeBOH">
                         </li>
                         <li>
                             <!-- <span class="title-search-name">选择物料：</span> -->

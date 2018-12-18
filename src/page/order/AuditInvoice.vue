@@ -52,20 +52,18 @@
                                     <span class="good-detail-name">{{item.name || item.goodsName}}
                                         <span v-if="!InterfaceSysTypeBOH" class="good-detail-sort">（规格）</span>
                                     </span>
-                                    <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.distributePrice1}}
-                                    </span>
                                 </div>
                                 <div>
-                                    <span class="good-detail-billno">编码：{{item.goodsCode}}</span>
-                                    <span v-if="InterfaceSysTypeBOH">订货单位：{{item.orderUnitName}}</span>
+                                    <span class="good-detail-billno">{{item.goodsCode || ''}}</span>
+                                     <span class="good-detail-sort" v-if="InterfaceSysTypeBOH">
+                                         ￥{{item.price||item.distributePrice1}}/{{item.utilname||item.unitName}}
+                                    </span>
+                                    <span class="good-detail-sort">数量：{{item.num || item.finalOrderQty}}</span>
                                 </div> 
-                                <div>
-                                    <span class="good-detail-sort">订货数量：{{item.finalOrderQty}}</span>
-                                </div>                     
                             </div>
-                            <div class="good-detail-r" v-if="!InterfaceSysTypeBOH">
+                            <div class="good-detail-r">
                                 <div class="park-input">
-                                    <span class="title-search-name">备注：{{item.remark}}</span>
+                                    <span class="title-search-name">备注：{{item.remark || item.memo}}</span>
                                 </div>                 
                             </div>
                         </div>

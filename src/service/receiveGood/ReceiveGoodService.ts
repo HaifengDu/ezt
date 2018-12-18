@@ -29,8 +29,8 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
      * @param param 查询条件 
      * @param pager 分页信息
      */
-    searchList(param:any,pager:IPagerData):AxiosPromise<any>{
-        return null;
+    searchList(param:any,pager:IPagerData){
+        return Promise.resolve(null);
     };
     /**
      * 单据详情接口
@@ -51,14 +51,14 @@ export class ReceiveGoodService extends BaseService implements IReceiveGoodServi
     /**
      * 获取来货单位
      */
-    getSupplierList():AxiosPromise<any>{
-        return null;
+    getSupplierList(){
+        return Promise.resolve(null);
     }
     /**
      * 获取仓库列表
      */
-    getWarehouseList():AxiosPromise<any>{
-        return null;
+    getWarehouseList(){
+        return Promise.resolve(null);
     }
     /**
      * 校验仓库物品是否存在

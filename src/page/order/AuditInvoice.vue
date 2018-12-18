@@ -137,7 +137,7 @@ export default class Order extends Vue{
     created() {   
         const factory = FactoryService.getInstance().createFactory();       
         this.service = factory.createOrderGood();
-        (this.MaterialDetails||[]).forEach(item=>item.active = false);
+        
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));
             if(!this.InterfaceSysTypeBOH){
@@ -158,8 +158,7 @@ export default class Order extends Vue{
             })
             this.MaterialDetails = ObjectHelper.serialize(this.selectedGood);
         }  
-        // this.MaterialDetails = Object.assign(this.MaterialDetails,...this.selectedGood); //修改时的物品，合并
-        
+        (this.MaterialDetails||[]).forEach(item=>item.active = false);
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
     }

@@ -257,7 +257,7 @@ export default class stockTaking extends Vue{
           this.hideMask();
       });  
       if(this.$route.params.purStatus=="已审核"){  
-        this.tabList.TabList.forEach((item,index)=>{
+        this.tabList.TabList.forEach((item,index)=>{ 
           if(item.name == this.$route.params.purStatus){
             item.active = true;
           }else{
@@ -372,12 +372,19 @@ export default class stockTaking extends Vue{
      */
     private librarydetails(item:any,types:PageType){
       this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
-        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
-        if(!this.InterfaceSysTypeBOH || this.tabList.getActive().status=='SCM_AUDIT_YES'){
-          this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
-        }else{
-          this.$router.push({name:'AuditcheckList'}); 
+        if(!this.InterfaceSysTypeBOH || this.tabList.getActive().status==0 || this.tabList.getActive().status==1){
+           this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
+           this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+        }
+        if(this.InterfaceSysTypeBOH){
+            if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
+              this.$router.push({name:'AuditcheckList'}); 
+            }
+            if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
+              this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
+            }
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data['details']));
         }
       },err=>{
           this.$toasted.show(err.message)
@@ -472,7 +479,7 @@ export default class stockTaking extends Vue{
         this.service.getEnquiryList(begin_date,bill_no,end_date,warehouse_id).then(res=>{ 
           this.hideMask();     
           this.isSearch = false;
-          if(!this.InterfaceSysTypeBOH){
+          if(!this.InterfaceSysTypeBOH){ 
               this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data.data));
           }else{
               this.cache.save(CACHE_KEY.INVENTORY_RESULT,JSON.stringify(res.data));

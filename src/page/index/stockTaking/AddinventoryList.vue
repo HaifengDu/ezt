@@ -87,7 +87,7 @@
                 </li>
               </ul>
               <ul>
-                <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in selectedGood" :key="index">    
+                <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in InventoryList" :key="index">    
                       <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)"   
                       v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                           <div class="good-detail-l">
@@ -103,7 +103,7 @@
                               </div> 
                               <div>
                                   <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
-                                  <span class="title-search-name ezt-dense-box">实盘数：<input v-model="item.disperse_num" style="width:50px;border-radius:0px;border:1px solid #ccc;"></span> 
+                                  <span class="title-search-name ezt-dense-box">实盘数：{{item.disperse_num}}</span> 
                               </div> 
                           </div>
                           <div class="good-detail-r">
@@ -120,8 +120,8 @@
             </div> 
             <ezt-footer>
               <div class="ezt-foot-temporary" slot="confirm">
-                <div class="ezt-foot-total" v-if="this.selectedGood.length>0">合计：
-                  <b>品项</b><span>{{this.selectedGood.length}}</span>，
+                <div class="ezt-foot-total" v-if="this.InventoryList.length>0">合计：
+                  <b>品项</b><span>{{this.InventoryList.length}}</span>，
                   <b>数量</b><span>{{Total.num || Total.disperse_num}}</span>，
                   <b>￥</b><span>{{Total.Amt.toFixed(2)}}</span>
                 </div>
@@ -171,8 +171,9 @@ export default class StockTaking extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private service:IStockTakingService;
     private bill_type:string; //弹层盘点类型
-    private selectedGood:any[];//store中selectedGood的值
+    private selectedGood:any[];//store中selectedGood的值  
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
+    private InventoryList:any[] = [];//货品详情
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={
@@ -198,7 +199,6 @@ export default class StockTaking extends Vue{
   created() {  
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createStockTaking();
-    (this.selectedGood||[]).forEach(item=>item.active = false);
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));   
     }
@@ -209,19 +209,20 @@ export default class StockTaking extends Vue{
         const InventoryType = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_TYPE));
         this.addinventory.name = InventoryType.name 
         this.addinventory.bill_type = InventoryType.bill_type
-    }
+    } 
     if(this.cache.getData(CACHE_KEY.ADDINVENTORY)){
         this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
-        
     }
     if(this.selectedGood&&this.selectedGood.length>0){
-          formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-              num:"acc_qty",  
-              price:"distributePrice1",    
-              remark:'memo',  
-              name:'goodsName'        
-          })
-      }
+        formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
+          num:"disperse_num",  //实盘数
+          remark:'memo',  
+          name:'material_name'       
+        })
+        this.InventoryList = ObjectHelper.serialize(this.selectedGood);
+    }  
+    (this.InventoryList||[]).forEach((item:any)=> this.$set(item,'active',false));
+    this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     /**
      * BOH版本 获取仓库
      */
@@ -231,7 +232,7 @@ export default class StockTaking extends Vue{
         this.addinventory.stock = warehouseName.warehouseList[0].warehouseName
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
-        this.selectedGood  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+        this.InventoryList  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
     }
     /**
      * SAAS版本  动态加载仓库
@@ -248,7 +249,7 @@ export default class StockTaking extends Vue{
    */
   private goBack() {
       let _this = this;   
-      if((this.addinventory&&this.addinventory.stock)||this.addinventory.length>0){
+      if((this.addinventory&&this.addinventory.stock)||this.InventoryList.length>0){
           this.$vux.confirm.show({
               // 组件除show外的属性
               onCancel () {
@@ -299,7 +300,7 @@ export default class StockTaking extends Vue{
    * 物料总数量\总金额
    */
     private get Total(){
-        return this.selectedGood.reduce((ori:any,item:any) => {
+         return this.InventoryList.reduce((ori:any,item:any) => {
             if(item.distributePrice1){
                 ori.disperse_num = ori.disperse_num + Number(item.disperse_num);
                 if(item.distributePrice1){
@@ -335,19 +336,19 @@ export default class StockTaking extends Vue{
        * 取消操作
        */
       onCancel () {
-        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
           return item.id == info.id;
         })
-        _this.selectedGood[newIndex].active = false;
+        _this.InventoryList[newIndex].active = false;
       },
       /**
        * 确认操作
        */
       onConfirm () {
-        let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
           return item.id == info.id;
         })
-        _this.selectedGood.splice(newIndex,1);
+        _this.InventoryList.splice(newIndex,1);
       },
       content:'请确认是否删除该物料?'
     })
@@ -357,7 +358,7 @@ export default class StockTaking extends Vue{
    */
   private saveReceive(rows:Array<any>){
         var rows=[]; 
-				this.selectedGood.forEach(item => {
+				this.InventoryList.forEach(item => {
 					let obj = {
               "unit_name": item.unit_name,
               "unit_id":item.unit_id,
@@ -390,7 +391,7 @@ export default class StockTaking extends Vue{
 					this.addBillInfo={};
 					this.setSelectedGood([]);
           this.addBeforeBillInfo={};
-          this.selectedGood=[];
+          this.InventoryList=[];
 					this.cache.clear();
 					this.$toasted.success("提交成功！");
 					this.$router.push("/stockTaking");
@@ -401,17 +402,21 @@ export default class StockTaking extends Vue{
   /**
    *  BOH版本   选择物料
    */
-  private BohMaterials(){
-    if(this.addBillInfo){       
+  private BohMaterials(){  
         let goodTerm = {};
         goodTerm={
           billsPageType: 'stocktaking',   
         }  
+        formData.modifyParams(this.InventoryList,{
+          "disperse_num":'num',  //实盘数
+          'memo':'remark',  
+          'material_name':'name'    
+        }) 
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
-        this.$router.push({name:'PublicAddGood',query:{}})
-    }      
+        this.setSelectedGood(this.InventoryList)
+        this.$router.push({name:'PublicAddGood',query:{}}) 
   }
 
 

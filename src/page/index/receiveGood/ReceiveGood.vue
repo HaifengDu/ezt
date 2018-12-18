@@ -113,7 +113,7 @@
         </li>
         <li>
           <span class="title-search-name">源单号：</span>
-          <input type="text" ref="sourceBillNo" v-on:input="handlerChangeNo($event)" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.sourceNo">
+          <input type="text" ref="sourceBillNo" v-on:input="handlerChangeNo($event)" class="ezt-middle" placeholder="请输入源单号" v-model="searchParam.upBillNo">
         </li>
         <li>
           <span class="title-search-name">单据号：</span>
@@ -121,7 +121,7 @@
         </li>
         <li>
           <span class="title-search-name">物料：</span>
-          <input type="text" class="ezt-middle" placeholder="请输入物料名称" v-model="searchParam.material">
+          <input type="text" class="ezt-middle" placeholder="请输入物料名称" v-model="searchParam.goodsName">
         </li>
         <li>
           <div class="ezt-two-btn" @click="toSearch">查询</div>

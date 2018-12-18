@@ -18,11 +18,11 @@
                         <span class="receive-dc-title">含税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">税率：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>
-                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
+                    <div style="display:flex">
                         <span class="receive-dc-title">未税金额：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">到货日期<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>
-                    <div style="display:flex" v-if="!InterfaceSysTypeBOH">
+                    <div style="display:flex">
                         <span class="receive-dc-title">仓库：<span class="receive-dc-content">item.arrive_date</span></span>
                         <span class="receive-dc-title">备注：<span class="receive-dc-content">item.ask_goods_date</span></span>
                     </div>              
@@ -54,7 +54,7 @@
                                 <span class="good-detail-billno">编号：{{item.goodsCode}}</span>
                                 <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">￥{{item.amt}}</span>
                             </div> 
-                            <div class="title">
+                            <div class="title" v-if="InterfaceSysTypeBOH">
                                 <span class="good-detail-billno">发货金额：{{item.sendAmt}}</span>
                             </div>                            
                         </div>
@@ -151,8 +151,14 @@ export default class ReceiveGood extends Vue{
             this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
              let submitType = this.detailList.submitType 
             this.service.getGoodDetail(submitType,this.detailList.id,this.pager.getPage()).then(res=>{
-                this.detailList = res.data.data;
-                this.goodList = res.data.data.detailList;
+               
+                if(res.data.data){
+                    this.detailList = res.data.data;
+                    this.goodList = res.data.data.detailList;
+                }else{
+                    this.goodList = res.data.list;
+                }
+                
             })           
         }
     }

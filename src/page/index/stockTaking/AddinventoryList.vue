@@ -148,6 +148,7 @@ import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
 import CACHE_KEY from '../../../constans/cacheKey'
 import { PageType } from "../../../enum/EPageType"
+import formData from '../../../dictory/formData'
 @Component({
    components:{
    },    
@@ -213,6 +214,14 @@ export default class StockTaking extends Vue{
         this.addinventory = JSON.parse(this.cache.getData(CACHE_KEY.ADDINVENTORY));
         
     }
+    if(this.selectedGood&&this.selectedGood.length>0){
+          formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
+              num:"acc_qty",  
+              price:"distributePrice1",    
+              remark:'memo',  
+              name:'goodsName'        
+          })
+      }
     /**
      * BOH版本 获取仓库
      */

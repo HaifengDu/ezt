@@ -18,22 +18,22 @@
           </li>
           <li>
               <span class="title-search-name">盘点类型：</span>
-              <input type="text" class="ezt-middle" disabled v-model="details.bill_type_name">
+              <input type="text" class="ezt-middle" disabled v-model="detail.bill_type_name">
           </li>
           <li>
               <span class="title-search-name">仓库：</span>
-              <input type="text" class="ezt-middle" disabled v-model="details.warehouse_name">
+              <input type="text" class="ezt-middle" disabled v-model="detail.warehouse_name">
           </li>
           <li  v-if="!InterfaceSysTypeBOH">
               <span class="title-search-name">未盘处理：</span>
-              <input type="text" class="ezt-middle" disabled v-model="details.stock_count_mode_name">
+              <input type="text" class="ezt-middle" disabled v-model="detail.stock_count_mode_name">
           </li>
           <li v-if="InterfaceSysTypeBOH">
             <span class="title-search-name is-required">选择货品：</span>
             <span class="title-search-right" @click="selectMaterials()">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
-          </li>
+          </li>   
         </ul>
         <ul>
            <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in InventoryList.details" :key="index">    
@@ -98,7 +98,8 @@ import IUser from "../../../interface/IUserModel"
 import { CachePocily } from "../../../common/Cache"
 import { ECache } from "../../../enum/ECache"
 import CACHE_KEY from '../../../constans/cacheKey'
-import { constants } from 'http2';
+import { constants } from 'http2'
+import formData from '../../../dictory/formData'
 @Component({
    components:{
    },
@@ -122,12 +123,13 @@ export default class StockTaking extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private service:IStockTakingService;
     private bill_type:string; //弹层盘点类型
+    private selectedGood:any[];//store中selectedGood的值  
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private details:any={};  //盘库表头信息
+    private detail:any={};//盘库表头信息
+    private details:any={};
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={};//新增盘库单
-    private selectedGood:any[];//store中selectedGood的值  
-    private InventoryList:any=[];   
+    private InventoryList:any[];   
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
@@ -136,20 +138,16 @@ export default class StockTaking extends Vue{
   created() {  
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createStockTaking();
-    this.InventoryList = ObjectHelper.serialize(this.selectedGood);
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
-        this.addBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO));
+        this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));
     }
-    if(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO)){
-        this.addBeforeBillInfo = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_ADDBEFOREINFO));
-    }    
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
-        this.details = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
+        this.detail = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.InventoryList  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
     }
-    (this.selectedGood||[]).forEach(item=> this.$set(item,'active',false));
+    // (this.InventoryList||[]).forEach(item=> this.$set(item,'active',false));
   }
 
   mounted(){ 
@@ -160,7 +158,7 @@ export default class StockTaking extends Vue{
    */
   private goBack() {     
       let _this = this;   
-      if(this.addinventory ||this.addinventory.length>0 || this.InventoryList.details.length>0){
+      if(this.addinventory ||this.addinventory.length>0 || this.InventoryList.length>0){
           this.$vux.confirm.show({
               onCancel () {
               },       
@@ -186,7 +184,7 @@ export default class StockTaking extends Vue{
    * 物料总数量\总金额
    */
     private get Total(){
-        return this.InventoryList.details.reduce((ori:any,item:any) => {
+        return this.InventoryList['details'].reduce((ori:any,item:any) => {
             if(item.distributePrice1){
                 ori.disperse_num = ori.disperse_num + Number(item.disperse_num);
                 if(item.distributePrice1){
@@ -266,7 +264,7 @@ export default class StockTaking extends Vue{
         let billInfo={   
           "id": this.InventoryList['id'],
           "bill_type":this.InventoryList['bill_type'],
-          "bill_type_name":this.details.bill_type_name,
+          "bill_type_name":this.detail.bill_type_name,
           "warehouse_id":this.InventoryList['warehouse_id'],
           "busi_date":this.user.auth.busi_date, 
           "bill_status":'SCM_AUDIT_NO', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
@@ -330,7 +328,7 @@ export default class StockTaking extends Vue{
             let billInfo={
               "id": _this.InventoryList['id'],
               "bill_type":_this.InventoryList['bill_type'],
-              "bill_type_name":_this.details.bill_type_name,
+              "bill_type_name":_this.detail.bill_type_name,
               "warehouse_id":_this.InventoryList['warehouse_id'],
               "busi_date":_this.user.auth.busi_date, 
               "bill_status":'SCM_AUDIT_YES', // SCM_AUDIT_NO 是修改      SCM_AUDIT_YES 提交并审核
@@ -352,22 +350,33 @@ export default class StockTaking extends Vue{
       cancelText:"审核不通过",
       showCancelButton:!_this.InterfaceSysTypeBOH,
       hideOnBlur:true
-    })
+    }) 
   }    
   /**
    * 选择货品
    */
   private selectMaterials(){ 
-      if(this.addBillInfo){
-        let goodTerm = {};
-        goodTerm={
-          billsPageType: 'stocktaking',
-        }     
-        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-        this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.details));
-        this.$router.push({name:'PublicAddGood',query:{}})
+      let goodTerm = {};
+      let material_param ={};
+      goodTerm={
+        billsPageType: 'stocktaking',
       }   
+      material_param={
+          supplierId : this.addBillInfo.supplierId,
+          orderDate : this.addBillInfo.orderDate,
+          orderType : 'SCM_ORDER_TYPE_RULE'
+      }
+      formData.modifyParams(this.InventoryList,{
+          acc_qty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+          distributePrice1:'price',
+          memo:'remark',
+          goodsName:'name'
+      })  
+      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+      this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+      this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.detail));
+      this.setSelectedGood(this.InventoryList['details'])
+      this.$router.push({name:'PublicAddGood',query:{}}) 
     }
   }
 </script>

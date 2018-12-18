@@ -11,7 +11,7 @@ import formData from '../../dictory/formData';
 
 export class BOHPublicAddGoodService extends BaseService implements IPublicAddGoodService{
 
-    private cache = CachePocily.getInstance();
+    private cache = CachePocily.getInstance();   
     private static _instance: BOHPublicAddGoodService;  
     
     private constructor(){
@@ -30,7 +30,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,{
             "bill_type": param.bill_type, 
             "pagination": {
-                "orderby": null, 
+                "orderby": null,    
                 "asc": false, 
                 "pageno": pager.page, 
                 "pagesize": pager.limit, 
@@ -45,7 +45,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
+                            acc_qty:"num",
                             distributePrice1:'price',
+                            memo:'remark',
+                            goodsName:'name'
                         }); 
                     }
                 })               
@@ -79,7 +82,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
+                            acc_qty:"num",
                             distributePrice1:'price',
+                            memo:'remark',
+                            goodsName:'name'
                         }); 
                     }
                 })               
@@ -114,7 +120,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 categoryList:'sortList',
                 categoryName:'name',
                 categoryId:'id',
-                childs:'cdata',
+                childs:'cdata',   
                 sortName:'name', 
                 memo:'remark',
             });

@@ -103,17 +103,18 @@ import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
 import CACHE_KEY from '../../constans/cacheKey'
 import ObjectHelper from '../../common/objectHelper'
+import formData from '../../dictory/formData'
 @Component({
     computed:{
         ...mapGetters({    
             'selectedGood':'publicAddGood/selectedGood',//已经选择好的物料
             'InterfaceSysTypeBOH':'InterfaceSysTypeBOH', //BOH接口
             'systemParamSetting':"systemParamSetting",//系统设置参数   
-            materialSetting : 'materialSetting',//物流参数设置
+            'materialSetting' : 'materialSetting',//物流参数设置
         })
     },
     methods:{
-        ...mapActions({
+        ...mapActions({   
             'setSelectedGood':'publicAddGood/setSelectedGood',
         })
     }
@@ -147,6 +148,7 @@ export default class Order extends Vue{
                  
             }
         }    
+       
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
     }
@@ -201,7 +203,7 @@ export default class Order extends Vue{
      * 选择物料
      */
     private renderUrl(info: string) {   
-       let goodTerm = {};
+        let goodTerm = {};
         let material_param ={};
         goodTerm={
             billsPageType: 'orderGood',
@@ -212,10 +214,17 @@ export default class Order extends Vue{
             orderDate : this.addBillInfo.orderDate,
             orderType : 'SCM_ORDER_TYPE_RULE'
         }
+        formData.modifyParams(this.MaterialDetails,{
+            finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+            distributePrice1:'price',
+            memo:'remark',
+            goodsName:'name'
+        })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
-        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
-        this.setSelectedGood(this.MaterialDetails);
+        this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo))
+        this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo))
+        this.setSelectedGood(this.MaterialDetails)
         this.$router.push(info);
     }  
    /**

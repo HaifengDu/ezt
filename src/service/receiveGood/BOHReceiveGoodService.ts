@@ -18,11 +18,6 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param pager  分页数据
      */
     getGoodList(submitType:string,status:string,pager:IPagerData){
-        // let config = {
-        //     headers: {
-        //         'X-Requested-With': 'XMLHttpRequest'
-        //     }
-        // }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
             "receiveType" : submitType, 
             "auditStatus" : status, 
@@ -36,8 +31,24 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
         }).then(res=>{         
             return Promise.resolve(res);
         });
-        // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
-        // return promise;
+    }
+    /**
+     * 查询 收货单
+     * @param param 查询的条件
+     * @param pager 分页信息
+     */
+    searchList(param:any,pager:IPagerData){
+        return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
+            "pagination": {
+                "orderby": null, 
+                "asc": false, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
+                "totalcount": 0
+            },...param
+        }).then(res=>{         
+            return Promise.resolve(res);
+        });
     }
     /**
      * 单据详情接口
@@ -58,8 +69,6 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
         }).then(res=>{        
             return Promise.resolve(res);
         });
-        // const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
-        // return promise;
     }
     /**
      * 收货
@@ -69,6 +78,24 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
             receiveType:submitType,
             data : param
         }).then(res=>{     
+            return Promise.resolve(res);
+        });
+    }
+    /**
+     * 来货单位
+     */
+    getSupplierList(){
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{})
+        .then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+    /**
+     * 获取 仓库列表
+     */
+    getWarehouseList(){
+        return Axios.post(`${this.reqUrl}mobile/stock/taking/findScmWarehouse`,{})
+        .then(res=>{              
             return Promise.resolve(res);
         });
     }

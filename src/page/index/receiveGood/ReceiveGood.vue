@@ -85,8 +85,8 @@
         <li class="select-list">
           <span class="title-search-name is-required">来货单位：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.storeId"
-             @change="handlerSearch('storeId')" :class="[{'selectError':billFiles[1].storeId},{'disabled':!searchParam.receiveType}]">
+            <select placeholder="请选择" class="ezt-select" :disabled='!searchParam.receiveType' v-model="searchParam.supplierId"
+             @change="handlerSearch('supplierId')" :class="[{'selectError':billFiles[1].supplierId},{'disabled':!searchParam.receiveType}]">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in pullList.storeList">{{item.name}}</option>
             </select>
@@ -107,7 +107,7 @@
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.warehouse">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.id" :key="index" v-for="(item,index) in pullList.warehouseList">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.warehouseList">{{item.name||item.warehouseName}}</option>
             </select>
           </span>
         </li>
@@ -190,7 +190,7 @@ export default class ReceiveGood extends Vue{
    */
   private searchParam:any={
     receiveType: '',
-    storeId:'',
+    supplierId:'',
     warehouse:'',
     startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
     endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
@@ -207,18 +207,22 @@ export default class ReceiveGood extends Vue{
    * 下拉 列表
    */
   private pullList:any = {
-    receiveType:[{//收货类型 下拉列表
-      id:'a',
-      name:'配送收货'
-    },{
-      id:'b',
-      name:'直配收货'
-    },{
-      id:'c',
-      name:'采购收货'
-    },{
-      id:'d',
-      name:'（平调）店间调拨收货'
+    // receiveType:[{//收货类型 下拉列表
+    //   id:'a',
+    //   name:'配送收货'
+    // },{
+    //   id:'b',
+    //   name:'直配收货'
+    // },{
+    //   id:'c',
+    //   name:'采购收货'
+    // },{
+    //   id:'d',
+    //   name:'（平调）店间调拨收货'
+    // }],
+    receiveType:[{//boh只支持一种类型
+      name:'配送收货',
+      id:"SCM_RECEIVE_TYPE_INVOICE"
     }],
     storeList:[],//来货单位 下拉列表
     warehouseList:[]//仓库 下拉列表
@@ -228,7 +232,7 @@ export default class ReceiveGood extends Vue{
    */
   private billFiles=[
     {id:"receiveType",msg:"请选择收货类型！",receiveType:false},
-    {id:"storeId",msg:"请选择来货单位！",storeId:false}];
+    {id:"supplierId",msg:"请选择来货单位！",supplierId:false}];
   created() {
     if(!this.InterfaceSysTypeBOH){
       this.tabList.push({
@@ -275,7 +279,7 @@ export default class ReceiveGood extends Vue{
   private handlerSearch(val:any){
     if(val == 'receiveType'){
       //TODO: 重新加载收货类型下面的来货单位列表
-      this.getStoreList();
+      this.getSupplierList();
     }
     this.billFiles.forEach(item=>{
       if(item.id == val){
@@ -286,23 +290,38 @@ export default class ReceiveGood extends Vue{
   /**
    * 获取  来货单位列表
    */
-  private getStoreList(){
-    this.pullList.storeList = [{
-      name: '供应商1',
-      id: 1
-    },{
-      name: '供应商2',
-      id: 2
-    }]
+  private getSupplierList(){   
+    this.service.getSupplierList().then(res=>{
+      if(res){
+        this.pullList.storeList = res.data.organList;
+      }else{
+        this.pullList.storeList = [{
+          name: '供应商1',
+          id: 1
+        },{
+          name: '供应商2',
+          id: 2
+        }]
+      }
+    })
   }
-  private getWarehouseList(){
-    this.pullList.warehouseList = [{
-      name: '仓库01',
-      id: 1
-    },{
-      name: '仓库02',
-      id: 2
-    }]
+  /**
+   * 获取仓库下拉列表
+   */
+  private getWarehouseList(){    
+    this.service.getWarehouseList().then(res=>{
+      if(res){
+        this.pullList.warehouseList = res.data.warehouseList;
+      }else{
+        this.pullList.warehouseList = [{
+          name: '仓库01',
+          id: 1
+        },{
+          name: '仓库02',
+          id: 2
+        }]
+      }
+    })
   }
   /**
    * 改变查询的日期
@@ -335,8 +354,8 @@ export default class ReceiveGood extends Vue{
       this.$router.push('/comfirmAccept');
     }else if(this.tabList.getActive().status=="SCM_AUDIT_YES" || this.tabList.getActive().status=="3"){
       detailList = {
-        dc_name:"配送中心-8店",
-        bill_no:"000111aab",   
+        dc_name:item.dc_name || item.outOrganName,
+        bill_no:item.bill_no||item.billNo,    
         id: item.id,  
         submitType:item.type        
       }

@@ -573,6 +573,10 @@ input.ezt-middle{
   .title-search-name{
     flex:1;
   }
+  /* 物品明细中 备注 */
+  .park-input .title-search-name{
+    font-size: 14px;
+  }
   .icon-trun-on{
     margin-left: 10px;
   }

@@ -294,7 +294,8 @@ export default class Order extends Vue{
                 num:"finalOrderQty",  
                 price:"distributePrice1",    
                 remark:'memo',  
-                name:'goodsName'        
+                name:'goodsName',
+                material_id:'goodsId'        
             })
         }
         this.goodData = ObjectHelper.serialize(this.selectedGood);
@@ -482,7 +483,8 @@ export default class Order extends Vue{
             finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
             distributePrice1:'price',
             memo:'remark',
-            goodsName:'name'
+            goodsName:'name',
+            goodsId:"material_id"
         })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.ORDER_CONTAINTIME,JSON.stringify(this.containTime));

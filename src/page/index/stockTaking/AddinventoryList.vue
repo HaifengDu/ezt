@@ -164,7 +164,7 @@ import formData from '../../../dictory/formData'
       'setSelectedGood':'publicAddGood/setSelectedGood',
     })    
    }
-})
+})   
 export default class StockTaking extends Vue{
     private user:IUser;
     private cache = CachePocily.getInstance();
@@ -219,8 +219,10 @@ export default class StockTaking extends Vue{
           remark:'memo',  
           name:'material_name'       
         })
-        this.InventoryList = ObjectHelper.serialize(this.selectedGood);
+       
     }  
+     this.InventoryList = ObjectHelper.serialize(this.selectedGood);
+     (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
     (this.InventoryList||[]).forEach((item:any)=> this.$set(item,'active',false));
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     /**

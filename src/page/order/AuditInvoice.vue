@@ -103,6 +103,7 @@ import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
 import CACHE_KEY from '../../constans/cacheKey'
 import ObjectHelper from '../../common/objectHelper'
+import formData from '../../dictory/formData';
 @Component({
     computed:{
         ...mapGetters({    
@@ -146,7 +147,19 @@ export default class Order extends Vue{
                 this.MaterialDetails = this.addBillInfo['detailList']
                  
             }
-        }    
+        } 
+        if(this.selectedGood&&this.selectedGood.length>0){
+            formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
+                num:"finalOrderQty",  
+                price:"distributePrice1",    
+                remark:'memo',  
+                name:'goodsName',
+                material_id:"goodsId"        
+            })
+            this.MaterialDetails = ObjectHelper.serialize(this.selectedGood);
+        }  
+        // this.MaterialDetails = Object.assign(this.MaterialDetails,...this.selectedGood); //修改时的物品，合并
+        
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
         this.type = this.$route.query.type
     }
@@ -212,6 +225,13 @@ export default class Order extends Vue{
             orderDate : this.addBillInfo.orderDate,
             orderType : 'SCM_ORDER_TYPE_RULE'
         }
+        formData.modifyParams(this.MaterialDetails,{
+            finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
+            distributePrice1:'price',
+            memo:'remark',
+            goodsName:'name',
+            goodsId:"material_id"   
+        })
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));

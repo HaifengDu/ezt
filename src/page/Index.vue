@@ -48,28 +48,28 @@
             <li @click="renderUrl('/receiveGood')">
               <div class="shouhuo"><span v-if='!InterfaceSysTypeBOH' class="ezt-reddot-s"></span></div>
               <span>收货</span></li>
-            <li @click="renderUrl('/supplierReturn')">
+            <li @click="renderUrl('/supplierReturn')" v-if='!InterfaceSysTypeBOH'>
               <div class="tuihuo"></div>
               <span>退货</span></li>
             <li @click="renderUrl('/stockTaking')">
               <div class="panku"></div>
               <span>盘库</span></li>
-            <li @click="renderUrl()">
+            <li @click="renderUrl()" v-if='!InterfaceSysTypeBOH'>
               <div class="kucun"><span v-if='!InterfaceSysTypeBOH' class="ezt-reddot-s"></span></div>
               <span>库存初始化</span></li>
-            <li @click="renderUrl('/spilledSheet')">
+            <li @click="renderUrl('/spilledSheet')" v-if='!InterfaceSysTypeBOH'>
               <div class="overflowing"></div>
               <span>损溢</span>
             </li>
-            <li @click="renderUrl('/inStoreAllotment')">
+            <li @click="renderUrl('/inStoreAllotment')" v-if='!InterfaceSysTypeBOH'>
               <div class="diaobo"></div>
               <span>店内调拨</span>
             </li>
-            <li @click="renderUrl('/storeAllotment')">
+            <li @click="renderUrl('/storeAllotment')" v-if='!InterfaceSysTypeBOH'>
               <div class="shouhuo"></div>
               <span>店间平调</span>
             </li>
-            <li @click="renderUrl('/leadbackMaterial')">
+            <li @click="renderUrl('/leadbackMaterial')" v-if='!InterfaceSysTypeBOH'>
               <div class="overflowing"></div>
               <span>领退料</span>
             </li>
@@ -87,7 +87,7 @@
           <span class="footer-order"></span>
           <div>订货</div>
         </li>
-        <li @click="renderUrl('/chartContent')">
+        <li @click="renderUrl('/chartContent')" v-if='!InterfaceSysTypeBOH'>
           <span class="footer-chart"></span>
           <div>报表</div>
         </li>

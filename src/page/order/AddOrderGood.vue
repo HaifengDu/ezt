@@ -272,7 +272,7 @@ export default class Order extends Vue{
     created() {
         const factory = FactoryService.getInstance().createFactory();
         this.service = factory.createOrderGood();
-         this.getSupplierList();  //配送机构下拉列表
+        this.getSupplierList();  //配送机构下拉列表
        
         //默认值       
         this.addBillInfo.orderDate = this.user.auth.busi_date;
@@ -331,7 +331,9 @@ export default class Order extends Vue{
     }
     private getSupplierList(){
         this.service.getSupplierList().then(res=>{
-            this.supplierLists = res.data.organList;
+            if(res){
+                this.supplierLists = res.data.organList;            
+            }
             if(!this.addBillInfo.supplierId){
                 //默认值
                 this.addBillInfo.supplierId = this.supplierLists[0].id;

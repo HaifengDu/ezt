@@ -64,7 +64,7 @@ export class OrderGoodsService extends BaseService implements IOrderGoodsService
      * 获取配送机构
      */
     getSupplierList(){
-        return Promise.resolve([] as any);
+        return Promise.resolve(null);
     }
     /**
      * 订单新增 保存

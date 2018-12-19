@@ -95,10 +95,10 @@
         <li>
           <span class="title-search-name is-required">收货日期：</span>
           <span>
-            <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd')" 
+            <ezt-canlendar ref="startDate" :max="searchParam.endDate" :defaultValue="pullList.defaultDate.defaultStartDate" 
               placeholder="开始时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.startDate"></ezt-canlendar>
               <span>至</span>
-            <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')"
+            <ezt-canlendar ref="endDate" :min="searchParam.startDate" :defaultValue="pullList.defaultDate.defaultEndDate"
               placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
           </span>
         </li>
@@ -188,13 +188,7 @@ export default class ReceiveGood extends Vue{
   /**
    * 搜索时的查询条件
    */
-  private searchParam:any={
-    receiveType: '',
-    supplierId:'',
-    warehouse:'',
-    startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
-    endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
-  };
+  private searchParam:any={};
   private tabList:TabList = new TabList();
   /**
    * 单据类型
@@ -225,7 +219,11 @@ export default class ReceiveGood extends Vue{
       id:"SCM_RECEIVE_TYPE_INVOICE"
     }],
     storeList:[],//来货单位 下拉列表
-    warehouseList:[]//仓库 下拉列表
+    warehouseList:[],//仓库 下拉列表
+    defaultDate:{
+      defaultStartDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+      defaultEndDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+    }
   };
   /**
    * 枚举 表单字段
@@ -261,7 +259,21 @@ export default class ReceiveGood extends Vue{
     this.getWarehouseList(); //仓库下拉列表
   }
 
-  mounted(){      
+  mounted(){ 
+    if(this.cache.getData(CACHE_KEY.RECEIVE_SEARCH)){//记住查询条件
+      this.searchParam = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_SEARCH));
+      this.pullList.defaultDate.defaultStartDate = this.searchParam.startDate;
+      this.pullList.defaultDate.defaultEndDate = this.searchParam.endDate;
+      this.getSupplierList();
+    }else{
+      this.searchParam = {        
+        receiveType: '',
+        supplierId:'',
+        warehouse:'',
+        startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
+        endDate:new Date(new Date().setDate(new Date().getDate())).format('yyyy-MM-dd')
+      }
+    }     
     this.getList();
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.isSearch=false; 

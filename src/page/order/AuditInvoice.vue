@@ -437,7 +437,7 @@ export default class OrderGoods extends Vue{
             hideOnBlur:true
         })
     }
-    private goBack(){
+    private goBack(){ 
         let _this = this;
         if((this.addBillInfo&&this.addBillInfo.arriveDate || this.addBillInfo.remark) ||this.selectedGood.length>0){
              this.$vux.confirm.show({
@@ -446,7 +446,10 @@ export default class OrderGoods extends Vue{
                 console.log(this) // 非当前 vm
                 },
                 onConfirm () {
+                    _this.addBillInfo={},
                     _this.setSelectedGood([]);
+                    _this.addBeforeBillInfo={};
+                    _this.cache.clear();
                     _this.$router.push('/orderGood')
                 },
                 content:"返回后，本次操作记录将丢失，请确认是否离开？"

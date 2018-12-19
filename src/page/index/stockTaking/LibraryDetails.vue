@@ -150,9 +150,7 @@ export default class stockTaking extends Vue{
       }else if(this.types == '4'){
          this.title = "盘点类型导入"
       }
-      
-    }
-    mounted(){       
+
       /**
        * 盘点类型导入 模板导入
        */
@@ -172,13 +170,17 @@ export default class stockTaking extends Vue{
       if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
           this.inventoryDetails = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
           if(this.InterfaceSysTypeBOH){
-              this.inventoryDetails = this.inventoryDetails
+              this.inventoryDetails = this.inventoryDetails['details']
           }
       }
       if(this.cache.getData(CACHE_KEY.TEMPLATE_NAME)){
             const template_name = JSON.parse(this.cache.getData(CACHE_KEY.TEMPLATE_NAME));
             this.details.template_name = template_name.templateName
       }
+      
+    }
+    mounted(){       
+      
     }
     /**
      * 审核不通过

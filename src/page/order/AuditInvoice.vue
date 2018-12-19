@@ -441,7 +441,7 @@ export default class OrderGoods extends Vue{
     }
     private goBack(){
         let _this = this;
-        if((this.addBillInfo&&this.addBillInfo.arriveDate||this.addBillInfo.remark)){
+        if((this.addBillInfo&&this.addBillInfo.arriveDate || this.addBillInfo.remark) ||this.selectedGood.length>0){
              this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {

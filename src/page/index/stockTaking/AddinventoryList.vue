@@ -196,7 +196,7 @@ export default class StockTaking extends Vue{
         {id:"treatment",msg:"请选择未盘处理方式！",treatment:false},
     ]
 
-  created() {  
+  created() { 
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createStockTaking();
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
@@ -222,7 +222,6 @@ export default class StockTaking extends Vue{
        
     }  
      this.InventoryList = ObjectHelper.serialize(this.selectedGood);
-     (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
     (this.InventoryList||[]).forEach((item:any)=> this.$set(item,'active',false));
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
     /**

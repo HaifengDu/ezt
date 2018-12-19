@@ -126,7 +126,7 @@ export default class OrderGoods extends Vue{
     };
     private addBeforeBillInfo: any = {};
     private type:string='';
-    private delId:any[]; //把刪除的物品id存
+    private delId:any[] = []; //把刪除的物品id存
     mounted(){
         
     }
@@ -202,20 +202,18 @@ export default class OrderGoods extends Vue{
     /**
      * 确认删除物料
      */
-    private delAction(item:any){
+    private delAction(item:any,delId:Array<any>){
         let _this = this;
         this.$vux.confirm.show({
             onCancel () {
-                
             },
-            onConfirm () {
-                var delId=[];
+            onConfirm (i:any) {
                 let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
-                   return item.id == info.id;
+					return item.id == info.id;
                 })
+				_this.delId.push(_this.selectedGood[newIndex].id);
                 _this.selectedGood.splice(newIndex,1);
-                delId.push(item.id);   
-                _this.cache.save(CACHE_KEY.ORDER_DELETEID,JSON.stringify(delId))
+				_this.cache.save(CACHE_KEY.ORDER_DELETEID,JSON.stringify(_this.delId))
             },
             content:'请确认是否删除该物料?'
         })

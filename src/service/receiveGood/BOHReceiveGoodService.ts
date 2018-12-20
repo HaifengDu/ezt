@@ -18,6 +18,11 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param pager  分页数据
      */
     getGoodList(submitType:string,status:string,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
             "receiveType" : submitType, 
             "auditStatus" : status, 
@@ -28,7 +33,7 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
                 "pagesize": pager.limit, 
                 "totalcount": 0
             }
-        }).then(res=>{         
+        },config).then(res=>{         
             return Promise.resolve(res);
         });
     }
@@ -38,6 +43,11 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param pager 分页信息
      */
     searchList(param:any,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receiveList`,{
             "pagination": {
                 "orderby": null, 
@@ -46,7 +56,7 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...param
-        }).then(res=>{         
+        },config).then(res=>{         
             return Promise.resolve(res);
         });
     }
@@ -56,6 +66,11 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * @param id  单据id
      */
     getGoodDetail(submitType:string,id:string,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/findBillById`,{
             "receiveType" : submitType,
             "id" : id,
@@ -66,7 +81,7 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
                 "pagesize": pager.limit, 
                 "totalcount": 0
             }
-        }).then(res=>{        
+        },config).then(res=>{        
             return Promise.resolve(res);
         });
     }
@@ -74,10 +89,15 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * 收货
      */
     goReceive(submitType:string,param:Object){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/stock/receive/receive`,{
             receiveType:submitType,
             data : param
-        }).then(res=>{     
+        },config).then(res=>{     
             return Promise.resolve(res);
         });
     }
@@ -85,7 +105,12 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * 来货单位
      */
     getSupplierList(){
-        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{})
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{},config)
         .then(res=>{              
             return Promise.resolve(res);
         });
@@ -94,7 +119,12 @@ export class BOHReceiveGoodService extends BaseService implements IReceiveGoodSe
      * 获取 仓库列表
      */
     getWarehouseList(){
-        return Axios.post(`${this.reqUrl}mobile/stock/taking/findScmWarehouse`,{})
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/stock/taking/findScmWarehouse`,{},config)
         .then(res=>{              
             return Promise.resolve(res);
         });

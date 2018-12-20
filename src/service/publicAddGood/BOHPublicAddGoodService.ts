@@ -63,6 +63,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param goodsSortId 
      */
     getBohItemCategory(param:any,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,{
             "bill_type":param.bill_type, 
             "goodsSortId":param.goodsSortId,
@@ -73,7 +78,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             }
-        }).then(res=>{  
+        },config).then(res=>{  
             let bb = res;
             if(bb.data.sortList&&bb.data.sortList.length>0){
                 bb.data.sortList.forEach((item:any)=>{
@@ -98,7 +103,12 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param param 
      * @pager 分页
      */
-    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{        
+    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }        
         return Axios.post(`${this.reqUrl}mobile/purchase/chooseOrderGoods`,{
             "id": param.id || '',
             "supplierId": param.supplierId,//21
@@ -111,7 +121,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0   
             }          
-        }).then(res=>{ 
+        },config).then(res=>{ 
             let bb = res;
             /**
              * 转一下 publicGood里面页面显示字段
@@ -146,6 +156,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 firstIds['goodsName'] = param['goodsName'];
             }
         }
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
             "supplierId": param.supplierId,//21,
             "orderType" : param.orderType,
@@ -157,7 +172,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        }).then(res=>{ 
+        },config).then(res=>{ 
             let bb = res;  
              /**
              * 转一下 publicGood里面页面显示字段

@@ -176,7 +176,7 @@ export default class allotment extends Vue{
             status:3,
             active:false
         });
-       this.pager = new Pager().setLimit(20)
+       this.pager = new Pager().setLimit(10)
        const factory = FactoryService.getInstance().createFactory();
        this.service = factory.createStoreAllot();
        this.handlerOutWare(); //调出仓库 下拉列表

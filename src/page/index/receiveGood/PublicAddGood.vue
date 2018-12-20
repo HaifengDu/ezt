@@ -48,8 +48,8 @@
                   </span>
                   <!---盘库显示规格账面数量-->
                   <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-                    规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
-                    账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
+                    <span class="good-item-sort" v-if="item.material_model || ''">{{item.unit_name}} </span>
+                     账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
                   </span>
                 </div>
                <div class="good-item-bot">
@@ -194,17 +194,17 @@
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
                 <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
                 <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-              </span>
-                <!---盘库显示规格账面数量-->
-              <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
-                规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
-                账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
-              </span>
+              </span>              
               <!-- 默认不可以进行编辑 BOH不限制-->
               <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.unitName}}</span>
               <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
+              </span>
+              <!---盘库显示规格账面数量-->
+              <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
+                <span class="good-item-sort" v-if="item.material_model || ''">{{item.unit_name}}</span>
+                账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
               </span>
             </div>
             <div class="good-item-bot">
@@ -257,7 +257,7 @@
       <div class="selected-good-content" ref="searchContainer" v-infinite-scroll="searchLoadMore"
             :infinite-scroll-disabled="searchAllLoaded" infinite-scroll-immediate-check="false"
             infinite-scroll-distance="10">
-        <div class="good-item" v-for="(item,index) in publicParam.searchList" :key='index'>
+        <div class="good-item" v-if="publicParam.searchList.length>0" v-for="(item,index) in publicParam.searchList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name || item.material_name}}</span>
             <!--库存初始化-->
@@ -291,6 +291,11 @@
             </span>
           </div>
         </div>
+        <!--无任何数据时 -->
+        <div v-if="publicParam.searchList.length == 0" class="done-none">
+          <div></div>
+          <span>暂无结果</span>
+        </div> 
       </div>
     </div>
     <ezt-footer>
@@ -401,7 +406,7 @@ export default class AddGood extends Vue{
 
   private timer:any = null;
   created(){ 
-    this.pager = new Pager().setLimit(7)
+    this.pager = new Pager().setLimit(10)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createPublicGood();
     if(this.cache.getData(CACHE_KEY.MATERIAL_PARAM)){

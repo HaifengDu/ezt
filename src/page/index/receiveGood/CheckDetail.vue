@@ -146,7 +146,7 @@ export default class ReceiveGood extends Vue{
         this.service = factory.createReceiveGood(); 
     }
     mounted(){ 
-        this.pager = new Pager().setLimit(7)
+        this.pager = new Pager().setLimit(10)
         if(this.cache.getData(CACHE_KEY.RECEIVE_DETAILLIST)){
             this.detailList = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_DETAILLIST));
              let submitType = this.detailList.submitType 

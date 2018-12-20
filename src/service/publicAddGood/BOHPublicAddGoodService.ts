@@ -47,7 +47,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                         formData.modifyParams( item.cdata[0].goodsList, {
                             // acc_qty:"num",
                             distributePrice1:'price',
-                            // memo:'remark',
+                            'unit_name':'unitName',
                             material_name:'name'
                         }); 
                     }

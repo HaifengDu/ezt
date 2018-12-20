@@ -166,7 +166,7 @@ export default class InitStock extends Vue {
     this.pager = new Pager();
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createInitStock();
-    this.pager = new Pager().setLimit(20)
+    this.pager = new Pager().setLimit(10)
     //  this.getGoodList();
   }
 

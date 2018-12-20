@@ -195,7 +195,7 @@ export default class ReturnGood extends Vue{
       status:3,
       active:false
     });
-    this.pager = new Pager().setLimit(20)
+    this.pager = new Pager().setLimit(10)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createSupplierReturn();
     this.getSupplierList();// 供货机构列表

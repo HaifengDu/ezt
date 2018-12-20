@@ -295,7 +295,7 @@ export default class ReceiveGood extends Vue{
     this.selectedGood.forEach(item=> this.$set(item,'active',false));
   }
   mounted(){     
-    this.pager = new Pager().setLimit(7)
+    this.pager = new Pager().setLimit(10)
     if(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE)){
       switch (JSON.parse(this.cache.getData(CACHE_KEY.RECEIVE_BILLTYPE))){
         case "配":

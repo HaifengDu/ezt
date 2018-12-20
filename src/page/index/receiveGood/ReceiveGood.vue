@@ -253,7 +253,7 @@ export default class ReceiveGood extends Vue{
         active:false
       });
     }
-    this.pager = new Pager().setLimit(20)
+    this.pager = new Pager().setLimit(10)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createReceiveGood();
     this.getWarehouseList(); //仓库下拉列表

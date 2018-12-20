@@ -176,7 +176,7 @@
           </x-dialog>
       </div>
     </div>
-    <!-- 已选择货品弹框 -->
+    <!-- 2、 已选择货品弹框 -->
     <div class="selected-item" v-if="isSelected">
       <ezt-header :back="false" title="已选货品">
         <div slot="action">
@@ -241,21 +241,23 @@
         </div>
       </div>
     </div>
-    <!-- 搜索所有物品 -->
+    <!-- 3、 搜索所有物品 -->
     <div class="search-item" v-if="isSearch">
        <div class="search-header">
-          <input type="text" placeholder="请输入" @input="handlerSearchData">
+          <input type="text" placeholder="请输入" @input="handlerSearchData" v-model="publicParam.searchData">
           <div class="search-icon">          
             <i class="fa fa-search" aria-hidden="true"></i>
           </div>
           <div class="search-close">
-            <span class='ezt-action-point' @click="isSearch=false">
+            <span class='ezt-action-point' @click="handlerSearchPage">
               <i class="fa fa-times" aria-hidden="true"></i>
             </span>  
           </div>
       </div>
-      <div class="selected-good-content">
-        <div class="good-item" v-for="(item,index) in selectedGoodList" :key='index'>
+      <div class="selected-good-content" ref="searchContainer" v-infinite-scroll="searchLoadMore"
+            :infinite-scroll-disabled="searchAllLoaded" infinite-scroll-immediate-check="false"
+            infinite-scroll-distance="10">
+        <div class="good-item" v-for="(item,index) in publicParam.searchList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name || item.material_name}}</span>
             <!--库存初始化-->
@@ -281,7 +283,7 @@
               <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
             </span>
             <!-- 收藏图标 -->
-            <span v-if="materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn' && materialLimit.billsPageType != 'spilledSheet' && materialLimit.billsPageType != 'leadbackMaterial'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
+            <span v-if="!InterfaceSysTypeBOH && materialLimit.billsPageType != 'initStock'&&materialLimit.billsPageType != 'supplierReturn' && materialLimit.billsPageType != 'spilledSheet' && materialLimit.billsPageType != 'leadbackMaterial'" class="good-collect" :class="{'active':item.active}" @click="handlerCollect(item)">
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span class="good-number">              
@@ -320,7 +322,9 @@ import CACHE_KEY from '../../../constans/cacheKey'
 import { PageType } from "../../../enum/EPageType";
 import { FactoryService } from '../../../factory/FactoryService';
 import { IPublicAddGoodService } from '../../../interface/service/IPublicAddGoodService';
+import FormData from '../../../dictory/formData';
 import _ from "lodash";
+import { clearTimeout, setTimeout } from 'timers';
 
 @Component({
   mixins:[maskMixin],
@@ -344,6 +348,12 @@ export default class AddGood extends Vue{
   private hideMask:()=>void;
   private showMask:()=>void;
   private cache = CachePocily.getInstance();
+  private publicParam: any={
+    searchData:'',//查询的物品名称
+    searchList:[],//查询完的结果
+    listPage:Number,
+    searchPage:Number
+  };
   private isSelected:boolean=false;//已选货品
   private isSearch:boolean=false;//搜索所有物品
   private selectedGoodList:any[] = [];    
@@ -387,6 +397,9 @@ export default class AddGood extends Vue{
   private loadMoreParam:any = {};
   private pager:Pager;
   private allLoaded: boolean = false;
+  private searchAllLoaded: boolean = false;
+
+  private timer:any = null;
   created(){ 
     this.pager = new Pager().setLimit(7)
     const factory = FactoryService.getInstance().createFactory();
@@ -407,6 +420,7 @@ export default class AddGood extends Vue{
     });
   }
   mounted() {  
+
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
     }
@@ -443,6 +457,7 @@ export default class AddGood extends Vue{
   private loadGood(item:any,categoryId:any){
     this.allLoaded=false;
     this.pager.resetStart();//分页加载还原pageNum值
+    this.publicParam.listPage = 1;
     (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
     
     let _this_ = this;
@@ -459,15 +474,18 @@ export default class AddGood extends Vue{
     }
     if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
       if(item.goodsList&&item.goodsList.length>0){//全部里面找出已经选择的货品
-        this.allGoods(item);
+        // this.allGoods(item);
+        this.goodList = this.allGoods(item);
+        // _this_.typeName = this.allGoods(item);
         _this_.typeName=item; 
         return false;
       }
     }      
     _this_.service.getGoodList( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList || [];
-      this.allGoods(res.data);
-      this.goodList = goodsList;
+      
+      this.goodList = this.allGoods(res.data);
+      // this.goodList = goodsList;
     },err=>{
       this.$toasted.show(err.message);      
     });
@@ -493,8 +511,8 @@ export default class AddGood extends Vue{
         item.addList.push(good);
       }
     });
-    this.goodList = item.goodsList;    
-    return false;
+    // this.goodList = item.goodsList;    
+    return item.goodsList;
   }
 
   /**
@@ -507,10 +525,16 @@ export default class AddGood extends Vue{
       this.$vux.loading.show({
         text:'加载中..'
       });
+      this.pager.setPage(this.publicParam.listPage);  //list懒加载的page为list的page
+      // this.publicParam.listPage = this.pager.getPage();
       this.pager.setNext();
+      this.publicParam.listPage = this.pager.getPage().page;//重新给list的page值
+      
       if(this.loadMoreParam.allGoods.goodsList&&this.loadMoreParam.allGoods.goodsList.length>0){//从分类中返回的物品 分页加载
         _this_.service.getGoodClass(this.materialParam,this.pager.getPage()).then(res=>{
-          let goodsList = res.data.sortList[0].cdata[0].goodsList;
+          let goodsList = res.data.sortList[0].cdata[0].goodsList;          
+          goodsList = this.allGoods(res.data.sortList[0].cdata[0]);//已选择的物品数量
+
           if(this.pager.getPage().limit>goodsList.length){
             this.allLoaded = true;
           }
@@ -525,6 +549,8 @@ export default class AddGood extends Vue{
       }else{//分类当中并没有返回全部的物品，要去单独请求一次物品的接口
         _this_.service.getGoodList(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
           let goodsList = res.data.goodsList;
+          goodsList = this.allGoods(res.data);//已选择的物品数量
+
           if(this.pager.getPage().limit>goodsList.length){
             this.allLoaded = true;
           }
@@ -538,6 +564,73 @@ export default class AddGood extends Vue{
         })
       } 
     }    
+  }
+
+  /**
+   * 查询物品中的下拉加载 
+   */
+  private searchLoadMore(){
+    if(!this.searchAllLoaded){
+      let _this_ = this;
+      this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setPage(this.publicParam.searchPage);  //search懒加载的page为search的page
+      this.pager.setNext();
+      this.publicParam.searchPage = this.pager.getPage().page;//重新给search的page值
+      this.service.getGoodList(Object.assign({goodsName:this.publicParam.searchData},...this.materialParam),this.pager.getPage())
+      .then((res:any)=>{
+        let goodsList = res.data.goodsList;
+        goodsList = this.allGoods(res.data);//已选择的物品数量
+
+        if(this.pager.getPage().limit>goodsList.length){
+          this.searchAllLoaded = true;
+        }
+        this.publicParam.searchList = this.publicParam.searchList.concat(goodsList);
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500);
+      })
+    }
+    
+  }
+
+  /**
+   * 搜索
+   */
+  private handlerSearchData(){
+    clearTimeout(this.timer);
+
+    this.publicParam.searchData = this.publicParam.searchData.replace(/\s+/g,'');//查询字段有空格
+    this.timer = setTimeout(()=>{
+      //函数抖动 控制用户输入频繁
+      this.service.getGoodList(Object.assign({goodsName:this.publicParam.searchData},...this.materialParam),this.pager.getPage())
+      .then((res:any)=>{
+        if(res.data.errcode == 0){
+          if(res.data.goodsList && res.data.goodsList.length == 0){//不能搜出来
+            this.searchAllLoaded=false;
+            this.pager.resetStart();//分页加载还原pageNum值
+            this.publicParam.searchPage = 1;            
+          }
+          this.publicParam.searchList = this.allGoods(res.data);
+         
+        }
+      })
+    }, 800);
+  }
+
+  @Watch('publicParam.searchData',{
+    deep:true
+  })
+  private WatchSearchList(newValue:any[],oldValue:any[]){
+    if(!oldValue || this.pager.getPage().limit>this.publicParam.searchList.length){//有值 搜索不出来
+      this.searchAllLoaded=false;
+      this.pager.resetStart();//分页加载还原pageNum值
+      this.publicParam.searchPage = 1;
+      
+    }
   }
   
   private showDelete(s:any,e:any){
@@ -657,8 +750,15 @@ export default class AddGood extends Vue{
    * 搜索所有物品 显示/隐藏
    */
   private handlerSearchPage(){
-    this.isSearch = true;
-    this.isSelected=false;
+    // this.isSearch = true;
+    // this.isSelected=false;
+    this.isSearch = !this.isSearch;
+    this.isSelected = !this.isSelected;  
+    if(this.publicParam.searchList.length == 0){
+      this.searchAllLoaded=false;
+      this.pager.resetStart();//分页加载还原pageNum值
+      this.publicParam.searchPage = 1;
+    } 
   }
   // 修改直拨提交
   private submitDerict(){
@@ -678,13 +778,8 @@ private changeDirect(item:any){
   }else{
     item.num = item.oldNum;
   }
-}
-  /**
-   * 搜索
-   */
-  private handlerSearchData(){
-    
-  }
+}  
+  
   /**
    * 收藏物品
    */
@@ -929,6 +1024,8 @@ private changeDirect(item:any){
 .selected-good-content{
   margin-top: 50px;
   margin-bottom: 50px;
+  overflow-x: hidden;
+  height: calc(100% - 210px);
 }
 .search-header{
   position: fixed;
@@ -1108,6 +1205,9 @@ private changeDirect(item:any){
 }
 .item-left-good{
   min-width: 200px;
+}
+.ezt-page-con{
+  overflow: hidden !important;
 }
 
 </style>

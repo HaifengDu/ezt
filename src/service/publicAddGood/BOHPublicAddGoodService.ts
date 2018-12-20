@@ -142,6 +142,9 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "goodsSortId": param.stockGoodsSortId,
                 "goodsName":param.orderGoodsName,
             }
+            if(param['goodsName']){
+                firstIds['goodsName'] = param['goodsName'];
+            }
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/queryOrderGoodsbyGoodsName`,{
             "supplierId": param.supplierId,//21,

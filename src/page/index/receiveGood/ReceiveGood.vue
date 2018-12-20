@@ -388,7 +388,7 @@ export default class ReceiveGood extends Vue{
   }
   private tabClick(index:number){
     this.tabList.setActive(index);
-      this.allLoaded=false;
+    this.allLoaded=false;
     (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
     this.pager.resetStart();//分页加载还原pageNum值
     this.getList();     

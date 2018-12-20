@@ -65,8 +65,26 @@ let utilData = {
     getType:function(val:any) {
         let valTypeStr = Object.prototype.toString.call(val);
         return valTypeStr.slice(8, valTypeStr.length - 1)
-    }
-
+    },
+    /* *
+     * 去抖動
+     * @param func 
+     * @param wait 
+     */
+  /*   throttle:(fn:Function, time = 50) => { // 防抖动 控制空闲时间 用户输入频繁
+        let timer:any; // 這裏如果函數被調用后，timer就會在内存裏面生成一份  1
+        return  function (...args:[]){  // 2
+            // 返回的function也會形成一塊内存區域，因爲它引用了timer，所以他們兩塊内存存在強引用關係
+            // 如果2的内存不被釋放掉 1的内存就不會被釋放掉，這就形成了閉包。
+            // 但是，咱們這個屬於每次都 new了一個内存，所以timer創建了多個而不是一個clearTimeout(timer);就不生效了，爲了保持生效
+            // 必須只能讓1創建一次，2創建多次但是timer始終引入的只有1裏面的timer  clearTimeout(timer);清除的就是上一個創建出來的timer了
+            let that = this;
+            clearTimeout(timer);
+            timer = setTimeout(()=>{
+                fn.call(that, args);
+            }, time);
+        }
+    } */
 }
 
 

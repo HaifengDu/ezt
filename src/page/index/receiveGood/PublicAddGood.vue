@@ -73,15 +73,15 @@
                   可退：{{item.returnNum||0}}
                 </span>
                 <span class="good-number">
-                   <!-- 库存数量限制 -->  
-                    <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)"
-                      :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
-                    <!-- 可退数量限制  -->
-                    <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
-                      :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
-                    <!-- 正常数量选择 -->
-                    <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
-                      &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                  <!-- 库存数量限制 -->  
+                  <ezt-number type="number" v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)"
+                    :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                  <!-- 可退数量限制  -->
+                  <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
+                    :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                  <!-- 正常数量选择 -->
+                  <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
+                    &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 </span>
                </div>
               
@@ -125,55 +125,55 @@
       </div>
       <!-- 编辑价格信息时  -->
       <div>
-          <x-dialog v-model="isPrice" class="dialog-demo">
-          <div class="ezt-dialog-header">                                
-              <span class="ezt-close" @click="isPrice=false" >
-              <i class="fa fa-times" aria-hidden="true"></i>
-              </span>
-          </div>                            
-          <div class="warehouse-list">
-              <ul class="edit-good-list">
-                  <li>
-                      <span class="title-select-name">数量：</span>
-                      <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
-                  </li>
-                  <li v-if="materialLimit.costType=='0'">
-                      <span class="title-dialog-name">价格：</span>
-                      <span class="icon-input price">
-                          <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
-                      </span>                                       
-                  </li>
-                  <li v-if="materialLimit.costType=='1'">
-                      <span class="title-dialog-name">含税额：</span>
-                      <span class="icon-input price">
-                          <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
-                      </span>                                       
-                  </li>
-                  <li>
-                      <span class="title-dialog-name">税率：</span>
-                      <span class="icon-input">
-                          <input type="text" class="ezt-smart" @change="pubChange(bindRemark,'rate')" v-model="bindRemark.rate">
-                      </span>
-                  </li>
-                  <li class="select-list">
-                      <span class="title-dialog-name">供应商：</span>
-                      <span class="title-select-name item-select">
-                      <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
-                          <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                          <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
-                      </select>
-                      </span>
-                  </li>
-                  <li>
-                      <span class="title-dialog-name">备注：</span>
-                      <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
-                  </li>
-              </ul>
-          </div>
-          <div class="mine-bot-btn">
-              <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
-          </div>             
-          </x-dialog>
+        <x-dialog v-model="isPrice" class="dialog-demo">
+        <div class="ezt-dialog-header">                                
+            <span class="ezt-close" @click="isPrice=false" >
+            <i class="fa fa-times" aria-hidden="true"></i>
+            </span>
+        </div>                            
+        <div class="warehouse-list">
+            <ul class="edit-good-list">
+                <li>
+                    <span class="title-select-name">数量：</span>
+                    <x-number v-model="bindRemark.num" button-style="round" :min="0"></x-number>
+                </li>
+                <li v-if="materialLimit.costType=='0'">
+                    <span class="title-dialog-name">价格：</span>
+                    <span class="icon-input price">
+                      <input type="text" @change="pubChange(bindRemark,'price')" class="ezt-smart" v-model="bindRemark.price">
+                    </span>                                       
+                </li>
+                <li v-if="materialLimit.costType=='1'">
+                    <span class="title-dialog-name">含税额：</span>
+                    <span class="icon-input price">
+                      <input type="text" @change="pubChange(bindRemark,'amt')" class="ezt-smart" v-model="bindRemark.amt">
+                    </span>                                       
+                </li>
+                <li>
+                    <span class="title-dialog-name">税率：</span>
+                    <span class="icon-input">
+                      <input type="text" class="ezt-smart" @change="pubChange(bindRemark,'rate')" v-model="bindRemark.rate">
+                    </span>
+                </li>
+                <li class="select-list">
+                    <span class="title-dialog-name">供应商：</span>
+                    <span class="title-select-name item-select">
+                    <select name="" id="" placeholder="请选择" class="ezt-select" v-model="bindRemark.supplier">
+                      <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                      <option :value="item.name" :key="index" v-for="(item,index) in orderType">{{item.name}}</option>
+                    </select>
+                    </span>
+                </li>
+                <li>
+                    <span class="title-dialog-name">备注：</span>
+                    <input type="text" placeholder="请输入备注" class="ezt-middle" v-model="bindRemark.remark">
+                </li>
+            </ul>
+        </div>
+        <div class="mine-bot-btn">
+            <span class="ezt-lone-btn" @click="priceConfirm">确定</span>
+        </div>             
+        </x-dialog>
       </div>
     </div>
     <!-- 2、 已选择货品弹框 -->
@@ -267,8 +267,8 @@
             </span>
              <!-- 盘库显示规格账面数量 -->
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-                规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
-                账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
+              规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
+              账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
             </span>
             <!-- 默认不可以进行编辑  BOH不限制-->
             <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.unitName}}</span>
@@ -312,11 +312,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import store from '../../../store';
-import {PublicAddGoodType} from '../../../store/PublicAddGood/mutation-types.ts';
-import ErrorMsg from "../model/ErrorMsg"
 import {Component,Watch} from "vue-property-decorator"
 import Pager from '../../../common/Pager';
-import {TabItem,LoadingPlugin} from 'vux'
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import {maskMixin} from "../../../helper/maskMixin";
 import { INoop, INoopPromise } from '../../../helper/methods';
@@ -333,18 +330,18 @@ import { clearTimeout, setTimeout } from 'timers';
 
 @Component({
   mixins:[maskMixin],
-   computed:{
-     ...mapGetters({
-       'selectedGood':'publicAddGood/selectedGood',
-       'materialSetting':'materialSetting',//物流设置
-       InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
-     }),
-   },
-   methods:{
-     ...mapActions({
-       'setSelectedGood':'publicAddGood/setSelectedGood'
-     })
-   }
+    computed:{
+      ...mapGetters({
+        'selectedGood':'publicAddGood/selectedGood',
+        'materialSetting':'materialSetting',//物流设置
+        InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
+      }),
+    },
+    methods:{
+      ...mapActions({
+        'setSelectedGood':'publicAddGood/setSelectedGood'
+      })
+    }
 })
 export default class AddGood extends Vue{
   private service:IPublicAddGoodService;

@@ -130,7 +130,12 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
      * 获取配送机构
      */
     getSupplierList(){
-        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{})
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/findDistributeList`,{},config)
         .then(res=>{              
             return Promise.resolve(res);
         });
@@ -139,12 +144,17 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
      * 订单新增保存
      */
     saveOrder(param:object){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
         return Axios.post(`${this.reqUrl}mobile/purchase/saveOrder`,{
             data:{
                 "orderType": "SCM_ORDER_TYPE_RULE", 
                 ...param
             }
-        })
+        },config)
         .then(res=>{              
             return Promise.resolve(res);
         });

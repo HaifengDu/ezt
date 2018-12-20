@@ -528,14 +528,13 @@ export default class OrderGoods extends Vue{
       }else{
         if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
           this.service.getGoodDetail(item.id).then(res=>{ 
-            this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
-            this.$router.push({name:'AuditInvoice',query:{type:type}});  
+              this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
+              this.$router.push({name:'AuditInvoice',query:{type:type}});  
             },err=>{
                 this.$toasted.show(err.message)
           })
         }
       }
-      
      }     
     /**
      * 再来一单

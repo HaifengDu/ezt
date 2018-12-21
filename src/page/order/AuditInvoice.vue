@@ -443,13 +443,12 @@ export default class OrderGoods extends Vue{
              this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {
-                console.log(this) // 非当前 vm
                 },
                 onConfirm () {
-                    _this.addBillInfo={},
-                    _this.setSelectedGood([]);
-                    _this.addBeforeBillInfo={};
-                    _this.cache.clear();
+                    _this.addBillInfo={}
+                    _this.setSelectedGood([])
+                    _this.addBeforeBillInfo={}
+                    _this.cache.clear()
                     _this.$router.push('/orderGood')
                 },
                 content:"返回后，本次操作记录将丢失，请确认是否离开？"

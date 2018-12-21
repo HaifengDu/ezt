@@ -62,7 +62,13 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                         }); 
                     }
                 })               
-            }        
+            }
+            formData.modifyParams(bb.data.goodsList,{
+                distributePrice1:'price',
+                'unit_name':'unitName',
+                material_name:'name'
+            })
+
            return Promise.resolve(bb);
         });
     }
@@ -100,7 +106,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                             // acc_qty:"num",
                             distributePrice1:'price',
                             // memo:'remark',
-                            material_name:'name'
+                            material_name:'name',
+                            unit_name:'unitName'
                         }); 
                     }
                 })               

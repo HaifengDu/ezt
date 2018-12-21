@@ -22,9 +22,19 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param bill_type 
      */
     getBohClassifiedSearch(param:any,pager:IPagerData){
+        let firstIds = {};
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {
+                "goodsSortId": param.categoryId,
+            }
+        }else{
+            firstIds = {
+                "goodsSortId": param.goodsSortId,
             }
         }
         return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,{
@@ -35,10 +45,10 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pageno": pager.page, 
                 "pagesize": pager.limit, 
                 "totalcount": 0
-            }
+            },...firstIds
         },config).then(res=>{              
             let bb = res; 
-            if(bb.data.sortList&&bb.data.sortList.length>0){
+            if(bb.data.sortList&&bb.data.sortList.length>0){//既查分类，也查物品
                 bb.data.sortList.forEach((item:any)=>{
                     if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>0){
                         /**
@@ -103,12 +113,27 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param param 
      * @pager 分页
      */
-    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{
+    getBohOrderClass(param:any,pager:IPagerData):AxiosPromise<any>{  //既查分类，也查物品
+        let firstIds = {};
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
-        }        
+        }   
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {
+                categoryId: param.categoryId,
+            }
+        }else{
+            firstIds = {
+                categoryId: param.categoryId,
+                "goodsSortId": param.stockGoodsSortId,
+                // "goodsName":param.orderGoodsName,
+            }
+            // if(param['goodsName']){
+            //     firstIds['goodsName'] = param['goodsName'];
+            // }
+        }
         return Axios.post(`${this.reqUrl}mobile/purchase/chooseOrderGoods`,{
             "id": param.id || '',
             "supplierId": param.supplierId,//21
@@ -120,7 +145,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pageno": pager.page, 
                 "pagesize": pager.limit, 
                 "totalcount": 0   
-            }          
+            },...firstIds         
         },config).then(res=>{ 
             let bb = res;
             /**
@@ -133,6 +158,14 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 childs:'cdata',   
                 sortName:'name', 
                 memo:'remark',
+            });
+            formData.modifyParams( bb.data.goodsList, {
+                memo:'remark',
+                goodsName:'name',
+                distributePrice1:'price',
+                goodsId:'material_id',
+                currentQty:'num'
+
             });
             return Promise.resolve(bb);
         });

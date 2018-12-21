@@ -475,7 +475,7 @@ export default class AddGood extends Vue{
       allGoods: item//下拉加载的时候分类中已经有返回全部的物品，加载更多
     }
     if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
-      if(item.goodsList&&item.goodsList.length>0){//全部里面找出已经选择的货品
+      if(item.goodsList && item.goodsList.length>0){//全部里面找出已经选择的货品
         // this.allGoods(item);
         this.goodList = this.allGoods(item);
         // _this_.typeName = this.allGoods(item);
@@ -483,7 +483,7 @@ export default class AddGood extends Vue{
         return false;
       }
     }      
-    _this_.service.getGoodList( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
+    _this_.service.getGoodClass( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList || [];
       
       this.goodList = this.allGoods(res.data);
@@ -549,7 +549,7 @@ export default class AddGood extends Vue{
           this.$toasted.show(err.message);
         });
       }else{//分类当中并没有返回全部的物品，要去单独请求一次物品的接口
-        _this_.service.getGoodList(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
+        _this_.service.getGoodClass(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
           let goodsList = res.data.goodsList;
           goodsList = this.allGoods(res.data);//已选择的物品数量
 

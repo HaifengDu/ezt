@@ -449,6 +449,8 @@ export default class Order extends Vue{
                 return item.id == info.id;
             })
             _this.goodData.splice(newIndex,1);
+            _this.selectedGood.splice(newIndex,1);
+            
         },
         content:'请确认是否删除该物料。'
         })
@@ -581,30 +583,30 @@ export default class Order extends Vue{
     private get Total(){
       return this.selectedGood.reduce((ori,item)=>{
         if(item.finalOrderQty){
-                //boh版的数量，金额
-                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
-                if(item.distributePrice1){
-                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1);
-                }else if(item.Amt){
-                    ori.Amt = ori.Amt + (item.amt);
-                }else{
-                    ori.Amt = 0;
-                    ori.finalOrderQty = 0;
-                }
-                return ori;
+            //boh版的数量，金额
+            ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
+            if(item.distributePrice1){
+                ori.Amt = ori.Amt + (Number(item.finalOrderQty) * Number(item.distributePrice1));
+            }else if(item.Amt){
+                ori.Amt = ori.Amt + (item.amt);
             }else{
-                //saas版的数量，金额
-                ori.num = ori.num+Number(item.num); 
-                if(item.price){
-                    ori.Amt = ori.Amt + (item.num * item.price);
-                }else if(item.Amt){
-                    ori.Amt = ori.Amt + (item.amt);
-                }else{
-                    ori.Amt = 0;
-                    ori.num = 0;
-                } 
-                return ori;
+                ori.Amt = 0;
+                ori.finalOrderQty = 0;
             }
+            return ori;
+        }else{
+            //saas版的数量，金额
+            ori.num = ori.num+Number(item.num); 
+            if(item.price){
+                ori.Amt = ori.Amt + (item.num * item.price);
+            }else if(item.Amt){
+                ori.Amt = ori.Amt + (item.amt);
+            }else{
+                ori.Amt = 0;
+                ori.num = 0;
+            } 
+            return ori;
+        }
       },{num:0,Amt:0,finalOrderQty:0});
     }
     /**

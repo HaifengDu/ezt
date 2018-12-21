@@ -15,7 +15,7 @@
          <div v-show="addgoods" class="addgoods">
           <ul>
             <li @click="toPage('/addOrderGood')">配送要货</li>
-            <li>供应商订货</li>
+            <li v-if="!InterfaceSysTypeBOH">供应商订货</li>
           </ul>
         </div>  
        </div>

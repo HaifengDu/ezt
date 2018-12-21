@@ -2,7 +2,7 @@
 <template>
   <div class="ezt-page-con">
     <ezt-header :back="true" title='选择物料' v-if="!isSelected&&!isSearch">
-      <div slot="action">
+      <div slot="action" v-if="materialLimit.billsPageType!='stocktaking'">
         <div class="add">
           <span class='ezt-action-point' @click="handlerSearchPage">
             <i class="fa fa-search" aria-hidden="true"></i>

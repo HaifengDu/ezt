@@ -396,7 +396,7 @@ export default class ReceiveGood extends Vue{
   //下拉加载更多
   private loadMore() {
     const status = this.tabList.getActive().status;
-    if(!this.allLoaded){
+    if(!this.allLoaded && this.goodList.length >= this.pager.getPage().limit){
       this.showMask();
       this.$vux.loading.show({
         text:'加载中..'

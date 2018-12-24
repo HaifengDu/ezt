@@ -521,7 +521,7 @@ export default class AddGood extends Vue{
    * 下滑加载更多物品
    */
   private loadMore(){
-    if(!this.allLoaded){
+    if(!this.allLoaded && this.goodList.length >= this.pager.getPage().limit){
       let _this_ = this;
       this.showMask();
       this.$vux.loading.show({
@@ -572,7 +572,7 @@ export default class AddGood extends Vue{
    * 查询物品中的下拉加载 
    */
   private searchLoadMore(){
-    if(!this.searchAllLoaded){
+    if(!this.searchAllLoaded && this.publicParam.searchList.length >= this.pager.getPage().limit){
       let _this_ = this;
       this.showMask();
       this.$vux.loading.show({

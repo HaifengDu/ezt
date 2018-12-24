@@ -48,7 +48,7 @@
                   </span>
                   <!---盘库显示规格账面数量-->
                   <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-                    <span class="good-item-sort" v-if="item.material_model || ''">{{item.unit_name}} </span>
+                     规格：<span class="good-item-sort" v-if="item.material_model || item.unitName">{{item.unitName}} </span>
                      账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
                   </span>
                 </div>
@@ -197,13 +197,13 @@
               </span>              
               <!-- 默认不可以进行编辑 BOH不限制-->
               <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking'">{{item.price}} 元/{{item.unitName}}</span>
-              <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
+              <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑--> 
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
               </span>
               <!---盘库显示规格账面数量-->
               <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort" style="margin-left:5px;">
-                <span class="good-item-sort" v-if="item.material_model || ''">{{item.unit_name}}</span>
+                规格：<span class="good-item-sort" v-if="item.material_model || item.unitName">{{item.unitName}}</span>
                 账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
               </span>
             </div>
@@ -267,7 +267,7 @@
             </span>
              <!-- 盘库显示规格账面数量 -->
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
-              规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
+              规格： <span class="good-item-sort" v-if="item.material_model || item.unitName">{{item.unitName}}</span>
               账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
             </span>
             <!-- 默认不可以进行编辑  BOH不限制-->
@@ -485,7 +485,6 @@ export default class AddGood extends Vue{
     }      
     _this_.service.getGoodClass( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList || [];
-      
       this.goodList = this.allGoods(res.data);
       // this.goodList = goodsList;
     },err=>{

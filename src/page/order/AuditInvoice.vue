@@ -40,7 +40,11 @@
                         </span>
                     </li> 
                 </ul>
-                <ul>
+                <div v-if="selectedGood.length==0" class="done-none">
+                    <div></div>
+                    <span>暂无物品明细</span>
+                </div>
+                <ul v-if="selectedGood.length>0">
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
                         <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
                         v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">

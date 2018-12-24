@@ -170,7 +170,7 @@ export default class StockTaking extends Vue{
               onCancel () {
               },       
               onConfirm () {
-                    _this.addBillInfo={},
+                    _this.addBillInfo={};
                     _this.setSelectedGood([]);
                     _this.addBeforeBillInfo={};
                     _this.cache.clear();

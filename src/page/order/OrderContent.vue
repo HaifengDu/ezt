@@ -1,7 +1,12 @@
 <!--订单模块首页-->
 <template>
 <div>
-   <div class="ezt-page-con orderList">
+   <div class="ezt-page-con orderList" 
+        ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="false" title="订货">
       <div slot="action">
          <div class="add">
@@ -28,8 +33,8 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
-        <!-- 订货单列表  -->
-         <div v-if="goodList.length==0" class="done-none">
+          <!-- 订货单列表  -->
+          <div v-if="goodList.length==0" class="done-none">
             <div></div>
             <span>目前还没有任何订单</span>
           </div>
@@ -75,6 +80,7 @@
               <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
         </div>
+        <span v-show="allLoaded">已全部加载</span>
       </div>
     </div>
     <ezt-footer>
@@ -219,6 +225,7 @@ export default class OrderGoods extends Vue{
     private supplyAgencyBoh:any=[{}];
     private orderSuccess:string= '';
     private supplyAgency:string= '';
+    private allLoaded:boolean = false;
     private searchParam:any={
       paymentType:'',
       startDate:new Date(new Date().setDate(new Date().getDate() - 6)).format('yyyy-MM-dd'),
@@ -364,10 +371,9 @@ export default class OrderGoods extends Vue{
      */
     private tabClick(index:number){
       this.tabList.setActive(index);
-      /**
-       * 分页加载还原pageNum值
-       */
-      this.pager.resetStart();
+      this.allLoaded=false;
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
+      this.pager.resetStart();//分页加载还原pageNum值
       this.getList();     
     }  
     /**
@@ -433,6 +439,38 @@ export default class OrderGoods extends Vue{
           this.$toasted.show(err.message);
       });
     } 
+    /**
+     * 下拉加载更多
+     */
+    private loadMore() {
+      const status = this.tabList.getActive().status;
+      if(!this.allLoaded){
+        this.showMask();
+        this.$vux.loading.show({
+          text:'加载中..'
+        });
+        this.pager.setNext();
+        this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+          if(!this.InterfaceSysTypeBOH){
+              if(this.pager.getPage().limit>res.data.list.length){
+                this.allLoaded=true;
+              }
+              this.goodList = res.data.list;
+          }else{
+              if(this.pager.getPage().limit>res.data.orderList.length){
+                this.allLoaded=true;
+              }
+              this.goodList = res.data.orderList;
+          }
+          setTimeout(()=>{
+            this.$vux.loading.hide();
+            this.hideMask();
+          },500); 
+        },err=>{
+            this.$toasted.show(err.message);
+        })
+      }     
+    }
     /**
      * 左侧滑动删除
      */ 
@@ -576,7 +614,7 @@ export default class OrderGoods extends Vue{
           this.$vux.confirm.show({
             // 组件除show外的属性
             onCancel () {
-            
+                
             },
             onConfirm () {
               // addInfo.billTypes = 'handlers'

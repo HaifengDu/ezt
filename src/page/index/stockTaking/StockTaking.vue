@@ -1,7 +1,12 @@
 <!--盘库首页-->
 <template>
 <div>
-   <div class="ezt-page-con stocktaking">
+   <div class="ezt-page-con stocktaking"
+        ref="listContainer" 
+        v-infinite-scroll="loadMore"
+        :infinite-scroll-disabled="allLoaded" 
+        infinite-scroll-immediate-check="false"
+        infinite-scroll-distance="10">
     <ezt-header :back="true" title="盘库" :isInfoGoback="true" @goBack="goBack">
       <div slot="action">
          <div class="add">
@@ -24,11 +29,11 @@
         </tab-item>
       </tab>
       <div class="ezt-add-content main-menu">
-        <div v-if="inventoryList.list==0" class="done-none">
+        <div v-if="this.inventoryList.list==0" class="done-none">
           <div></div>
           <span>目前还没有任何订单</span>  
         </div>
-        <div v-if="inventoryList.list!=0">
+        <div v-if="this.inventoryList.list!=0">
           <div class="receive-dc-list" v-for="(item,index) in inventoryList.list" :key="index">
             <div class="ezt-list-show" 
                 v-swipeleft="handlerSwipe.bind(this,item,true)"  
@@ -71,8 +76,9 @@
             <div class="ezt-detail-del" @click="delAction(item)">
                 <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
+          </div>
         </div>
-      </div>
+       <span v-show="allLoaded">已全部加载</span>
       </div>
     </div>
   </div>
@@ -187,6 +193,7 @@ export default class stockTaking extends Vue{
     private bohWarehouse:any;
     private type:string; //盘点类型数据
     private pageType = PageType;
+    private allLoaded:boolean = false;//数据是否加载全部
     created() {
       const factory = FactoryService.getInstance().createFactory();
       this.service = factory.createStockTaking();
@@ -298,9 +305,11 @@ export default class stockTaking extends Vue{
     } 
     private tabClick(index:number){
       this.tabList.setActive(index);
+      this.allLoaded=false;
+      (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
       this.pager.resetStart();//分页加载还原pageNum值
-      this.getpkList();  
-    }
+      this.getpkList();   
+    }       
     /**
      * 点击删除按钮 
      */
@@ -357,6 +366,38 @@ export default class stockTaking extends Vue{
         },err=>{
           this.$toasted.show(err.message)
       });
+    }
+    /**
+     * 下拉加载更多
+     */
+    private loadMore() {
+      const status = this.tabList.getActive().status;
+      if(!this.allLoaded){
+        this.showMask();
+        this.$vux.loading.show({
+          text:'加载中..'
+        });
+        this.pager.setNext();
+        this.service.getInventoryList(status as string, this.pager.getPage()).then(res=>{  
+          if(!this.InterfaceSysTypeBOH){
+             if(this.pager.getPage().limit>res.data.data[0].length){
+                this.allLoaded=true;   
+              }
+              this.inventoryList = res.data.data[0];
+          }else{
+             if(this.pager.getPage().limit>res.data.list.length){
+                this.allLoaded=true;   
+              }
+              this.inventoryList = res.data;
+          }
+          setTimeout(()=>{
+            this.$vux.loading.hide();
+            this.hideMask();
+          },500); 
+        },err=>{
+            this.$toasted.show(err.message);
+        })
+      }     
     }
     /**
      * 左侧滑动删除

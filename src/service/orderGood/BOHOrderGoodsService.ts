@@ -26,7 +26,7 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
                 "orderby": null, 
                 "asc": false, 
                 "pageno": 1, 
-                "pagesize": 20, 
+                "pagesize": 10, 
                 "totalcount": 0
             }
         },config).then(res=>{              
@@ -103,7 +103,7 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
                 "orderby": "", 
                 "asc": false, 
                 "pageno": 1, 
-                "pagesize": 20, 
+                "pagesize": 10, 
                 "totalcount": 0
             } 
         },config).then(res=>{              

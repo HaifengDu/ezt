@@ -55,9 +55,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
-                            // acc_qty:"num",
                             distributePrice1:'price',
-                            'unit_name':'unitName',
+                            unit_name:'unitName',
                             material_name:'name'
                         }); 
                     }
@@ -65,7 +64,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
             formData.modifyParams(bb.data.goodsList,{
                 distributePrice1:'price',
-                'unit_name':'unitName',
+                unit_name:'unitName',
                 material_name:'name'
             })
 
@@ -103,15 +102,18 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
-                            // acc_qty:"num",
                             distributePrice1:'price',
-                            // memo:'remark',
-                            material_name:'name',
-                            unit_name:'unitName'
+                            unit_name:'unitName',
+                            material_name:'name'
                         }); 
                     }
                 })               
             }  
+            formData.modifyParams(bb.data.goodsList,{
+                distributePrice1:'price',
+                unit_name:'unitName',
+                material_name:'name'
+            })
             return Promise.resolve(bb);
         });
     }

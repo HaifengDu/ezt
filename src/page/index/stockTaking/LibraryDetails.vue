@@ -131,7 +131,7 @@ export default class stockTaking extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private cache = CachePocily.getInstance();
     private details:any={};  //盘库表头信息
-    private inventoryDetails:any[]=[];//详情页物品信息
+    private inventoryDetails:any[];//详情页物品信息
     private types:string = '';  //页面类型
     private title:string = '';//页面表头
     private pageType = PageType;

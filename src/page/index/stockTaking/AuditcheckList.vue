@@ -127,7 +127,7 @@ export default class StockTaking extends Vue{
     private detail:any={};//盘库表头信息
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={};//新增盘库单
-    private InventoryList:any[];   
+    private InventoryList:any[] = [];   
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
@@ -144,6 +144,7 @@ export default class StockTaking extends Vue{
     }
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.InventoryList  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+        this.InventoryList = this.InventoryList['details']
     }
     if(this.selectedGood&&this.selectedGood.length>0){
       formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段

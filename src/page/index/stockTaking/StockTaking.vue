@@ -419,13 +419,13 @@ export default class stockTaking extends Vue{
            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
         }
         if(this.InterfaceSysTypeBOH){
-            if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
+            if(this.tabList.getActive().status=='SCM_AUDIT_NO'){ 
               this.$router.push({name:'AuditcheckList'}); 
             }
             if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
               this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
             }
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data['details']));
+            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         }
       },err=>{
           this.$toasted.show(err.message)
@@ -619,7 +619,7 @@ export default class stockTaking extends Vue{
         position: absolute;
         right: -11px;
         width: 50px;
-        height: 190px;
+        height: 167px;
         font-size: 25px;
         display: flex;
         align-items: center;

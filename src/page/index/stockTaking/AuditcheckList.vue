@@ -48,7 +48,7 @@
                         </div>
                         <div class="good-detail-nobreak">
                               <span class="good-detail-billno">编码：{{item.material_num}}</span>
-                              <span class="good-detail-sort">单位：{{item.unit_name}}</span> 
+                              <span class="good-detail-sort">单位：{{item.unitName}}</span> 
                         </div> 
                         <div>
                             <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
@@ -56,8 +56,8 @@
                         </div> 
                     </div>
                     <div class="good-detail-r">
-                      <div class="park-input"> 
-                        <span class="title-search-name">备注：{{item.remark||item.memo}}</span>
+                      <div class="park-input" style="margin-top:10px;"> 
+                        <span class="title-search-name">备注：{{item.remark || item.memo}}</span>
                       </div>                    
                     </div>
                 </div> 
@@ -138,7 +138,7 @@ export default class StockTaking extends Vue{
     this.service = factory.createStockTaking();
     if(this.cache.getData(CACHE_KEY.INVENTORY_ADDINFO)){
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));
-    }
+    } 
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
         this.detail = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
     }
@@ -148,9 +148,10 @@ export default class StockTaking extends Vue{
     }
     if(this.selectedGood&&this.selectedGood.length>0){
       formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-        num:"disperse_num",  //实盘数
-        remark:'memo',  
-        name:'material_name'       
+          num:"disperse_num",  //实盘数
+          remark:'memo',  
+          name:'material_name',
+          price:"distributePrice1"       
       })
       this.InventoryList = ObjectHelper.serialize(this.selectedGood);
     }  
@@ -194,12 +195,12 @@ export default class StockTaking extends Vue{
    * 
    * 物料总数量\总金额
    */
-    private get Total(){
-        return this.InventoryList.reduce((ori:any,item:any) => {
-            if(item.distributePrice1){
+  private get Total(){
+         return this.InventoryList.reduce((ori,item) => {
+            if(item.disperse_num){
                 ori.disperse_num = ori.disperse_num + Number(item.disperse_num);
                 if(item.distributePrice1){
-                    ori.Amt = ori.Amt + Number(item.distributePrice1);
+                    ori.Amt = ori.Amt + (Number(item.disperse_num) * Number(item.distributePrice1));
                 }else if(item.Amt){
                     ori.Amt = ori.Amt + (item.amt);
                 }else{
@@ -219,8 +220,8 @@ export default class StockTaking extends Vue{
                 } 
                 return ori;
            }
-    },{num:0,Amt:0,distributePrice1:0,disperse_num:0});
-  } 
+      },{num:0,Amt:0,distributePrice1:0,disperse_num:0});
+   } 
   /**
    * 删除物料操作
    */
@@ -264,11 +265,12 @@ export default class StockTaking extends Vue{
               material_id: item.material_id,
               unit_id: item.unit_id,
               thery_qty: item.thery_qty,
-              unit_name: item.unit_name,
+              unitName: item.unitName,
               material_name: item.material_name,
               acc_qty:item.acc_qty,
               distributePrice1:item.distributePrice1,
-              disperse_num:item.disperse_num
+              disperse_num:item.disperse_num,
+              memo:item.memo
             };
 					rows.push(obj);    
         });  
@@ -328,11 +330,12 @@ export default class StockTaking extends Vue{
                   material_id: item.material_id,
                   unit_id: item.unit_id,
                   thery_qty: item.thery_qty,
-                  unit_name: item.unit_name,
+                  unitName: item.unitName,
                   material_name: item.material_name,
                   acc_qty:item.acc_qty,
                   distributePrice1:item.distributePrice1,
-                  disperse_num:item.disperse_num
+                  disperse_num:item.disperse_num,
+                  memo:item.memo,
                 };
               rows.push(obj);
             });

@@ -173,7 +173,7 @@ export default class StockTaking extends Vue{
     private bill_type:string; //弹层盘点类型
     private selectedGood:any[];//store中selectedGood的值  
     private setSelectedGood:INoopPromise//store中给selectedGood赋值
-    private InventoryList:any[] = [];//货品详情
+    private InventoryList:any[];//货品详情
     private pageType = PageType; //页面类型
     private warehouseType:any[] = [];  //动态加载仓库
     private addinventory:any={
@@ -360,10 +360,15 @@ export default class StockTaking extends Vue{
    *  BOH盘点单 保存并提交
    */
   private saveReceive(rows:Array<any>){
+    	if(!this.selectedGood||this.selectedGood.length<=0){
+        this.$toasted.show("当前货品数量为0，请添加货品！");
+        return false;
+      }
         var rows=[]; 
 				this.InventoryList.forEach(item => {
 					let obj = {
-              "unit_name": item.unit_name,
+              "memo":item.memo,
+              "unitName": item.unitName,
               "unit_id":item.unit_id,
               "consume_qty":item.consume_qty,
               "thery_qty":item.thery_qty,
@@ -387,10 +392,7 @@ export default class StockTaking extends Vue{
           "details":rows
         }
 				this.service.getAdditionalcheckList(billInfo).then(res=>{
-					if(!this.selectedGood||this.selectedGood.length<=0){
-						this.$toasted.show("当前货品数量为0，请添加货品！");
-						return false;
-					}
+				
 					this.addBillInfo={};
 					this.setSelectedGood([]);
           this.addBeforeBillInfo={};

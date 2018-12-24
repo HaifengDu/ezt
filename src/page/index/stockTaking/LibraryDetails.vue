@@ -34,7 +34,7 @@
                     </div>
                     <div>
                         <p>规格：<span>{{item.material_model}}</span></p>
-                        <p>单位：<span>{{item.unit_name}}</span></p>
+                        <p>单位：<span>{{item.unitName}}</span></p>
                     </div>
                     <div v-if="!InterfaceSysTypeBOH">
                       <p>理论库存：<span>{{item.thery_qty}}</span></p>

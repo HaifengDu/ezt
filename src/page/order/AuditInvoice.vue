@@ -171,10 +171,10 @@ export default class OrderGoods extends Vue{
      */
      private get Total(){
         return this.selectedGood.reduce((ori,item) => {
-            if(item.distributePrice1){
-                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
+            if(item.finalOrderQty){
+                ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);   
                 if(item.distributePrice1){
-                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1 * item.orderUnitRates );
+                    ori.Amt = ori.Amt + (item.finalOrderQty * item.distributePrice1);
                 }else if(item.Amt){
                     ori.Amt = ori.Amt + (item.amt);
                 }else{
@@ -194,7 +194,7 @@ export default class OrderGoods extends Vue{
                 } 
                 return ori;
            }
-      },{num:0,Amt:0,distributePrice1:0,finalOrderQty:0,orderUnitRates:0});
+      },{num:0,Amt:0,distributePrice1:0,finalOrderQty:0});
     } 
 
      /**

@@ -8,7 +8,8 @@ import ComfirmAccept from '@/page/index/receiveGood/ConfirmAccept.vue';//收货�
 import AddReceiveGood from '@/page/index/receiveGood/AddReceiveGood.vue';//新增收货
 import CheckDetail from '@/page/index/receiveGood/CheckDetail.vue';//收货单详情页
 import SearchReceiveGood from '@/page/index/receiveGood/SearchReceiveGood.vue';//收货单查询
-import PublicAddGood from '@/page/index/receiveGood/PublicAddGood.vue';//选择物料
+import PublicAddGood from '@/page/publicGood/BohPublicAddGood.vue';//BOH选择物料
+import SaasPublicGood from '@/page/publicGood/SaasPublicGood.vue';//saas版選擇物料
 import MineContent from '@/page/mine/MineContent.vue';
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue';
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue';
@@ -121,6 +122,10 @@ const router = new Router({
       path:'/publicAddGood',
       name:'PublicAddGood',
       component: PublicAddGood,
+    },{
+      path:'/saasPublicGood',
+      name:'SaasPublicGood',
+      component: SaasPublicGood,
     },{
       path:'/changePsd',
       name:'ChangePsd',

@@ -26,7 +26,7 @@
               <p class="title" v-if="types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.ConfirmList || !types== pageType.RealdiscEntry || types== pageType.InventoryType">盘点单</p>
               <ul>
                 <li :key="index" v-for="(item,index) in inventoryDetails">
-                    <div>   
+                    <div>  
                       <p>
                          <span style="margin-right:10px;">{{item.material_name}}</span>
                          编码：<span>{{item.material_num}}</span>

@@ -414,18 +414,19 @@ export default class stockTaking extends Vue{
     private librarydetails(item:any,types:PageType){
       this.service.getLibraryDetails(item.id,item.bill_status).then(res=>{ 
         this.cache.save(CACHE_KEY.INVENTORY_LIST,JSON.stringify(item));
+        this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         if(!this.InterfaceSysTypeBOH || this.tabList.getActive().status==0 || this.tabList.getActive().status==1){
            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
            this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
         }
+       
         if(this.InterfaceSysTypeBOH){
             if(this.tabList.getActive().status=='SCM_AUDIT_NO'){ 
-              this.$router.push({name:'AuditcheckList'}); 
+              this.$router.push({name:'AuditcheckList'});   
             }
             if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
               this.$router.push({name:'LibraryDetails',query:{types:types.toString()}});  
             }
-            this.cache.save(CACHE_KEY.INVENTORY_DETAILS,JSON.stringify(res.data.data));
         }
       },err=>{
           this.$toasted.show(err.message)

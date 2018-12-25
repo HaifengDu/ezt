@@ -534,7 +534,6 @@ input{
         color: #A3B3C2;
         letter-spacing: 0;
         padding: 0px 0px 5px;
-        margin-top: 10px;
     }
     .ezt-detail-good{
         display: flex;

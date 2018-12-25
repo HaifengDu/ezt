@@ -16,6 +16,7 @@ import IndexList from 'mint-ui/lib/index-list';
 import IndexSection from 'mint-ui/lib/index-section';
 import InfiniteScroll from 'mint-ui/lib/infinite-scroll';
 import CellSwipe from 'mint-ui/lib/cell-swipe';
+import GoTop from '../components/GoTop.vue';
 
 // import Notification from "element-ui/lib/notification";
 // import DatePicker from "element-ui/lib/date-picker";
@@ -156,3 +157,4 @@ Vue.component(CellSwipe.name, Vue.extend(CellSwipe));
 Vue.component('confirm', Vue.extend(Confirm));//确认弹框
 Vue.component('button-tab', Vue.extend(ButtonTab))
 Vue.component('button-tab-item', Vue.extend(ButtonTabItem))
+Vue.component("GoTop",Vue.extend(GoTop));//返回顶部

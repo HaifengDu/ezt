@@ -174,6 +174,7 @@
    <!-- <confirm v-model="isDelete" @on-confirm="Confirm" @on-cancel="Cancel">
         <p style="text-align:center;">是否要删除该单据？</p>
    </confirm> -->
+   <go-top :element="element" :maxTop="40" class="toTop"></go-top> 
 </div>
 </template>
 <script lang="ts">
@@ -212,6 +213,7 @@ export default class OrderGoods extends Vue{
     private InterfaceSysTypeBOH:boolean;
     private pager:Pager;
     private service: IOrderGoodsService;
+    private element: any = null; 
     private tabList:TabList = new TabList();
     private goodList:any[] = [];//列表页list数据
     private addMaskClickListener:(...args:any[])=>void;
@@ -299,9 +301,18 @@ export default class OrderGoods extends Vue{
         if(this.InterfaceSysTypeBOH){
           this.getOrganization();  
         }
-        
     }
-    mounted(){      
+    /**
+     * 顶部
+     */
+    @Watch('this.osTop',{
+      deep:true
+    })
+
+    mounted(){     
+      if (this.$refs.listContainer){
+        this.element = this.$refs.listContainer;
+      } 
       this.getList();
       /**
        * 点击遮罩层下拉
@@ -379,7 +390,7 @@ export default class OrderGoods extends Vue{
     }  
     /**
      * 点击删除待审核单据
-     */
+     */   
     private deleteBill(item:any){
       let _this = this;
       this.$vux.confirm.show({
@@ -632,6 +643,10 @@ export default class OrderGoods extends Vue{
 }
 </script>
 <style lang="less" scoped>
+    .go-top{
+      bottom:78px !important;
+      z-index: 9;
+    }
     .ezt-header{
       padding: 0;
       height: 45px;

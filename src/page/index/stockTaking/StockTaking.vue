@@ -1,6 +1,6 @@
 <!--盘库首页-->
 <template>
-<div>
+ <div>
    <div class="ezt-page-con stocktaking"
         ref="listContainer" 
         v-infinite-scroll="loadMore"
@@ -136,6 +136,7 @@
       </li>
     </ul>
   </div> 
+  <go-top :element="element" :maxTop="40" class="toTop"></go-top> 
 </div>
 </template>
 <script lang="ts">
@@ -154,11 +155,12 @@ import {maskMixin} from "../../../helper/maskMixin"
 import { CachePocily } from "../../../common/Cache"
 import { PageType } from "../../../enum/EPageType"
 import CACHE_KEY from '../../../constans/cacheKey'
+import noInput from '../../../mixin/noInput'
 @Component({
    components:{
      TabItem
    },
-   mixins:[maskMixin],
+   mixins:[maskMixin,noInput],
    computed:{
      ...mapGetters({
         'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',//接口BOH
@@ -174,7 +176,8 @@ export default class stockTaking extends Vue{
     private pager:Pager; 
     private service:IStockTakingService;
     private InterfaceSysTypeBOH:boolean;
-    private cache = CachePocily.getInstance();   
+    private cache = CachePocily.getInstance();  
+    private element: any = null; 
     private inventoryList:{list?:any[]} = {};//盘库列表   
     private tabList:TabList = new TabList();
     private newlyadded:boolean= false;
@@ -254,7 +257,17 @@ export default class stockTaking extends Vue{
        */
       this.getWarehouseType();  
     }
+    /**
+     * 顶部
+     */
+    @Watch('this.osTop',{
+      deep:true
+    })
+
     mounted(){   
+      if (this.$refs.listContainer){
+        this.element = this.$refs.listContainer;
+      }
       this.getpkList();
       /**
        * 点击遮罩层 
@@ -509,7 +522,7 @@ export default class stockTaking extends Vue{
     private query(){
       this.isSearch = !this.isSearch;
       this.isSearch?this.showMask():this.hideMask();
-    }
+    }   
     /**
      * 查询结果页  
      */
@@ -532,13 +545,16 @@ export default class stockTaking extends Vue{
         })
     }
 }
-</script>
+</script>   
 <style lang="less" scoped>
 @padding: 5px 6px;
 @width:100%;  
 @height:100%;
 @background-color:#fff;
 @border-radius:3px;
+    .go-top{
+      z-index:9;
+    }
     .ezt-header{
       padding: 0;
       height: 45px;

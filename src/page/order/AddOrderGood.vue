@@ -132,12 +132,12 @@
                     </li>
                 </ul>   
             </div>
-        </div>
+        </div> 
         <ezt-footer>
             <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total" v-if="this.goodData.length>0">合计：
                     <b>品项</b><span>{{this.goodData.length}}</span>，
-                    <b>数量</b><span>{{Total.num||Total.finalOrderQty}}</span>，
+                    <b>数量</b><span>{{Total.num || Total.finalOrderQty}}</span>，
                     <b v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥</b>
                     <span v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">{{Total.Amt.toFixed(2)}}</span>
                 </div>
@@ -452,7 +452,7 @@ export default class Order extends Vue{
             _this.selectedGood.splice(newIndex,1);
             
         },
-        content:'请确认是否删除该物料。'
+        content:'请确认是否删除该物料?'
         })
     }
     // 左侧滑动删除
@@ -587,7 +587,7 @@ export default class Order extends Vue{
             ori.finalOrderQty = ori.finalOrderQty + Number(item.finalOrderQty);
             if(item.distributePrice1){
                 ori.Amt = ori.Amt + (Number(item.finalOrderQty) * Number(item.distributePrice1));
-            }else if(item.Amt){
+            }else if(item.Amt){   
                 ori.Amt = ori.Amt + (item.amt);
             }else{
                 ori.Amt = 0;
@@ -607,7 +607,7 @@ export default class Order extends Vue{
             } 
             return ori;
         }
-      },{num:0,Amt:0,finalOrderQty:0});
+      },{num:0,Amt:0,finalOrderQty:0,distributePrice1:0});
     }
     /**
      * 提交并审核
@@ -649,13 +649,12 @@ export default class Order extends Vue{
             },
             onConfirm () {//审核通过
                 _this.setSelectedGood([]);
-                _this.$toasted.success("审核成功！");
                 if(!_this.InterfaceSysTypeBOH){
                     _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
                 }else{
                     _this.service.saveOrder((Object.assign(newparam,_this.addBeforeBillInfo))).then(res=>{
-                        _this.$toasted.success("审核成功");
                         _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
+                        _this.$toasted.success("审核成功！");
                     },err=>{
                         this.$toasted.show(err.message);
                     })                    

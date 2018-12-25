@@ -40,7 +40,7 @@
           </li>  
           <li v-if="receive_billtype.cai">
             <span class="title-search-name">选择物料：</span>
-            <span class="title-search-right" @click="renderUrl('/publicAddGood')">
+            <span class="title-search-right" @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
             
@@ -219,7 +219,7 @@
             <a href="javascript:(0)" class="ezt-foot-sub" @click="saveAndAuditReceive" v-if="receive_billtype.cai">提交并审核</a>   
           </div>  
         </div>     
-      </ezt-footer>    
+      </ezt-footer>     
     </div>
   </div>
 </template>

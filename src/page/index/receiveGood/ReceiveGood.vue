@@ -127,7 +127,8 @@
           <div class="ezt-two-btn" @click="toSearch">查询</div>
         </li>
       </ul>
-    </div> 
+    </div>  
+     <go-top :element="element" :maxTop="40" class="toTop"></go-top> 
   </div> 
 </template>
 
@@ -164,6 +165,7 @@ import commonService from '../../../service/commonService.js';
   //  }
 })
 export default class ReceiveGood extends Vue{
+  private element: any=null;
   private InterfaceSysTypeBOH:boolean;
   private cache = CachePocily.getInstance();
   private service: IReceiveGoodService;
@@ -257,9 +259,18 @@ export default class ReceiveGood extends Vue{
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createReceiveGood();
     this.getWarehouseList(); //仓库下拉列表
+   
   }
+  @Watch('this.osTop',{
+    deep:true
+  })
 
   mounted(){ 
+    if (this.$refs.listContainer){
+      this.element = this.$refs.listContainer;
+      console.log(this.$refs.listContainer);
+    }
+
     if(this.cache.getData(CACHE_KEY.RECEIVE_SEARCH)){//记住查询条件
       this.searchParam = JSON.parse(this.cache.getDataOnce(CACHE_KEY.RECEIVE_SEARCH));
       this.pullList.defaultDate.defaultStartDate = this.searchParam.startDate;

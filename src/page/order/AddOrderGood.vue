@@ -70,7 +70,7 @@
                         <li>
                             <!-- <span class="title-search-name">选择物料：</span> -->
                             <span class="title-search-name is-required">选择物料：</span>
-                            <span class="title-search-right" @click="renderUrl('/publicAddGood')">
+                            <span class="title-search-right" @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
                             <i class="fa fa-angle-right" aria-hidden="true"></i>
                             </span>
                             

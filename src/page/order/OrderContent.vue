@@ -131,7 +131,7 @@
                 <option value=''  style="display:none;" disabled="disabled" selected="selected">请选择供货机构</option>
                 <option :value="item.id" :key="index" v-for="(item,index) in selectionBoh">{{item.name}}</option>
               </select>
-            </span>   
+            </span>     
           </li>
        <li class="select-list" v-if="!InterfaceSysTypeBOH">
           <span class="title-search-name ">支付类型：</span> 
@@ -326,6 +326,7 @@ export default class OrderGoods extends Vue{
         this.tabList.TabList.forEach((item,index)=>{
           if(item.name == this.$route.params.purStatus){
             item.active = true;
+            this.getList();
           }else{
             item.active = false;
           }

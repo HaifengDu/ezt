@@ -67,7 +67,7 @@
                       <!-- boh价格/单位 总金额显示 -->
                       <div class="good-detail-price" v-if="InterfaceSysTypeBOH">
                         <span class="good-detail-sort">￥{{item.sendPrice}}/{{item.orderUnitName}}</span> 
-                        <span class="good-detail-sort">￥{{item.sendAmt}}</span>
+                        <span class="good-detail-sort">金额：￥{{item.sendAmt}}</span>
                       </div>
                        <!-- saas显示 发、收量  -->
                       <div class="good-detail-num" v-if="(!InterfaceSysTypeBOH)">                                                 
@@ -81,8 +81,8 @@
                       </div>
                        <!-- boh显示 收量 -->   
                       <div class="good-detail-num" v-if="(InterfaceSysTypeBOH)"> 
-                          <span class="title-search-name ezt-dense-box">发：{{item.sendQty}}</span>   
-                          <span class="title-search-name ezt-dense-box">收：                          
+                          <span class="title-search-name ezt-dense-box">发货数量：{{item.sendQty}}</span>   
+                          <span class="title-search-name ezt-dense-box">实收数量：                          
                             <span v-if="InterfaceSysTypeBOH">{{item.factQty}}</span>
                           </span>
                       </div>                   

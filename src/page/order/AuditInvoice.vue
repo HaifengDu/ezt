@@ -225,7 +225,7 @@ export default class OrderGoods extends Vue{
      /**
      * 选择物料
      */
-    private renderUrl(info: string) {   
+    private renderUrl(info: string) {
         let goodTerm = {};
         let material_param ={};
         goodTerm={
@@ -233,6 +233,7 @@ export default class OrderGoods extends Vue{
             showPrice: !this.materialSetting.show_order_price
         }  
         material_param={
+            id:this.addBillInfo.id,
             supplierId : this.addBillInfo.supplierId,
             orderDate : this.addBillInfo.orderDate,
             orderType : 'SCM_ORDER_TYPE_RULE'
@@ -248,7 +249,7 @@ export default class OrderGoods extends Vue{
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo))
         this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo))
-        this.setSelectedGood(this.selectedGood)
+        this.setSelectedGood(this.selectedGood)     
         this.$router.push(info);
     } 
     /**

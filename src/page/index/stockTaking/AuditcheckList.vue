@@ -20,7 +20,7 @@
               <span class="title-search-name">盘点类型：</span>
               <input type="text" class="ezt-middle" disabled v-model="detail.bill_type_name">
           </li>
-          <li>
+          <li>   
               <span class="title-search-name">仓库：</span>
               <input type="text" class="ezt-middle" disabled v-model="detail.warehouse_name">
           </li>

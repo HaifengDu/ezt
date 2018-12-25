@@ -3,8 +3,8 @@
    <!--确认盘点单  审核盘点单  盘库详情  实盘录入-->
    <div class="ezt-page-con librarydetails" 
         v-if="types== pageType.ConfirmList || types== pageType.AuditList || types== pageType.LibraryDetails || types== pageType.RealdiscEntry || types== pageType.InventoryType">
-      <ezt-header :back="true" :title="title">
-        <div slot="action">
+      <ezt-header :back="true" :title="title"  @goBack="goBack" :isInfoGoback="true">
+        <div slot="action">  
             <span></span>
         </div>         
       </ezt-header>    
@@ -181,6 +181,10 @@ export default class stockTaking extends Vue{
     }
     mounted(){       
       
+    }
+    private goBack() {     
+      this.cache.clear();
+      this.$router.push('/stockTaking');
     }
     /**
      * 审核不通过

@@ -61,7 +61,7 @@
                 </div>
                 <div class="good-detail-nobreak">
                     <span class="good-detail-billno ">编码：003222</span>
-                    <span class="good-detail-sort">￥{{item.price}}/{{item.utilname}}</span>
+                    <span class="good-detail-sort">￥{{item.price}}/{{item.unitName}}</span>
                     <span class="title-search-name ezt-dense-box">收：{{item.num}}</span>                         
                 </div>                     
               </div>

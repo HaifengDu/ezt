@@ -43,8 +43,8 @@
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName" v-if="!InterfaceSysTypeBOH">配</span>
                 <span class="return-list-title"  style="margin-left:10px;">{{item.dc_name}} {{item.billNo}}</span> 
-                <span class="receive-status" v-if="tabList.getActive().status==0 || tabList.getActive().status=='SCM_AUDIT_NO'"  @click.stop="toexamine('examine',item)">审核未通过</span>
-                <span class="receive-status" @click.stop="morelist('add',item)" v-if="tabList.getActive().status==1 || (tabList.getActive().status==2&&!InterfaceSysTypeBOH)">再来一单>></span>
+                <span class="receive-status" v-if="tabList.getActive().status==0 || tabList.getActive().status=='SCM_AUDIT_NO'"  @click.stop="toexamine(item)">审核未通过</span>
+                <span class="receive-status" @click.stop="morelist(item)" v-if="tabList.getActive().status==1 || (tabList.getActive().status==2&&!InterfaceSysTypeBOH)">再来一单>></span>
                 <span class="receive-status" v-if="tabList.getActive().status=='SCM_AUDIT_YES'">已完成</span>
               </div>
               <div class="receive-icon-content" @click="orderdetails('payMent',item)">
@@ -561,7 +561,7 @@ export default class OrderGoods extends Vue{
     /**
      * 审核要货单
      */
-    private toexamine(type:any,item:any){   
+    private toexamine(item:any){   
       if(!this.InterfaceSysTypeBOH){
         let OrderModule = {}; 
         if(this.tabList.getActive().status==0){
@@ -573,13 +573,15 @@ export default class OrderGoods extends Vue{
             memo:'提前一天联系供应商',        
           }   
           this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(OrderModule));
-          this.$router.push({name:'AuditInvoice',query:{type:type}});  
+          // this.$router.push({name:'AuditInvoice',query:{type:type}});  
+          this.$router.push('/AuditInvoice')
         }
       }else{
         if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
           this.service.getGoodDetail(item.id).then(res=>{ 
               this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(res.data.data));
-              this.$router.push({name:'AuditInvoice',query:{type:type}});  
+              // this.$router.push({name:'AuditInvoice',query:{type:type}});  
+              this.$router.push('/AuditInvoice')
             },err=>{
                 this.$toasted.show(err.message)
           })
@@ -589,12 +591,11 @@ export default class OrderGoods extends Vue{
     /**
      * 再来一单
      */
-    private morelist(type:any,item:any){
+    private morelist(item:any){
       let addInfo = {};
       let _this = this;
        if(this.tabList.getActive().status==1 || this.tabList.getActive().status==2){
         addInfo={
-          type:type,
           billno:item.bill_no,
           supplierName:'供应商1号',
           orderDate:item.ask_goods_date,   
@@ -612,9 +613,9 @@ export default class OrderGoods extends Vue{
             },
             onConfirm () {
               _this.$set(addInfo,'billTypes','handlers');
-              // addInfo.billTypes = 'handlers';
               _this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(addInfo));
-              _this.$router.push({name:'AuditInvoice',query:{type:type}}); 
+              // _this.$router.push({name:'AuditInvoice',query:{type:type}}); 
+              _this.$router.push('/addOrderGood'); 
             },
             content:'***【供货机构名称】的****【物料名称】已停止供货，请确认是否跳过此物料继续下单。',
             confirmText:"继续下单"

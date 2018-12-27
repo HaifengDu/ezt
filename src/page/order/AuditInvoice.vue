@@ -2,7 +2,7 @@
 <template>
     <div class="ezt-page-con AuditInvoice">
         <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
-        <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
+        <!-- <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header> -->
         <div class="ezt-main">
             <div class="ezt-add-content">
                 <ul class="ezt-title-search">
@@ -12,17 +12,18 @@
                     <li>
                         <span class="title-search-name">来货单位：</span>{{addBillInfo.supplierName}}
                     </li>
-                    <li v-if="this.type == 'examine'">     
+                    <!-- <li v-if="this.type == 'examine'">    -->
+                    <li>
                         <span class="title-search-name">要货日期：</span>
                         <input type="text" class="ezt-middle" disabled v-model="addBillInfo.orderDate" :max="addBillInfo.arriveDate" ref="startDate">
                     </li>
-                    <li v-if="this.type == 'add'">
+                    <!-- <li v-if="this.type == 'add'">
                         <span class="title-search-name is-required">要货日期：</span>
                         <span>
                             <ezt-canlendar ref="startDate" v-model="addBillInfo.orderDate" :max="addBillInfo.arriveDate" :defaultValue="addBillInfo.orderDate" placeholder="要货日期" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar">
                            </ezt-canlendar> 
                         </span>
-                    </li>
+                    </li> -->
                     <li class="select-list" v-if="!InterfaceSysTypeBOH">
                         <span class="title-search-name is-required">到货日期：</span>
                         <span>
@@ -137,7 +138,7 @@ export default class OrderGoods extends Vue{
     created(){
         const factory = FactoryService.getInstance().createFactory();
         this.service = factory.createOrderGood();
-        this.type = this.$route.query.type
+        // this.type = this.$route.query.type
 
         if(this.cache.getData(CACHE_KEY.ORDER_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.ORDER_ADDINFO));

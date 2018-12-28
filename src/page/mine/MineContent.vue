@@ -11,7 +11,7 @@
             <span class="mine-title-name">{{user.auth.username||'--'}}</span>
             <span class="mine-store-name">{{user.auth.store_name||'--'}}</span>
           </div>
-        </div>
+        </div>   
         <div class="mine-action" v-if="!this.InterfaceSysTypeBOH">
           <div class="mine-action-title">
             <span class="mine-funds return-dc-content">资金管理</span>
@@ -25,6 +25,25 @@
             <li>
               <div class="jyjl"></div>
               <span>交易记录</span>
+            </li>
+          </ul>
+        </div>
+        <div class="mine-action" v-if="InterfaceSysTypeBOH">
+          <div class="mine-action-title">
+            <span class="mine-funds return-dc-content">个人信息</span>
+          </div>
+          <ul class="personal">
+            <li>
+              <span>员工姓名：{{Personal.empName}}</span>
+              <span>员工号：{{Personal.empNo}}</span>
+            </li>
+            <li>
+              <span>员工性别：{{Personal.gender == 'UUS_FEMALE'?'女':'男'}}</span>
+              <span>职务：{{Personal.postName}}</span>
+            </li>
+             <li>
+              <span>电话：{{Personal.tel}}</span>
+              <span>电子邮箱：{{Personal.email}}</span>
             </li>
           </ul>
         </div>
@@ -42,7 +61,7 @@
               </span>
             </li>
         </ul>
-        <div class="mine-bot-btn" :class="[{'bot-top':InterfaceSysTypeBOH}]" @click="logout">
+        <div class="mine-bot-btn" @click="logout">
           <span class="ezt-lone-btn">退出</span>
         </div>
       </div>
@@ -63,7 +82,7 @@ import {mapGetters} from "vuex";
 declare var mobiscroll:any;
 @Component({
   components:{
-    
+        
   },
   computed:{
     ...mapGetters({
@@ -78,12 +97,17 @@ export default class Mine extends Vue{
   private user:any;
   private service:ILoginService;
   private balancAmt:number=0;
+  private Personal:any={};
   // private isExit:boolean=false;
   
   created() {
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createLogin();
     this.checkBalance();
+    if(this.InterfaceSysTypeBOH){   //获取个人信息
+       this.getPersonal();
+    }
+   
   }
   mounted(){
   }
@@ -102,8 +126,22 @@ export default class Mine extends Vue{
             });         
         },
         content:'请确认是否退出当前用户？',
-    })   
+    })      
   }
+  
+  private getPersonal(){ 
+      this.service.getPersonal().then(res=>{  
+        this.Personal = res.data.data;
+        this.Personal.empNo = this.Personal.empNo
+        this.Personal.empName = this.Personal.empName
+        this.Personal.gender = this.Personal.gender
+        this.Personal.postName = this.Personal.postName
+        this.Personal.tel = this.Personal.tel
+        this.Personal.email = this.Personal.email
+      },err=>{
+          this.$toasted.show(err.message)
+      })
+    }
   /**
    * 查询余额
    */
@@ -138,9 +176,6 @@ export default class Mine extends Vue{
       -webkit-box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);
       box-shadow: 0 3px 10px 0 rgba(60, 130, 251, 0.43);   
     }
-  }
-  .mine-bot-btn.bot-top{
-    margin-top: 220px;
   }
  
  /* 我的用户头像 */
@@ -211,6 +246,17 @@ export default class Mine extends Vue{
     box-sizing: border-box;
     // border-right: 1px solid #E1ECFF;
     // border-bottom: 1px solid #E1ECFF;
+  }
+   .personal{
+    display: flex;
+    flex-direction: column;
+  }
+  .personal li{
+     margin-top: 16px;
+  }
+  .personal li span{
+     width: 50%;
+     float: left;
   }
   .mine-funds{
     border-left: 5px solid #0d7dfd;

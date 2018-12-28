@@ -515,5 +515,8 @@ export default class ReceiveGood extends Vue{
   .title-select-name .ezt-select.disabled{
     background: #ccc;
   }
+  .ezt-add-content{
+    padding-bottom: 0 !important;
+  }
    
 </style>

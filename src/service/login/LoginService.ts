@@ -34,7 +34,7 @@ export class LoginService extends BaseService implements ILoginService{
 
     // 登录 SAAS
     login(user:IUser){
-        const checkResult = this.check(user);
+        const checkResult = this.check(user);     
         if(!checkResult.success){
             return Promise.reject(checkResult);
         }
@@ -137,6 +137,22 @@ export class LoginService extends BaseService implements ILoginService{
             return this.logout().then(()=>res);
         });
     }
+
+    /**
+     * 获取个人信息
+     */
+    getPersonal(){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}/getUserInfo`,{
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+    
 
     static createInstance() {
         LoginService.getInstance();

@@ -39,7 +39,7 @@
             <div v-if="goodList.length==0" class="done-none">
                 <span>暂无物品明细</span>
             </div> 
-            <ul v-if="goodList.length!=0">
+            <ul v-if="goodList.length>0">
                 <li class="good-detail-content" v-for="(item,index) in goodList" :key="index">
                     <div class="ezt-detail-good">
                         <div class="good-detail-l">
@@ -87,13 +87,13 @@
             </ul> 
         </div>  
     </div>
-    <ezt-footer>
+    <ezt-footer  v-if="goodList.length!=0">
         <div class="ezt-foot-temporary" slot="confirm">
-        <div class="ezt-foot-total">合计：
-            <b>品项</b><span>{{goodList.length}}</span>，
-            <b>数量</b><span>{{Total.num||Total.sendQty}}</span>，
-            <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
-        </div> 
+            <div class="ezt-foot-total">合计：
+                <b>品项</b><span>{{goodList.length}}</span>，
+                <b>数量</b><span>{{Total.num||Total.sendQty}}</span>，
+                <b>含税金额￥</b><span>{{Total.Amt.toFixed(2)}}</span>
+            </div> 
         </div>
     </ezt-footer>  
   </div>

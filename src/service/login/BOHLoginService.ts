@@ -111,6 +111,24 @@ export class BOHLoginService extends BaseService implements ILoginService{
             return res;
         });
     }
+
+
+    /**   
+     * 个人信息
+     */
+    getPersonal(){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}/getUserInfo`,{
+              
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+   
     /**
      * 日结
      * @param param 

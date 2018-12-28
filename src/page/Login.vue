@@ -69,7 +69,7 @@ export default class Login extends Vue{
             this.$router.replace({path:'/'})
         },err=>{       
             this.$toasted.show(err.message);
-        });
+        });    
         // if(!this.InterfaceSysTypeBOH){
         //     this.service.login(this.user).then(res=>{//SAAS登录 
         //         console.log("登录成功");
@@ -97,7 +97,7 @@ export default class Login extends Vue{
     height: 100%;
   .logo{
     display: flex;
-    margin:24px 0px 40px 0px;
+    margin:104px 0px 40px 0px;
     align-items: center;
     flex-direction: column;
     i{

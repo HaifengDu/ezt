@@ -45,8 +45,6 @@ export default {
 
         // TODO 兼容Window对象
         this.scrollTop = (event.srcElement.scrollingElement) ? (event.srcElement.scrollingElement.scrollTop ? event.srcElement.scrollingElement.scrollTop:0):event.srcElement.scrollTop;
-      //  this.scrollTop =
-      //     event.srcElement.scrollTop || 0;  // :TODO 兼容Window   ?  还去兼容一下吗？在我这边用window测的，那的是后面的结果s
         
         this.showTopWarp();
       }

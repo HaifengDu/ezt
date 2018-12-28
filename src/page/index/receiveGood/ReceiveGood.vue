@@ -261,10 +261,6 @@ export default class ReceiveGood extends Vue{
     this.getWarehouseList(); //仓库下拉列表
    
   }
-  @Watch('this.osTop',{
-    deep:true
-  })
-
   mounted(){ 
     if (this.$refs.listContainer){
       this.element = this.$refs.listContainer;

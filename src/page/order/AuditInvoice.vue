@@ -1,7 +1,7 @@
 <!-- 审核调拨单 -->
 <template>
     <div class="ezt-page-con AuditInvoice">
-        <ezt-header v-if="this.type == 'examine'" title="审核要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
+        <ezt-header  title="审核要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <!-- <ezt-header v-if="this.type == 'add'" title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header> -->
         <div class="ezt-main">
             <div class="ezt-add-content">
@@ -237,7 +237,7 @@ export default class OrderGoods extends Vue{
             id:this.addBillInfo.id,
             supplierId : this.addBillInfo.supplierId,
             orderDate : this.addBillInfo.orderDate,
-            orderType : 'SCM_ORDER_TYPE_RULE'
+            orderType : 'SCM_ORDER_TYPE_RULE'    
         }
         formData.modifyParams(this.selectedGood,{
             finalOrderQty:"num",//将当前模块后台想要的字段转换为选择物料所显示的公共字段
@@ -245,7 +245,7 @@ export default class OrderGoods extends Vue{
             memo:'remark',
             goodsName:'name',
             goodsId:"material_id"   
-        })
+        })    
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(material_param))
         this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo))

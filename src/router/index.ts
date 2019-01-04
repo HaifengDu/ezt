@@ -10,7 +10,7 @@ import CheckDetail from '@/page/index/receiveGood/CheckDetail.vue';//收货单�
 import SearchReceiveGood from '@/page/index/receiveGood/SearchReceiveGood.vue';//收货单查询
 import PublicAddGood from '@/page/publicGood/BohPublicAddGood.vue';//BOH选择物料
 import SaasPublicGood from '@/page/publicGood/SaasPublicGood.vue';//saas版選擇物料
-import MineContent from '@/page/mine/MineContent.vue';
+import MineContent from '@/page/mine/MineContent.vue'; 
 import StockTaking from '@/page/index/stockTaking/StockTaking.vue';
 import AddinventoryList from '@/page/index/stockTaking/AddinventoryList.vue';
 import AuditcheckList from '@/page/index/stockTaking/AuditcheckList.vue';//审核盘点单
@@ -65,228 +65,283 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      meta:{noRequireAuth:true}
+      meta:{noRequireAuth:true,allowBack: false}
     },{
       path:"/",
       name:"Home",
-      component:Index
+      component:Index,
+      meta: {allowBack: false}
     },{
       path:"/receiveGood",
       name:"ReceiveGood",
-      component:ReceiveGood,     
+      component:ReceiveGood,  
+      meta: {allowBack: false}   
     },{
       path: '/comfirmAccept',
       name: 'ComfirmAccept',
       component: ComfirmAccept,
+      meta: {allowBack: false}
     },{
       path: '/checkDetail',
       name: 'CheckDetail',
-      component: CheckDetail
+      component: CheckDetail,
+      meta: {allowBack: false}
     },{
       path: '/addReceiveGood',
       name: 'AddReceiveGood',
-      component: AddReceiveGood
+      component: AddReceiveGood,
+      meta: {allowBack: false}
     },{
       path: '/searchReceiveGood',
       name: 'SearchReceiveGood',
-      component: SearchReceiveGood
+      component: SearchReceiveGood,
+      meta: {allowBack: false}
     },{
       path:"/mine",
       name:"MineContent",
-      component:MineContent
+      component:MineContent,
+      meta: {allowBack: false}
     },{
       path:"/stockTaking",
       name:"StockTaking",
       component:StockTaking,
+      meta: {allowBack: false}
     },{
       path: '/addInventoryList',   //新增盘点单
       name: 'AddinventoryList',
       component: AddinventoryList,
+      meta: {allowBack: false}
     },{
       path: '/auditcheckList',   //添加审核盘点单
       name: 'AuditcheckList',
       component: AuditcheckList,
+      meta: {allowBack: false}
     },{      
       path: '/libraryDetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',
       component: LibraryDetails,
+      meta: {allowBack: false}
     },{
       path: '/queryResult',   //查询结果
       name: 'QueryResult',
       component: QueryResult,
+      meta: {allowBack: false}
     },{
       path: '/selecttheTemplate',   //选择模板
       name: 'SelecttheTemplate',
       component: SelecttheTemplate,
+      meta: {allowBack: false}
     },{
       path:'/publicAddGood',
       name:'PublicAddGood',
       component: PublicAddGood,
+      meta: {allowBack: false}
     },{
       path:'/saasPublicGood',
       name:'SaasPublicGood',
       component: SaasPublicGood,
+      meta: {allowBack: false}
     },{
       path:'/changePsd',
       name:'ChangePsd',
       component: ChangePsd,
+      meta: {allowBack: false}
     },{
       path: '/initStock',
       name:'InitStock',
-      component: InitStock
+      component: InitStock,
+      meta: {allowBack: false}
     },{
       path:'/addInitStock',
       name:'AddInitStock',
-      component: AddInitStock
+      component: AddInitStock,
+      meta: {allowBack: false}
     },{
       path: '/initSet',
       name:"InitSet",
-      component: InitSet
+      component: InitSet,
+      meta: {allowBack: false}
     },{
       path: '/initAudit',
       name:'InitAudit',
-      component: InitAudit
+      component: InitAudit,
+      meta: {allowBack: false}
     },{
       path: '/initDetail',
       name:"InitDetail",
-      component: InitDetail
+      component: InitDetail,
+      meta: {allowBack: false}
     },{
       path:'/systemSetting',
       name:'SystemSetting',
-      component: SystemSetting
+      component: SystemSetting,
+      meta: {allowBack: false}
     },{
       path: '/addOrderGood',
       name:"AddOrderGood",
-      component: AddOrderGood
+      component: AddOrderGood,
+      meta: {allowBack: false}
     },
     {
       path: '/orderGood',
       name: 'OrderGood',
-      component: OrderGood
+      component: OrderGood,
+      meta: {allowBack: false}
     },{
       path: '/orderPaySuccess',
       name:'OrderPaySuccess',
-      component:OrderPaySuccess
+      component:OrderPaySuccess,
+      meta: {allowBack: false}
     },{
       path: '/searchOrderGood',
       name:"SearchOrderGood",
-      component: SearchOrderGood
+      component: SearchOrderGood,
+      meta: {allowBack: false}
     },{
       path: '/orderDetails',
       name:"OrderDetails",
-      component: OrderDetails
+      component: OrderDetails,
+      meta: {allowBack: false}
     },{
       path: '/auditInvoice',
       name:"AuditInvoice",
-      component: AuditInvoice
-    },    {   
+      component: AuditInvoice,
+      meta: {allowBack: false}
+    },{   
       path: '/chartContent',
       name: 'ChartContent',
-      component: ChartContent
+      component: ChartContent,
+      meta: {allowBack: false}
     },{
       path:"/spilledSheet",
       name:"SpilledSheet",
-      component: SpilledSheet
+      component: SpilledSheet,
+      meta: {allowBack: false}
     },{
       path:"/searchSpilledSheet",
       name:"SearchSpilledSheet",
-      component: SearchSpilledSheet
+      component: SearchSpilledSheet,
+      meta: {allowBack: false}
     },{
       path:"/spilledSheetDetails",
       name:"SpilledSheetDetails",
-      component: SpilledSheetDetails
+      component: SpilledSheetDetails,
+      meta: {allowBack: false}
     },{
       path:"/addflossSheet",
       name:"AddflossSheet",
-      component:AddflossSheet
+      component:AddflossSheet,
+      meta: {allowBack: false}
     },{
       path:"/auditoflossSheet",
       name:"AuditoflossSheet",
-      component:AuditoflossSheet
+      component:AuditoflossSheet,
+      meta: {allowBack: false}
     },{ //店间调拨 开始 
       path: '/storeAllotment',
       name: "StoreAllotment",
-      component: StoreAllotment
+      component: StoreAllotment,
+      meta: {allowBack: false}
     },{
       path: '/storeAllotAdd',
       name: "StoreAllotAdd",
-      component: StoreAllotAdd
+      component: StoreAllotAdd,
+      meta: {allowBack: false}
     },{
       path: '/storeAllotAudit',
       name: "StoreAllotAudit",
-      component : StoreAllotAudit
+      component : StoreAllotAudit,
+      meta: {allowBack: false}
     },{
       path: '/storeAllotSearch',
       name: "StoreAllotSearch",
-      component: StoreAllotSearch
+      component: StoreAllotSearch,
+      meta: {allowBack: false}
     },{//店间调拨 结束
       path: '/storeAllotDetail',
       name: 'StoreAllotDetail',
-      component: StoreAllotDetail
+      component: StoreAllotDetail,
+      meta: {allowBack: false}
     },{ //店内调拨 开始 
       path: '/inStoreAllotment',
       name: "InStoreAllotment",
-      component: InStoreAllotment
+      component: InStoreAllotment,
+      meta: {allowBack: false}
     },{
       path: '/inStoreAllotAdd',
       name: "InStoreAllotAdd",
-      component: InStoreAllotAdd
+      component: InStoreAllotAdd,
+      meta: {allowBack: false}
     },{
       path: '/inStoreAllotAudit',
       name: "InStoreAllotAudit",
-      component : InStoreAllotAudit
+      component : InStoreAllotAudit,
+      meta: {allowBack: false}
     },{
       path: '/inStoreAllotSearch',
       name: "InStoreAllotSearch",
-      component: InStoreAllotSearch
+      component: InStoreAllotSearch,
+      meta: {allowBack: false}
     },{//店内调拨 结束
       path: '/inStoreAllotDetail',
       name: 'InStoreAllotDetail',
-      component: InStoreAllotDetail
+      component: InStoreAllotDetail,
+      meta: {allowBack: false}
     },{
       path:"/supplierReturn",
       name:"SupplierReturn",
-      component:SupplierReturn
+      component:SupplierReturn,
+      meta: {allowBack: false}
     },{
       path:'/supplierReturnAdd',
       name:"SupplierReturnAdd",
-      component:SupplierReturnAdd
+      component:SupplierReturnAdd,
+      meta: {allowBack: false}
     },{
       path:'/supplierReturnDetail',
       name:'SupplierReturnDetail',
-      component:SupplierReturnDetail
+      component:SupplierReturnDetail,
+      meta: {allowBack: false}
     },{
       path:'/supplierReturnAudit',
       name:'SupplierReturnAudit',
-      component:SupplierReturnAudit
+      component:SupplierReturnAudit,
+      meta: {allowBack: false}
     },{   
       path:'/supplierReturnSearch',
       name:"SupplierReturnSearch",
-      component:SupplierReturnSearch
+      component:SupplierReturnSearch,
+      meta: {allowBack: false}
     },{
       path: '/leadbackMaterial',
       name: 'LeadbackMaterial',
-      component: LeadbackMaterial
+      component: LeadbackMaterial,
+      meta: {allowBack: false}
     },{
       path: '/addleadbackMaterial',
       name: 'AddleadbackMaterial',
-      component: AddleadbackMaterial
+      component: AddleadbackMaterial,
+      meta: {allowBack: false}
     },{
       path: '/searchLeadbackMaterial',
       name: 'SearchLeadbackMaterial',
-      component: SearchLeadbackMaterial
+      component: SearchLeadbackMaterial,
+      meta: {allowBack: false}
     },{
       path: '/addleadbackRetreating',
       name: 'AddleadbackRetreating',
-      component: AddleadbackRetreating
+      component: AddleadbackRetreating,
+      meta: {allowBack: false}
     },{
       path:'/leadbackMaterialDetails',
       name:'LeadbackMaterialDetails',
-      component:LeadbackMaterialDetails
+      component:LeadbackMaterialDetails,
+      meta: {allowBack: false}
     },{
       path:'/auditoleadbackMaterial',
       name:'AuditoleadbackMaterial',
-      component:AuditoleadbackMaterial
+      component:AuditoleadbackMaterial,
+      meta: {allowBack: false}
     }
   ]
 });

@@ -173,7 +173,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 goodsName:'name',
                 distributePrice1:'price',
                 goodsId:'material_id',
-                currentQty:'num'
+                finalOrderQty:'num'
 
             });
             return Promise.resolve(bb);
@@ -190,7 +190,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             firstIds = {}
         }else{
             firstIds = {
-                categoryId: param.categoryId,
+                "categoryId": param.categoryId,
                 "goodsSortId": param.stockGoodsSortId,
                 "goodsName":param.orderGoodsName,
             }
@@ -222,7 +222,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             formData.modifyParams( bb.data.goodsList, {
                 goodsId:'material_id',
                 goodsName:'name',
-                currentQty:'num',
+                finalOrderQty:'num',
                 distributePrice1:'price',
                 memo:'remark',
             });  
@@ -253,7 +253,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         }      
     }    
     /**
-     * 获取分类对应的物品
+     * 获取分类对应的物品     
      */
     getGoodList(param:any,pager:IPagerData):AxiosPromise<any>{
         let materialLimit = { billsPageType:'' };

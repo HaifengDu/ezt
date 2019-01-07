@@ -26,14 +26,14 @@ export function interceptRouter(router:Router):Router {
         }
 
         //禁止浏览器使用回退键
-        let allowBack = true  
-        if (to.meta.allowBack !== undefined) {
-            allowBack = to.meta.allowBack
-        }
-        if (!allowBack) {
-            history.pushState(null, null, location.href)
+        // let allowBack = true  
+        // if (to.meta.allowBack !== undefined) {
+        //     allowBack = to.meta.allowBack
+        // }
+        // if (!allowBack) {
+        //     history.pushState(null, null, location.href)
            
-        }    
+        // }    
     });
     return router;
 }

@@ -11,16 +11,15 @@
 export default {
   name: 'App',
   mounted(){
-    window.onpopstate = () => {
-        let _this = this;
-        if (!this.allowBack) {    //    这个allowBack 是存在vuex里面的变量
-            history.go(1)
-            this.$vux.confirm.show({
-              showCancelButton: false,
-              content:'请使用界面上的回退键'
-            })
-        }
-    }
+    // window.onpopstate = () => {
+    //     if (!this.allowBack) {    //    这个allowBack 是存在vuex里面的变量
+    //         history.go(1)
+    //         this.$vux.confirm.show({
+    //           showCancelButton: false,
+    //           content:'请使用界面上的回退键'
+    //         })
+    //     }
+    // }
   },
 }
 

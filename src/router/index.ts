@@ -65,283 +65,283 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      meta:{noRequireAuth:true,allowBack: false}
+      // meta:{noRequireAuth:true,allowBack: false}
     },{
       path:"/",
       name:"Home",
       component:Index,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/receiveGood",
       name:"ReceiveGood",
       component:ReceiveGood,  
-      meta: {allowBack: false}   
+      // meta: {allowBack: false}   
     },{
       path: '/comfirmAccept',
       name: 'ComfirmAccept',
       component: ComfirmAccept,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/checkDetail',
       name: 'CheckDetail',
       component: CheckDetail,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/addReceiveGood',
       name: 'AddReceiveGood',
       component: AddReceiveGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/searchReceiveGood',
       name: 'SearchReceiveGood',
       component: SearchReceiveGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/mine",
       name:"MineContent",
       component:MineContent,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/stockTaking",
       name:"StockTaking",
       component:StockTaking,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/addInventoryList',   //新增盘点单
       name: 'AddinventoryList',
       component: AddinventoryList,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/auditcheckList',   //添加审核盘点单
       name: 'AuditcheckList',
       component: AuditcheckList,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{      
       path: '/libraryDetails',   //盘库详情   审核盘点单
       name: 'LibraryDetails',
       component: LibraryDetails,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/queryResult',   //查询结果
       name: 'QueryResult',
       component: QueryResult,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/selecttheTemplate',   //选择模板
       name: 'SelecttheTemplate',
       component: SelecttheTemplate,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/publicAddGood',
       name:'PublicAddGood',
       component: PublicAddGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/saasPublicGood',
       name:'SaasPublicGood',
       component: SaasPublicGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/changePsd',
       name:'ChangePsd',
       component: ChangePsd,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/initStock',
       name:'InitStock',
       component: InitStock,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/addInitStock',
       name:'AddInitStock',
       component: AddInitStock,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/initSet',
       name:"InitSet",
       component: InitSet,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/initAudit',
       name:'InitAudit',
       component: InitAudit,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/initDetail',
       name:"InitDetail",
       component: InitDetail,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/systemSetting',
       name:'SystemSetting',
       component: SystemSetting,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/addOrderGood',
       name:"AddOrderGood",
       component: AddOrderGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },
     {
       path: '/orderGood',
       name: 'OrderGood',
       component: OrderGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/orderPaySuccess',
       name:'OrderPaySuccess',
       component:OrderPaySuccess,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/searchOrderGood',
       name:"SearchOrderGood",
       component: SearchOrderGood,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/orderDetails',
       name:"OrderDetails",
       component: OrderDetails,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/auditInvoice',
       name:"AuditInvoice",
       component: AuditInvoice,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{   
       path: '/chartContent',
       name: 'ChartContent',
       component: ChartContent,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/spilledSheet",
       name:"SpilledSheet",
       component: SpilledSheet,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/searchSpilledSheet",
       name:"SearchSpilledSheet",
       component: SearchSpilledSheet,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/spilledSheetDetails",
       name:"SpilledSheetDetails",
       component: SpilledSheetDetails,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/addflossSheet",
       name:"AddflossSheet",
       component:AddflossSheet,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/auditoflossSheet",
       name:"AuditoflossSheet",
       component:AuditoflossSheet,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{ //店间调拨 开始 
       path: '/storeAllotment',
       name: "StoreAllotment",
       component: StoreAllotment,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/storeAllotAdd',
       name: "StoreAllotAdd",
       component: StoreAllotAdd,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/storeAllotAudit',
       name: "StoreAllotAudit",
       component : StoreAllotAudit,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/storeAllotSearch',
       name: "StoreAllotSearch",
       component: StoreAllotSearch,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{//店间调拨 结束
       path: '/storeAllotDetail',
       name: 'StoreAllotDetail',
       component: StoreAllotDetail,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{ //店内调拨 开始 
       path: '/inStoreAllotment',
       name: "InStoreAllotment",
       component: InStoreAllotment,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/inStoreAllotAdd',
       name: "InStoreAllotAdd",
       component: InStoreAllotAdd,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/inStoreAllotAudit',
       name: "InStoreAllotAudit",
       component : InStoreAllotAudit,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/inStoreAllotSearch',
       name: "InStoreAllotSearch",
       component: InStoreAllotSearch,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{//店内调拨 结束
       path: '/inStoreAllotDetail',
       name: 'InStoreAllotDetail',
       component: InStoreAllotDetail,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:"/supplierReturn",
       name:"SupplierReturn",
       component:SupplierReturn,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/supplierReturnAdd',
       name:"SupplierReturnAdd",
       component:SupplierReturnAdd,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/supplierReturnDetail',
       name:'SupplierReturnDetail',
       component:SupplierReturnDetail,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/supplierReturnAudit',
       name:'SupplierReturnAudit',
       component:SupplierReturnAudit,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{   
       path:'/supplierReturnSearch',
       name:"SupplierReturnSearch",
       component:SupplierReturnSearch,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/leadbackMaterial',
       name: 'LeadbackMaterial',
       component: LeadbackMaterial,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/addleadbackMaterial',
       name: 'AddleadbackMaterial',
       component: AddleadbackMaterial,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/searchLeadbackMaterial',
       name: 'SearchLeadbackMaterial',
       component: SearchLeadbackMaterial,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path: '/addleadbackRetreating',
       name: 'AddleadbackRetreating',
       component: AddleadbackRetreating,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/leadbackMaterialDetails',
       name:'LeadbackMaterialDetails',
       component:LeadbackMaterialDetails,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     },{
       path:'/auditoleadbackMaterial',
       name:'AuditoleadbackMaterial',
       component:AuditoleadbackMaterial,
-      meta: {allowBack: false}
+      // meta: {allowBack: false}
     }
   ]
 });

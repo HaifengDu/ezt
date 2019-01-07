@@ -65,7 +65,7 @@ const router = new Router({
       path: '/login',
       name: 'Login',
       component: Login,
-      // meta:{noRequireAuth:true,allowBack: false}
+      meta:{noRequireAuth:true}
     },{
       path:"/",
       name:"Home",

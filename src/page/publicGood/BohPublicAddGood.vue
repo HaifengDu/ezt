@@ -745,7 +745,7 @@ export default class AddGood extends Vue{
         const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
         this.selectedGoodList[index].disperse_num = '';//删除完物品数量清空为0
         this.selectedGoodList.splice(index,1);
-        if(this.typeName.addList.length>0){
+        if(this.typeName.addList.length>=0){
           const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
           this.typeName.addList[smallIndex].disperse_num = '';
           this.typeName.addList.splice(smallIndex,1);

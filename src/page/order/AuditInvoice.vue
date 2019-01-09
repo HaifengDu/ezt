@@ -301,7 +301,8 @@ export default class OrderGoods extends Vue{
                 "busiDate": item.busiDate,
                 "unitId": item.unitId,
                 "upQty": item.upQty,
-                "goodsCode": item.goodsCode
+                "goodsCode": item.goodsCode,
+                "memo":item.memo,
             };
 			rows.push(obj);    
             });  
@@ -398,7 +399,8 @@ export default class OrderGoods extends Vue{
                             "busiDate": item.busiDate,
                             "unitId": item.unitId,
                             "upQty": item.upQty,
-                            "goodsCode": item.goodsCode
+                            "goodsCode": item.goodsCode,
+                            "memo":item.memo,
                         };
                         row.push(objList);    
                     });  

@@ -678,6 +678,7 @@ export default class OrderGoods extends Vue{
       transition: transform .5s;
       background: #fff;
       z-index: 2;
+      border-radius: 6px;
     }
     .ezt-list-del{
       position: absolute;   

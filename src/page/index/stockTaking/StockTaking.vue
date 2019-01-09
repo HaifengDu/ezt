@@ -647,6 +647,7 @@ export default class stockTaking extends Vue{
       transition: transform .5s;
       background: #fff;
       z-index: 2;
+      border-radius: 6px;
     }
     .swipe-transform{
       transform: translateX(-50px);

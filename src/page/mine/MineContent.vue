@@ -34,17 +34,19 @@
           </div>
           <ul class="personal">
             <li>
-              <span>员工姓名：{{Personal.empName}}</span>
-              <span>员工号：{{Personal.empNo}}</span>
+              员工姓名：{{Personal.empName}}
             </li>
             <li>
-              <span>员工性别：{{Personal.gender == 'UUS_FEMALE'?'女':'男'}}</span>
-              <span>职务：{{Personal.postName}}</span>
+              员工号：{{Personal.empNo}}
             </li>
-             <li>
-              <span>电话：{{Personal.tel}}</span>
-              <span>电子邮箱：{{Personal.email}}</span>
+            <li>
+              员工性别：{{Personal.gender == 'UUS_FEMALE'?'女':'男'}}
             </li>
+            <li>
+              职务：{{Personal.postName}}
+            </li>
+            <li>电话：{{Personal.tel}}</li>
+            <li>电子邮箱：{{Personal.email}}</li>
           </ul>
         </div>
         <ul class="mine-action-list" v-if="!InterfaceSysTypeBOH">

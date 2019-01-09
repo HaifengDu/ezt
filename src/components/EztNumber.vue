@@ -1,15 +1,16 @@
 <!--整体页面的头部布局-->
 <template>
-<div class="ezt-count">
-    <span class="ezt-minus" @click="handlerMinus" :class="{'number-diabled':minusDisabled}">-</span>    
-    <input class="ezt-number" v-model="dValue" :type="type" :disabled="disabled" @input="selectChange" :value="dValue"/>
-    <span class="ezt-plus" @click="handlerPlus">+</span>  
-</div>
-
+    <div class="ezt-count">
+        <span class="ezt-minus" @click="handlerMinus" :class="{'number-diabled':minusDisabled}">-</span>    
+        <input class="ezt-number" v-model="dValue" :type="type" :disabled="disabled" @input="selectChange" :value="dValue"/>
+        <span class="ezt-plus" @click="handlerPlus">+</span>  
+    </div>
 </template>
-
 <script>
-  import {mapGetters, mapMutations, mapActions} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
+import { CachePocily } from "../common/Cache";
+import { ECache } from "../enum/ECache";
+import CACHE_KEY from '../constans/cacheKey';
 import { parse } from 'querystring';
   export default {
     components: {},
@@ -17,6 +18,7 @@ import { parse } from 'querystring';
     data () {
       return {
         dValue:0,
+        cache:CachePocily.getInstance(),
         // minusDisabled:true,
       }
     },
@@ -40,6 +42,9 @@ import { parse } from 'querystring';
        limitNum:Boolean,
     },
     computed:{
+        ...mapGetters({
+          'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',//接口BOH
+        }),
         minusDisabled:{
             get(){
                 if(this.dValue>0){
@@ -50,13 +55,14 @@ import { parse } from 'querystring';
             },
             set(){
                 if(this.dValue>0){
-                    return false;
+                    return false;   
                 }else{
                     return true;
                 }
             }
            
-        }
+        },
+       
     },
     watch: {
        'value':function(newValue,oldValue){
@@ -64,7 +70,13 @@ import { parse } from 'querystring';
        }
     },
     created(){
-        this.dValue = this.value||0;
+        if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
+           this.materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
+        }
+        this.dValue = this.value || 0;   
+        if(this.InterfaceSysTypeBOH&&this.materialLimit.billsPageType == 'stocktaking'){
+           this.dValue = this.value;
+        }
     },
     methods: {
         pubChange(){

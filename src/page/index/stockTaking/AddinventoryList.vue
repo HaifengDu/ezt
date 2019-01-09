@@ -103,7 +103,7 @@
                               </div> 
                               <div>
                                   <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
-                                  <span class="title-search-name ezt-dense-box">实盘数：{{item.disperse_num}}</span> 
+                                  <span class="title-search-name ezt-dense-box">实盘数：{{item.disperse_num || 0}}</span> 
                               </div> 
                           </div>
                           <div class="good-detail-r">
@@ -215,7 +215,7 @@ export default class StockTaking extends Vue{
     }
     if(this.selectedGood&&this.selectedGood.length>0){
         formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-          num:"disperse_num",  //实盘数
+          // num:"disperse_num",  //实盘数
           remark:'memo',  
           name:'material_name',
           price:"distributePrice1"    
@@ -356,7 +356,7 @@ export default class StockTaking extends Vue{
       content:'请确认是否删除该物料?'
     })
   }
-  /**
+  /**  
    *  BOH盘点单 保存并提交
    */
   private saveReceive(rows:Array<any>){
@@ -365,9 +365,9 @@ export default class StockTaking extends Vue{
         return false;
       }
         var rows=[]; 
-				this.InventoryList.forEach(item => {
+				this.InventoryList.forEach(item => {    
 					let obj = {
-              "memo":item.memo,
+              "memo":item.memo || '',
               "unitName": item.unitName,
               "unit_id":item.unit_id,
               "consume_qty":item.consume_qty,
@@ -380,7 +380,7 @@ export default class StockTaking extends Vue{
               "material_id":item.material_id, 
               "material_name":item.material_name,
               "distributePrice1":item.distributePrice1,
-              "disperse_num":item.disperse_num,   //实盘数
+              "disperse_num":item.disperse_num || 0,   //实盘数
             };
 					rows.push(obj);
         });
@@ -392,7 +392,6 @@ export default class StockTaking extends Vue{
           "details":rows
         }
 				this.service.getAdditionalcheckList(billInfo).then(res=>{
-				
 					this.addBillInfo={};
 					this.setSelectedGood([]);
           this.addBeforeBillInfo={};
@@ -407,19 +406,23 @@ export default class StockTaking extends Vue{
   /**
    *  BOH版本   选择物料
    */
-  private BohMaterials(){  
+  private BohMaterials(){     
         let goodTerm = {};
+        let addinventory = {};
         goodTerm={
           billsPageType: 'stocktaking',   
         }  
+        addinventory ={
+          bill_type:this.addinventory.bill_type,
+        }
         formData.modifyParams(this.InventoryList,{
-          "disperse_num":'num',  //实盘数
+          // "disperse_num":'num',  //实盘数
           'memo':'remark',  
           'material_name':'name'    
         }) 
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.addinventory));
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(addinventory));
         this.setSelectedGood(this.InventoryList)
         this.$router.push({name:'PublicAddGood',query:{}}) 
   }
@@ -441,7 +444,7 @@ export default class StockTaking extends Vue{
       let goodTerm = {};
       goodTerm={
         billsPageType: 'stocktaking',
-      }
+      }   
       this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
       this.cache.save(CACHE_KEY.ORDER_ADDINFO,JSON.stringify(this.addBillInfo));
       this.cache.save(CACHE_KEY.ORDER_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));

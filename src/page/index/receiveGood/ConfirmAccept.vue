@@ -408,7 +408,7 @@ private changeDirect(item:any){
   }else{
     item.num = item.oldNum;
   }
-}  
+}     
   /**
    * 确认收货
    */
@@ -428,6 +428,8 @@ private changeDirect(item:any){
       this.addBeforeBillInfo={};
       this.$toasted.success("收货成功！")
       this.$router.push({name:'ReceiveGood',params:{'purStatus':'已完成'}});
+    },err=>{
+      this.$toasted.show(err.message);
     })
          
   }

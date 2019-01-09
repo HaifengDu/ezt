@@ -16,7 +16,7 @@
           <span class="collect-good active"  v-if="materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH">
             <span> <i class="fa fa-star-o" aria-hidden="true"></i></span>
             <span>收藏</span>
-            <i class="divide">|</i>
+            <i class="divide">|</i>    
           </span>
           <div class="good-type-list" :class="{collect:(materialLimit.billsPageType!='initStock'&&!InterfaceSysTypeBOH)}">
             <span @click="changeSmallType(item)" :class="[{active:item.active}]" :key=index v-for="(item,index) in goodBigType">{{item.name}}</span>
@@ -37,11 +37,12 @@
                   <span class="good-item-name">{{item.name || item.material_name}}</span>  
                   <!--库存初始化-->
                   <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
-                    <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
-                    <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-                  </span>
-                  <!-- 默认不可以进行编辑  BOH不限制-->
-                  <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice  && materialLimit.billsPageType != 'initStock'">{{item.price||0}} 元/{{item.unitName}}</span>
+                    <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>           
+                    <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>          
+                  </span> 
+                  <!-- 默认不可以进行编辑-->
+                  <span class="good-item-sort" v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'initStock'"
+                  >{{item.price||0}} 元/{{item.unitName}}</span>                
                   <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据选择物料处 editPrice控制 是否可以编辑-->
                   <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                     价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -80,11 +81,11 @@
                   <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                     :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                   <!-- 正常数量选择 -->
-                  <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
-                    &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                  <ezt-number type="number" disabled v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'&&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'&&materialLimit.billsPageType !='stocktaking'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                   <!--只针对盘点 -->
+                  <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='stocktaking'" @change="handlerNum(item)" v-model="item.disperse_num"></ezt-number>
                 </span>
                </div>
-              
              </div>           
           </div>
         </div>
@@ -192,11 +193,14 @@
               <span class="good-item-name">{{item.name || item.material_name}}</span>
               <!--库存初始化-->
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
-                <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
-                <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
-              </span>              
-              <!-- 默认不可以进行编辑 BOH不限制-->
-              <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice">{{item.price}} 元/{{item.unitName}}</span>
+                <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                
+                <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                   
+              </span> 
+              <!-- 默认不可以进行编辑-->
+              <span
+                  class="good-item-sort"
+                  v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'initStock'"
+              >{{item.price||0}} 元/{{item.unitName}}</span>
               <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑--> 
               <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
                 价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -230,8 +234,9 @@
                 <ezt-number type="number" v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                   :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 <!-- 正常数量选择 -->
-                <ezt-number type="number" v-if="materialLimit.billsPageType!='inStoreAllot'&& materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'
-                  &&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                 <ezt-number type="number" disabled v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'&&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'&&materialLimit.billsPageType !='stocktaking'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                  <!--只针对盘点 -->
+                <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='stocktaking'" @change="handlerNum(item)" v-model="item.disperse_num"></ezt-number>
               </span>
             </div>
           </div>          
@@ -269,9 +274,12 @@
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
               规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
               账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
-            </span>
-            <!-- 默认不可以进行编辑  BOH不限制-->
-            <span class="good-item-sort" v-if="InterfaceSysTypeBOH || !materialLimit.showPrice && !materialLimit.editPrice">{{item.price}} 元/{{item.unitName}}</span>
+            </span> 
+            <!-- 默认不可以进行编辑-->
+            <span
+                class="good-item-sort"
+                v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'initStock'"
+            >{{item.price||0}} 元/{{item.unitName}}</span>          
             <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
             <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
               价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price">
@@ -287,7 +295,7 @@
               <i class="fa fa-star-o" aria-hidden="true"></i>
             </span>
             <span class="good-number">              
-              <ezt-number type="number" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+              <ezt-number type="number" disabled @change="handlerNum(item)" v-model="item.num"></ezt-number>
             </span>
           </div>
         </div>
@@ -334,7 +342,7 @@ import { clearTimeout, setTimeout } from 'timers';
       ...mapGetters({
         'selectedGood':'publicAddGood/selectedGood',
         'materialSetting':'materialSetting',//物流设置
-        InterfaceSysTypeBOH:'InterfaceSysTypeBOH'
+        'InterfaceSysTypeBOH':'InterfaceSysTypeBOH'
       }),
     },
     methods:{
@@ -354,7 +362,7 @@ export default class AddGood extends Vue{
     searchData:'',//查询的物品名称
     searchList:[],//查询完的结果
     listPage:Number,
-    searchPage:Number
+    searchPage:Number   
   };
   private isSelected:boolean=false;//已选货品
   private isSearch:boolean=false;//搜索所有物品
@@ -422,7 +430,6 @@ export default class AddGood extends Vue{
     });
   }
   mounted() {  
-
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
     }
@@ -454,14 +461,13 @@ export default class AddGood extends Vue{
   }
   /**
    * item 小类 所谓的cdata
-   * categoryId 大类的id
+   * categoryId 大类的id  
    */
   private loadGood(item:any,categoryId:any){
     this.allLoaded=false;
     this.pager.resetStart();//分页加载还原pageNum值
     this.publicParam.listPage = 1;
     (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
-    
     let _this_ = this;
     if(!item.addList){
       this.$set(item,'addList',[]);
@@ -479,7 +485,7 @@ export default class AddGood extends Vue{
         // this.allGoods(item);
         this.goodList = this.allGoods(item);
         // _this_.typeName = this.allGoods(item);
-        _this_.typeName=item; 
+        _this_.typeName=item;    
         return false;
       }
     }      
@@ -584,7 +590,6 @@ export default class AddGood extends Vue{
       .then((res:any)=>{
         let goodsList = res.data.goodsList;
         goodsList = this.allGoods(res.data);//已选择的物品数量
-
         if(this.pager.getPage().limit>goodsList.length){
           this.searchAllLoaded = true;
         }
@@ -603,7 +608,6 @@ export default class AddGood extends Vue{
    */
   private handlerSearchData(){
     clearTimeout(this.timer);
-
     this.publicParam.searchData = this.publicParam.searchData.replace(/\s+/g,'');//查询字段有空格
     this.timer = setTimeout(()=>{
       //函数抖动 控制用户输入频繁
@@ -694,8 +698,8 @@ export default class AddGood extends Vue{
         })
         return false;
       }
-    }
-    if(item.num>0){
+    }   
+    if(item.num>0 || item.disperse_num>=0){
       //新增
       var ret = this.selectedGoodList.find((value:any)=>{
         return item.material_id == value.material_id;
@@ -720,31 +724,41 @@ export default class AddGood extends Vue{
         this.typeName.addList.splice(smallIndex,1);
       }
     }
-  }
+  }   
   /**
    * 查看已选择货品 显示/隐藏
    */
   private viewSelectedItem(){
-    if(this.selectedGoodList.length>0){
-      this.isSelected=true;
-      this.isSearch = false;
-      console.log(this.selectedGoodList,'0000')
-      // this.showMask();
-    }else{
-      this.$toasted.show('请先选择物品');
-    }   
+      if(this.selectedGoodList.length>=0){
+        this.isSelected=true;
+        this.isSearch = false;
+        // this.showMask();
+      }else{
+        this.$toasted.show('请先选择物品');
+      }   
   }
   /**
    * 删除已选择货品
    */
   private selectedDelGood(item:any){
-    const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-    this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
-    this.selectedGoodList.splice(index,1);
-    if(this.typeName.addList.length>0){
-      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-      this.typeName.addList[smallIndex].num=0;
-      this.typeName.addList.splice(smallIndex,1);
+    if(this.materialLimit.billsPageType == 'stocktaking'){
+        const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+        this.selectedGoodList[index].disperse_num = '';//删除完物品数量清空为0
+        this.selectedGoodList.splice(index,1);
+        if(this.typeName.addList.length>0){
+          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+          this.typeName.addList[smallIndex].disperse_num = '';
+          this.typeName.addList.splice(smallIndex,1);
+        }
+    }else{
+        const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+        this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
+        this.selectedGoodList.splice(index,1);
+        if(this.typeName.addList.length>0){
+          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+          this.typeName.addList[smallIndex].num=0;
+          this.typeName.addList.splice(smallIndex,1);
+        }
     }
   }
   /**

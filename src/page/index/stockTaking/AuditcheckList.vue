@@ -37,8 +37,9 @@
         </ul>
         <ul>
            <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in InventoryList" :key="index">    
-                <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
-                v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
+             <!-- 左滑删除货品   v-swipeleft="handleSwipe.bind(this,item,true)" 
+                v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" -->
+                <div class="ezt-detail-good">
                     <div class="good-detail-l">
                         <div>
                             <span class="good-detail-name">    
@@ -46,11 +47,11 @@
                               <span class="good-detail-sort" v-if="item.material_model || ''">（{{item.material_model}}）</span> 
                             </span>
                         </div>
-                        <div class="good-detail-nobreak">
+                        <div class="good-detail-nobreak">   
                               <span class="good-detail-billno">编码：{{item.material_num}}</span>
                               <span class="good-detail-sort">单位：{{item.unitName}}</span> 
                         </div> 
-                        <div>
+                        <div>  
                             <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
                             <span class="title-search-name ezt-dense-box">实盘数：{{item.disperse_num}}</span> 
                         </div> 
@@ -131,7 +132,7 @@ export default class StockTaking extends Vue{
     private addBeforeBillInfo:any={};//保存第一次选择的单据信息，以免在弹框 取消的时候还原之前的值
     private addBillInfo:any={
        editPrice:false
-    }; 
+    };   
     private InventoryType:any; 
   created() {  
     const factory = FactoryService.getInstance().createFactory();
@@ -141,22 +142,23 @@ export default class StockTaking extends Vue{
     } 
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
         this.detail = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
-    }
+    }     
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.InventoryList  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
         this.InventoryList = this.InventoryList['details']
     }
     if(this.selectedGood&&this.selectedGood.length>0){
-      formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-          num:"disperse_num",  //实盘数
+      formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段   
           remark:'memo',  
           name:'material_name',
           price:"distributePrice1"       
       })
       this.InventoryList = ObjectHelper.serialize(this.selectedGood);
     }  
+    (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
     (this.InventoryList||[]).forEach((item:any)=> this.$set(item,'active',false));
     this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
+       
   }
 
   mounted(){ 
@@ -195,7 +197,7 @@ export default class StockTaking extends Vue{
    * 
    * 物料总数量\总金额
    */
-  private get Total(){
+  private get Total(){  
          return this.InventoryList.reduce((ori,item) => {
             if(item.disperse_num){
                 ori.disperse_num = ori.disperse_num + Number(item.disperse_num);
@@ -269,8 +271,8 @@ export default class StockTaking extends Vue{
               material_name: item.material_name,
               acc_qty:item.acc_qty,
               distributePrice1:item.distributePrice1,
-              disperse_num:item.disperse_num,
-              memo:item.memo
+              disperse_num:item.disperse_num || 0,
+              memo:item.memo || '',
             };
 					rows.push(obj);    
         });  
@@ -315,7 +317,7 @@ export default class StockTaking extends Vue{
         
       },
       /**
-       * 审核通过
+       * 审核通过   
        */
       onConfirm (rows:Array<any>) {
             var rows=[];
@@ -334,8 +336,8 @@ export default class StockTaking extends Vue{
                   material_name: item.material_name,
                   acc_qty:item.acc_qty,
                   distributePrice1:item.distributePrice1,
-                  disperse_num:item.disperse_num,
-                  memo:item.memo,
+                  disperse_num:item.disperse_num || 0,
+                  memo:item.memo || '',
                 };
               rows.push(obj);
             });
@@ -358,7 +360,7 @@ export default class StockTaking extends Vue{
             },err=>{
               _this.$toasted.show(err.message)
             })
-      },
+      },   
       content:'确认审核该单据？',
       confirmText:"审核通过",
       cancelText:"审核不通过",
@@ -367,23 +369,23 @@ export default class StockTaking extends Vue{
     }) 
   }    
   /**
-   * 选择货品
+   * 选择货品  
    */
   private selectMaterials(){ 
-      let goodTerm = {};
-      goodTerm={
-        billsPageType: 'stocktaking',
-      }   
-      formData.modifyParams(this.InventoryList,{
-          "disperse_num":'num',  //实盘数
+        let goodTerm = {};
+        goodTerm={
+          billsPageType: 'stocktaking',   
+        }  
+        formData.modifyParams(this.InventoryList,{
+          // "disperse_num":'num',  //实盘数
           'memo':'remark',  
-          'material_name':'name'    
-      }) 
-      this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
-      this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
-      this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.detail));
-      this.setSelectedGood(this.InventoryList)
-      this.$router.push({name:'PublicAddGood',query:{}}) 
+          'material_name':'name'        
+        })     
+        this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
+        this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
+        this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.detail));
+        this.setSelectedGood(this.InventoryList)
+        this.$router.push({name:'PublicAddGood',query:{}}) 
     }
   }
 </script>

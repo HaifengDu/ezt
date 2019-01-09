@@ -8,9 +8,7 @@ import ObjectHelper from "../../common/objectHelper";
 import { AxiosPromise } from 'axios';
 import { IPagerData } from "../../interface/IPagerData";
 import formData from '../../dictory/formData';
-
 export class BOHPublicAddGoodService extends BaseService implements IPublicAddGoodService{
-
     private cache = CachePocily.getInstance();   
     private static _instance: BOHPublicAddGoodService;  
     
@@ -19,7 +17,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     }
      /**
      * BOH版本   编制盘点单新增物品  （按分类检索）
-     * @param bill_type 
+     * @param bill_type      
      */
     getBohClassifiedSearch(param:any,pager:IPagerData){
         let firstIds = {};
@@ -37,27 +35,33 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "goodsSortId": param.goodsSortId,
             }
         }
-        return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,{
+        var p = {
             "bill_type": param.bill_type, 
+            "id": -1, 
             "pagination": {
-                "orderby": null,    
+                "orderby": "",    
                 "asc": false, 
                 "pageno": pager.page, 
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        },config).then(res=>{              
+        }
+        if(param.id){
+            p.id = param.id;
+        }
+        return Axios.post(`${this.reqUrl}mobile/stock/taking/chooseStockTakingGoods`,p,config).then(res=>{    
             let bb = res; 
-            if(bb.data.sortList&&bb.data.sortList.length>0){//既查分类，也查物品
+            if(bb.data.sortList&&bb.data.sortList.length>=0){//既查分类，也查物品
                 bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>0){
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
                             distributePrice1:'price',
                             unit_name:'unitName',
-                            material_name:'name'
+                            material_name:'name',
+                            // disperse_num:'num',
                         }); 
                     }
                 })               
@@ -65,7 +69,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             formData.modifyParams(bb.data.goodsList,{
                 distributePrice1:'price',
                 unit_name:'unitName',
-                material_name:'name'
+                material_name:'name',
+                // disperse_num:'num',
             })
 
            return Promise.resolve(bb);
@@ -95,16 +100,17 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         },config).then(res=>{  
             let bb = res;
-            if(bb.data.sortList&&bb.data.sortList.length>0){
+            if(bb.data.sortList&&bb.data.sortList.length>=0){
                 bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>0){
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
                         formData.modifyParams( item.cdata[0].goodsList, {
                             distributePrice1:'price',
                             unit_name:'unitName',
-                            material_name:'name'
+                            material_name:'name',
+                            // disperse_num:'num',
                         }); 
                     }
                 })               
@@ -112,7 +118,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             formData.modifyParams(bb.data.goodsList,{
                 distributePrice1:'price',
                 unit_name:'unitName',
-                material_name:'name'
+                material_name:'name',
+                // disperse_num:'num',
             })
             return Promise.resolve(bb);
         });
@@ -135,9 +142,9 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         }else{
             firstIds = {
-                categoryId: param.categoryId,
+                "categoryId": param.categoryId,
                 "goodsSortId": param.stockGoodsSortId,
-                // "goodsName":param.orderGoodsName,
+                // "goodsName":param.orderGoodsName,   
             }
             // if(param['goodsName']){
             //     firstIds['goodsName'] = param['goodsName'];

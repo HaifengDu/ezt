@@ -257,11 +257,11 @@ export default class OrderGoods extends Vue{
      * 提交
      */
     private saveReceive(rows:Array<any>,delId:Array<any>){
-        if(!this.InterfaceSysTypeBOH){
-             if(!this.selectedGood||this.selectedGood.length<=0){
+         if(!this.selectedGood||this.selectedGood.length<=0){
             this.$toasted.show("当前物料数量为0，请添加物料！");
             return false;
-            } 
+         } 
+        if(!this.InterfaceSysTypeBOH){
             this.addBillInfo={};
             this.setSelectedGood([]);
             this.addBeforeBillInfo={};

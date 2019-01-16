@@ -48,7 +48,7 @@
             <li @click="renderUrl('/receiveGood')">
               <div class="shouhuo"><span v-if='!InterfaceSysTypeBOH' class="ezt-reddot-s"></span></div>
               <span>收货</span></li>
-            <li @click="renderUrl('/supplierReturn')" v-if='!InterfaceSysTypeBOH'>
+            <li @click="renderUrl('/supplierReturn')">
               <div class="tuihuo"></div>
               <span>退货</span></li>
             <li @click="renderUrl('/stockTaking')">
@@ -144,6 +144,7 @@ export default class Index extends Vue{
    private storeGroupData:{[index:string]:any[]} = {};
    private tabStatus:boolean=true;//门店下拉默认显示全部门店 
    private testData:any[];
+   private InterfaceSysTypeBOH:boolean;
     created() {
       const factory = FactoryService.getInstance().createFactory();
       this.service = factory.createIndex();
@@ -199,7 +200,9 @@ export default class Index extends Vue{
     }
     //顶部选择门店下拉点击事件
     private handleSelect(){
-      this.titleSelect=!this.titleSelect; 
+      if(!this.InterfaceSysTypeBOH){ 
+          this.titleSelect=!this.titleSelect; 
+      }
     }
     //门店下拉列表中切换门店事件
     private handlerStore(item:any){
@@ -220,13 +223,11 @@ export default class Index extends Vue{
 
 <style lang="less" scoped> 
    .icon-menu {
-    padding: 10px 0px 20px 0px;
-    /*display: -webkit-flex;*/
-    margin-top: 30px;
-
+    width: 100%;
+    margin-top: 26px;
   }
   .icon-menu li {
-    width: 25%;
+    width: 33.3%;
     float: left;
     display: flex;
     align-items: center;

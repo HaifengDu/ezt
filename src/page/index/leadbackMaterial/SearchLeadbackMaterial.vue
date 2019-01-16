@@ -46,7 +46,7 @@
             </div>
           </li>
         </ul>
-        <span v-show="allLoaded">已全部加载</span> 
+        <span v-show="allLoaded">没有更多数据</span> 
       </div>      
     </div>
   </div>

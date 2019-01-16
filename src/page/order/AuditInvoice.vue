@@ -349,14 +349,10 @@ export default class OrderGoods extends Vue{
              * 审核通过
              */
             onConfirm (row:Array<any>) { 
-                if(!this.InterfaceSysTypeBOH){
+                if(!_this.InterfaceSysTypeBOH){
                     _this.setSelectedGood([]);
                     _this.$toasted.success("审核成功！");
-                    if(!_this.InterfaceSysTypeBOH){//SAAS才有待支付
-                        _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
-                    }else{
-                        _this.$router.push({name:'OrderGood',params:{'purStatus':'已完成'}}); 
-                    }
+                    _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
                 }else{
                     var row =[];
                     _this.selectedGood.forEach((item:any) => {

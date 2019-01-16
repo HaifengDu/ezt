@@ -141,10 +141,10 @@ export default class StockTaking extends Vue{
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));
     } 
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
-        this.detail = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
+        this.detail = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_LIST));
     }     
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
-        this.InventoryList  = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS));
+        this.InventoryList  = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_DETAILS));
         this.InventoryList = this.InventoryList['details']
     }
     if(this.selectedGood&&this.selectedGood.length>0){

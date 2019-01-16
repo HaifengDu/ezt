@@ -237,6 +237,115 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         });
     }
 
+
+
+    /**
+     * BOH版本  退货 分类
+     * @param bill_type 
+     * @param goodsSortId 
+     */
+    getBohReturnGoods(param:any,pager:IPagerData){
+        let firstIds = {};
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {
+                "goodsSortId": param.categoryId,
+            }
+        }else{
+            firstIds = {
+                "goodsSortId": param.goodsSortId,
+            }
+        }
+        var p = {
+            "billType": param.billType, 
+            "busiDate": param.busiDate,
+            "id":-1, 
+            "pagination": {
+                "orderby": "",    
+                "asc": false, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
+                "totalcount": 0
+            },...firstIds
+        }
+        if(param.id){
+            p.id = param.id;
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,p,config).then(res=>{    
+            let bb = res; 
+            if(bb.data.sortList&&bb.data.sortList.length>=0){   //既查分类，也查物品
+                bb.data.sortList.forEach((item:any)=>{
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
+                        /**
+                         * 转一下 publicGood里面页面显示字段
+                         */
+                        formData.modifyParams( item.cdata[0].goodsList, {
+                            unit_name:'unitName',
+                            goodsName:'name',
+                            wareQty:'stock',    
+                        }); 
+                    }
+                })               
+            }
+            formData.modifyParams(bb.data.goodsList,{
+                unit_name:'unitName',
+                goodsName:'name',
+                wareQty:'stock',    
+            })
+           return Promise.resolve(bb);
+        });
+    }
+    /**
+     * 退货
+     * @param param 
+     * @param pager 
+     */
+    getItemCategoryGoods(param:any,pager:IPagerData){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,{
+            "billType": param.billType, 
+            "busiDate": param.busiDate,
+            "goodsSortId":param.goodsSortId,
+            "pagination": {
+                "orderby": null, 
+                "asc": false, 
+                "pageno": pager.page, 
+                "pagesize": pager.limit, 
+                "totalcount": 0
+            }
+        },config).then(res=>{  
+            let bb = res;
+            if(bb.data.sortList&&bb.data.sortList.length>=0){
+                bb.data.sortList.forEach((item:any)=>{
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
+                        /**
+                         * 转一下 publicGood里面页面显示字段
+                         */
+                        formData.modifyParams( item.cdata[0].goodsList, {
+                            unit_name:'unitName',
+                            goodsName:'name',
+                            wareQty:'stock',   
+                        }); 
+                    }
+                })               
+            }  
+            formData.modifyParams(bb.data.goodsList,{
+                unit_name:'unitName',
+                goodsName:'name',
+                wareQty:'stock',  
+            })
+            return Promise.resolve(bb);
+        });
+    }
+
     //==================================== 公共的查 分类、物品====================
     /**
      * 获取分类
@@ -251,8 +360,12 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             return this.getBohClassifiedSearch(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
-        }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){
+        }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){   //订货  查询分类
             return this.getBohOrderClass(param,pager).then(res=>{
+                return Promise.resolve(res);
+            })
+        }else if(materialLimit && materialLimit.billsPageType == 'supplierReturn'){   //退货  查询分类  
+            return this.getBohReturnGoods(param,pager).then(res=>{
                 return Promise.resolve(res);
             })
         }else{//默认查询不到为空
@@ -275,7 +388,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         }else if(materialLimit && materialLimit.billsPageType == 'orderGood'){//boh订单 查询物品
             return this.getBohOrderGoods(param,pager).then(res=>{
                 return Promise.resolve(res);
-            })
+            })       
+        }else if(materialLimit && materialLimit.billsPageType == 'supplierReturn'){//boh退货 查询物品
+            return this.getItemCategoryGoods(param,pager).then(res=>{
+                return Promise.resolve(res);
+            })       
         }else{//默认查询不到为空
             return Promise.resolve(null);
         }     

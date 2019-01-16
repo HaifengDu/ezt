@@ -8,12 +8,20 @@
                         <span class="title-search-name">单号：</span>
                         {{addBillInfo.bill_no}}
                     </li>
-                    <li>
+                    <li v-if="!InterfaceSysTypeBOH">
                         <span class="title-search-name">仓库：</span>
                         {{addBillInfo.warehouse}}
                     </li>
-                    <li>
+                    <li v-if="false">
+                        <span class="title-search-name">配送中心</span>
+                        {{addBillInfo.supplier}}
+                    </li>
+                    <li v-if="false">
                         <span class="title-search-name">供应商：</span>
+                        {{addBillInfo.supplier}}
+                    </li>
+                    <li v-if="false">
+                        <span class="title-search-name">源单号：</span>
                         {{addBillInfo.supplier}}
                     </li>
                     <li>
@@ -100,6 +108,7 @@ import { ISupplierReturnService } from '../../../interface/service/ISupplierRetu
        ...mapGetters({
            selectedGood:"publicAddGood/selectedGood",
            'materialSetting':'materialSetting',//物流设置
+           'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',   //true BOH接口  false saas接口
        })
    },
    methods:{
@@ -115,6 +124,7 @@ export default class ReturnGood extends Vue{
     private setSelectedGood: INoopPromise;
     private addBillInfo:any={};
     private addBeforeBillInfo:any={};
+    private InterfaceSysTypeBOH:boolean;
     /**
      * 输入数量的时候校验，初始值
      */

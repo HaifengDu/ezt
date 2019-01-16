@@ -66,7 +66,7 @@
                 </div>
               </div>
           </div>
-           <span v-show="allLoaded">已全部加载</span>   
+           <span v-show="allLoaded">没有更多数据</span>   
         </div>
       </div>         
     </div>
@@ -264,7 +264,7 @@ export default class ReceiveGood extends Vue{
   mounted(){ 
     if (this.$refs.listContainer){
       this.element = this.$refs.listContainer;
-      console.log(this.$refs.listContainer);
+      // console.log(this.$refs.listContainer);
     }
 
     if(this.cache.getData(CACHE_KEY.RECEIVE_SEARCH)){//记住查询条件

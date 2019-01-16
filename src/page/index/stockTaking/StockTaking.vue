@@ -46,6 +46,7 @@
                       <i v-if="item.bill_type_name === '日盘'" class="day">日</i>
                       <i v-if="item.bill_type_name === '周盘'" class="week">周</i>
                       <i v-if="item.bill_type_name === '周期盘点'" class="year">月</i>
+                      <i v-if="item.bill_type_name === '新品盘'" class="new">新</i>
                       {{item.bill_no}}
                   </span>
                 </span> 
@@ -78,7 +79,7 @@
             </div>
           </div>
         </div>
-       <span v-show="allLoaded">已全部加载</span>
+       <span v-show="allLoaded">没有更多数据</span>
       </div>
     </div>
   </div>
@@ -588,6 +589,9 @@ export default class stockTaking extends Vue{
           .year{
             background: linear-gradient(-134deg, #97DBFF 0%, #7AC0FF 100%);
           }
+          .new{
+            background: linear-gradient(-134deg, #97DBFF 0%, #7AC0FF 100%);
+          }
           i{
             opacity: 0.7;
             border-radius: 4px;
@@ -602,9 +606,6 @@ export default class stockTaking extends Vue{
             float: left;
             margin-right: 5px;
           }
-        }
-        span:last-child{
-          font-size: 12px;
         }
       }
     }

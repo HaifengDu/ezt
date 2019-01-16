@@ -28,7 +28,7 @@ export class SupplierReturnService extends BaseService implements ISupplierRetur
      * @param id 单据id
      * @param type  单据类型
      */
-    getGoodDetail(id:string,type:string){
+    getGoodDetail(id:string,pager:IPagerData){
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=12`);
         return promise;
     }
@@ -40,6 +40,27 @@ export class SupplierReturnService extends BaseService implements ISupplierRetur
         const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
         return promise;
     }
+
+    /**
+     * 退货高级查询
+     */
+    getGoodResult(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    }
+
+    /**
+     * 根据退货类型显示供应商货配送中心
+     */
+    getReturnType(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    } 
+
+
+
+
+
     static createInstance() {
         SupplierReturnService.getInstance();
     }

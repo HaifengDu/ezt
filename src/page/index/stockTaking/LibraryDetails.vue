@@ -465,10 +465,8 @@ export default class stockTaking extends Vue{
                 line-height: 25px;
                 p{
                   width: @width;
-                  font-size: 12px;
                   color: #5F7B9A;
                   span{
-                    font-size: 12px;
                     color: #395778;
                   }
                 }
@@ -500,17 +498,15 @@ export default class stockTaking extends Vue{
               line-height: 25px;
               background-color:@background-color;
               margin-bottom: 10px;
-               border-radius: @border-radius;
+              border-radius: @border-radius;
                div{
                   text-align: left;
                   display: flex;
                   justify-content: space-between;
                   padding: 0 10px;
                    p{
-                    font-size: 12px;
                     color: #5F7B9A;
                   span{
-                    font-size: 13px;
                     color: #395778; 
                   }
                 }

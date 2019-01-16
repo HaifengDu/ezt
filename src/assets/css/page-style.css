@@ -182,11 +182,11 @@ input.ezt-middle{
   z-index: 10;
 }
 .ezt-header-goback{
-  width: 20px;
-  height: 20px;
+  width: 26px;
+  height: 26px;
   flex:1;
   background:url('../images/icon-title-back.png') no-repeat;
-  background-size: 20px 20px;
+  background-size: 26px 26px;
   margin-left: 10px;
 }
 .ezt-header-goback.none{ /* header并没有返回按钮 */

@@ -80,7 +80,7 @@
               <i class="fa fa-trash" aria-hidden="true"></i>
             </div>
         </div>
-        <span v-show="allLoaded">已全部加载</span>
+        <span v-show="allLoaded">没有更多数据</span>
       </div>
     </div>
     <ezt-footer>
@@ -199,7 +199,7 @@ import CACHE_KEY from '../../constans/cacheKey'
    mixins:[maskMixin],
    computed:{
      ...mapGetters({
-         InterfaceSysTypeBOH:'InterfaceSysTypeBOH',
+         InterfaceSysTypeBOH:'InterfaceSysTypeBOH',  
      })
    },
    methods:{
@@ -287,7 +287,7 @@ export default class OrderGoods extends Vue{
          if(this.InterfaceSysTypeBOH){  
           this.tabList.push({
               name:"待审核",
-              status:'SCM_AUDIT_NO',
+              status:'SCM_AUDIT_NO',   
               active:true,
             },{          
               name:"已完成",

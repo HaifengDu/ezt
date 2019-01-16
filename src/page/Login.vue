@@ -97,7 +97,7 @@ export default class Login extends Vue{
     height: 100%;
   .logo{
     display: flex;
-    margin:104px 0px 40px 0px;
+    margin:40px 0px 40px 0px;
     align-items: center;
     flex-direction: column;
     i{

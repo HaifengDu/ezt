@@ -8,6 +8,6 @@ export interface IReceiveGoodService{
     searchList(param:any,pager:IPagerData):AxiosPromise<any>;
     goReceive(submitType:string,param:Object):AxiosPromise<any>;
     getSupplierList:() => AxiosPromise<any>;
-    getWarehouseList:() => AxiosPromise<any>;
+    getWarehouseList:() => AxiosPromise<any>;   
     
 }

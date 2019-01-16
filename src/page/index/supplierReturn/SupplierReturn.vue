@@ -19,12 +19,12 @@
     <div class="ezt-main">       
       <tab :line-width=2 active-color='#fc378c'>
         <tab-item 
-        class="vux-center" 
-        :selected="item.active" 
-        v-for="(item, index) in tabList.TabList"
-        @on-item-click="tabClick(index)" 
-        :key="index">
-          {{item.name}}
+          class="vux-center" 
+          :selected="item.active" 
+          v-for="(item, index) in tabList.TabList"
+          @on-item-click="tabClick(index)" 
+          :key="index">
+            {{item.name}}
         </tab-item>
       </tab>         
       <div class="ezt-add-content">  
@@ -39,20 +39,27 @@
               v-swiperight="handlerSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}" >
               <div class="receive-icon-title">
                 <span class="receive-icon-dcName"></span>
-                <span class="return-list-title">{{item.dc_name}}</span> 
-                <span class="receive-status">{{item.arrive_date}}</span>
+                <span class="return-list-title">{{item.dc_name || item.billNo}}</span> 
+                <span class="receive-status">{{item.arrive_date || item.busiDate}}</span>
               </div>
               <div class="receive-icon-content">
-                <!-- <div style="display:flex"> -->
-                  <span class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
-                  <span class="receive-dc-title">仓库：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>                
-                <!-- </div>               -->
-                <div style="display:flex">                
+                <span v-if="!InterfaceSysTypeBOH" class="receive-dc-title">单号：<span class="receive-dc-content">{{item.bill_no}}</span></span>
+                <span v-if="!InterfaceSysTypeBOH" class="receive-dc-title">仓库：<span class="receive-dc-content">{{item.ask_goods_date}}</span></span>   
+                <span v-if="InterfaceSysTypeBOH"  class="receive-dc-title">机构名称：<span class="receive-dc-content">{{item.outOrganName}}</span></span>
+                <span v-if="InterfaceSysTypeBOH"  class="receive-dc-title">供应商/配销中心：<span class="receive-dc-content">{{item.businessName}}</span></span>  
+                <span v-if="InterfaceSysTypeBOH"  class="receive-dc-title">退货类型：
+                     <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_DISTRIBUTE'">配送退货</span>
+                     <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_SUPPLIER'">供应商退货</span>
+                     <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_OTHER_RETURN'">其他退货</span>
+                </span>               
+                <div style="display:flex" v-if="!InterfaceSysTypeBOH">                
                   <span class="receive-dc-title">数量：<span class="receive-dc-content">{{item.exportNum}}</span></span>
                   <span class="receive-dc-title">金额：<span class="receive-dc-content">￥{{item.exportNum}}</span></span>
                 </div>
-                <span class="receive-dc-title">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark}}</span></span>
+                <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建人：<span class="receive-dc-content">{{item.creator}}</span></span>
+                <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建日期：<span class="receive-dc-content">{{item.createDate}}</span></span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
+                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
               </div>     
             </div> 
             <div class="ezt-list-del" @click.stop="deleteBill(item)">
@@ -67,18 +74,27 @@
         <li class="select-list">
           <span class="title-search-name ">退货类型：</span>
           <span class="title-select-name item-select">
-            <select placeholder="请选择" class="ezt-select" v-model="searchParam.returnType">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.returnType" @change="selectReturn">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
               <option :value="item.id" :key="index" v-for="(item,index) in pullList.returnType">{{item.typeName}}</option>
             </select>
           </span>
         </li>
-        <li class="select-list">
+        <li class="select-list" v-if="searchParam.returnType === 'SCM_OUT_TYPE_DISTRIBUTE'">
+          <span class="title-search-name ">配送中心：</span>
+          <span class="title-select-name item-select">
+            <select placeholder="请选择" class="ezt-select" v-model="searchParam.supplier">
+              <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name || item.supplierName}}</option>
+            </select>
+          </span>
+        </li>
+        <li class="select-list" v-if="searchParam.returnType === 'SCM_OUT_TYPE_SUPPLIER' || searchParam.returnType === 'SCM_OUT_TYPE_OTHER_RETURN'">
           <span class="title-search-name ">供货机构：</span>
           <span class="title-select-name item-select">
             <select placeholder="请选择" class="ezt-select" v-model="searchParam.supplier">
               <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-              <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
+              <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name || item.supplierName}}</option>
             </select>
           </span>
         </li>
@@ -92,13 +108,10 @@
               placeholder="结束时间" @change="selectDateChange" type="text" :formate="'yyyy-MM-dd'" class="input-canlendar" v-model="searchParam.endDate"></ezt-canlendar>
           </span>
         </li>
-        <li>
-          <span class="title-search-name">单据：</span>
-          <input type="text" placeholder="请输入单据号" class="ezt-middle" v-on:input="handlerChangeNo($event)" v-model="searchParam.billNo">
-        </li>
-        <li>
-            <span class="title-search-name">物料：</span>
-            <input type="text" placeholder="请输入物料名称" class="ezt-middle" v-model="searchParam.material">
+        <li>  
+          <span class="title-search-name">单据或物料：</span>   
+           <!-- v-on:input="handlerChangeNo($event)" -->
+          <input type="text" placeholder="输入单据号和物料名称查询" class="ezt-middle"  v-model="searchParam.billNo">  
         </li>
         <li>
           <div class="ezt-two-btn" @click="toSearch">查询</div>
@@ -130,24 +143,26 @@ declare var mobiscroll:any;
     TabItem
   },
   mixins:[maskMixin,noInput],
-  //  computed:{
-  //    ...mapGetters({
-  //      'goodList':'returnGood/goodList'
-  //    })
-  //  },
-  //  methods:{
-  //    ...mapActions({
-  //      'getGoodList':"returnGood/getGoodList"
-  //    })
-  //  }
+   computed:{
+     ...mapGetters({
+       'InterfaceSysTypeBOH':'InterfaceSysTypeBOH',   //true BOH接口  false saas接口
+      //  'goodList':'returnGood/goodList'
+     })
+   },
+   methods:{
+     ...mapActions({
+      //  'getGoodList':"returnGood/getGoodList"
+     })
+   }
 })
 export default class ReturnGood extends Vue{
   private cache = CachePocily.getInstance();
   private service: ISupplierReturnService;
   private pager:Pager;
-  private getGoodList:INoopPromise
+  private getGoodList:INoopPromise;
+  private InterfaceSysTypeBOH:boolean;
   private addMaskClickListener:(...args:any[])=>void;
-  private hideMask:()=>void;
+  private hideMask:()=>void;   
   private showMask:()=>void;
   /**
    * 列表页list数据
@@ -176,33 +191,58 @@ export default class ReturnGood extends Vue{
    */
   private pullList : any= {
     returnType: [{     //退货类型
-        id:'store',
+        id:'SCM_OUT_TYPE_DISTRIBUTE',
         typeName:'配送退货'
     },{
-        id:'supplier',
+        id:'SCM_OUT_TYPE_SUPPLIER',
         typeName:'供应商退货'
-    }],
-    supplierList: []
-  }
-
-  created() {
-    this.tabList.push({
-      name:"待审核",
-      status:1,
-      active:true,
     },{
-      name:"已完成",
-      status:3,
-      active:false
-    });
+        id:'SCM_OUT_TYPE_OTHER_RETURN',
+        typeName:'其他退货'
+    }],
+    supplierList: [],
+  };
+
+
+  created() {     
+    /**
+     * Saas版本
+     */
+    if(!this.InterfaceSysTypeBOH){  
+      this.tabList.push({
+        name:"待审核",
+        status:1,
+        active:true,
+      },{
+        name:"已完成",
+        status:3,
+        active:false
+      });
+    }
+    /**
+     * BOH版本
+     */
+    if(this.InterfaceSysTypeBOH){  
+       this.tabList.push({
+        name:"待审核",
+        status:'SCM_AUDIT_NO',
+        active:true,
+      },{
+        name:"已完成",
+        status:'SCM_AUDIT_YES',
+        active:false
+      });
+    }
     this.pager = new Pager().setLimit(10)
     const factory = FactoryService.getInstance().createFactory();
     this.service = factory.createSupplierReturn();
-    this.getSupplierList();// 供货机构列表
+    if(!this.InterfaceSysTypeBOH){
+      this.getSupplierList();// 供货机构列表
+    }
   }
 
   mounted(){
-    this.getList();
+    this.getList();   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.isSearch=false; 
       this.hideMask();
@@ -242,6 +282,7 @@ export default class ReturnGood extends Vue{
       id: 2
     }]
   }
+  
   /**
    * 左侧滑动删除
    */
@@ -276,31 +317,52 @@ export default class ReturnGood extends Vue{
   }
     //详情页跳转
   private toPage(item:any,info:string){
-    let confirmGoodInfo = {};
-    let detailList = {};
-    if(info){
-        this.$router.push(info);
-        return false;
-    }
-    if(this.tabList.getActive().status==1){
-      confirmGoodInfo={
-        bill_no:item.bill_no,
-        billType:'合同采购',
-        warehouse:'01',
-        remark:'在途中', 
-        returnType:'supplier'        
+      let confirmGoodInfo = {};
+      let detailList = {};
+      if(!this.InterfaceSysTypeBOH){
+          if(this.tabList.getActive().status==1){
+            confirmGoodInfo={
+              bill_no:item.bill_no,
+              billType:'合同采购',
+              warehouse:'01',
+              remark:'在途中', 
+              returnType:'supplier'        
+            }
+            this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
+            this.$router.push('/supplierReturnAudit');
+          }else if(this.tabList.getActive().status==3){
+            detailList = {
+              dc_name:"配送中心-8店",
+              bill_no:"000111aab",         
+            }
+            this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(detailList));
+            this.$router.push('/supplierReturnDetail');    
+          }
+      }else{
+          if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
+            confirmGoodInfo={
+              bill_no:item.bill_no,
+              billType:'合同采购',
+              warehouse:'01',
+              remark:'在途中', 
+              returnType:'supplier'        
+            }
+            this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
+            this.$router.push('/supplierReturnAudit');
+          }else if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
+            this.service.getGoodDetail(item.id,this.pager.getPage()).then(res=>{ 
+               this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(res.data));
+               this.$router.push('/supplierReturnDetail')
+            },err=>{
+                this.$toasted.show(err.message)
+            })
+          }
       }
-      this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
-      this.$router.push('/supplierReturnAudit');
-    }else if(this.tabList.getActive().status==3){
-      detailList = {
-        dc_name:"配送中心-8店",
-        bill_no:"000111aab",         
+      if(info){
+          this.$router.push(info);
+          return false;
       }
-      this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(detailList));
-      this.$router.push('/supplierReturnDetail');
-    }
-    
+
   }
 
   private tabClick(index:number){
@@ -319,10 +381,17 @@ export default class ReturnGood extends Vue{
       });
       this.pager.setNext();
       this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-        if(this.pager.getPage().limit>res.data.list.length){
-          this.allLoaded=true;
-        }
-        this.goodList=this.goodList.concat(res.data.list);
+         if(!this.InterfaceSysTypeBOH){
+              if(this.pager.getPage().limit>res.data.list.length){
+                this.allLoaded=true;
+              }
+              this.goodList = res.data.list;
+          }else{
+              if(this.pager.getPage().limit>res.data.returnList.length){
+                this.allLoaded=true;
+              }
+              this.goodList = res.data.returnList;
+          }
         setTimeout(()=>{
           this.$vux.loading.hide();
           this.hideMask();
@@ -340,7 +409,11 @@ export default class ReturnGood extends Vue{
       this.$vux.loading.show({
         text: '加载中...'
         });
-      this.goodList=res.data.list;
+      if(!this.InterfaceSysTypeBOH){
+          this.goodList=res.data.list;   
+      }else{
+          this.goodList = res.data.returnList;
+      }
       setTimeout(()=>{
         this.$vux.loading.hide();
         this.hideMask();
@@ -349,16 +422,50 @@ export default class ReturnGood extends Vue{
         this.$toasted.show(err.message);
     });
   }
+   
+   /**
+    * 根据退货类型显示配送中心或供应商
+    */
+   private selectReturn(){
+      const billType = this.searchParam.returnType || null
+      this.service.getReturnType(billType).then(res=>{ 
+            this.pullList.supplierList = res.data.organList
+        },err=>{
+            this.$toasted.show(err.message)
+      })
+   }
+
+
   //搜索选择的条件显示/隐藏
   private searchTitle(){
-    this.isSearch = !this.isSearch;
+    this.isSearch = !this.isSearch;  
     this.isSearch?this.showMask():this.hideMask();
   }
   private toSearch(){
-    this.isSearch = false;
-    this.hideMask();
-    this.cache.save(CACHE_KEY.SUPPLIERRETURN_SEARCH,JSON.stringify(this.searchParam));
-    this.$router.push('/supplierReturnSearch');
+    if(!this.InterfaceSysTypeBOH){
+        this.isSearch = false;
+        this.hideMask();
+        this.cache.save(CACHE_KEY.SUPPLIERRETURN_SEARCH,JSON.stringify(this.searchParam));
+        this.$router.push('/supplierReturnSearch');
+    }else{
+        const billType = this.searchParam.returnType || null
+        const busiDateBegin = this.searchParam.startDate
+        const busiDateEnd =  this.searchParam.endDate
+        const supplierId = this.searchParam.supplier || null
+        const query = this.searchParam.billNo || null
+        this.service.getGoodResult(billType,busiDateBegin,busiDateEnd,supplierId,query,this.pager.getPage()).then(res=>{ 
+          this.hideMask();        
+          this.isSearch = false;
+          if(!this.InterfaceSysTypeBOH){ 
+              this.cache.save(CACHE_KEY.SUPPLIERRETURN_RESULT,JSON.stringify(res.data.data));
+          }else{
+              this.cache.save(CACHE_KEY.SUPPLIERRETURN_RESULT,JSON.stringify(res.data['returnList']));
+          }
+          this.$router.push('/supplierReturnSearch');
+        },err=>{
+            this.$toasted.show(err.message)
+        })
+    }
   }  
   private goBack(){
     this.$router.push("/");

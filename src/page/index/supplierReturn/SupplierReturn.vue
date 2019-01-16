@@ -7,7 +7,7 @@
     <ezt-header :back="true" title="退货" @goBack="goBack" :isInfoGoback="true">
       <div slot="action">
         <div>
-          <span class='ezt-action-point' @click="toPage(null,'/supplierReturnAdd')">
+          <span class='ezt-action-point' @click="addPage('/supplierReturnAdd')">
           <i class="fa fa-plus" aria-hidden="true" ></i>
           </span>
         <span class='ezt-action-point' @click="searchTitle">
@@ -314,6 +314,12 @@ export default class ReturnGood extends Vue{
         },
         content:'是否要删除该单据？'
     })
+  }
+  private addPage(info:string){
+     if(info){
+          this.$router.push(info);
+          return false;
+      }
   }
     //详情页跳转
   private toPage(item:any,info:string){

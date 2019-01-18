@@ -25,9 +25,9 @@
                     <li>
                         <x-input title="备注：" :max="100" v-model="addBillInfo.memo"></x-input>
                     </li>
-                    <li>
+                    <li @click="renderUrl('/publicAddGood')">
                         <span class="title-search-name is-required">物料明细</span>
-                        <span class="title-search-right" @click="renderUrl('/publicAddGood')">
+                        <span class="title-search-right">
                         <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </span>
                     </li> 

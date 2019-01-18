@@ -13,7 +13,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     private static _instance: BOHPublicAddGoodService;  
     
     private constructor(){
-        super(ERequestType.Boh)
+        super(ERequestType.Boh)   
     }
      /**
      * BOH版本   编制盘点单新增物品  （按分类检索）
@@ -33,7 +33,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         }else{
             firstIds = {
                 "goodsSortId": param.goodsSortId,
-            }
+            }    
         }
         var p = {
             "bill_type": param.bill_type, 
@@ -279,14 +279,15 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             let bb = res; 
             if(bb.data.sortList&&bb.data.sortList.length>=0){   //既查分类，也查物品
                 bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
+                    if(item.cdata&&item.cdata[0].returnGoodsList&&item.cdata[0].returnGoodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
-                        formData.modifyParams( item.cdata[0].goodsList, {
+                        formData.modifyParams( item.cdata[0].returnGoodsList, {
                             unit_name:'unitName',
                             goodsName:'name',
-                            wareQty:'stock',    
+                            qty:'num',   
+                            wareQty:'stock'  
                         }); 
                     }
                 })               
@@ -294,13 +295,14 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             formData.modifyParams(bb.data.goodsList,{
                 unit_name:'unitName',
                 goodsName:'name',
-                wareQty:'stock',    
+                qty:'num',   
+                wareQty:'stock' 
             })
            return Promise.resolve(bb);
         });
     }
     /**
-     * 退货
+     * 退货   获取物品
      * @param param 
      * @param pager 
      */
@@ -323,16 +325,19 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         },config).then(res=>{  
             let bb = res;
+            debugger
             if(bb.data.sortList&&bb.data.sortList.length>=0){
                 bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
+                    debugger
+                    if(item.cdata&&item.cdata[0].returnGoodsList&&item.cdata[0].returnGoodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
-                        formData.modifyParams( item.cdata[0].goodsList, {
+                        formData.modifyParams( item.cdata[0].returnGoodsList, {
                             unit_name:'unitName',
                             goodsName:'name',
-                            wareQty:'stock',   
+                            qty:'num',   
+                            wareQty:'stock'   
                         }); 
                     }
                 })               
@@ -340,7 +345,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             formData.modifyParams(bb.data.goodsList,{
                 unit_name:'unitName',
                 goodsName:'name',
-                wareQty:'stock',  
+                qty:'num',   
+                wareQty:'stock' 
             })
             return Promise.resolve(bb);
         });

@@ -1,8 +1,10 @@
 <!--整体页面的头部布局-->
 <template>
-<div class="ezt-page-con" ref="listContainer" 
+<div class="ezt-page-con" 
+  ref="listContainer" 
   v-infinite-scroll="loadMore"
-  :infinite-scroll-disabled="allLoaded" infinite-scroll-immediate-check="false"
+  :infinite-scroll-disabled="allLoaded" 
+  infinite-scroll-immediate-check="false"
   infinite-scroll-distance="10">
     <ezt-header :back="true" title="退货" @goBack="goBack" :isInfoGoback="true">
       <div slot="action">
@@ -27,7 +29,7 @@
             {{item.name}}
         </tab-item>
       </tab>         
-      <div class="ezt-add-content">  
+      <div class="ezt-add-content main-menu">  
         <!--无任何数据时 -->
         <div v-if="goodList.length==0" class="done-none">
             <div></div>
@@ -66,7 +68,7 @@
               <i class="fa fa-trash" aria-hidden="true"></i>
             </div>     
         </div>
-        <span v-show="allLoaded">已全部加载</span>  
+        <span v-show="allLoaded">没有更多数据</span>  
       </div>    
     </div>
     <div v-show="isSearch" class="search-dialog">
@@ -118,9 +120,9 @@
         </li>
       </ul>
     </div>
+    <go-top :element="element" :maxTop="40" class="toTop"></go-top> 
   </div>
 </template>
-
 <script lang="ts">
 import Vue from 'vue'
 import ErrorMsg from "../model/ErrorMsg"
@@ -161,6 +163,7 @@ export default class ReturnGood extends Vue{
   private pager:Pager;
   private getGoodList:INoopPromise;
   private InterfaceSysTypeBOH:boolean;
+  private element: any = null; 
   private addMaskClickListener:(...args:any[])=>void;
   private hideMask:()=>void;   
   private showMask:()=>void;
@@ -205,6 +208,12 @@ export default class ReturnGood extends Vue{
 
 
   created() {     
+    const factory = FactoryService.getInstance().createFactory();
+    this.service = factory.createSupplierReturn();
+    this.pager = new Pager().setLimit(20)
+    if(!this.InterfaceSysTypeBOH){
+      this.getSupplierList();// 供货机构列表
+    }
     /**
      * Saas版本
      */
@@ -233,15 +242,19 @@ export default class ReturnGood extends Vue{
         active:false
       });
     }
-    this.pager = new Pager().setLimit(10)
-    const factory = FactoryService.getInstance().createFactory();
-    this.service = factory.createSupplierReturn();
-    if(!this.InterfaceSysTypeBOH){
-      this.getSupplierList();// 供货机构列表
-    }
+    
   }
+   /**
+     * 顶部
+     */
+  @Watch('this.osTop',{
+    deep:true
+  })
 
   mounted(){
+    if (this.$refs.listContainer){
+      this.element = this.$refs.listContainer;
+    } 
     this.getList();   
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.isSearch=false; 
@@ -259,16 +272,6 @@ export default class ReturnGood extends Vue{
   private selectDateChange(val:any){
     (<any>this.$refs.startDate).setMax(new Date(val));
     (<any>this.$refs.endDate).setMin(new Date(val));
-  }
-
-  /**
-   * watch demo
-   */
-  @Watch("list",{
-    deep:true
-  })
-  private listWatch(newValue:any[],oldValue:any[]){
-
   }
   /**
    * 获取 供货机构 
@@ -371,43 +374,17 @@ export default class ReturnGood extends Vue{
 
   }
 
-  private tabClick(index:number){
+  private tabClick(index:number){  
     this.tabList.setActive(index);
     this.allLoaded=false;
     (this.$refs.listContainer as HTMLDivElement).scrollTop = 0;
     this.pager.resetStart();//分页加载还原pageNum值
     this.getList();     
   }
-  //下拉加载更多
-  private loadMore() {
-    if(!this.allLoaded){
-      this.showMask();
-      this.$vux.loading.show({
-        text:'加载中..'
-      });
-      this.pager.setNext();
-      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
-         if(!this.InterfaceSysTypeBOH){
-              if(this.pager.getPage().limit>res.data.list.length){
-                this.allLoaded=true;
-              }
-              this.goodList = res.data.list;
-          }else{
-              if(this.pager.getPage().limit>res.data.returnList.length){
-                this.allLoaded=true;
-              }
-              this.goodList = res.data.returnList;
-          }
-        setTimeout(()=>{
-          this.$vux.loading.hide();
-          this.hideMask();
-        },500); 
-      },err=>{
-          this.$toasted.show(err.message);
-      })
-    }     
-  }
-  //获取列表
+
+  /**
+   * 获取退货列表
+   */
   private getList(){
     const status = this.tabList.getActive().status;
     this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{
@@ -428,6 +405,38 @@ export default class ReturnGood extends Vue{
         this.$toasted.show(err.message);
     });
   }
+  /**
+   * 下拉加载更多
+   */
+  private loadMore() {
+    if(!this.allLoaded){
+      this.showMask();
+      this.$vux.loading.show({
+        text:'加载中..'
+      });
+      this.pager.setNext();
+      this.service.getGoodList(status as string, this.pager.getPage()).then(res=>{  
+         if(!this.InterfaceSysTypeBOH){
+              if(this.pager.getPage().limit>res.data.list.length){
+                this.allLoaded=true;
+              }
+              this.goodList = res.data.list;
+          }else{
+              if(this.pager.getPage().limit>res.data.returnList.length){
+                this.allLoaded=true; 
+              }
+              this.goodList = res.data.returnList;
+          }
+        setTimeout(()=>{
+          this.$vux.loading.hide();
+          this.hideMask();
+        },500); 
+      },err=>{
+          this.$toasted.show(err.message);
+      })
+    }     
+  }
+
    
    /**
     * 根据退货类型显示配送中心或供应商
@@ -438,7 +447,7 @@ export default class ReturnGood extends Vue{
             this.pullList.supplierList = res.data.organList
         },err=>{
             this.$toasted.show(err.message)
-      })
+      })    
    }
 
 
@@ -479,8 +488,17 @@ export default class ReturnGood extends Vue{
    
 }
 </script>
-
 <style lang="less" scoped> 
+.go-top{
+  bottom:78px !important;
+  z-index: 999;
+}
+.ezt-add-content{
+  padding-bottom: 0!important;
+}
+.main-menu{
+  background-color: #F1F6FF;
+}
 .add{
   font-size: 20px;
   i{

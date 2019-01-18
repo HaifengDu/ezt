@@ -98,7 +98,7 @@
                                     <span class="good-detail-name">
                                         <span class="good-detail-break">{{item.name || item.goodsName}}</span> 
                                         <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">（规格）</span>
-                                        <span class="good-detail-sort" style="margin-left:10px;" v-if="addBillInfo.returnType == 'SCM_OUT_TYPE_DISTRIBUTE'">单位：{{item.unitName}}</span>
+                                        <span class="good-detail-sort" style="margin-left:10px;" v-if="addBillInfo.returnType == 'SCM_OUT_TYPE_DISTRIBUTE'">单位：{{item.measureUnitName}}</span>
                                     </span>
                                 </div>
                                 <div class="good-detail-nobreak">
@@ -167,7 +167,7 @@ import formData from '../../../dictory/formData';
     }
 })
 export default class ReturnGood extends Vue{
-    private cache = CachePocily.getInstance();
+    private cache = CachePocily.getInstance();    
     private service : ISupplierReturnService;
     private user:IUser;
     private InterfaceSysTypeBOH:boolean;
@@ -266,6 +266,14 @@ export default class ReturnGood extends Vue{
         this.addBillInfo.warehouse = this.pullList.warehouseList[0].id;
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_ADDINFO)){
             this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));
+        }
+
+        /**
+         * 配送中心下拉数据
+         */
+        if(this.cache.getData(CACHE_KEY.DISTRIBUTION_CENTER)){
+            this.pullList.supplierList = JSON.parse(this.cache.getData(CACHE_KEY.DISTRIBUTION_CENTER));
+            console.log(this.pullList.supplierList)
         }
        
         if(this.selectedGood&&this.selectedGood.length>0){
@@ -616,6 +624,7 @@ export default class ReturnGood extends Vue{
                 this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
                 this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
                 this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(ReturnConditions));
+                this.cache.save(CACHE_KEY.DISTRIBUTION_CENTER,JSON.stringify(this.pullList.supplierList));
                 this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
                 this.setSelectedGood(this.ReturnList)
                 this.$router.push(info);

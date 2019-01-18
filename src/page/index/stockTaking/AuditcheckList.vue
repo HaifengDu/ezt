@@ -28,9 +28,9 @@
               <span class="title-search-name">未盘处理：</span>
               <input type="text" class="ezt-middle" disabled v-model="detail.stock_count_mode_name">
           </li>
-          <li v-if="InterfaceSysTypeBOH">
+          <li v-if="InterfaceSysTypeBOH"  @click="selectMaterials()">
             <span class="title-search-name is-required">选择货品：</span>
-            <span class="title-search-right" @click="selectMaterials()">
+            <span class="title-search-right">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
           </li>   

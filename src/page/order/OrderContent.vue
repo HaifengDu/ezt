@@ -15,7 +15,7 @@
            </span>
           <span class='ezt-action-point' @click="queryPage">
             <i class="fa fa-search" aria-hidden="true"></i>
-          </span>          
+          </span>              
          </div>
          <div v-show="addgoods" class="addgoods">
           <ul>
@@ -646,7 +646,7 @@ export default class OrderGoods extends Vue{
 <style lang="less" scoped>
     .go-top{
       bottom:78px !important;
-      z-index: 9;
+      z-index: 99;
     }
     .ezt-header{
       padding: 0;

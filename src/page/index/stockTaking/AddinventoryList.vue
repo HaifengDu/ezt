@@ -79,9 +79,9 @@
                     <span class="title-search-name">盘点仓库：</span>
                     <input type="text" class="ezt-middle" disabled v-model="addinventory.stock">
                 </li>
-                <li>
+                <li @click="BohMaterials()">
                   <span class="title-search-name is-required">选择货品：</span>
-                  <span class="title-search-right" @click="BohMaterials()">
+                  <span class="title-search-right">
                     <i class="fa fa-angle-right" aria-hidden="true"></i>
                   </span>
                 </li>

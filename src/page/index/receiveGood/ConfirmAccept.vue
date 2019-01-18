@@ -38,9 +38,9 @@
             <input type="text" v-if="!InterfaceSysTypeBOH" class="ezt-middle" v-model="addBillInfo.remark">
             <span v-if="InterfaceSysTypeBOH">{{addBillInfo.memo}}</span>
           </li>  
-          <li v-if="receive_billtype.cai">
+          <li v-if="receive_billtype.cai"  @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
             <span class="title-search-name">选择物料：</span>
-            <span class="title-search-right" @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
+            <span class="title-search-right">
               <i class="fa fa-angle-right" aria-hidden="true"></i>
             </span>
             

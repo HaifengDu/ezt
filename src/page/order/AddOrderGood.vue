@@ -67,10 +67,10 @@
                             <input type="text" class="ezt-middle" v-model="addBillInfo.remark" v-if="!InterfaceSysTypeBOH">
                             <input type="text" class="ezt-middle" v-model="addBillInfo.memo" v-if="InterfaceSysTypeBOH">
                         </li>
-                        <li>
+                        <li @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
                             <!-- <span class="title-search-name">选择物料：</span> -->
                             <span class="title-search-name is-required">选择物料：</span>
-                            <span class="title-search-right" @click="renderUrl(InterfaceSysTypeBOH ? '/publicAddGood':'/saasPublicGood')">
+                            <span class="title-search-right">
                             <i class="fa fa-angle-right" aria-hidden="true"></i>
                             </span>
                             

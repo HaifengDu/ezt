@@ -115,6 +115,68 @@ export class BOHSupplierReturnService extends BaseService implements ISupplierRe
     }   
 
 
+    /**
+     * 退单新增  保存  审核
+     */
+    getReturnSaveAudit(param:object){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }    
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/saveScmReturn`,{
+            data:{
+                ...param
+            }
+        },config)
+        .then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+
+    /**
+     * 审核退货单
+     * @param param 
+     */
+    getReturnUpdate(param:object){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }    
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/updateScmReturn`,{
+            data:{
+                ...param
+            }
+        },config)
+        .then(res=>{              
+            return Promise.resolve(res);
+        });
+    }
+    /**
+     * 待审核退货单据  删除
+     * @param id 
+     */
+
+    getDeleteReturn(id:string){
+        let config = {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        }
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/delScmReturn`,{
+            "id":id,  
+        },config).then(res=>{              
+            return Promise.resolve(res);
+        });
+    }  
+
+
+
+
+
+
+
     static createInstance(){
         BOHSupplierReturnService.getInstance();
     }

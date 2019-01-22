@@ -43,8 +43,8 @@
                         <span class="title-search-name ">配送中心：</span>
                         <span class="title-select-name item-select">
                             <select placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplier">
-                            <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                            <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name || item.supplierName}}</option>
+                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                <option :value="item" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -54,8 +54,8 @@
                             <select value placeholder="请选择" class="ezt-select" v-model="addBillInfo.supplier" 
                                 @change="handlerBillType('supplier','您已维护物料信息，如调整供货机构，须重新选择源单号及物料。')"
                                 :class="[{'selectError':billFiles[2].supplier}]">
-                                <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
-                                <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name || item.supplierName}}</option>
+                                    <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
+                                    <option :value="item.id" :key="index" v-for="(item,index) in pullList.supplierList">{{item.name}}</option>
                             </select>
                         </span>
                     </li>
@@ -105,7 +105,7 @@
                                     <span class="good-detail-billno ">编码：{{item.goodsCode}}</span>
                                     <span class="good-detail-sort" v-if="(addBillInfo.returnType == 'store' && materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥{{item.price}}/{{item.utilname}}</span>
                                     <span class="title-search-name ezt-dense-box">退货数量：{{item.num || item.qty}}</span>                         
-                                </div>                     
+                                </div>                      
                             </div>
                             <div class="good-detail-r">
                             <div class="park-input"> 
@@ -123,13 +123,16 @@
                 <div class="ezt-foot-temporary" slot="confirm">
                     <div class="ezt-foot-total" v-if="this.ReturnList.length>0">合计：
                         <b>品项</b><span></span>，{{this.ReturnList.length}}
-                        <b>数量</b><span>{{Total.num}}</span>，
+                        <b>数量</b><span>{{Total.num || Total.qty}}</span>，
                         <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥</b>
                         <span v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">{{(Total.Amt).toFixed(2)}}</span>
                     </div>
-                    <div class="ezt-foot-button">
-                        <a href="javascript:(0)" class="ezt-foot-storage" @click="saveAllot">提交</a>  
+                    <div class="ezt-foot-button" v-if="!InterfaceSysTypeBOH">
+                        <a href="javascript:(0)"  class="ezt-foot-storage" @click="saveAllot">提交</a>  
                         <a href="javascript:(0)" class="ezt-foot-sub" @click="confirmAllot"> 提交并审核</a>   
+                    </div>  
+                    <div class="ezt-foot-button" v-if="InterfaceSysTypeBOH">
+                        <a href="javascript:(0)"  class="ezt-foot-storage save" @click="saveReturn">保存并提交</a>  
                     </div>  
                 </div>
             </ezt-footer>
@@ -273,7 +276,6 @@ export default class ReturnGood extends Vue{
          */
         if(this.cache.getData(CACHE_KEY.DISTRIBUTION_CENTER)){
             this.pullList.supplierList = JSON.parse(this.cache.getData(CACHE_KEY.DISTRIBUTION_CENTER));
-            console.log(this.pullList.supplierList)
         }
        
         if(this.selectedGood&&this.selectedGood.length>0){
@@ -293,11 +295,31 @@ export default class ReturnGood extends Vue{
      * 物料总数量、总金额
      */
     private get Total(){
-        return this.selectedGood.reduce((ori,item)=>{
-            ori.num = ori.num+Number(item.num);       
-            ori.Amt = ori.Amt + (Number(item.num) * Number(item.price));
-            return ori;
-        },{num:0,Amt:0});
+        return this.ReturnList.reduce((ori,item) => {
+            if(item.distributePrice1){
+                ori.qty = ori.qty + Number(item.qty);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + (item.qty * item.distributePrice1);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.qty = 0;
+                }
+                return ori;
+           }else{
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+           }
+    },{num:0,Amt:0,distributePrice1:0,qty:0});
     }
     /**
      * 退货类型为配送退货，必填源单号
@@ -393,7 +415,7 @@ export default class ReturnGood extends Vue{
         let that = this;
         if(!that.InterfaceSysTypeBOH){
             if(that.selectedGood.length>0){
-                that.$vux.confirm.show({
+                that.$vux.confirm.show({   
                     // 组件除show外的属性
                     onCancel () {
                         that.addBillInfo[val] = that.addBeforeBillInfo[val];
@@ -459,8 +481,7 @@ export default class ReturnGood extends Vue{
      * 根据退货类型显示配送中心或供货机构
      */
     private selectReturn(){
-        const billType = this.pullList.returnType || null
-        this.service.getReturnType(billType).then(res=>{ 
+        this.service.getReturnType(this.addBillInfo.returnType).then(res=>{ 
                 this.pullList.supplierList = res.data.organList
             },err=>{
                 this.$toasted.show(err.message)
@@ -481,11 +502,72 @@ export default class ReturnGood extends Vue{
             content:"该收货单有待处理的退货单："+ _this.addBillInfo.sourceBillno.billNo
         })
     }
+    /**
+     * 保存并提交
+     */
+    private saveReturn(rows:Array<any>){
+       for(let i=0;i<this.billFiles.length;i++){
+            let item = this.billFiles[i];
+            if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
+                if(!this.isRequired&&item.id=='sourceBillno'){//退货类型为供应商退货，非必填
+                    item[item.id] = false;
+                }else{
+                    this.$toasted.show(item.msg);
+                    item[item.id]=true;
+                    return false;
+                }
+            }
+        }
+        this.setSelectedGood(this.selectedGood.filter(checkItem => (checkItem.num&&checkItem.num!=0)));
+        if(!this.ReturnList||this.ReturnList.length<=0){
+            this.$toasted.show("请添加物料！");
+            return false;
+        } 
+        var rows=[]; 
+		this.ReturnList.forEach(item => {    
+		   let obj = {
+            "distributePrice1":item.distributePrice1,
+            "goodsCode":item.goodsCode,
+            "goodsName":item.goodsName,
+            "goodsId":item.id,
+            "unitId":item.measureUnitId,
+            "unitName":item.measureUnitName,
+            "price":item.price,
+            "qty": item.qty,
+            "rate": item.rate,
+            "orderUnitId": item.scmUnitId,
+            "orderUnitName":item.scmUnitName,
+            "wareQty":item.wareQty,
+            "memo":item.memo || '',
+            };
+			rows.push(obj);
+        });
+        let data={
+           "totalAmt": this.Total.qty,
+           "status": "SCM_RETURN_STATUS_FINISH",
+           "businessName": this.addBillInfo.supplier.name,
+           "businessId": this.addBillInfo.supplier.id,       //配送中心id  供应商id
+           "auditStatus": "SCM_AUDIT_NO",    //审核状态   NO
+           "busiDate":  this.user.auth.busi_date,
+           "outType": "SCM_OUT_TYPE_DISTRIBUTE",
+           "detailList":rows,
+        }
+		this.service.getReturnSaveAudit(data).then(res=>{
+            this.addBillInfo={};
+            this.ReturnList=[];
+            this.setSelectedGood([]);
+            this.addBeforeBillInfo={};
+            this.$toasted.success("提交成功！");
+            this.$router.push('/supplierReturn')
+		},err=>{
+          this.$toasted.show(err.message)
+        })
+    }
       /**
      * 提交
      */
     private saveAllot(){
-        for(let i=0;i<this.billFiles.length;i++){
+         for(let i=0;i<this.billFiles.length;i++){
             let item = this.billFiles[i];
             if(!this.addBillInfo[item.id]||this.addBillInfo[item.id]==""){
                 if(!this.isRequired&&item.id=='sourceBillno'){//退货类型为供应商退货，非必填
@@ -590,9 +672,8 @@ export default class ReturnGood extends Vue{
                 this.$router.push(info);
             } 
        }else{
-            let goodTerm = {}
-            let ReturnConditions = {}
-            let sourceBillList = {}
+            let goodTerm = {};
+            let ReturnConditions = {};
             if(this.addBillInfo){
                 let _this = this;
                 for(let i=0;i<this.billFiles.length;i++){
@@ -640,7 +721,7 @@ export default class ReturnGood extends Vue{
             this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {
-                    console.log(this) // 非当前 vm
+
                 },
                 onConfirm () {
                     _this.addBillInfo={},
@@ -741,7 +822,6 @@ export default class ReturnGood extends Vue{
         position: absolute;
         right: 10px;
         top: 30px;
-        // background: pink;
         width: 50px;
         height: 50px;
         text-align: center;
@@ -753,6 +833,10 @@ export default class ReturnGood extends Vue{
     .ezt-select .disNum{
         color: red;
         border-bottom: 1px solid #000;
+    }
+    .save{
+        width: 100%;
+        background-color: #1188FC;
     }
 </style>
 

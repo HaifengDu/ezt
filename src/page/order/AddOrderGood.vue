@@ -1,10 +1,10 @@
 <!--新增订货-->
-<template>
+<template>       
     <div class="ezt-page-con">
         <ezt-header title="添加要货单" :back="true" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
-                <ul class="ezt-title-search">
+                <ul class="ezt-title-search">   
                     <li class="select-list">
                         <span class="title-search-name is-required">配送机构：</span>
                         <span class="title-select-name item-select">
@@ -13,7 +13,7 @@
                             <option value="" style="display:none;" disabled="disabled" selected="selected">请选择</option>
                             <option :value="item.id" :key="index" v-for="(item,index) in supplierLists">{{item.name}}</option>
                         </select>
-                        </span>
+                        </span>   
                     </li>
                     <!-- boh版本要货日期 页面中不限制 -->
                     <li class="select-list" v-if="InterfaceSysTypeBOH">
@@ -114,7 +114,7 @@
                                     </span>                                    -->
                                 </div>
                                 <div>
-                                    <span class="good-detail-billno">{{item.goodsCode||""}}</span>
+                                    <span class="good-detail-billno">{{item.goodsCode || ""}}</span>
                                     <span class="good-detail-sort" v-if="materialSetting.show_order_price||InterfaceSysTypeBOH">￥{{item.price||item.distributePrice1}}/{{item.utilname||item.unitName}}
                                     </span>
                                     <span class="good-detail-sort">数量：{{item.num||item.finalOrderQty}}</span>
@@ -150,18 +150,18 @@
     </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
-import {Component} from "vue-property-decorator"
-import IUser from "../../interface/IUserModel"
+import Vue from 'vue';
+import {Component} from "vue-property-decorator";
+import IUser from "../../interface/IUserModel";
 import { mapActions, mapGetters } from 'vuex';
 import { INoop, INoopPromise } from '../../helper/methods';
 import { FactoryService } from '../../factory/FactoryService';
 import { IOrderGoodsService } from '../../interface/service/IOrderGoodsService';
 import { CachePocily } from "../../common/Cache";
 import { ECache } from "../../enum/ECache";
-import ObjectHelper from '../../common/objectHelper'
-import CACHE_KEY from '../../constans/cacheKey'
-import commonService from '../../service/commonService.js';
+import ObjectHelper from '../../common/objectHelper';
+import CACHE_KEY from '../../constans/cacheKey';
+import commonService from '../../service/commonService';
 import {EGoodType} from '../../enum/EGoodType';
 import formData from '../../dictory/formData';
 @Component({
@@ -170,8 +170,8 @@ import formData from '../../dictory/formData';
             'user' : 'user',
             'selectedGood' : 'publicAddGood/selectedGood',//已经选择好的物料
             'systemParamSetting' : "systemParamSetting",//系统设置
-            InterfaceSysTypeBOH : 'InterfaceSysTypeBOH',//后台接口是否为BOH
-            materialSetting : 'materialSetting',//物流设置
+            'InterfaceSysTypeBOH' : 'InterfaceSysTypeBOH',//后台接口是否为BOH
+            'materialSetting' : 'materialSetting',//物流设置
         })
     },
     methods:{
@@ -690,7 +690,7 @@ export default class Order extends Vue{
             this.$toasted.show("请添加物料！");
             return false;
         }
-        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;
+        this.addBillInfo.containTime=this.containTime.newHour+":"+this.containTime.newMinut;    
         let param ={            
             detailList:this.goodData,
             totalAmt:this.Total.Amt,
@@ -701,7 +701,7 @@ export default class Order extends Vue{
             delete this.addBeforeBillInfo.orderType;
         }  
         this.service.saveOrder((Object.assign(param,this.addBeforeBillInfo))).then(res=>{
-            this.addBillInfo={},
+            this.addBillInfo={},    
             this.goodData=[];
             this.setSelectedGood([]);
             this.addBeforeBillInfo={};
@@ -713,13 +713,13 @@ export default class Order extends Vue{
     /**
      * 返回
      */
-    private goBack(){
+    private goBack(){    
         let _this = this;
          if((this.addBillInfo&&this.addBillInfo.storeId)||this.goodData.length>0){
             this.$vux.confirm.show({
                 // 组件除show外的属性
                 onCancel () {
-                console.log(this) // 非当前 vm
+                    
                 },
                 onConfirm () {
                     _this.addBillInfo={},
@@ -817,7 +817,7 @@ export default class Order extends Vue{
     display: flex;
     flex-direction: column;
     padding-bottom: 10px;
-    transition: transform .5s;
+    transition: all .5s;
     background: #fff;
     z-index: 2;
   }

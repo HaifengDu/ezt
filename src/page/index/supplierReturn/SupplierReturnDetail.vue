@@ -44,7 +44,7 @@
                         </div>
                         <div class="good-detail-item">
                             <div class="good-detail-sort content">备注：
-                                <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark || item.memo?'item.memo':'无'}}</div>
+                                <div v-fixHeight="item" class="remark-suitable" :class="{'auto':item.flod}">{{item.remark || item.memo}}</div>
                                 <span @click='handleFold(item)' v-if="item.show">{{item.flod?"收起":"展开"}}</span>
                             </div>
                         </div>

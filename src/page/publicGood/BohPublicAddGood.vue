@@ -504,7 +504,7 @@ export default class AddGood extends Vue{
         return false;
       }
     }      
-    _this_.service.getGoodClass( Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
+    _this_.service.getGoodClass(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList || [];
       this.goodList = this.allGoods(res.data);
       // this.goodList = goodsList;
@@ -526,8 +526,19 @@ export default class AddGood extends Vue{
     //TODO:item.id加载货品
     _.forEach(item.goodsList,good=>{
       this.$set(good,'active',false);
-      const index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-      if(index>=0){
+      /**
+       * 退货处理
+       */
+      if(this.materialLimit.billsPageType == 'supplierReturn'){
+        var index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
+      }
+      /**
+       * 盘点处理
+       */
+      if(this.materialLimit.billsPageType == 'stocktaking'){
+        var index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+      }
+      if(index>=0){    
         ObjectHelper.merge(good,this.selectedGoodList[index],true);
         this.selectedGoodList[index] = good;
         item.addList.push(good);
@@ -682,61 +693,87 @@ export default class AddGood extends Vue{
   private handlerNum(item:any){
     let _this = this;
     //退货数量 限制处理
-    if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
-        this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
-      if(!item.isStock){
-        if(item.num == item.stock){//库存量
-          this.$set(item,'isStock','true');
-          return false;
+    // if(this.materialLimit.billsPageType == 'inStoreAllot' || this.materialLimit.billsPageType == 'storeAllot'||
+    //     this.materialLimit.billsPageType == 'spilledSheet' || this.materialLimit.billsPageType == 'leadbackMaterial'||(this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
+    //   if(!item.isStock){
+    //     if(item.num == item.stock){//库存量
+    //       this.$set(item,'isStock','true');
+    //       return false;
+    //     }
+    //   }else{
+    //     if(item.num == item.returnNum){//可退量
+    //       this.$set(item,'isStock','true');
+    //       return false;
+    //     }
+    //   }     
+    //   let confirmTitle="";
+    //   if(this.materialLimit.billsPageType == 'supplierReturn'){
+    //     if(item.isStock&&this.materialSetting.isAnyReturn&&item.num > item.stock){//是任意退货 （库存）
+    //       confirmTitle = '实退数量不可大于库存数量';
+    //     }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
+    //       confirmTitle ='实退数量不可大于可退数量';
+    //     }
+    //   }else if(item.isStock&&item.num == item.stock){
+    //       confirmTitle ='添加数量不可大于库存量';
+    //   }
+    //   if(confirmTitle){
+    //     this.$vux.confirm.show({
+    //       content:confirmTitle,
+    //       showCancelButton:false,
+    //       hideOnBlur:true
+    //     })
+    //     return false;
+    //   }
+    // }   
+    if((this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
+       if(item.num>0){
+            var ret = this.selectedGoodList.find((value:any)=>{
+              return item.id == value.id;
+            });
+            if(!ret){
+              this.selectedGoodList.push(item);
+            }
+            var smallRet = this.typeName.addList.find((value:any)=>{
+              return item.id == value.id;
+            })
+            if(!smallRet){       
+              this.typeName.addList.push(item);
+            }
+       }else{
+            const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
+            if(index>=0){
+              this.selectedGoodList.splice(index,1);
+            }
+            const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
+            if(smallIndex>=0){
+              this.typeName.addList.splice(smallIndex,1);
+            }
+       }
+    }else{
+       if(item.num>0 || item.disperse_num>=0){
+        //新增
+        var ret = this.selectedGoodList.find((value:any)=>{
+          return item.material_id == value.material_id;
+        });
+        if(!ret){
+          this.selectedGoodList.push(item);
+        }
+        var smallRet = this.typeName.addList.find((value:any)=>{
+          return item.material_id == value.material_id;
+        })
+        if(!smallRet){       
+          this.typeName.addList.push(item);
         }
       }else{
-        if(item.num == item.returnNum){//可退量
-          this.$set(item,'isStock','true');
-          return false;
+        //删除
+        const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+        if(index>=0){
+          this.selectedGoodList.splice(index,1);
         }
-      }     
-      let confirmTitle="";
-      if(this.materialLimit.billsPageType == 'supplierReturn'){
-        if(item.isStock&&this.materialSetting.isAnyReturn&&item.num == item.stock){//是任意退货 （库存）
-          confirmTitle = '实退数量不可大于库存数量';
-        }else if(item.isStock&&!this.materialSetting.isAnyReturn&&item.num == item.returnNum){//不是任意退货（可退）
-          confirmTitle ='实退数量不可大于可退数量';
+        const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+        if(smallIndex>=0){
+          this.typeName.addList.splice(smallIndex,1);
         }
-      }else if(item.isStock&&item.num == item.stock){
-          confirmTitle ='添加数量不可大于库存量';
-      }
-      if(confirmTitle){
-        this.$vux.confirm.show({
-          content:confirmTitle,
-          showCancelButton:false,
-          hideOnBlur:true
-        })
-        return false;
-      }
-    }   
-    if(item.num>0 || item.disperse_num>=0){
-      //新增
-      var ret = this.selectedGoodList.find((value:any)=>{
-        return item.material_id == value.material_id;
-      });
-      if(!ret){
-        this.selectedGoodList.push(item);
-      }
-      var smallRet = this.typeName.addList.find((value:any)=>{
-        return item.material_id == value.material_id;
-      })
-      if(!smallRet){       
-        this.typeName.addList.push(item);
-      }
-    }else{
-      //删除
-      const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-      if(index>=0){
-        this.selectedGoodList.splice(index,1);
-      }
-      const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-      if(smallIndex>=0){
-        this.typeName.addList.splice(smallIndex,1);
       }
     }
   }   

@@ -52,7 +52,7 @@
                 <span v-if="InterfaceSysTypeBOH"  class="receive-dc-title">退货类型：
                      <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_DISTRIBUTE'">配送退货</span>
                      <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_SUPPLIER'">供应商退货</span>
-                     <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_OTHER_RETURN'">其他退货</span>
+                     <span class="receive-dc-content" v-if="item.outType === 'SCM_OUT_TYPE_OTHER_RETURN'">其他退货</span>  
                 </span>               
                 <div style="display:flex" v-if="!InterfaceSysTypeBOH">                
                   <span class="receive-dc-title">数量：<span class="receive-dc-content">{{item.exportNum}}</span></span>
@@ -61,7 +61,7 @@
                 <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建人：<span class="receive-dc-content">{{item.creator}}</span></span>
                 <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建日期：<span class="receive-dc-content">{{item.createDate}}</span></span>
                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
+                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
               </div>     
             </div> 
             <div class="ezt-list-del" @click.stop="deleteBill(item)">
@@ -291,7 +291,7 @@ export default class ReturnGood extends Vue{
    */
   private handlerSwipe(item:any,active:boolean){
       const status = this.tabList.getActive().status;
-      if(status =="1"){
+      if(status =="1" || status == "SCM_AUDIT_NO"){
           this.$set(item,'active',active);
       }  
   }
@@ -309,11 +309,22 @@ export default class ReturnGood extends Vue{
             _this.goodList[newIndex].active = false;
         },
         onConfirm () {
-            let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+          if(!_this.InterfaceSysTypeBOH){
+              let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
                 return item.id == info.id;
+              })
+              _this.goodList.splice(newIndex,1);
+          }else{
+             _this.service.getDeleteReturn(item.id).then(res=>{
+              let newIndex = _this.goodList.findIndex((info:any,index:any)=>{
+              return item.id == info.id;
+              })
+              _this.goodList.splice(newIndex,1);
+              _this.getList();
+            },err=>{
+              _this.$toasted.show(err.message)
             })
-            _this.goodList.splice(newIndex,1);
-            _this.getList();
+          }
         },
         content:'是否要删除该单据？'
     })
@@ -348,24 +359,30 @@ export default class ReturnGood extends Vue{
             this.$router.push('/supplierReturnDetail');    
           }
       }else{
-          if(this.tabList.getActive().status=='SCM_AUDIT_NO'){
-            confirmGoodInfo={
-              bill_no:item.bill_no,
-              billType:'合同采购',
-              warehouse:'01',
-              remark:'在途中', 
-              returnType:'supplier'        
-            }
-            this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
-            this.$router.push('/supplierReturnAudit');
-          }else if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
-            this.service.getGoodDetail(item.id,this.pager.getPage()).then(res=>{ 
-               this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(res.data));
-               this.$router.push('/supplierReturnDetail')
+          /**
+           * BOH版本
+           */
+          this.service.getGoodDetail(item.id,this.pager.getPage()).then(res=>{ 
+                // confirmGoodInfo={
+                //   bill_no:item.bill_no,
+                //   billType:'合同采购',
+                //   warehouse:'01',
+                //   remark:'在途中', 
+                //   returnType:'supplier'        
+                // }
+              this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(res.data));
+              // this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
+              if(this.InterfaceSysTypeBOH){
+                  if(this.tabList.getActive().status=='SCM_AUDIT_NO'){ 
+                    this.$router.push('/supplierReturnAudit')
+                  }
+                  if(this.tabList.getActive().status=='SCM_AUDIT_YES'){
+                    this.$router.push('/supplierReturnDetail')
+                  }
+              }
             },err=>{
                 this.$toasted.show(err.message)
             })
-          }
       }
       if(info){
           this.$router.push(info);
@@ -525,11 +542,11 @@ export default class ReturnGood extends Vue{
 .ezt-list-del{
   position: absolute;
   right: 12px;
-  top: 42px;
+  top: 0px;
   width: 50px;
-  height: 50px;
+  height: 211px;
+  line-height: 211px;
   text-align: center;
-  margin: 25px 0px;
   font-size: 22px;
 }
 //左侧滑动删除

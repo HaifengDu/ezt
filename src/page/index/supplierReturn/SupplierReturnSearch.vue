@@ -32,7 +32,7 @@
                                 <span v-if="InterfaceSysTypeBOH" class="receive-dc-title">创建人：<span class="receive-dc-content">{{item.creator}}</span></span>
                                 <span v-if="InterfaceSysTypeBOH" class="receive-dc-title">创建日期：<span class="receive-dc-content">{{item.createDate}}</span></span>
                                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-                                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark || item.memo?'item.memo':'无'}}</span></span>
+                                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
                             </div>
                         </div>
                     </li>

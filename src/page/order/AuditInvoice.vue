@@ -32,16 +32,12 @@
                         </span>
                     </li> 
                 </ul>
-                <div v-if="selectedGood.length==0" class="done-none">
-                    <div></div>
-                    <span>暂无物品明细</span>
-                </div>
-                <ul v-if="selectedGood.length>0">
+                <ul>
                     <li class="good-detail-content" v-for="(item,index) in selectedGood" :key="index"> 
                         <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)" 
                         v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
                             <div class="good-detail-l">
-                                <div>
+                                <div>  
                                     <span class="good-detail-name">{{item.name || item.goodsName}}
                                         <span v-if="!InterfaceSysTypeBOH" class="good-detail-sort">（规格）</span>
                                     </span>
@@ -196,10 +192,14 @@ export default class OrderGoods extends Vue{
     /**
      * 确认删除物料
      */
-    private delAction(item:any,delId:Array<any>){
+    private delAction(item:any,delId:Array<any>){   
         let _this = this;
         this.$vux.confirm.show({
             onCancel () {
+                let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
+                   return item.id == info.id;
+                })
+                _this.selectedGood[newIndex].active = false;
             },
             onConfirm (i:any) {
                 let newIndex = _this.selectedGood.findIndex((info:any,index:any)=>{
@@ -221,7 +221,7 @@ export default class OrderGoods extends Vue{
         goodTerm={
             billsPageType: 'orderGood',
             showPrice: !this.materialSetting.show_order_price
-        }  
+        }     
         material_param={
             id:this.addBillInfo.id,
             supplierId : this.addBillInfo.supplierId,
@@ -348,13 +348,16 @@ export default class OrderGoods extends Vue{
             /**
              * 审核通过
              */
-            onConfirm (row:Array<any>) { 
+            onConfirm (row:Array<any>,delId:Array<any>) { 
                 if(!_this.InterfaceSysTypeBOH){
                     _this.setSelectedGood([]);
                     _this.$toasted.success("审核成功！");
                     _this.$router.push({name:'OrderGood',params:{'purStatus':'待支付'}}); 
                 }else{
                     var row =[];
+                    if(_this.cache.getData(CACHE_KEY.ORDER_DELETEID)){
+                       _this.delId = JSON.parse(_this.cache.getData(CACHE_KEY.ORDER_DELETEID));
+                    }
                     _this.selectedGood.forEach((item:any) => {
                         let objList = {
                             "orderCategoryId": item.orderCategoryId,
@@ -410,6 +413,7 @@ export default class OrderGoods extends Vue{
                         "orderType": _this.addBillInfo.orderType,
                         "receiveOrganId":_this.addBillInfo.receiveOrganId,
                         "detailList":row,
+                        "delIds":_this.delId || '',
                     }  
                 _this.service.getAuditorderlistyes(data).then(res=>{ 
                     _this.addBillInfo={};

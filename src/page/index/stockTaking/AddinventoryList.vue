@@ -1,7 +1,7 @@
 <!--新增盘点单-->
-<template>
-    <div>
-      <!-- SAAS版本 -->
+<template>   
+  <div> 
+      <!-- saas版本 -->
       <div class="ezt-page-con addinventorylist" v-if="!InterfaceSysTypeBOH">
           <ezt-header :back="true" title='新增盘点单' @goBack="goBack" :isInfoGoback="true">
             <div slot="action">
@@ -54,8 +54,8 @@
             </div> 
           </div>      
         </div>
-      <!-- BOH版本 -->
-      <div class="ezt-page-con addinventorylist" v-show="InterfaceSysTypeBOH">
+     <!-- boh版本 -->
+     <div class="ezt-page-con addinventorylist" v-show="InterfaceSysTypeBOH">
           <ezt-header :back="true" title='新增盘点单' @goBack="goBack" :isInfoGoback="true">
             <div slot="action">
             </div>   
@@ -74,9 +74,9 @@
                 <li>
                     <span class="title-search-name">盘点类型：</span>
                     <input type="text" class="ezt-middle" disabled v-model="addinventory.name">
-                </li>
+                </li>  
                 <li>
-                    <span class="title-search-name">盘点仓库：</span>
+                    <span class="title-search-name">盘点仓库：</span>     
                     <input type="text" class="ezt-middle" disabled v-model="addinventory.stock">
                 </li>
                 <li @click="BohMaterials()">
@@ -86,11 +86,15 @@
                   </span>
                 </li>
               </ul>
+              <!-- 选择的物料明细 -->
               <ul>
-                <li class="good-detail-content" :class="{'':item.active}" v-for="(item,index) in InventoryList" :key="index">    
-                      <div class="ezt-detail-good" v-swipeleft="handleSwipe.bind(this,item,true)"   
-                      v-swiperight="handleSwipe.bind(this,item,false)" :class="{'swipe-transform':item.active}">
-                          <div class="good-detail-l">
+                <li class="good-detail-content" v-for="(item,index) in InventoryList" :key="index">
+                    <div class="ezt-detail-good" 
+                        v-swipeleft="handlerSwipe.bind(this,item,true)"  
+                        v-swiperight="handlerSwipe.bind(this,item,false)" 
+                        :class="{'swipe-transform':item.active}"
+                       >
+                        <div class="good-detail-l">
                               <div>
                                   <span class="good-detail-name">
                                     <span class="good-detail-break">{{item.material_name}}</span> 
@@ -104,19 +108,19 @@
                               <div>
                                   <span class="title-search-name ezt-dense-box">账面数量：{{item.acc_qty}}</span>   
                                   <span class="title-search-name ezt-dense-box">实盘数：{{item.disperse_num || 0}}</span> 
-                              </div> 
-                          </div>
-                          <div class="good-detail-r">
+                              </div>             
+                        </div>
+                       <div class="good-detail-r">
                             <div class="park-input" style="margin-top: 10px;"> 
                               <span class="title-search-name">备注：{{item.remark || item.memo}}</span>
                             </div>                    
-                          </div>
-                      </div> 
-                      <div class="ezt-detail-del" @click="delAction(item)">
+                       </div>
+                    </div>
+                    <div class="ezt-detail-del" @click="delAction(item)">
                         <i class="fa fa-trash" aria-hidden="true"></i>
-                      </div>
+                    </div> 
                 </li>
-              </ul>   
+              </ul> 
             </div> 
             <ezt-footer>
               <div class="ezt-foot-temporary" slot="confirm">
@@ -130,9 +134,9 @@
                 </div>  
               </div>
             </ezt-footer>
-          </div>      
-        </div>
+        </div>      
     </div>
+ </div>
 </template>
 <script lang="ts">
 import Vue from 'vue'
@@ -225,7 +229,7 @@ export default class StockTaking extends Vue{
     this.InventoryList = ObjectHelper.serialize(this.selectedGood);
     (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
     (this.InventoryList||[]).forEach((item:any)=> this.$set(item,'active',false));
-    this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
+    this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝 
     /**
      * BOH版本 获取仓库
      */
@@ -285,8 +289,37 @@ export default class StockTaking extends Vue{
   /**
    * 左侧滑动
    */
-  private handleSwipe(item:any,active:boolean){ 
-    item.active=active;
+  private handlerSwipe(item:any,active:boolean){ 
+      debugger
+      item.active = active;        
+  }
+  /**
+   * 删除物料操作
+   */
+  private delAction(item:any){
+    let _this = this;
+    this.$vux.confirm.show({
+      /**
+       * 取消操作
+       */
+      onCancel () {
+        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
+              return item.id == info.id;
+        })
+        _this.InventoryList[newIndex].active = false;
+      },
+      /**
+       * 确认操作
+       */
+      onConfirm () {
+        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
+            return item.id == info.id;
+        })
+        _this.InventoryList.splice(newIndex,1);
+        _this.selectedGood.splice(newIndex,1);
+      },
+      content:'请确认是否删除该物料?'
+    })
   }
    /**
      * SAAS版本 选择仓库 未盘处理方式
@@ -329,33 +362,7 @@ export default class StockTaking extends Vue{
            }
     },{num:0,Amt:0,distributePrice1:0,disperse_num:0});
   } 
-  /**
-   * 删除物料操作
-   */
-  private delAction(item:any){
-    let _this = this;
-    this.$vux.confirm.show({
-      /**
-       * 取消操作
-       */
-      onCancel () {
-        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
-          return item.id == info.id;
-        })
-        _this.InventoryList[newIndex].active = false;
-      },
-      /**
-       * 确认操作
-       */
-      onConfirm () {
-        let newIndex = _this.InventoryList.findIndex((info:any,index:any)=>{
-          return item.id == info.id;
-        })
-        _this.InventoryList.splice(newIndex,1);
-      },
-      content:'请确认是否删除该物料?'
-    })
-  }
+  
   /**  
    *  BOH盘点单 保存并提交
    */
@@ -643,14 +650,28 @@ input.ezt-smart{
         padding: 0px 0px 5px;
     }
     .ezt-detail-good{    
-      display: flex;
-      flex-direction: column;
-      padding-bottom: 10px;
-      transition: transform .5s;
-      background: #fff;
-      z-index: 2;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 10px;
+        transition: transform .5s;
+        background: #fff;
+        z-index: 2;
     }
 }
+    // 左侧滑动删除
+    .swipe-transform{
+        transform: translateX(-50px);
+    }
+    .ezt-detail-del{
+        position: absolute;
+        right: 10px;
+        top: 30px;
+        width: 50px;
+        height: 50px;
+        text-align: center;
+        margin: 10px 0px;
+        font-size: 22px;
+    }
     //物料明细结束 
     .park-input{
       display: flex;
@@ -662,20 +683,5 @@ input.ezt-smart{
     .title-search-right{
       flex: 2;
       text-align: right;
-    }
-    .swipe-transform{
-      transform: translateX(-50px);
-    }
-    .ezt-detail-del{
-      position: absolute;
-      right: -9px;
-      top: 0;
-      width: 50px;
-      height: 130px;
-      text-align: center;
-      line-height: 125px;
-      font-size: 25px;
-      display: flex;
-      align-items: center;
-    }
+    } 
 </style>

@@ -57,6 +57,29 @@ export class SupplierReturnService extends BaseService implements ISupplierRetur
         return promise;
     } 
 
+    /**
+     * 新增退货  保存 审核
+     */
+    getReturnSaveAudit(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    }
+  
+    /**
+     * 待审核单据   删除
+     */
+    getDeleteReturn(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    }
+
+    /**
+     * 审核退货单
+     */
+    getReturnUpdate(){
+        const promise = Axios.get(`http://api.scmacewill.cn:3000/apimock/getMockData?id=55`);
+        return promise;
+    }
 
 
 

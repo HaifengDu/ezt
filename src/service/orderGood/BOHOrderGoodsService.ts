@@ -147,11 +147,11 @@ export class BOHOrderGoodsService extends BaseService implements IOrderGoodsServ
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
-            }
+            }    
         }
         return Axios.post(`${this.reqUrl}mobile/purchase/saveOrder`,{
             data:{
-                "orderType": "SCM_ORDER_TYPE_RULE", 
+                "orderType": "SCM_ORDER_TYPE_RULE",   
                 ...param
             }
         },config)

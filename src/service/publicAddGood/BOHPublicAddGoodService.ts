@@ -19,7 +19,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * BOH版本   编制盘点单新增物品  （按分类检索）
      * @param bill_type      
      */
-    getBohClassifiedSearch(param:any,pager:IPagerData){
+    getBohClassifiedSearch(param:any,pager:IPagerData):AxiosPromise<any>{
         let firstIds = {};
         let config = {
             headers: {
@@ -82,7 +82,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param bill_type 
      * @param goodsSortId 
      */
-    getBohItemCategory(param:any,pager:IPagerData){
+    getBohItemCategory(param:any,pager:IPagerData):AxiosPromise<any>{
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -138,7 +138,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         }   
         if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
             firstIds = {
-                categoryId: param.categoryId,
+                "categoryId": param.categoryId,
             }
         }else{
             firstIds = {
@@ -240,11 +240,11 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
 
 
     /**
-     * BOH版本  退货 分类
+     * BOH版本  退货 分类  物品
      * @param bill_type 
      * @param goodsSortId 
      */
-    getBohReturnGoods(param:any,pager:IPagerData){
+    getBohReturnGoods(param:any,pager:IPagerData):AxiosPromise<any>{
         let firstIds = {};
         let config = {
             headers: {
@@ -258,8 +258,8 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         }else{
             firstIds = {
                 "goodsSortId": param.goodsSortId,
-            }
-        }
+            }    
+        }   
         var p = {
             "billType": param.billType, 
             "busiDate": param.busiDate,
@@ -275,38 +275,39 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         if(param.id){
             p.id = param.id;
         }
-        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,p,config).then(res=>{    
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,p,config).then(res=>{   
             let bb = res; 
             if(bb.data.sortList&&bb.data.sortList.length>=0){   //既查分类，也查物品
                 bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].returnGoodsList&&item.cdata[0].returnGoodsList.length>=0){
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
-                        formData.modifyParams( item.cdata[0].returnGoodsList, {
-                            unit_name:'unitName',
+                        formData.modifyParams( item.cdata[0].goodsList, {
                             goodsName:'name',
-                            qty:'num',   
-                            wareQty:'stock'  
+                            wareQty:'stock',
+                            distributePrice1:'price',
                         }); 
                     }
                 })               
             }
             formData.modifyParams(bb.data.goodsList,{
-                unit_name:'unitName',
                 goodsName:'name',
-                qty:'num',   
-                wareQty:'stock' 
+                wareQty:'stock',
+                distributePrice1:'price',
             })
            return Promise.resolve(bb);
         });
     }
+
+
+
     /**
-     * 退货   获取物品
+     * 退货  搜索获取物品信息
      * @param param 
      * @param pager 
      */
-    getItemCategoryGoods(param:any,pager:IPagerData){
+    getItemCategoryGoods(param:any,pager:IPagerData):AxiosPromise<any>{
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
@@ -315,7 +316,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,{
             "billType": param.billType, 
             "busiDate": param.busiDate,
-            "goodsSortId":param.goodsSortId,
             "pagination": {
                 "orderby": null, 
                 "asc": false, 
@@ -325,28 +325,22 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             }
         },config).then(res=>{  
             let bb = res;
-            debugger
             if(bb.data.sortList&&bb.data.sortList.length>=0){
                 bb.data.sortList.forEach((item:any)=>{
-                    debugger
-                    if(item.cdata&&item.cdata[0].returnGoodsList&&item.cdata[0].returnGoodsList.length>=0){
+                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
                          */
-                        formData.modifyParams( item.cdata[0].returnGoodsList, {
-                            unit_name:'unitName',
+                        formData.modifyParams( item.cdata[0].goodsList, {
                             goodsName:'name',
-                            qty:'num',   
-                            wareQty:'stock'   
+                            wareQty:'stock',
                         }); 
                     }
                 })               
             }  
             formData.modifyParams(bb.data.goodsList,{
-                unit_name:'unitName',
                 goodsName:'name',
-                qty:'num',   
-                wareQty:'stock' 
+                wareQty:'stock',
             })
             return Promise.resolve(bb);
         });

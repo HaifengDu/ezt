@@ -496,7 +496,7 @@ input.ezt-middle{
     position: fixed;
     bottom: 0;
     text-align: center;
-    padding: 6px 0px;
+    padding: 6px 0px; 
     background: #FFFFFF;
     box-shadow: 0 -1px 3px 0 rgba(204, 216, 228, 0.80);
     width: 100%;

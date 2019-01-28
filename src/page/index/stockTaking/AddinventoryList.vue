@@ -290,7 +290,6 @@ export default class StockTaking extends Vue{
    * 左侧滑动
    */
   private handlerSwipe(item:any,active:boolean){ 
-      debugger
       item.active = active;        
   }
   /**

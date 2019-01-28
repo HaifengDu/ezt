@@ -15,7 +15,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
     private constructor(){
         super(ERequestType.Boh)   
     }
-     /**
+     /** 
      * BOH版本   编制盘点单新增物品  （按分类检索）
      * @param bill_type      
      */
@@ -237,8 +237,6 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
         });
     }
 
-
-
     /**
      * BOH版本  退货 分类  物品
      * @param bill_type 
@@ -259,7 +257,7 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
             firstIds = {
                 "goodsSortId": param.goodsSortId,
             }    
-        }   
+        }
         var p = {
             "billType": param.billType, 
             "busiDate": param.busiDate,
@@ -271,36 +269,37 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pagesize": pager.limit, 
                 "totalcount": 0
             },...firstIds
-        }
+        }   
         if(param.id){
             p.id = param.id;
         }
-        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,p,config).then(res=>{   
-            let bb = res; 
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,p,config).then(res=>{  
+            let bb = res;  
             if(bb.data.sortList&&bb.data.sortList.length>=0){   //既查分类，也查物品
                 bb.data.sortList.forEach((item:any)=>{
                     if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
                         /**
                          * 转一下 publicGood里面页面显示字段
-                         */
+                         */  
                         formData.modifyParams( item.cdata[0].goodsList, {
                             goodsName:'name',
                             wareQty:'stock',
-                            distributePrice1:'price',
+                            memo:'remark',
                         }); 
                     }
                 })               
             }
             formData.modifyParams(bb.data.goodsList,{
+                memo:'remark',
                 goodsName:'name',
                 wareQty:'stock',
-                distributePrice1:'price',
+                goodsId:'material_id',
             })
-           return Promise.resolve(bb);
+           return Promise.resolve(bb);   
         });
     }
 
-
+ 
 
     /**
      * 退货  搜索获取物品信息
@@ -308,13 +307,26 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
      * @param pager 
      */
     getItemCategoryGoods(param:any,pager:IPagerData):AxiosPromise<any>{
+        let firstIds = {};
+        if(param.stockGoodsSortId ==-1 || (param.stockGoodsSortId==0 && !isNaN(param.stockGoodsSortId))){
+            firstIds = {}
+        }else{
+            firstIds = {
+                "categoryId": param.categoryId,
+                "goodsSortId": param.stockGoodsSortId,
+                "goodsName":param.orderGoodsName,
+            }
+            if(param['goodsName']){
+                firstIds['goodsName'] = param['goodsName'];
+            }
+        }
         let config = {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest'
             }
         }
-        return Axios.post(`${this.reqUrl}mobile/purchase/return/chooseScmReturnGoods`,{
-            "billType": param.billType, 
+        return Axios.post(`${this.reqUrl}mobile/purchase/return/queryReturnGoods`,{
+            "billType": param.billType,   
             "busiDate": param.busiDate,
             "pagination": {
                 "orderby": null, 
@@ -322,23 +334,12 @@ export class BOHPublicAddGoodService extends BaseService implements IPublicAddGo
                 "pageno": pager.page, 
                 "pagesize": pager.limit, 
                 "totalcount": 0
-            }
-        },config).then(res=>{  
+            },...firstIds
+        },config).then(res=>{     
             let bb = res;
-            if(bb.data.sortList&&bb.data.sortList.length>=0){
-                bb.data.sortList.forEach((item:any)=>{
-                    if(item.cdata&&item.cdata[0].goodsList&&item.cdata[0].goodsList.length>=0){
-                        /**
-                         * 转一下 publicGood里面页面显示字段
-                         */
-                        formData.modifyParams( item.cdata[0].goodsList, {
-                            goodsName:'name',
-                            wareQty:'stock',
-                        }); 
-                    }
-                })               
-            }  
             formData.modifyParams(bb.data.goodsList,{
+                id:'material_id',
+                memo:'remark',
                 goodsName:'name',
                 wareQty:'stock',
             })

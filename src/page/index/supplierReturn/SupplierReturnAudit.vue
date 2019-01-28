@@ -1,5 +1,5 @@
 <template>
-    <div class="ezt-page-con">
+    <div class="ezt-page-con supplierReturn">
         <ezt-header :back="true" title="审核供应商退货单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
@@ -15,7 +15,7 @@
                     <li v-if="this.addBillInfo.outType == 'SCM_OUT_TYPE_DISTRIBUTE'">
                         <span class="title-search-name">配送中心</span>
                         {{addBillInfo.businessName}}
-                    </li>
+                    </li>  
                     <li v-if="this.addBillInfo.outType == 'SCM_OUT_TYPE_OTHER_RETURN'">
                         <span class="title-search-name">供货机构：</span>
                         {{addBillInfo.businessName}}
@@ -27,10 +27,10 @@
                     <li>
                         <span class="title-search-name">退货日期：</span>
                         {{addBillInfo.busiDate}}
-                    </li>
-                    <li v-if="!InterfaceSysTypeBOH">
-                        <span class="title-search-name">备注：</span>
-                        <input type="text" class="ezt-middle" v-model="addBillInfo.remark">
+                    </li>   
+                    <li>
+                        <x-input  v-if="!InterfaceSysTypeBOH" title="备注：" :max="100" v-model="addBillInfo.remark"></x-input>
+                        <x-input  v-if="InterfaceSysTypeBOH" title="备注：" :max="100" v-model="addBillInfo.memo"></x-input>
                     </li>
                     <li @click="renderUrl('/publicAddGood')">
                         <span class="title-search-name">选择物料：</span>
@@ -51,14 +51,18 @@
                                     <span class="good-detail-name">{{item.name || item.goodsName}}
                                         <span class="good-detail-sort" v-if="!InterfaceSysTypeBOH">(/{{item.utilname}})</span>
                                     </span>  
-                                    <span class="good-detail-sort" style="margin-left:10px;" v-if="addBillInfo.returnType == 'SCM_OUT_TYPE_DISTRIBUTE'">单位：{{item.measureUnitName}}</span>                       
+                                    <span class="good-detail-sort" style="margin-left:10px;">单位：{{item.unitName || item.measureUnitName }}</span>    
+                                    <span class="title-search-name ezt-dense-box">
+                                        库存：{{item.wareQty}}
+                                    </span>                   
                                 </div>
                                 <div>
                                     <span class="good-detail-billno">{{item.goodsCode}}</span>
                                     <span class="good-detail-sort" v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥{{item.price}}</span>
                                     <span class="title-search-name ezt-dense-box">
-                                        退货数量：{{item.num || item.qty}}
+                                        退货数量：{{item.qty}}
                                     </span>
+                                    
                                 </div>                     
                             </div>
                             <div class="good-detail-r">
@@ -77,8 +81,8 @@
                 <div class="ezt-foot-temporary" slot="confirm">
                 <div class="ezt-foot-total">合计：
                     <b>品项</b><span>{{this.returnDetail.length}}</span>，
-                    <b>数量</b><span>{{Total.num}}</span>，
-                    <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥</b>
+                    <b>数量</b><span>{{Total.num || Total.qty}}</span>
+                    <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">，￥</b>
                     <span v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">{{Total.Amt.toFixed(2)}}</span>
                 </div>
                 <div class="ezt-foot-button">
@@ -136,7 +140,7 @@ export default class ReturnGood extends Vue{
     private oldValue = 1;
     private materialSetting:any;
     private returnDetail:any[] = [];
-    private delId:any[] = []; //把刪除的物品id存
+    private delId:any[] = []; //把刪除的物品id存   
     created(){
         const factory = FactoryService.getInstance().createFactory();
         this.service = factory.createSupplierReturn();
@@ -146,19 +150,20 @@ export default class ReturnGood extends Vue{
             this.returnDetail = detailList.data['detailList']
         }
 
+
         if(this.selectedGood&&this.selectedGood.length>0){
-            formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-                num:"qty",  //退货数量
+            formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段   
                 remark:'memo',  
                 name:'goodsName',
-                stock:"wareQty"        
+                stock:"wareQty",
+                // num:"qty",  
+                material_id:"goodsId"
             })
+            this.returnDetail = ObjectHelper.serialize(this.selectedGood);
         }  
+        (this.selectedGood||[]).forEach(item=>this.$set(item,'active',false));
+        (this.returnDetail||[]).forEach((item:any)=> this.$set(item,'active',false));
         this.addBeforeBillInfo = ObjectHelper.serialize(this.addBillInfo);//深拷贝
-        if(this.returnDetail.length==0&&this.addBillInfo.detailList){
-            this.setSelectedGood(this.addBillInfo.detailList);         
-        }
-        (this.returnDetail||[]).forEach(item=> this.$set(item,'active',false));
     }
     mounted() {
         if(!this.InterfaceSysTypeBOH){
@@ -179,9 +184,6 @@ export default class ReturnGood extends Vue{
             }]
           }
         }
-
-       
-        
     }
     
     /**
@@ -209,6 +211,7 @@ export default class ReturnGood extends Vue{
                 "totalAmt": this.Total.qty,
                 "status": "SCM_RETURN_STATUS_FINISH",
                 "businessName": this.addBillInfo.businessName,
+                "memo": this.addBillInfo.memo,
                 "businessId": this.addBillInfo.businessId,       //配送中心id  供应商id
                 "auditStatus": "SCM_AUDIT_NO",    //审核状态   NO
                 "busiDate":  this.user.auth.busi_date,
@@ -221,7 +224,7 @@ export default class ReturnGood extends Vue{
                 this.returnDetail=[];
                 this.setSelectedGood([]);
                 this.addBeforeBillInfo={};
-                this.$toasted.success("提交成功！");
+                this.$toasted.success("提交成功！"); 
                 this.$router.push('/supplierReturn')
             },err=>{
                 this.$toasted.show(err.message)
@@ -240,6 +243,7 @@ export default class ReturnGood extends Vue{
         }
          let param ={            
             "id":this.addBillInfo.id,
+            "memo": this.addBillInfo.memo,
             "totalAmt": this.Total.qty,
             "status": "SCM_RETURN_STATUS_FINISH",
             "businessName": this.addBillInfo.businessName,
@@ -282,26 +286,70 @@ export default class ReturnGood extends Vue{
             cancelText:"审核不通过",
             showCancelButton:!_this.InterfaceSysTypeBOH,
             hideOnBlur:true
-        })
+        })   
     }
     /**
      * 
      * 物料总数量\总金额
      */
     private get Total(){
-      return this.returnDetail.reduce((ori,item)=>{
-       ori.num = ori.num+Number(item.num);       
-       ori.Amt = ori.Amt + (item.num * item.price);
-      return ori;
-      },{num:0,Amt:0});
+      return this.returnDetail.reduce((ori,item) => {
+            if(item.distributePrice1){
+                ori.qty = ori.qty + Number(item.qty);
+                if(item.distributePrice1){
+                    ori.Amt = ori.Amt + (item.qty * item.distributePrice1);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.qty = 0;
+                }
+                return ori;
+           }else{
+                ori.num = ori.num+Number(item.num); 
+                if(item.price){
+                    ori.Amt = ori.Amt + (item.num * item.price);
+                }else if(item.Amt){
+                    ori.Amt = ori.Amt + (item.amt);
+                }else{
+                    ori.Amt = 0;
+                    ori.num = 0;
+                } 
+                return ori;
+           }
+    },{num:0,Amt:0,distributePrice1:0,qty:0});
     }
     /**
      * 左侧滑动物料删除
      */
-    private handlerSwipe(item:any,active:boolean){     
+    private handlerSwipe(item:any,active:boolean){        
         item.active = active;
     }
-    /**
+     /**
+     * 删除物料操作
+     */ 
+    private delAction(item:any,delId:Array<any>){
+        let _this = this;
+        this.$vux.confirm.show({
+            // 组件除show外的属性
+            onCancel () {
+                let newIndex = _this.returnDetail.findIndex((info:any,index:any)=>{
+                    return item.id == info.id;
+                }) 
+                _this.returnDetail[newIndex].active = false;
+            },
+            onConfirm () {
+                let newIndex = _this.returnDetail.findIndex((info:any,index:any)=>{
+					return item.id == info.id;
+                })
+				_this.delId.push(_this.returnDetail[newIndex].id);     
+                _this.returnDetail.splice(newIndex,1);
+				_this.cache.save(CACHE_KEY.DISTRIBUTION_DELETEID,JSON.stringify(_this.delId))
+            },
+            content:'请确认是否删除该物料?'
+        })
+    }
+    /**   
      * 修改物料的数量 
      */
     private numChange(item:any,info:any){
@@ -321,46 +369,27 @@ export default class ReturnGood extends Vue{
         }
         })
     }
-     /**
-     * 删除物料操作
-     */
-    private delAction(item:any,delId:Array<any>){
-        let _this = this;
-        this.$vux.confirm.show({
-            // 组件除show外的属性
-            onCancel () {
-                let newIndex = _this.returnDetail.findIndex((info:any,index:any)=>{
-                    return item.id == info.id;
-                }) 
-                _this.returnDetail[newIndex].active = false;
-            },
-            onConfirm () {
-                let newIndex = _this.returnDetail.findIndex((info:any,index:any)=>{
-					return item.id == info.id;
-                })
-				_this.delId.push(_this.selectedGood[newIndex].id);
-                _this.selectedGood.splice(newIndex,1);
-				_this.cache.save(CACHE_KEY.DISTRIBUTION_DELETEID,JSON.stringify(_this.delId))
-            },
-            content:'请确认是否删除该物料?'
-        })
-    }
+    
     //选择物料
     private renderUrl(info:string){  
         let goodTerm = {};
-        let ReturnConditions = {};
+        let ReturnConditions = {};     
         goodTerm={
             billsPageType: 'supplierReturn',
         } 
         ReturnConditions={
             billType:this.addBillInfo.outType,
             busiDate:this.user.auth.busi_date,
+            id:this.addBillInfo.id,
         }
         formData.modifyParams(this.returnDetail,{
-            qty:'num',  //退货数量
             memo:'remark',  
             goodsName:'name',
+            goodsId:"material_id",
             wareQty:'stock',    
+            unitName:'measureUnitName',      
+            // qty:"num",  
+             
         })    
         if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
             this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
@@ -369,19 +398,20 @@ export default class ReturnGood extends Vue{
             this.$set(goodTerm,'editPrice',true);//供应商退货（无源单号）并且任意退货， 价格可以编辑
         }
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件   
-        this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
+        this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo))
         this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(ReturnConditions));
-        this.setSelectedGood(this.returnDetail);   
+        this.setSelectedGood(this.returnDetail);
         this.$router.push(info);
     } 
     /**
      * 返回上一页
      */
-    private goBack(){
+    private goBack(){   
         this.addBillInfo={};
-        this.setSelectedGood([]);
-        this.addBeforeBillInfo={};
+        this.setSelectedGood([]); 
+        this.addBeforeBillInfo={};   
+        this.cache.clear();
         this.$router.push('/supplierReturn')
     }
     

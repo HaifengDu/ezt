@@ -141,7 +141,7 @@ export default class StockTaking extends Vue{
         this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_ADDINFO));
     } 
     if(this.cache.getData(CACHE_KEY.INVENTORY_LIST)){
-        this.detail = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_LIST));
+        this.detail = JSON.parse(this.cache.getData(CACHE_KEY.INVENTORY_LIST));
     }     
     if(this.cache.getData(CACHE_KEY.INVENTORY_DETAILS)){
         this.InventoryList  = JSON.parse(this.cache.getDataOnce(CACHE_KEY.INVENTORY_DETAILS));
@@ -367,7 +367,7 @@ export default class StockTaking extends Vue{
       showCancelButton:!_this.InterfaceSysTypeBOH,
       hideOnBlur:true
     }) 
-  }    
+  }       
   /**
    * 选择货品  
    */
@@ -380,7 +380,7 @@ export default class StockTaking extends Vue{
           // "disperse_num":'num',  //实盘数
           'memo':'remark',  
           'material_name':'name'        
-        })     
+        })       
         this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
         this.cache.save(CACHE_KEY.INVENTORY_ADDBEFOREINFO,JSON.stringify(this.addBeforeBillInfo));
         this.cache.save(CACHE_KEY.MATERIAL_PARAM,JSON.stringify(this.detail));

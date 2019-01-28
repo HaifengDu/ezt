@@ -1,5 +1,5 @@
 <template>
-    <div class="ezt-page-con">
+    <div class="ezt-page-con supplierReturn">
         <ezt-header :back="true" title="添加退货单" @goBack="goBack" :isInfoGoback="true"></ezt-header>
         <div class="ezt-main">
             <div class="ezt-add-content">
@@ -81,6 +81,10 @@
                                  :key="index" v-for="(item,index) in sourceBillList"><span v-if="item.noHand!=0">禁用</span>{{item.sourceBillName}}</option>
                             </select>
                         </span>
+                    </li>      
+                     <li>
+                        <x-input  v-if="!InterfaceSysTypeBOH" title="备注：" :max="100" v-model="addBillInfo.remark"></x-input>
+                        <x-input  v-if="InterfaceSysTypeBOH" title="备注：" :max="100" v-model="addBillInfo.memo"></x-input>
                     </li>
                     <li  @click="renderUrl('/publicAddGood')">
                         <span class="title-search-name is-required">选择物料：</span>
@@ -122,8 +126,8 @@
             <ezt-footer>
                 <div class="ezt-foot-temporary" slot="confirm">
                     <div class="ezt-foot-total" v-if="this.ReturnList.length>0">合计：
-                        <b>品项</b><span></span>，{{this.ReturnList.length}}
-                        <b>数量</b><span>{{Total.num || Total.qty}}</span>，
+                        <b>品项：</b><span></span>{{this.ReturnList.length}}，
+                        <b>数量：</b><span>{{Total.num || Total.qty}}</span>，
                         <b v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">￥</b>
                         <span v-if="(addBillInfo.returnType == 'store'&&materialSetting.show_back_price)||addBillInfo.returnType == 'supplier'">{{(Total.Amt).toFixed(2)}}</span>
                     </div>
@@ -268,7 +272,7 @@ export default class ReturnGood extends Vue{
         } 
         this.addBillInfo.warehouse = this.pullList.warehouseList[0].id;
         if(this.cache.getData(CACHE_KEY.SUPPLIERRETURN_ADDINFO)){
-            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));
+            this.addBillInfo = JSON.parse(this.cache.getDataOnce(CACHE_KEY.SUPPLIERRETURN_ADDINFO));      
         }
 
         /**
@@ -280,10 +284,10 @@ export default class ReturnGood extends Vue{
        
         if(this.selectedGood&&this.selectedGood.length>0){
             formData.modifyParams(this.selectedGood,{//将选择物料中的字段转为当前模块后台想要的字段
-                num:"qty",  //退货数量
                 remark:'memo',  
                 name:'goodsName',
-                stock:"wareQty"   
+                stock:"wareQty",   
+                material_id:'goodsId',   
             })
         }  
         this.ReturnList = ObjectHelper.serialize(this.selectedGood);
@@ -442,7 +446,7 @@ export default class ReturnGood extends Vue{
                         }else{
                             that.setSelectedGood([]);
                             that.addBeforeBillInfo[val]=that.addBillInfo[val];
-                        }
+                        }  
                     
                     },
                     content:title
@@ -529,12 +533,12 @@ export default class ReturnGood extends Vue{
             "distributePrice1":item.distributePrice1,
             "goodsCode":item.goodsCode,
             "goodsName":item.goodsName,
-            "goodsId":item.id,
+            "goodsId":item.goodsId,
             "unitId":item.measureUnitId,
             "unitName":item.measureUnitName,
             "price":item.price,
             "qty": item.qty,
-            "rate": item.rate,
+            "orderUnitRates": item.rate,
             "orderUnitId": item.scmUnitId,
             "orderUnitName":item.scmUnitName,
             "wareQty":item.wareQty,
@@ -543,6 +547,7 @@ export default class ReturnGood extends Vue{
 			rows.push(obj);
         });
         let data={
+           "memo":this.addBillInfo.memo,
            "totalAmt": this.Total.qty,
            "status": "SCM_RETURN_STATUS_FINISH",
            "businessName": this.addBillInfo.supplier.name,
@@ -657,7 +662,7 @@ export default class ReturnGood extends Vue{
                     }     
                 }
                 goodTerm={
-                    billsPageType: 'supplierReturn',
+                    billsPageType: 'supplierReturnAdd',
                 } 
                 if(this.addBillInfo.returnType == 'store'){//退货类型为配送退货时，单价根据参数控制
                     this.$set(goodTerm,'showPrice',!this.materialSetting.show_back_price);
@@ -689,7 +694,7 @@ export default class ReturnGood extends Vue{
                     
                     }     
                 }
-                goodTerm={
+                goodTerm={      
                     billsPageType: 'supplierReturn',
                 } 
                 ReturnConditions={
@@ -697,10 +702,10 @@ export default class ReturnGood extends Vue{
                     busiDate:this.user.auth.busi_date,
                 }
                 formData.modifyParams(this.ReturnList,{
-                    "qty":'num',  //退货数量
-                    'memo':'remark',  
-                    'goodsName':'name',
-                    'wareQty':'stock',    
+                    memo:'remark',  
+                    goodsName:'name',
+                    wareQty:'stock',    
+                    goodsId:"material_id",
                 }) 
                 this.cache.save(CACHE_KEY.MATERIAL_LIMIT,JSON.stringify(goodTerm));//添加物料的条件
                 this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(this.addBillInfo));
@@ -716,7 +721,7 @@ export default class ReturnGood extends Vue{
      * 返回上一页
      */
     private goBack(){
-         let _this = this;
+        let _this = this;
         if((this.addBillInfo&&this.addBillInfo.warehouse)||this.selectedGood.length>0){
             this.$vux.confirm.show({
                 // 组件除show外的属性

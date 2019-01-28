@@ -9,12 +9,12 @@
     <ezt-header :back="true" title="退货" @goBack="goBack" :isInfoGoback="true">
       <div slot="action">
         <div>
-          <span class='ezt-action-point' @click="addPage('/supplierReturnAdd')">
-          <i class="fa fa-plus" aria-hidden="true" ></i>
-          </span>
-        <span class='ezt-action-point' @click="searchTitle">
-          <i class="fa fa-search" aria-hidden="true"></i>
-        </span>          
+          <div class='ezt-action-point' @click="addPage('/supplierReturnAdd')">
+            <i class="fa fa-plus" aria-hidden="true" ></i>
+          </div>
+          <div class='ezt-action-point' @click="searchTitle">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </div>          
         </div>
       </div>
     </ezt-header>    
@@ -61,7 +61,7 @@
                 <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建人：<span class="receive-dc-content">{{item.creator}}</span></span>
                 <span class="receive-dc-title" v-if="InterfaceSysTypeBOH">创建日期：<span class="receive-dc-content">{{item.createDate}}</span></span>
                 <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">货物摘要：<span class="receive-dc-content">{{item.details}}</span></span>
-                <span class="receive-dc-title" v-if="!InterfaceSysTypeBOH">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
+                <span class="receive-dc-title">备注：<span class="receive-dc-content">{{item.remark || item.memo}}</span></span>
               </div>     
             </div> 
             <div class="ezt-list-del" @click.stop="deleteBill(item)">
@@ -363,15 +363,7 @@ export default class ReturnGood extends Vue{
            * BOH版本
            */
           this.service.getGoodDetail(item.id,this.pager.getPage()).then(res=>{ 
-                // confirmGoodInfo={
-                //   bill_no:item.bill_no,
-                //   billType:'合同采购',
-                //   warehouse:'01',
-                //   remark:'在途中', 
-                //   returnType:'supplier'        
-                // }
               this.cache.save(CACHE_KEY.SUPPLIERRETURN_DETAILLIST,JSON.stringify(res.data));
-              // this.cache.save(CACHE_KEY.SUPPLIERRETURN_ADDINFO,JSON.stringify(confirmGoodInfo));
               if(this.InterfaceSysTypeBOH){
                   if(this.tabList.getActive().status=='SCM_AUDIT_NO'){ 
                     this.$router.push('/supplierReturnAudit')
@@ -523,9 +515,12 @@ export default class ReturnGood extends Vue{
   }
 }
 .ezt-action-point{
-  width: 20px;
-  height: 26px;
-  display: inline-block;
+   width: 20px;
+   height: 26px;
+   display: inline-block;
+}
+.fa{
+  margin-top:4px;
 }
 .oo{
   display: inline-block;

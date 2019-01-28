@@ -58,10 +58,10 @@
                 </div>
                 <!-- 退货显示  编码 -->
                 <div class="good-item-bot">
-                   <span v-if="materialLimit.billsPageType == 'supplierReturn'" class="good-item-sort">
-                     单位：<span class="good-item-sort">{{item.measureUnitName}} </span>
-                  </span>
-                </div>
+                  <span v-if="materialLimit.billsPageType == 'supplierReturn'" class="good-item-sort">
+                    单位：<span class="good-item-sort">{{item.measureUnitName}}</span>  
+                 </span>
+               </div>
                <div class="good-item-bot">
                  <!-- 编辑图标 -->
                  <span class="good-remark" @click="handlerRemark(item)">
@@ -84,7 +84,7 @@
                 </span>
                 <span class="good-number">
                   <!-- 库存数量限制 -->  
-                  <ezt-number type="number" disabled v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)" :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                <ezt-number type="number" disabled v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'" :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                   <!-- 可退数量限制  -->
                   <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                     :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
@@ -92,6 +92,8 @@
                   <ezt-number type="number" disabled v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'&&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'&&materialLimit.billsPageType !='stocktaking'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                    <!--只针对盘点 -->
                   <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='stocktaking'" @change="handlerNum(item)" v-model="item.disperse_num"></ezt-number>
+                  <!-- 只针对退货 -->
+                  <ezt-number type="number" disabled v-if="(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)" :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.qty"></ezt-number>
                 </span>
                </div>
              </div>           
@@ -216,14 +218,15 @@
                 账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
               </span>
                <!-- 退货显示单位  编码 -->
-                <span v-if="materialLimit.billsPageType == 'supplierReturn'" class="good-item-sort">
+                <span style="margin-left:10px;" v-if="materialLimit.billsPageType == 'supplierReturn' || materialLimit.billsPageType =='orderGood'" class="good-item-sort">
                     编码：<span class="good-item-sort">{{item.goodsCode}}</span>
                 </span>
             </div>
              <!-- 退货显示  编码 -->
             <div class="good-item-bot">
                 <span v-if="materialLimit.billsPageType == 'supplierReturn'" class="good-item-sort">
-                  单位：<span class="good-item-sort">{{item.measureUnitName}} </span>
+                  单位：<span class="good-item-sort" style="margin-left:10px;">{{item.measureUnitName}} </span>
+                  库存：<span class="good-item-sort">{{item.stock || 0}} </span>
               </span>
             </div>
             <div class="good-item-bot">
@@ -243,8 +246,7 @@
               </span>
               <span class="good-number">
                 <!-- 库存数量限制 -->  
-                <ezt-number type="number" disabled v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'||(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)"
-                  :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
+                <ezt-number type="number" disabled v-if="materialLimit.billsPageType == 'inStoreAllot' || materialLimit.billsPageType == 'storeAllot'|| materialLimit.billsPageType == 'spilledSheet' || materialLimit.billsPageType == 'leadbackMaterial'" :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                 <!-- 可退数量限制  -->
                 <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='supplierReturn'&&!materialSetting.isAnyReturn"
                   :returnMax="item.returnNum" :limitNum="true" @change="handlerNum(item)" v-model="item.num"></ezt-number>
@@ -252,7 +254,9 @@
                  <ezt-number type="number" disabled v-if="materialLimit.billsPageType!='inStoreAllot'&&materialLimit.billsPageType!= 'storeAllot' && materialLimit.billsPageType!='spilledSheet'&&materialLimit.billsPageType!='leadbackMaterial'&&materialLimit.billsPageType!='supplierReturn'&&materialLimit.billsPageType !='stocktaking'" @change="handlerNum(item)" v-model="item.num"></ezt-number>
                   <!--只针对盘点 -->
                 <ezt-number type="number" disabled v-if="materialLimit.billsPageType =='stocktaking'" @change="handlerNum(item)" v-model="item.disperse_num"></ezt-number>
-              </span>
+                <!-- 只针对退货 -->
+                 <ezt-number type="number" disabled v-if="(materialLimit.billsPageType=='supplierReturn' && materialSetting.isAnyReturn)" :returnMax="item.stock" :limitNum="true" @change="handlerNum(item)" v-model="item.qty"></ezt-number>
+              </span>    
             </div>
           </div>          
           <div @click="selectedDelGood(item)" class="item-delete">
@@ -264,7 +268,7 @@
     <!-- 3、 搜索所有物品 -->
     <div class="search-item" v-if="isSearch">
        <div class="search-header">
-          <input type="text" placeholder="请输入" @input="handlerSearchData" v-model="publicParam.searchData">
+          <input type="text" placeholder="请输入物品名称" @input="handlerSearchData" v-model="publicParam.searchData">
           <div class="search-icon">          
             <i class="fa fa-search" aria-hidden="true"></i>
           </div>
@@ -277,23 +281,32 @@
       <div class="selected-good-content" ref="searchContainer" v-infinite-scroll="searchLoadMore"
             :infinite-scroll-disabled="searchAllLoaded" infinite-scroll-immediate-check="false"
             infinite-scroll-distance="10">
-        <div class="good-item" v-if="publicParam.searchList.length>0" v-for="(item,index) in publicParam.searchList" :key='index'>
+        <div class="good-item" v-if="publicParam.searchList.length > 0" v-for="(item,index) in publicParam.searchList" :key='index'>
           <div class="good-item-title">
             <span class="good-item-name">{{item.name || item.material_name}}</span>
+             <div  v-if="materialLimit.billsPageType == 'supplierReturn' || materialLimit.billsPageType =='orderGood'">编码：<span class="good-item-sort" style="margin-right:10px;">{{item.goodsCode}}</span> </div>
             <!--库存初始化-->
             <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice &&materialLimit.billsPageType == 'initStock'" class="good-item-sort edit">
-              <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                    
+              <span v-if="materialLimit.costType =='0'">价格：<input type="text" @change="pubChange(item,'price')" class="ezt-smart" v-model="item.price"></span>                  
               <span v-if="materialLimit.costType == '1'">金额：<input type="text" @change="pubChange(item,'amt')" class="ezt-smart" v-model="item.amt"></span>                    
             </span>
              <!-- 盘库显示规格账面数量 -->
             <span v-if="!materialLimit.showPrice &&materialLimit.billsPageType == 'stocktaking'" class="good-item-sort">
               规格： <span class="good-item-sort" v-if="item.material_model || ''">{{item.material_model}}</span>
               账面数量：<span class="good-item-sort">{{item.acc_qty}}</span>
+               <!-- 退货显示单位  编码 -->
+                <span v-if="materialLimit.billsPageType == 'supplierReturn' || materialLimit.billsPageType =='orderGood'" class="good-item-sort">
+                    编码：<span class="good-item-sort">{{item.goodsCode}}</span>
+                </span>
             </span> 
+             <!-- 退货显示  编码 -->
+            <div class="good-item-bot">
+               <span v-if="materialLimit.billsPageType == 'supplierReturn'" class="good-item-sort">
+                  单位：<span class="good-item-sort">{{item.measureUnitName}} </span>
+                </span>
+            </div>
             <!-- 默认不可以进行编辑-->
-            <span
-                class="good-item-sort"
-                v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'initStock'"
+            <span class="good-item-sort" v-if="!materialLimit.showPrice && !materialLimit.editPrice && materialLimit.billsPageType != 'stocktaking' && materialLimit.billsPageType != 'initStock' && materialLimit.billsPageType != 'supplierReturn'"
             >{{item.price||0}} 元/{{item.unitName}}</span>          
             <!-- 价格可以进行编辑  收货、平调 可以编辑的话找到单据处 editPrice控制 是否可以编辑-->
             <span v-if="!InterfaceSysTypeBOH && !materialLimit.showPrice && materialLimit.editPrice " class="good-item-sort edit">
@@ -402,7 +415,7 @@ export default class AddGood extends Vue{
   ];
   private goodBigType:any[] = [];
   private goodSmallType:any[] = [];
-  private goodList:any[]=[];
+  private goodList:any[] = [];
   private allType:any[];
   private typeName:any={};//记录type选择哪条 激活的那条数据添加样式
   private bindRemark:any={};//深拷贝存储的值 
@@ -448,7 +461,8 @@ export default class AddGood extends Vue{
     if(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT)){
       this.materialLimit = JSON.parse(this.cache.getData(CACHE_KEY.MATERIAL_LIMIT));
     }
-    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    '   
+    this.selectedGoodList = Array.prototype.slice.call(this.selectedGood);//添加物料把已经选过的物料从store中拿过来给页面    ' 
+    // console.log(JSON.stringify(this.selectedGoodList))
     this.addMaskClickListener(()=>{//点击遮罩隐藏下拉
       this.hideMask();
     });
@@ -467,11 +481,7 @@ export default class AddGood extends Vue{
     this.typeName = item; 
     this.$set(item,'categoryId',item.id);  
     this.goodSmallType = item;
-   /*  (item.cdata).forEach((info:any,index:any)=>{
-      this.loadGood(info,info.id);
-    }) */
     this.loadGood(item.cdata[0],item.id);
-  
     // TODO:加载货品this.goodSmallType[0]   
   }
   /**
@@ -497,17 +507,14 @@ export default class AddGood extends Vue{
     }
     if(item.id==-1 || (item.id == 0 && !isNaN(0))){//加载全部
       if(item.goodsList && item.goodsList.length>0){//全部里面找出已经选择的货品
-        // this.allGoods(item);
         this.goodList = this.allGoods(item);
-        // _this_.typeName = this.allGoods(item);
         _this_.typeName=item;    
         return false;
       }
-    }      
+    }   
     _this_.service.getGoodClass(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
       let goodsList = res.data.goodsList || [];
       this.goodList = this.allGoods(res.data);
-      // this.goodList = goodsList;
     },err=>{
       this.$toasted.show(err.message);      
     });
@@ -526,25 +533,13 @@ export default class AddGood extends Vue{
     //TODO:item.id加载货品
     _.forEach(item.goodsList,good=>{
       this.$set(good,'active',false);
-      /**
-       * 退货处理
-       */
-      if(this.materialLimit.billsPageType == 'supplierReturn'){
-        var index = _.findIndex(this.selectedGoodList,model=>good.id===model.id);
-      }
-      /**
-       * 盘点处理
-       */
-      if(this.materialLimit.billsPageType == 'stocktaking'){
-        var index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
-      }
-      if(index>=0){    
+      var index = _.findIndex(this.selectedGoodList,model=>good.material_id===model.material_id);
+      if(index >= 0){    
         ObjectHelper.merge(good,this.selectedGoodList[index],true);
         this.selectedGoodList[index] = good;
         item.addList.push(good);
       }
     });
-    // this.goodList = item.goodsList;    
     return item.goodsList;
   }
 
@@ -559,15 +554,12 @@ export default class AddGood extends Vue{
         text:'加载中..'
       });
       this.pager.setPage(this.publicParam.listPage);  //list懒加载的page为list的page
-      // this.publicParam.listPage = this.pager.getPage();
       this.pager.setNext();
       this.publicParam.listPage = this.pager.getPage().page;//重新给list的page值
-      
       if(this.loadMoreParam.allGoods.goodsList&&this.loadMoreParam.allGoods.goodsList.length>0){//从分类中返回的物品 分页加载
         _this_.service.getGoodClass(this.materialParam,this.pager.getPage()).then(res=>{
           let goodsList = res.data.sortList[0].cdata[0].goodsList;          
           goodsList = this.allGoods(res.data.sortList[0].cdata[0]);//已选择的物品数量
-
           if(this.pager.getPage().limit>goodsList.length){
             this.allLoaded = true;
           }
@@ -579,11 +571,10 @@ export default class AddGood extends Vue{
         },err=>{
           this.$toasted.show(err.message);
         });
-      }else{//分类当中并没有返回全部的物品，要去单独请求一次物品的接口
+      }else{      //分类当中并没有返回全部的物品，要去单独请求一次物品的接口
         _this_.service.getGoodClass(Object.assign(this.loadMoreParam,this.materialParam),this.pager.getPage()).then(res=>{
           let goodsList = res.data.goodsList;
           goodsList = this.allGoods(res.data);//已选择的物品数量
-
           if(this.pager.getPage().limit>goodsList.length){
             this.allLoaded = true;
           }
@@ -646,7 +637,6 @@ export default class AddGood extends Vue{
             this.publicParam.searchPage = 1;            
           }
           this.publicParam.searchList = this.allGoods(res.data);
-         
         }
       })
     }, 800);
@@ -725,32 +715,7 @@ export default class AddGood extends Vue{
     //     return false;
     //   }
     // }   
-    if((this.materialLimit.billsPageType=='supplierReturn' && this.materialSetting.isAnyReturn)){
-       if(item.num>0){
-            var ret = this.selectedGoodList.find((value:any)=>{
-              return item.id == value.id;
-            });
-            if(!ret){
-              this.selectedGoodList.push(item);
-            }
-            var smallRet = this.typeName.addList.find((value:any)=>{
-              return item.id == value.id;
-            })
-            if(!smallRet){       
-              this.typeName.addList.push(item);
-            }
-       }else{
-            const index = _.findIndex(this.selectedGoodList,model=>item.id===model.id);
-            if(index>=0){
-              this.selectedGoodList.splice(index,1);
-            }
-            const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.id===model.id);
-            if(smallIndex>=0){
-              this.typeName.addList.splice(smallIndex,1);
-            }
-       }
-    }else{
-       if(item.num>0 || item.disperse_num>=0){
+       if(item.num>0 || item.disperse_num>=0 || item.qty>0){
         //新增
         var ret = this.selectedGoodList.find((value:any)=>{
           return item.material_id == value.material_id;
@@ -774,7 +739,6 @@ export default class AddGood extends Vue{
         if(smallIndex>=0){
           this.typeName.addList.splice(smallIndex,1);
         }
-      }
     }
   }   
   /**
@@ -795,19 +759,31 @@ export default class AddGood extends Vue{
   private selectedDelGood(item:any){
     if(this.materialLimit.billsPageType == 'stocktaking'){
         const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
-        this.selectedGoodList[index].disperse_num = '';//删除完物品数量清空为0
+        this.selectedGoodList[index].disperse_num='';//删除完物品数量清空为0 
         this.selectedGoodList.splice(index,1);
         if(this.typeName.addList.length>=0){
           const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
-          this.typeName.addList[smallIndex].disperse_num = '';
+          this.typeName.addList[smallIndex].disperse_num='';
+          this.typeName.addList.splice(smallIndex,1);
+        }
+    }else if(this.materialLimit.billsPageType == 'supplierReturn'){
+        const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
+        this.selectedGoodList[index].qty=0;//删除完物品数量清空为0 
+        this.selectedGoodList.splice(index,1);
+        if(this.typeName.addList.length>=0){
+          const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+          debugger
+          this.typeName.addList[smallIndex].qty=0;
           this.typeName.addList.splice(smallIndex,1);
         }
     }else{
+        debugger
         const index = _.findIndex(this.selectedGoodList,model=>item.material_id===model.material_id);
         this.selectedGoodList[index].num = 0;//删除完物品数量清空为0
         this.selectedGoodList.splice(index,1);
         if(this.typeName.addList.length>0){
           const smallIndex =_.findIndex(this.typeName.addList,(model:any)=>item.material_id===model.material_id);
+          debugger
           this.typeName.addList[smallIndex].num=0;
           this.typeName.addList.splice(smallIndex,1);
         }
@@ -857,7 +833,7 @@ private changeDirect(item:any){
    * 选择完货品去提交
    * */ 
   private goToCommit(types:PageType){
-    this.setSelectedGood(this.selectedGoodList);
+    this.setSelectedGood(this.selectedGoodList);    
     if(this.$route.query.newType === 'manual'){
         this.$router.push({
           name:'LibraryDetails',
